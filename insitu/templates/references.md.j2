@@ -1,0 +1,8 @@
+{% if rows %}
+Each key names a directory holding its `README.md`, and `source.json` when it backs a Lean claim. The generated bibliography is `src/latex/refs.bib`.
+
+{% for row in rows | sort(attribute="path") %}`{{ row.path | relative_to(this.directory) | replace('/README.md', '') }}`{% if not loop.last %} · {% endif %}{% endfor %}
+
+{% else %}
+_No references yet._
+{% endif %}

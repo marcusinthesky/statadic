@@ -1,0 +1,21 @@
+{
+  "source_url": "https://public.econ.duke.edu/~ap172/Patton_Politis_White_2009.pdf",
+  "statement_locations": [
+    "Correction p. 373, items 1 and 4–5, referring to Theorem 3.1 and equation (9) of Politis–White (2004).",
+    "Page 373, corrections 1 and 3–5 to the Politis–White equations (6), (8), (9); circular equations (11), (13), (14) retain their original constants.",
+    "Page 373, correction 5 to equation (9); the native lower bound on the returned length is a STATADIC convention."
+  ],
+  "proof_locations": [
+    "For the leading squared-bias-plus-variance criterion, substitute the corrected cube-root balance and factor the exact objective gap. The factored uniqueness argument is supplied here.",
+    "Politis–White 2004, Appendix proofs of Theorems 3.2–3.3, final plug-in step, extended here to the two native lower bounds.",
+    "Evaluate the corrected cube-root plug-in rule at zero lag-weighted pilot, then apply STATADIC’s lower bound."
+  ],
+  "claim_ids": [
+    "STATADIC-BLOCKLENGTH-001",
+    "STATADIC-BLOCKLENGTH-003",
+    "STATADIC-BLOCKLENGTH-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives each specialization and its assumptions, diagnostics and limits.",
+  "source_review": "Compared the indicated source with the formula and STATADIC branch implementation. Human semantic review pending."
+}

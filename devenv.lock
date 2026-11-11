@@ -1,0 +1,64 @@
+{
+  "nodes": {
+    "devenv": {
+      "locked": {
+        "dir": "src/modules",
+        "lastModified": 1778814374,
+        "narHash": "sha256-gZIaq9to5brzEsnlHE2D0FRN4ixZJEBd2ZV/3WNlt4Q=",
+        "owner": "cachix",
+        "repo": "devenv",
+        "rev": "e44d88a683bf945c72445babd85f1d2e4e933409",
+        "type": "github"
+      },
+      "original": {
+        "dir": "src/modules",
+        "owner": "cachix",
+        "repo": "devenv",
+        "rev": "e44d88a683bf945c72445babd85f1d2e4e933409",
+        "type": "github"
+      }
+    },
+    "lean4-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782490315,
+        "narHash": "sha256-dUZ98JBxn+zvYoRag0IfTDHLxVXACytxvdxluWjeI58=",
+        "owner": "lenianiva",
+        "repo": "lean4-nix",
+        "rev": "7711df0784e335267b6aa57a5c8ada62a6bef0bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lenianiva",
+        "repo": "lean4-nix",
+        "rev": "7711df0784e335267b6aa57a5c8ada62a6bef0bf",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1788614874,
+        "narHash": "sha256-7QYjT2vHLuX9Z1pdxHXDKCbh1CR3D/2rywB9Tx0MPRg=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c043004d1c6985732bcc1cbc5a9c9aecbbb4e0f0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c043004d1c6985732bcc1cbc5a9c9aecbbb4e0f0",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "devenv": "devenv",
+        "lean4-nix": "lean4-nix",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

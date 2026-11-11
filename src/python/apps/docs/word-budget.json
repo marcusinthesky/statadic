@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "baseline_revision": "52268aa5078d94c9bf8b092c7655fbf3ae54031a",
+  "baseline_words": 6166,
+  "maximum_words": 1541,
+  "target_words": 1450,
+  "baseline_files": {
+    "README.md": {
+      "words": 418,
+      "sha256": "ebc4a24cd017cf93c29a40d37260d69c5e9418c6265c9b74cd35317f118799a9"
+    },
+    "src/python/packages/statadic/README.md": {
+      "words": 1760,
+      "sha256": "a3b1e3d6948bd4538a32a1f5d5f0b5ad432d1bf3942776fdf29485bac24d18dd"
+    },
+    "src/python/packages/statadic/docs/index.md": {
+      "words": 210,
+      "sha256": "d1d7a43765f593ccae831b1ed1538b02a203f2da513c7b69e03ab69cc25ee2cd"
+    },
+    "src/python/packages/statadic/docs/start/choose-method.md": {
+      "words": 152,
+      "sha256": "786cf655b96b8bd51c624d98b814c254aa0d620b01fc8a80cb5152f9c81a91a6"
+    },
+    "src/python/packages/statadic/docs/start/glossary.md": {
+      "words": 174,
+      "sha256": "610aae1ca1ff60e44d47596b0934b5e9d9f8f711f59f12aa9918ff4d99457f19"
+    },
+    "src/python/packages/statadic/docs/start/index.md": {
+      "words": 79,
+      "sha256": "4dd141fd8ea688b137f427a23ae35c558a8f7951e2eed43b8bdb312f7d6ec8e8"
+    },
+    "src/python/packages/statadic/docs/start/installation.md": {
+      "words": 117,
+      "sha256": "e8fc25daaf5093c655363afedb20833b7e4aec6647fc910620ae488825f6bf29"
+    },
+    "src/python/packages/statadic/docs/start/troubleshooting.md": {
+      "words": 175,
+      "sha256": "474ef27e5033d80969d68e0e5ec1b0ab9416b9b1294581e265f3d632d9dc49e2"
+    },
+    "src/python/packages/statadic/docs/start/workflow.md": {
+      "words": 185,
+      "sha256": "3aeab31087ba549268ca534a700adb5e66411e22a994e7f8fbcbe52cb09dd3cc"
+    },
+    "src/python/packages/statadic/docs/guides/everyday.md": {
+      "words": 373,
+      "sha256": "1de7db513d984e58c67b8d9c4e2fc5b1ddfbc97dc6d10fa0996fff737ac45511"
+    },
+    "src/python/packages/statadic/docs/compose/change-component.md": {
+      "words": 184,
+      "sha256": "6cf1fe6863e9a55a7ba602bd61a6e008b226568723fbfcad8e4955a4eae9081e"
+    },
+    "src/python/packages/statadic/docs/compose/index.md": {
+      "words": 396,
+      "sha256": "83e750f3bc055065a8d11b46893507b78e3fc262608c2357a0fd5ea6dbd2ac96"
+    },
+    "src/python/packages/statadic/docs/composable-api.md": {
+      "words": 1605,
+      "sha256": "9b5f50bbe0c7bfb5a13f0d4d071a7cdc015f0e9d4f4fe212950424a1ef89ea68"
+    },
+    "src/python/packages/statadic/docs/tutorials/first-regression.md": {
+      "words": 338,
+      "sha256": "b668112cfa984d31443b69ac335800a77a3fe7b93350f6097854100f2ade6105"
+    }
+  },
+  "entrypoints": [
+    "README.md",
+    "src/python/packages/statadic/README.md",
+    "src/python/packages/statadic/docs/index.md",
+    "src/python/packages/statadic/docs/start/choose-method.md",
+    "src/python/packages/statadic/docs/start/glossary.md",
+    "src/python/packages/statadic/docs/start/index.md",
+    "src/python/packages/statadic/docs/start/installation.md",
+    "src/python/packages/statadic/docs/start/troubleshooting.md",
+    "src/python/packages/statadic/docs/start/workflow.md",
+    "src/python/packages/statadic/docs/guides/everyday.md",
+    "src/python/packages/statadic/docs/compose/change-component.md",
+    "src/python/packages/statadic/docs/compose/index.md",
+    "src/python/packages/statadic/docs/composable-api.md",
+    "src/python/packages/statadic/docs/tutorials/first-regression.md",
+    "src/python/packages/statadic/docs/methods.md"
+  ]
+}

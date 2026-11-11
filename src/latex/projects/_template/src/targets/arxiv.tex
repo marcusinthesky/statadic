@@ -1,0 +1,32 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=30mm]{geometry}
+\usepackage[round,authoryear]{natbib}
+\usepackage{microtype}
+\usepackage{statadic-manuscript}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+
+\input{metadata}
+\input{generated/values}
+
+\title{\papertitle}
+\author{\paperauthors\\\paperaffiliations}
+\date{\paperdate}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  This document verifies the arXiv-compatible source target and its clean
+  source bundle.
+\end{abstract}
+
+\noindent\textit{Keywords:} \paperkeywords
+
+\input{chapters/introduction}
+
+\end{document}

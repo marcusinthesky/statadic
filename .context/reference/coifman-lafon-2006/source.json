@@ -1,0 +1,18 @@
+{
+  "source_url": "https://www.math.wustl.edu/~victor/classes/pmf/Lafon06.pdf",
+  "statement_locations": [
+    "Section 2.1, p. 7, degree d(x), normalization p(x,y)=k(x,y)/d(x) and conservation of mass",
+    "Section 2.1, p. 7, normalized kernel; section 2.2, p. 8, Gaussian graph weights in the Figure 1 example"
+  ],
+  "proof_locations": [
+    "The displayed normalization and row integral on p. 7 give the Markov construction. STATADIC proves the discrete off-diagonal version with a distinct peer for positive degree; symmetry is unnecessary for this row identity.",
+    "The Gaussian exponent on p. 8 contains the squared distance divided by bandwidth. STATADIC cancels a common positive scale in this ratio for arbitrary exponent costs, then in the row normalization."
+  ],
+  "claim_ids": [
+    "STATADIC-DIFFUSION-001",
+    "STATADIC-DIFFUSION-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "source_review": "Agent comparison of the cited formulas with the Lean definitions. Human semantic review pending.",
+  "scope_note": "The published formulas motivate the implementation. The STATADIC-specific refinements and their assumptions are stated in the claim registry."
+}

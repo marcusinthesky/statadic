@@ -1,0 +1,3511 @@
+{
+  "covariance.population-risk": {
+    "id": "covariance.population-risk",
+    "family": "covariance-estimation",
+    "aim": "Compare covariance trace bias and Frobenius risk, retaining target misspecification.",
+    "dgp": "n=64,p=4 Gaussian observations; SD=(.5,1,1.5,2); constant correlation .3 or block correlations .7 and -.5; mean=(0,1,2,3).",
+    "estimand": "Known population covariance; trace target is sum of marginal variances.",
+    "methods": [
+      "sample-ddof0",
+      "sample-ddof1",
+      "ledoit-wolf-constant-correlation"
+    ],
+    "scenarios": [
+      "matched-target",
+      "misspecified-target"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "frobenius_loss",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Ledoit and Wolf 2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "population-covariance",
+        [
+          "sample-ddof0",
+          "sample-ddof1",
+          "ledoit-wolf-constant-correlation"
+        ]
+      ]
+    ]
+  },
+  "sharpe.point-estimation": {
+    "id": "sharpe.point-estimation",
+    "family": "sharpe",
+    "aim": "Evaluate Sharpe point bias and MSE under known marginal moments.",
+    "dgp": "n=128 returns with population mean .2 and variance 1: iid Gaussian, standardized lognormal(sigma=.6), or stationary Gaussian AR(1,rho=.5).",
+    "estimand": "Population marginal mean divided by marginal SD = .2; no annualization.",
+    "methods": [
+      "sample-sharpe"
+    ],
+    "scenarios": [
+      "gaussian",
+      "skewed",
+      "dependent"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Sharpe 1966",
+      "Lo 2002"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "linear.ols-covariance": {
+    "id": "linear.ols-covariance",
+    "family": "linear",
+    "aim": "Compare fixed-design slope bias and coverage across covariance providers.",
+    "dgp": "n=64,256; intercept and fixed linspace(-2,2); Gaussian errors; SD=1 (homoskedastic) or 0.3+abs(x) (heteroskedastic). Student-t/F(df=n-2) and normal/chi2 references are separate scenarios; robust covariance does not imply an exact finite-sample reference law.",
+    "estimand": "Slope beta=0, conditional on a fixed full-rank design.",
+    "methods": [
+      "classical",
+      "HC0",
+      "HC1",
+      "HC2",
+      "HC3"
+    ],
+    "scenarios": [
+      "homoskedastic-n64-t",
+      "homoskedastic-n64-normal",
+      "homoskedastic-n256-t",
+      "homoskedastic-n256-normal",
+      "heteroskedastic-n64-t",
+      "heteroskedastic-n64-normal",
+      "heteroskedastic-n256-t",
+      "heteroskedastic-n256-normal"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "White 1980",
+      "MacKinnon and White 1985"
+    ],
+    "qualification": "size-and-coverage",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "homoskedastic-n64-t",
+      "homoskedastic-n64-normal",
+      "homoskedastic-n256-t",
+      "homoskedastic-n256-normal",
+      "heteroskedastic-n64-t",
+      "heteroskedastic-n64-normal",
+      "heteroskedastic-n256-t",
+      "heteroskedastic-n256-normal"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "ols-slope",
+        [
+          "classical",
+          "HC0",
+          "HC1",
+          "HC2",
+          "HC3"
+        ]
+      ]
+    ]
+  },
+  "mmd.finite-bias": {
+    "id": "mmd.finite-bias",
+    "family": "mmd",
+    "aim": "Evaluate U/V squared-MMD bias with an enumerated population target.",
+    "dgp": "Independent samples from support {-1,0,2}; p=(.2,.5,.3); q=p (null) or (.5,.2,.3) (alternative); n,m=(8,8) or (8,13).",
+    "estimand": "Linear-kernel population MMD squared = (E_P X - E_Q Y)^2.",
+    "methods": [
+      "U",
+      "V"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Gretton et al. 2012"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "linear-mmd-squared",
+        [
+          "U",
+          "V"
+        ]
+      ]
+    ]
+  },
+  "gmm.affine-mean": {
+    "id": "gmm.affine-mean",
+    "family": "gmm",
+    "aim": "Measure parameter risk, Wald coverage and actual-fit J rejection, including misspecification.",
+    "dgp": "256 independent N(0,I3) rows minus (1,.5,-.25)*.4; misspecified scenario adds (0,.2,.2). Identity and iterated weights; centered bandwidth-zero variability.",
+    "estimand": "Correctly specified parameter .4; under misspecification .4 is the original structural benchmark, not an identified common moment root.",
+    "methods": [
+      "identity-GMM",
+      "iterated-GMM",
+      "Hansen-J"
+    ],
+    "scenarios": [
+      "correct",
+      "misspecified"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hansen-1982"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "correct"
+    ],
+    "method_metrics": [
+      [
+        "Hansen-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "iv.structural-estimation": {
+    "id": "iv.structural-estimation",
+    "family": "gmm",
+    "aim": "Compare strongly identified endogenous-regressor IV procedures and actual-fit J.",
+    "dgp": "n=256; four independent Gaussian instruments; one endogenous and one exogenous regressor with fixed full-rank loadings plus .5 Gaussian shocks; structural error shares .3 first shock. Independent noise scale 1 or .3+abs(z1).",
+    "estimand": "First structural coefficient .7; second -.4. Exclusion holds in both scenarios.",
+    "methods": [
+      "identity-GMM",
+      "2SLS",
+      "iterated-GMM",
+      "Hansen-J"
+    ],
+    "scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hansen-1982"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "method_metrics": [
+      [
+        "Hansen-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "glm.canonical-inference": {
+    "id": "glm.canonical-inference",
+    "family": "glm",
+    "aim": "Evaluate canonical MLE and model/HC covariance normal-Wald inference.",
+    "dgp": "Fixed n=128 intercept/linspace(-1.5,1.5) design; beta=(.2,.4). Independent Binomial(5,logit inverse(X beta)) or Poisson(exp(X beta)); unit dispersion.",
+    "estimand": "Slope .4 on the canonical link scale; confidence level .95.",
+    "methods": [
+      "model",
+      "HC0",
+      "HC1"
+    ],
+    "scenarios": [
+      "binomial",
+      "poisson"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "nelder-wedderburn-1972",
+      "white-1980"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "binomial",
+      "poisson"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "gel.fixed-moments": {
+    "id": "gel.fixed-moments",
+    "family": "gel",
+    "aim": "Evaluate complete fixed-moment GEL LR null rejection and power with retained dual failures.",
+    "dgp": "Normal null: n=256,q=2 iid N(0,I); alternative mean=(.2,.2). Rare null: n=512,q=1 Bernoulli(.05)-.05. LR calibration explicitly assumes iid.",
+    "estimand": "Zero moment vector under both null scenarios; nonzero normal alternative. No fitted structural parameter.",
+    "methods": [
+      "cue",
+      "el",
+      "et"
+    ],
+    "scenarios": [
+      "normal-null",
+      "normal-alternative",
+      "rare-null"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "newey-smith-2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "normal-null",
+      "rare-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "survival.independent-aft": {
+    "id": "survival.independent-aft",
+    "family": "survival",
+    "aim": "Evaluate independent AFT slope and observed-information normal-Wald coverage.",
+    "dgp": "n=128; intercept plus iid two Gaussian covariates; beta=(.2,.4,-.3). Weibull shape 1.5 or lognormal sigma .7; independent exponential censoring scale2 after entry. Entry zero or Uniform(0,1); event times sampled conditional on survival past entry.",
+    "estimand": "First covariate log-time coefficient .4 conditional on observed covariates and left truncation.",
+    "methods": [
+      "observed-information-Wald"
+    ],
+    "scenarios": [
+      "weibull-ordinary",
+      "weibull-delayed",
+      "lognormal-ordinary",
+      "lognormal-delayed"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "AFT source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "weibull-ordinary",
+      "weibull-delayed",
+      "lognormal-ordinary",
+      "lognormal-delayed"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "permutation.bernoulli-size-power": {
+    "id": "permutation.bernoulli-size-power",
+    "family": "permutation",
+    "aim": "Compare random-permutation size under exchangeability and power under a fixed alternative.",
+    "dgp": "Independent Bernoulli samples p=.2; q=.2 under null or .6 under alternative; n=24,m=24 or31; 999 permutations with add-one calibration; greater tail. Methods share data and permutation keys. RBF bandwidth is 1.",
+    "estimand": "Energy=2(p-q)^2; linear MMD squared=(p-q)^2; RBF MMD squared=2(p-q)^2(1-exp(-1/2)); all are unrooted.",
+    "methods": [
+      "energy-euclidean-V",
+      "linear-mmd-U",
+      "linear-mmd-V",
+      "rbf-mmd-U",
+      "rbf-mmd-V"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hemerik-goeman-2018",
+      "phipson-smyth-2010",
+      "szekely-rizzo-2013",
+      "gretton-etal-2012"
+    ],
+    "qualification": "size-or-power-by-scenario",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "null-equal",
+      "null-unequal"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "bootstrap.mean-coverage": {
+    "id": "bootstrap.mean-coverage",
+    "family": "bootstrap",
+    "aim": "Measure percentile-interval coverage and SE accuracy under IID and stationary dependent data.",
+    "dgp": "Stationary Gaussian AR(1) with marginal variance1 and rho=0,.3,.7; n=64,256; mean0;999 bootstrap resamples. Fixed stationary lengths1,4,8,16 and data-selected stationary Politis-White/Patton and first-lag heuristic are compared with ordinary IID percentile bootstrap. Dependence is an intentional misspecification for the IID comparator.",
+    "estimand": "Mean0; exact finite-n sampling variance=(n+2sum((n-k)rho^k,k=1..n-1))/n^2.",
+    "methods": [
+      "iid-percentile",
+      "stationary-length1",
+      "stationary-length4",
+      "stationary-length8",
+      "stationary-length16",
+      "stationary-PW-selector",
+      "stationary-heuristic-selector"
+    ],
+    "scenarios": [
+      "rho0-n64",
+      "rho0-n256",
+      "rho0.3-n64",
+      "rho0.3-n256",
+      "rho0.7-n64",
+      "rho0.7-n256"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "se_accuracy",
+      "failures"
+    ],
+    "citation_candidates": [
+      "efron-1979",
+      "politis-romano-1994",
+      "politis-white-2004",
+      "patton-politis-white-2009"
+    ],
+    "qualification": "coverage-only",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "equivalence.bernoulli-margin": {
+    "id": "equivalence.bernoulli-margin",
+    "family": "equivalence",
+    "aim": "Measure false equivalence at/above the margin and power below it.",
+    "dgp": "Independent target Bernoulli(.2), candidate Bernoulli(.35,.5,.7); 64 observations per group, half-sample selection split, Euclidean energy exponent1, unrooted margin.18. One candidate or two identical-population candidates; 999 permutation and 999 bootstrap draws. Solver=pgd, tol=1e-6,maxiter=1000,weight_method=kernel_balance,reoptimize=True.",
+    "estimand": "Population raw energy=2(.2-q)^2. H0:energy>=.18; reject for equivalence.",
+    "methods": [
+      "one-candidate",
+      "two-candidates"
+    ],
+    "scenarios": [
+      "equivalent",
+      "boundary-null",
+      "separated-null"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "szekely-rizzo-2013",
+      "IUT source and exact custom bootstrap-equivalence method review pending"
+    ],
+    "qualification": "size-or-power-by-scenario",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "boundary-null",
+      "separated-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "multiplicity.equivalence-family": {
+    "id": "multiplicity.equivalence-family",
+    "family": "multiplicity",
+    "aim": "Evaluate family-wise false equivalence across dependent pairwise decisions.",
+    "dgp": "Three independent Bernoulli groups with probabilities(.2,.5,.8),64 per group. Shared groups induce dependent p-values. Raw energy margin .18 gives two boundary nulls and one strict null. Each pair executes equivalence with split.5 and999 permutation/bootstrap draws before multiplicity control.",
+    "estimand": "Global null: pairwise energies>=.18. FWER=P(any false equivalence).",
+    "methods": [
+      "bonferroni",
+      "holm"
+    ],
+    "scenarios": [
+      "global-null"
+    ],
+    "metrics": [
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "holm-1979; valid true-null p-values required; bootstrap validity unresolved"
+    ],
+    "qualification": "size-only",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "global-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [
+      "bonferroni",
+      "holm"
+    ],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "linear.weighted-inference": {
+    "id": "linear.weighted-inference",
+    "family": "linear",
+    "aim": "Compare OLS and analytic WLS slope risk and covariance under matched and reversed precision.",
+    "dgp": "n=128 fixed intercept/linspace(-2,2); beta=(.2,.4); independent Gaussian errors with SD=.3+abs(x). Relative precision is inverse variance or its reciprocal. Both scenarios share generated datasets.",
+    "estimand": "Slope .4 conditional on fixed full-rank design. Classical and HC3 t/F inference uses residual df126; no exact-t guarantee is asserted for HC3 or wrong precision.",
+    "methods": [
+      "OLS-classical",
+      "OLS-HC3",
+      "WLS-classical",
+      "WLS-HC3"
+    ],
+    "scenarios": [
+      "matched-precision",
+      "reversed-precision"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "stepniak-gauss-markov-2010",
+      "mackinnon-white-1985"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "matched-precision",
+      "reversed-precision"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "panel.static-estimation": {
+    "id": "panel.static-estimation",
+    "family": "panel",
+    "aim": "Measure static panel estimators and actual-fit uncertainty, retaining correlated-effects bias.",
+    "dgp": "Fixed complete entity-major design:24 entities by6 integer periods, intercept plus two Gaussian regressors; beta=(.4,0,-.7). Each replicate draws independent Gaussian entity effects SD.7 and independent row shocks SD1. Correlated-effects scenario adds .8 times entity mean focal regressor to effects. First differences omit intercept and never bridge gaps. Within tolerance is 1e-6.",
+    "estimand": "First regressor structural coefficient0. Correlated effects violate pooled/between/random-effects exogeneity; comparisons retain this structural benchmark. Native t/F laws use actual fit residual df, also for cluster-entity covariance with group correction.",
+    "methods": [
+      "pooled-classical",
+      "pooled-cluster-entity",
+      "within-classical",
+      "within-cluster-entity",
+      "random-effects-classical",
+      "random-effects-cluster-entity",
+      "between-classical",
+      "first-difference-classical"
+    ],
+    "scenarios": [
+      "independent-effects",
+      "correlated-effects"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "swamy-arora-1972",
+      "arellano-1987"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "independent-effects",
+      "correlated-effects"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.sar-inference": {
+    "id": "spatial.sar-inference",
+    "family": "spatial",
+    "aim": "Measure SAR rho risk and expected-information Wald performance without changing adverse finite-sample results.",
+    "dgp": "Fixed n=48 directed row-stochastic graph:W[i,i+1]=.7,W[i,i-2]=.3 modulo48. Fixed intercept plus two Gaussian regressors; beta=(.4,-.5,.8); innovation SD.5. y=solve(I-rho W,X beta+e), rho0 or.4. Exact dense Gaussian ML; normal/chi2 references.",
+    "estimand": "Structural spatial-lag coefficient rho; graph row order exactly matches observation order.",
+    "methods": [
+      "Gaussian-ML-information"
+    ],
+    "scenarios": [
+      "rho0",
+      "rho0.4"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "ord-1975"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "rho0",
+      "rho0.4"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.slx-inference": {
+    "id": "spatial.slx-inference",
+    "family": "spatial",
+    "aim": "Evaluate exogenous spatial lag coefficients with classical and HC3 uncertainty.",
+    "dgp": "Same fixed directed n48 graph/design as SAR; expanded design [X,W X_nonintercept], beta=(.4,-.5,.8,.3,-.2). Independent Gaussian errors SD.5 or .3+abs(first regressor). Native t/F references with df43.",
+    "estimand": "First exogenous spatially lagged regressor coefficient .3, conditional on the fixed graph and design.",
+    "methods": [
+      "SLX-classical",
+      "SLX-HC3"
+    ],
+    "scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "halleck-vega-elhorst-2015",
+      "mackinnon-white-1985"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "dyadic.point-estimation": {
+    "id": "dyadic.point-estimation",
+    "family": "dyadic",
+    "aim": "Measure pooled and node-effect dyadic point-estimator risk; no edge- independent uncertainty is substituted.",
+    "dgp": "Complete undirected graph with16 or32 nodes and upper-triangle edge order. Independent standard Gaussian node covariates and node shocks; focal=abs(c_i-c_j); y=.4+.6*focal+a_i+a_j+.3*Gaussian edge shock. Whole networks are independent replication units. Actual host rank- cleaned estimator; x64 required.",
+    "estimand": "Dyadic focal slope .6. Point risk only; this study does not qualify the multinomial node-bootstrap inference procedure.",
+    "methods": [
+      "pooled",
+      "node-fixed-effects"
+    ],
+    "scenarios": [
+      "n16",
+      "n32"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "dyadic seminal source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.iv-inference": {
+    "id": "spatial.iv-inference",
+    "family": "spatial",
+    "aim": "Evaluate actual spatial 2SLS and both supported independent- innovation covariance formulas.",
+    "dgp": "Fixed n48 circular directional graph W[i,i+1]=.6,W[i,i-1]=.4 and intercept plus two Gaussian regressors; beta=(.3,-.5,.8), rho=.25. Independent Gaussian innovations SD.5 or .3+.2*abs(x1). Instruments generated from selected x1,x2 and one spatial lag; identity of rows preserved.",
+    "estimand": "Structural spatial lag coefficient .25. Normal-Wald inference from actual IV fit; no weak-instrument-robust or exact finite-sample claim.",
+    "methods": [
+      "2SLS-homoskedastic",
+      "2SLS-heteroskedastic"
+    ],
+    "scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Kelejian and Prucha spatial 2SLS source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.error-gmm": {
+    "id": "spatial.error-gmm",
+    "family": "spatial",
+    "aim": "Compare homoskedastic and heteroskedastic spatial quadratic-moment estimators and retained lambda inference.",
+    "dgp": "Same fixed graph/design as spatial IV. Spatial error u=solve(I-.3W,e). SEM y=X beta+u or combo y=solve(I-.25W,X beta+u). Innovations Gaussian SD.5 or .3+.2*abs(x1); beta=(.3,-.5,.8). Actual one-update GMM with selected instruments x1,x2, no clipping substitute.",
+    "estimand": "Structural spatial-error coefficient lambda=.3; both variance moment models run on each shared dataset. No inference is qualified by study registration.",
+    "methods": [
+      "homoskedastic-moments",
+      "heteroskedastic-moments"
+    ],
+    "scenarios": [
+      "error-homoskedastic",
+      "error-heteroskedastic",
+      "combo-homoskedastic",
+      "combo-heteroskedastic"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Kelejian and Prucha spatial GMM source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "error-homoskedastic",
+      "error-heteroskedastic",
+      "combo-homoskedastic",
+      "combo-heteroskedastic"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.error-ml": {
+    "id": "spatial.error-ml",
+    "family": "spatial",
+    "aim": "Evaluate actual SEM and SAC Gaussian ML expected-information Wald intervals for lambda.",
+    "dgp": "Same fixed n48 graph/design and beta as spatial IV. Gaussian iid innovations SD.5; spatial error lambda=.3. SEM rho=0; SAC rho=.25. Actual dense Gaussian joint spatial search and scale-nuisance information covariance.",
+    "estimand": "Structural spatial-error coefficient lambda=.3; normal-Wald calibration, with all numerical/boundary failures retained.",
+    "methods": [
+      "Gaussian-ML-information"
+    ],
+    "scenarios": [
+      "SEM",
+      "SAC"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "ord-1975",
+      "SAC exact source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "SEM",
+      "SAC"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.kkp-components": {
+    "id": "spatial.kkp-components",
+    "family": "spatial",
+    "aim": "Evaluate KKP beta plug-in inference and lambda point risk under its distinct component model.",
+    "dgp": "Time-major balanced6 periods by16 units; constant directional graph .6 forward/.4 backward. Fixed intercept plus two Gaussian covariates, beta=(.3,-.5,.8). Draw unit effects N(0,1) and iid innovations N(0,.25); filter BOTH by solve(I-.3W). Actual identity/full quadratic-moment weighting.",
+    "estimand": "First slope -.5 and spatial-error lambda .3. Beta uses actual transformed linear fit's conventional plug-in t/F covariance; lambda has point risk only, no fabricated joint GMM standard error.",
+    "methods": [
+      "identity-moments-beta",
+      "identity-moments-lambda",
+      "full-weights-beta",
+      "full-weights-lambda"
+    ],
+    "scenarios": [
+      "filtered-components"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Kapoor Kelejian Prucha 2007 source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "filtered-components"
+    ],
+    "method_metrics": [
+      [
+        "identity-moments-lambda",
+        [
+          "bias",
+          "mse",
+          "failures"
+        ]
+      ],
+      [
+        "full-weights-lambda",
+        [
+          "bias",
+          "mse",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.observed-panel": {
+    "id": "spatial.observed-panel",
+    "family": "spatial",
+    "aim": "Evaluate selected-observation Gaussian SAR ML while retaining full active-graph covariates and omitted-outcome propagation.",
+    "dgp": "Four ordered periods,12 active units each; fixed dense zero-diagonal row-normalized graph per period and intercept plus Gaussian covariate. Full y_t=solve(I-.25W_t,X_t(.3,-.5)+e_t), iid Gaussian innovations SD.5. Omit outcomes of graph nodes t and t+4 only; keep full designs/graphs, pass actual selected indices. No unit effects.",
+    "estimand": "Structural rho=.25; pooled observed likelihood with observed- information normal-Wald covariance. Selection is deterministic and independent of innovations.",
+    "methods": [
+      "selected-Gaussian-ML"
+    ],
+    "scenarios": [
+      "fixed-outcome-selection"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "observed spatial likelihood exact source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "fixed-outcome-selection"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "linear.dependence-covariance": {
+    "id": "linear.dependence-covariance",
+    "family": "linear",
+    "aim": "Evaluate actual Bartlett HAC and one-way cluster coverage against dependent errors, with classical control.",
+    "dgp": "n=256 fixed intercept and Gaussian predictor; beta=(.2,.4). Error is stationary unit-variance AR1 rho.7 in row/time order or .8 Gaussian cluster effect plus .6 iid shock in32 clusters of8 contiguous rows. Cluster and HAC choices share each dataset. HAC bandwidths0,4,12; cluster correction1 or32/31.",
+    "estimand": "Slope .4; normal-Wald reference for all selectors, not exact t inference or automatic dependence-model detection.",
+    "methods": [
+      "classical",
+      "HAC-b0",
+      "HAC-b4",
+      "HAC-b12",
+      "cluster-uncorrected",
+      "cluster-G-corrected"
+    ],
+    "scenarios": [
+      "serial-AR1",
+      "clustered"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "newey-west-1987",
+      "liang-zeger-1986"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "serial-AR1",
+      "clustered"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "panel.dependence-covariance": {
+    "id": "panel.dependence-covariance",
+    "family": "panel",
+    "aim": "Compare actual one/two-way cluster, within-entity HAC and Driscoll- Kraay kernel covariance.",
+    "dgp": "Fixed complete entity-major24 by24 design, intercept and Gaussian predictor, beta=(.2,.4). Entity effects SD.7; error=.6 stationary entity-specific AR1(.6)+.5 stationary common AR1(.5). Observed actual periods consecutive or every second integer; AR processes advance on actual full integer grid before selection. Entity within fit tolerance1e-6. Covariance retains native slope/effect correction; cluster group_debias=True; autocorrelation and DK bandwidth4 in actual time units, Bartlett/Parzen/QS kernels.",
+    "estimand": "Within slope .4. Native normal-Wald inference; no exact finite-sample or universal dependence-robust guarantee. Two-way indefinite covariance remains unavailable rather than PSD-repaired.",
+    "methods": [
+      "classical",
+      "heteroskedastic",
+      "cluster-entity",
+      "cluster-time",
+      "cluster-two-way",
+      "autocorrelation-bartlett",
+      "autocorrelation-parzen",
+      "autocorrelation-qs",
+      "driscoll-kraay-bartlett",
+      "driscoll-kraay-parzen",
+      "driscoll-kraay-qs"
+    ],
+    "scenarios": [
+      "consecutive-time",
+      "gapped-time"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "arellano-1987",
+      "cameron-gelbach-miller-2011",
+      "driscoll-kraay-1998",
+      "newey-west-1987"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "consecutive-time",
+      "gapped-time"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "panel.fama-macbeth": {
+    "id": "panel.fama-macbeth",
+    "family": "panel",
+    "aim": "Evaluate actual cross-section coefficient averaging and its native time-series covariance.",
+    "dgp": "Fixed complete entity-major32 entities by32 periods; intercept and Gaussian predictor. Per-period slope=.4+.2 stationary Gaussian process, independent or AR1(.6); response=.2+slope_t*x+.5 iid Gaussian row shock. Actual FamaMacBeth fits every cross-section; covariance bandwidth0 or4 with Bartlett/Parzen/QS and count/(count-1) correction. Every period remains separately identified.",
+    "estimand": "Unconditional mean slope .4, not the realized finite-period slope average. Normal-Wald reference; period counts, covariance bandwidth and actual ordering remain explicit.",
+    "methods": [
+      "iid-b0",
+      "HAC-bartlett",
+      "HAC-parzen",
+      "HAC-qs"
+    ],
+    "scenarios": [
+      "independent-slopes",
+      "serial-slopes"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "fama-macbeth-1973",
+      "newey-west-1987"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "independent-slopes",
+      "serial-slopes"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sharpe.selection-scores": {
+    "id": "sharpe.selection-scores",
+    "family": "sharpe",
+    "aim": "Measure PSR and DSR score exceedance with and without selection.",
+    "dgp": "n=128; eight independent Gaussian strategy series with unit variance, each mean zero under null or .2 under alternative. Select the maximum sample Sharpe or the first prespecified configuration; calculate DSR using the measured sample variance across all eight Sharpe estimates.",
+    "estimand": "Marginal per-observation Sharpe zero or .2; scores are asymptotic normal-CDF statistics, not posterior probabilities. The DSR benchmark is estimated and score exceedance is descriptive, not an exact p-value.",
+    "methods": [
+      "unselected-PSR",
+      "selected-PSR",
+      "selected-DSR"
+    ],
+    "scenarios": [
+      "null",
+      "alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "bailey-lopez-de-prado-2014"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [
+      "unselected-PSR",
+      "selected-PSR",
+      "selected-DSR"
+    ],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sharpe.paired-difference": {
+    "id": "sharpe.paired-difference",
+    "family": "sharpe",
+    "aim": "Evaluate paired circular-bootstrap Sharpe-difference test.",
+    "dgp": "n=128; paired stationary Gaussian AR(1) returns, rho=0 or .5; innovations have cross-correlation .5, unit marginal variance; first mean zero or .2, second mean zero.",
+    "estimand": "Difference in population Sharpe zero under null and .2 under alternative.",
+    "methods": [
+      "paired-circular"
+    ],
+    "scenarios": [
+      "iid-null",
+      "iid-alternative",
+      "ar-null",
+      "ar-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "ledoit-wolf-2008"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "iid-null",
+      "ar-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sharpe.multiple-inference": {
+    "id": "sharpe.multiple-inference",
+    "family": "sharpe",
+    "aim": "Measure actual Romano-Wolf family decisions and Reality Check p-values.",
+    "dgp": "n=128; three strategies and benchmark share Gaussian shocks with pairwise correlation .5; stationary AR(1) rho=0 or .5; strategy means all zero under null, or all .2 under alternative.",
+    "estimand": "All strategies have unit marginal variance, benchmark mean zero; family null means no strategy has positive population Sharpe difference.",
+    "methods": [
+      "romano-wolf",
+      "white-reality-check"
+    ],
+    "scenarios": [
+      "iid-null",
+      "iid-alternative",
+      "ar-null",
+      "ar-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "romano-wolf-2005",
+      "white-2000"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "iid-null",
+      "ar-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [
+      "romano-wolf"
+    ],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sharpe.stationary-interval": {
+    "id": "sharpe.stationary-interval",
+    "family": "sharpe",
+    "aim": "Measure stationary-bootstrap Sharpe interval coverage.",
+    "dgp": "n=128 Gaussian stationary AR(1) rho=0 or .5, unit marginal variance and mean 0 or .2; automatic block selection.",
+    "estimand": "Per-observation marginal Sharpe equals the Gaussian mean.",
+    "methods": [
+      "stationary-percentile"
+    ],
+    "scenarios": [
+      "iid-zero",
+      "iid-positive",
+      "ar-zero",
+      "ar-positive"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "politis-romano-1994",
+      "politis-white-2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "gel.affine-profile": {
+    "id": "gel.affine-profile",
+    "family": "gel",
+    "aim": "Evaluate actual affine structural-parameter GEL fits and separately available profiled LR overidentification tests.",
+    "dgp": "n=128 independent Gaussian three-dimensional moment errors with covariance diag(1,2,.5); derivative d=(1,.5,-.25). g0=error-.4*d, or add(-.1,.2,0) under misspecification; shift orthogonal to d. AffineGEL cue/el/et uses native eager multiplier and outer minimization defaults; no fixed-moment substitution.",
+    "estimand": "Interior structural parameter .4 under correct specification; original structural benchmark under misspecification, where no common population root exists. Parameter point risk is separate from profiled LR chi-square2 testing. No parameter covariance is invented.",
+    "methods": [
+      "cue-parameter",
+      "cue-profiled-LR",
+      "el-parameter",
+      "el-profiled-LR",
+      "et-parameter",
+      "et-profiled-LR"
+    ],
+    "scenarios": [
+      "correct",
+      "misspecified"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "newey-smith-2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "correct"
+    ],
+    "method_metrics": [
+      [
+        "cue-parameter",
+        [
+          "bias",
+          "mse",
+          "failures"
+        ]
+      ],
+      [
+        "cue-profiled-LR",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "el-parameter",
+        [
+          "bias",
+          "mse",
+          "failures"
+        ]
+      ],
+      [
+        "el-profiled-LR",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "et-parameter",
+        [
+          "bias",
+          "mse",
+          "failures"
+        ]
+      ],
+      [
+        "et-profiled-LR",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "gel.fixed-test-forms": {
+    "id": "gel.fixed-test-forms",
+    "family": "gel",
+    "aim": "Compare every public fixed GEL LR/LM/Wald form using the same complete dual fit per carrier.",
+    "dgp": "Normal null:128 iid N(0,I2) rows; alternative mean(.25,.25). Rare null:512 iid Bernoulli(.05)-.05 scalar rows. Actual FixedGEL cue/el/et fit followed by public gel_test lr,lm,wald with explicit iid acknowledgement. All solver/rank failures retained.",
+    "estimand": "Zero population moment vector for both null scenarios; shifted normal alternative. Effective moment rank controls degrees of freedom. Native LM and Wald share the same uncentered moment quadratic and are not claimed independent tests.",
+    "methods": [
+      "cue-lr",
+      "cue-lm",
+      "cue-wald",
+      "el-lr",
+      "el-lm",
+      "el-wald",
+      "et-lr",
+      "et-lm",
+      "et-wald"
+    ],
+    "scenarios": [
+      "normal-null",
+      "normal-alternative",
+      "rare-null"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "newey-smith-2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "normal-null",
+      "rare-null"
+    ],
+    "method_metrics": [
+      [
+        "cue-lr",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "cue-lm",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "cue-wald",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "el-lr",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "el-lm",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "el-wald",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "et-lr",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "et-lm",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "et-wald",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "gmm.variability-and-J": {
+    "id": "gmm.variability-and-J",
+    "family": "gmm",
+    "aim": "Evaluate actual fixed/iterated centered/plain GMM parameter inference, retained-fit efficient J, profiled-kernel J and genuinely fixed-parameter J.",
+    "dgp": "Same n128 affine Gaussian model and orthogonal misspecification shift as affine GEL. Fixed weights identity; iterated native defaults; centered/plain bandwidth-zero variability. Wald normal intervals use actual-fit sandwich. Retained-fit J enforces efficient-weight provenance and fixed-point convergence. Public linear_hansen_j_kernel refits affine moments with native convergence and full-rank covariance checks; fixed-parameter hansen_j uses theta=.4 and k=0.",
+    "estimand": "Structural parameter .4 under correct specification; original benchmark under misspecification. Profiled/actual-fit J has two overidentifying df; genuinely fixed-parameter J has three. Correct- model acknowledgements describe the null reference and are intentionally violated in misspecification diagnostics. No fixed- weight fit receives efficient-J provenance.",
+    "methods": [
+      "fixed-plain-Wald",
+      "iterated-plain-Wald",
+      "fixed-centered-Wald",
+      "iterated-centered-Wald",
+      "actual-fit-plain-J",
+      "actual-fit-centered-J",
+      "profiled-plain-J",
+      "fixed-parameter-plain-J",
+      "profiled-centered-J",
+      "fixed-parameter-centered-J"
+    ],
+    "scenarios": [
+      "correct",
+      "misspecified"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hansen-1982",
+      "newey-smith-2004"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "correct"
+    ],
+    "method_metrics": [
+      [
+        "fixed-plain-Wald",
+        [
+          "bias",
+          "mse",
+          "coverage",
+          "width",
+          "size",
+          "failures"
+        ]
+      ],
+      [
+        "iterated-plain-Wald",
+        [
+          "bias",
+          "mse",
+          "coverage",
+          "width",
+          "size",
+          "failures"
+        ]
+      ],
+      [
+        "fixed-centered-Wald",
+        [
+          "bias",
+          "mse",
+          "coverage",
+          "width",
+          "size",
+          "failures"
+        ]
+      ],
+      [
+        "iterated-centered-Wald",
+        [
+          "bias",
+          "mse",
+          "coverage",
+          "width",
+          "size",
+          "failures"
+        ]
+      ],
+      [
+        "actual-fit-plain-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "actual-fit-centered-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "profiled-plain-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "fixed-parameter-plain-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "profiled-centered-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ],
+      [
+        "fixed-parameter-centered-J",
+        [
+          "size",
+          "power",
+          "failures"
+        ]
+      ]
+    ],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "inequalities.gaussian-operating-characteristics": {
+    "id": "inequalities.gaussian-operating-characteristics",
+    "family": "moment-inequalities",
+    "aim": "Evaluate actual uncorrected indicator-GMS QLR/MMM and Wolak chi-bar tests under binding/slack/violated moment inequalities.",
+    "dgp": "n128 iid Gaussian moment rows with covariance [[1,.35],[.35,1]]. Means(0,0), (0,.35), (.35,.35) satisfy E[g]>=0; violated mean(-.2,.35). Native bandwidth0; inner calibration default999draws, explicit smoke32; independent named method streams on shared datasets. Wolak projection max_sweeps256; GMS eta0 is uncorrected, never Table-I RMS-certified. Decision convention: GMS native reject; Wolak pvalue <= alpha.",
+    "estimand": "Null E[g]>=0; size/rejection under all binding/slack nulls, power under the violated alternative. Uses actual GMS reject decision and Wolak p<=.05; numerical projection/calibration failures count as attempted procedure failures.",
+    "methods": [
+      "indicator-GMS-QLR",
+      "indicator-GMS-MMM",
+      "Wolak-chi-bar"
+    ],
+    "scenarios": [
+      "binding-null",
+      "partial-slack-null",
+      "interior-null",
+      "violated"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Andrews and Soares 2010",
+      "Andrews and Barwick 2012",
+      "Wolak 1989 source convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "binding-null",
+      "partial-slack-null",
+      "interior-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "kappa.gaussian-boundary-tail": {
+    "id": "kappa.gaussian-boundary-tail",
+    "family": "kappa",
+    "aim": "Calibrate the public positive-part boundary-tail helper in an explicitly known Gaussian experiment.",
+    "dgp": "n64 independent N(kappa,1) observations; constrained Gaussian mean estimate=max(samplemean,0); known preconstraint Gaussian SE1/sqrt64. Boundary null kappa0 or positive alternative .25. Invoke actual boundary_robust_pvalue at null0; inclusive boundary atom returns1. Decision convention: pvalue <= alpha.",
+    "estimand": "Nonnegative Gaussian mean kappa. This is reference-law calibration for the public helper, not a fit of STATADIC's correlation-gap/kappa estimator or evidence for arbitrary supplied standard errors.",
+    "methods": [
+      "positive-part-Gaussian-tail"
+    ],
+    "scenarios": [
+      "boundary-null",
+      "positive-alternative"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Andrews 2001 boundary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "boundary-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "dyadic.node-bootstrap-inference": {
+    "id": "dyadic.node-bootstrap-inference",
+    "family": "dyadic",
+    "aim": "Evaluate native multinomial node-bootstrap interval coverage and zero-slope decisions for pooled/node-fixed-effects fits.",
+    "dgp": "Complete undirected16/32-node networks, upper-triangle edges. Standard Gaussian node covariates and latent node shocks; focal=abs(c_i-c_j); y=.4+beta*focal+a_i+a_j+.3 Gaussian edge shock; beta0 or.6. Independent whole networks are replication units. Native DyadicEstimator then node_bootstrap_report, endpoint-count-product weights and required focal column. Default999draws; explicit smoke32; same node schedule across methods and null/alternative. x64 required. Decision convention: pvalue <= alpha.",
+    "estimand": "Structural dyadic slope beta, confidence level.95 and zero-slope p-value from actual bootstrap report. Require every requested draw solve-valid and focal-finite; retain counts otherwise. No edge- independent surrogate or bootstrap qualification from registration. At32draws minimum two-sided p=2/33>.05, so smoke cannot establish testing power.",
+    "methods": [
+      "pooled-node-bootstrap",
+      "node-FE-bootstrap"
+    ],
+    "scenarios": [
+      "null-n16",
+      "alternative-n16",
+      "null-n32",
+      "alternative-n32"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "dyadic multinomial node-bootstrap seminal source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "null-n16",
+      "null-n32"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "mantel.node-association": {
+    "id": "mantel.node-association",
+    "family": "mantel",
+    "aim": "Evaluate native Pearson/Spearman Mantel node-permutation association tests.",
+    "dgp": "n20 iid paired observations with two coordinates per arm. x,epsilon independent N(0,I2); null y=epsilon, alternative y=.8x+.6epsilon. Construct full Euclidean distance matrices; native Mantel.fit/infer permutes y node labels jointly in rows/columns, never individual dependent edges. Default999 random permutations, smoke32, named method seeds.",
+    "estimand": "Independence of the two iid observation arms implies node-label exchangeability under the null. Correlated alternative induces distance association. Upper-tail add-one permutation p-values; no independence assumption for distance-matrix edges.",
+    "methods": [
+      "pearson",
+      "spearman"
+    ],
+    "scenarios": [
+      "independent-null",
+      "correlated-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Mantel 1967 source convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "independent-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "groups.distribution-permutation": {
+    "id": "groups.distribution-permutation",
+    "family": "group-comparison",
+    "aim": "Compare native DISCO V-statistic and squared-distance PERMANOVA group-label permutation tests.",
+    "dgp": "Three independent Gaussian groups of sizes12,16,20, two coordinates. Shared iid N(0,I2) cloud; null no changes, location-only first- coordinate group shifts0,.8,-.8, scale-change multipliers1,1.5,2. Construct Euclidean distance matrix. Native from_distances and random infer labels; DISCO raw distances, PERMANOVA squared distances. Default999 permutations, smoke32.",
+    "estimand": "Strong null: all three observation distributions identical, giving group-label exchangeability. Location/scale changes are distribution alternatives; sensitivity of the two statistics may differ. Neither method is represented as a pure dispersion-only test.",
+    "methods": [
+      "DISCO",
+      "PERMANOVA"
+    ],
+    "scenarios": [
+      "equal-distributions",
+      "location-only",
+      "scale-change"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Rizzo and Szekely DISCO 2010 source review pending",
+      "Anderson PERMANOVA 2001 source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "equal-distributions"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "groups.dispersion-permutation": {
+    "id": "groups.dispersion-permutation",
+    "family": "group-comparison",
+    "aim": "Evaluate actual spatial-median PERMDISP residual permutation, including location-only nulls and unequal group sizes.",
+    "dgp": "Same Gaussian clouds/groups as groups.distribution-permutation. Native PERMDISP fits spatial medians and radii once; unadjusted or sqrt(n_g/(n_g-1)) radius correction. Fit full group effects to radii and permute their centered residuals, not group coordinates or refitted medians. Native random residual plan, default999/smoke32 draws. Retain median/embedding/null failures.",
+    "estimand": "Null equal population dispersion around each group's own center; location-only shifts remain null. Scale-change is alternative. Residual permutation is approximate because radii/centers are estimated; no exact enumeration/exchangeability claim follows from raw-row label exchangeability.",
+    "methods": [
+      "median-unadjusted",
+      "median-bias-adjusted"
+    ],
+    "scenarios": [
+      "equal-distributions",
+      "location-only",
+      "scale-change"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Anderson 2006 PERMDISP source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "equal-distributions",
+      "location-only"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "mixture.selected-homogeneity": {
+    "id": "mixture.selected-homogeneity",
+    "family": "mixture",
+    "aim": "Evaluate genuinely optimized-mixture homogeneity using both selection-split and full reoptimization routes.",
+    "dgp": "Target16 and two candidate clouds of12 iid scalar Gaussian observations each. Strong null all N(0,1), hence pooled-label exchangeability; alternative target N(1,1), both candidates N(0,1). Native corrected_mixture_test with Euclidean exponent1 exact energy- barycentre objective, PGD tol1e-5/maxiter1000; either contiguous .5 selection/test split or full-sample reoptimization in EVERY permutation. Default999 permutations AND999 energy bootstrap draws, smoke32 each.",
+    "estimand": "Strong distribution-equality null with identical candidate populations; this does not establish arbitrary heterogeneous- component mixture-null validity. Selected empirical weights are actually optimized, never replaced by a fixed kernel. Studentized native difference p-value, not equivalence p-value. Retain all nonfinite resamples and documented solver failures; unrelated RuntimeError remains pending.",
+    "methods": [
+      "selection-split-energy",
+      "reoptimized-energy"
+    ],
+    "scenarios": [
+      "exchangeable-null",
+      "location-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "selected-mixture calibration primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "exchangeable-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "mmd.kernel-estimation": {
+    "id": "mmd.kernel-estimation",
+    "family": "mmd",
+    "aim": "Measure signed U/V MMD-squared risk and nonlinear rooted-V risk.",
+    "dgp": "Independent draws on support((1,0),(0,1),(2,0)); P=(.2,.5,.3), Q=P under null or(.5,.2,.3) under alternative. n,m=(8,8) or(8,13). Same-point degeneracy uses P=Q=pointmass((1,0)),n=8,m=13. This nonzero support has nonzero population and attainable sample means. RBF bandwidth1; distance-induced kernel is unhalved Euclidean exponent1 with shared fixed reference(1,0).",
+    "estimand": "Enumerated kernel population MMD squared for U/V; its nonnegative square root for root-V. Negative U estimates remain valid and unmodified; mmd() root uses runtime max(V,0), not a U square root or unbiased root.",
+    "methods": [
+      "linear-U",
+      "linear-V",
+      "linear-root-V",
+      "RBF-U",
+      "RBF-V",
+      "RBF-root-V",
+      "cosine-U",
+      "cosine-V",
+      "cosine-root-V",
+      "distance-induced-U",
+      "distance-induced-V",
+      "distance-induced-root-V"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal",
+      "same-point-degenerate"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "gretton-etal-2012",
+      "sejdinovic-equivalence-2013"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "linear-mmd-squared",
+        [
+          "linear-U",
+          "linear-V"
+        ]
+      ],
+      [
+        "RBF-mmd-squared",
+        [
+          "RBF-U",
+          "RBF-V"
+        ]
+      ],
+      [
+        "cosine-mmd-squared",
+        [
+          "cosine-U",
+          "cosine-V"
+        ]
+      ],
+      [
+        "distance-induced-mmd-squared",
+        [
+          "distance-induced-U",
+          "distance-induced-V"
+        ]
+      ]
+    ]
+  },
+  "energy.ground-estimation": {
+    "id": "energy.ground-estimation",
+    "family": "energy",
+    "aim": "Compare explicit raw/rooted energy targets and supported ground powers.",
+    "dgp": "Independent draws on support((1,0),(0,1),(2,0)); P=(.2,.5,.3), Q=P under null or(.5,.2,.3) under alternative. n,m=(8,8) or(8,13). Same-point degeneracy uses P=Q=pointmass((1,0)),n=8,m=13. This nonzero support has nonzero population and attainable sample means. Euclidean powers .5,1,1.5 and angular radians power1; rooted doors use actual PackedClouds with uniform atom masses.",
+    "estimand": "Enumerated 2E d(X,Y)^alpha-E d(X,X')^alpha-E d(Y,Y')^alpha for raw V; its square root for rooted V. Scalar energy has no U interface; no hand-written U estimator is presented as a STATADIC energy method.",
+    "methods": [
+      "euclidean-alpha0.5-V",
+      "euclidean-alpha1-V",
+      "euclidean-alpha1.5-V",
+      "angular-alpha1-V",
+      "euclidean-alpha1-root-V",
+      "angular-alpha1-root-V"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal",
+      "same-point-degenerate"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "szekely-rizzo-2013",
+      "sejdinovic-equivalence-2013"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "discrepancy.atom-mass-estimation": {
+    "id": "discrepancy.atom-mass-estimation",
+    "family": "mmd",
+    "aim": "Measure actual rooted mass-weighted MMD/energy plug-in risk.",
+    "dgp": "Independent draws on support((1,0),(0,1),(2,0)); P=(.2,.5,.3), Q=P under null or(.5,.2,.3) under alternative. n,m=(8,8) or(8,13). Same-point degeneracy uses P=Q=pointmass((1,0)),n=8,m=13. This nonzero support has nonzero population and attainable sample means. The same IID datasets are compared with uniform masses and deterministic index masses proportional to1,...,n (and1,...,m). Masses are normalized independently of sampled values. True support counts differ in unequal scenarios; no padding probability is created.",
+    "estimand": "Same enumerated population rooted MMD/energy for both mass schedules. Deterministic atom weighting changes finite-sample risk, not P/Q. Weighted doors expose V roots only and guard cancellation-scale negativity; no weighted-U/unbiased-root claim is made.",
+    "methods": [
+      "linear-uniform-root-V",
+      "RBF-uniform-root-V",
+      "cosine-uniform-root-V",
+      "distance-induced-uniform-root-V",
+      "energy-euclidean-uniform-root-V",
+      "energy-angular-uniform-root-V",
+      "linear-index-weighted-root-V",
+      "RBF-index-weighted-root-V",
+      "cosine-index-weighted-root-V",
+      "distance-induced-index-weighted-root-V",
+      "energy-euclidean-index-weighted-root-V",
+      "energy-angular-index-weighted-root-V"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal",
+      "same-point-degenerate"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "gretton-etal-2012",
+      "szekely-rizzo-2013",
+      "custom deterministic atom-mass convention source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "linear-root",
+        [
+          "linear-uniform-root-V",
+          "linear-index-weighted-root-V"
+        ]
+      ],
+      [
+        "RBF-root",
+        [
+          "RBF-uniform-root-V",
+          "RBF-index-weighted-root-V"
+        ]
+      ],
+      [
+        "cosine-root",
+        [
+          "cosine-uniform-root-V",
+          "cosine-index-weighted-root-V"
+        ]
+      ],
+      [
+        "distance-induced-root",
+        [
+          "distance-induced-uniform-root-V",
+          "distance-induced-index-weighted-root-V"
+        ]
+      ],
+      [
+        "energy-euclidean-root",
+        [
+          "energy-euclidean-uniform-root-V",
+          "energy-euclidean-index-weighted-root-V"
+        ]
+      ],
+      [
+        "energy-angular-root",
+        [
+          "energy-angular-uniform-root-V",
+          "energy-angular-index-weighted-root-V"
+        ]
+      ]
+    ]
+  },
+  "mmd.prototype-direction": {
+    "id": "mmd.prototype-direction",
+    "family": "mmd",
+    "aim": "Measure nonlinear normalized sample-mean direction discrepancy risk.",
+    "dgp": "Independent draws on support((1,0),(0,1),(2,0)); P=(.2,.5,.3), Q=P under null or(.5,.2,.3) under alternative. n,m=(8,8) or(8,13). Same-point degeneracy uses P=Q=pointmass((1,0)),n=8,m=13. This nonzero support has nonzero population and attainable sample means. Explicit adapter computes each sample mean and normalizes it before calling the STATADIC supplied-prototype chord function.",
+    "estimand": "Chord norm between normalized enumerated population mean vectors. This differs from the cosine point-kernel MMD. A zero or nonfinite sample/population mean has undefined direction and is a retained failure, never a substituted zero direction. No unbiasedness claim.",
+    "methods": [
+      "normalized-mean-chord"
+    ],
+    "scenarios": [
+      "null-equal",
+      "null-unequal",
+      "alternative-equal",
+      "alternative-unequal",
+      "same-point-degenerate"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "normalized prototype functional source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "transport.sphere-empirical": {
+    "id": "transport.sphere-empirical",
+    "family": "transport",
+    "aim": "Measure empirical sphere-chord W1/W2 error against discrete population transport.",
+    "dgp": "Independent samples of size12 on the unit sphere support ((1,0),(0,1),(-1,0)); P=(.2,.5,.3), Q=P or (.5,.2,.3). Actual checked exact_balanced_wasserstein1/2 require equal support cardinality and unit rows. Population truth comes from an independent constrained SciPy linear program, not an empirical plug-in target.",
+    "estimand": "Population chord-ground W1 or W2. Finite-sample rooted transport need not be unbiased.",
+    "methods": [
+      "sphere-W1",
+      "sphere-W2"
+    ],
+    "scenarios": [
+      "null",
+      "alternative"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "peyre-cuturi-2019"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "transport.scalar-quantiles": {
+    "id": "transport.scalar-quantiles",
+    "family": "transport",
+    "aim": "Measure uniform and deterministic-weighted unequal-support real-line transport risk.",
+    "dgp": "Independent draws on scalar support(-1,0,2); P=(.2,.5,.3), Q=P or(.5,.2,.3); sizes12 and17. Weighted empirical atom masses proportional index+1, independent of sampled values. Weighted runtime transport_cross consumes true unequal support counts; no probability mass is placed on padding.",
+    "estimand": "Exact population W1, W2, or W2 squared from independent finite-law coupling. Deterministic index weights keep the population law fixed; nonlinear root has no unbiasedness claim.",
+    "methods": [
+      "empirical-W1",
+      "empirical-W2",
+      "empirical-powered-W2",
+      "weighted-quantile-W2"
+    ],
+    "scenarios": [
+      "null",
+      "alternative"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "peyre-cuturi-2019"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "transport.sliced-projections": {
+    "id": "transport.sliced-projections",
+    "family": "transport",
+    "aim": "Separate fixed and freshly sampled finite-projection W2 targets.",
+    "dgp": "Independent bivariate unit-covariance Gaussian clouds size16 and23; second mean is (0,0) or(.6,-.2). Eight normalized Gaussian directions: fixed design key173 for every replicate, or independent named projection key per replicate. Runtime fixed-design and random-key doors evaluated separately.",
+    "estimand": "Conditional finite-design population W2=sqrt(mean((direction dot shift)^2)). This is not full-sphere sliced W2=norm(shift)/sqrt(2), nor full multivariate W2=norm(shift). Random projections have replicate-specific conditional targets, retained explicitly.",
+    "methods": [
+      "fixed-design-W2",
+      "redrawn-design-W2"
+    ],
+    "scenarios": [
+      "null",
+      "translated"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "peyre-cuturi-2019"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "geometry.population-loss": {
+    "id": "geometry.population-loss",
+    "family": "geometry",
+    "aim": "Measure location and population eigenspace losses without sign-dependent PCA bias.",
+    "dgp": "Independent size64 or256 standard Gaussian triples. Median uses first two isotropic coordinates, population location zero. PCA uses all coordinates scaled by sqrt((4,2,1)); centered unscaled public PCA fit with one component, known population projector diag(1,0,0), strict eigengap. Shared Gaussian base across methods; median convergence flag is required only for the stationarity algorithm.",
+    "estimand": "Median Euclidean location-error norm or PCA Frobenius projector-error norm, each target zero. Mean loss is risk; MSE is squared-loss risk, not coordinate or signed eigenvector bias. No invented finite-sample closed-form PCA risk.",
+    "methods": [
+      "stationary-median-radius",
+      "fixed-Weiszfeld-radius",
+      "PCA-projector-error"
+    ],
+    "scenarios": [
+      "n64",
+      "n256"
+    ],
+    "metrics": [
+      "loss",
+      "failures"
+    ],
+    "citation_candidates": [],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sampler.marginal-joint-law": {
+    "id": "sampler.marginal-joint-law",
+    "family": "sampler",
+    "aim": "Validate native alternative samplers against declared marginal and joint moments.",
+    "dgp": "Actual sample.alternatives.draw,512 rows and2 coordinates. Normal N(0,I), multivariate Student-t df12 with common per-row chi-square scale, mean-shift .4, Gaussian scale1.5, or fixed-count mixture fraction.25 with last128 rows shifted2. Known row means are subtracted for centered moments; mixture is ordered non-IID, not iid random contamination. Adjacent disjoint row pairs diagnose independence.",
+    "estimand": "RMS discrepancy across first-coordinate mean, centered second moment, centered coordinate product, centered squared-coordinate product and adjacent-row centered product. Targets are analytic: variance df/(df-2), squared-product df^2/((df-2)(df-4)) for shared-scale t; zero centered coordinate/row products. Raw moments and targets retained. Student df12 makes these loss MC variances finite; equal t marginals alone do not establish correct joint law.",
+    "methods": [
+      "normal",
+      "student_t",
+      "mean_shift",
+      "scale",
+      "mixture"
+    ],
+    "scenarios": [
+      "n512-d2"
+    ],
+    "metrics": [
+      "loss",
+      "failures"
+    ],
+    "citation_candidates": [],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "permutation.signed-mean-tails": {
+    "id": "permutation.signed-mean-tails",
+    "family": "resampling",
+    "aim": "Exercise actual public less/greater/two-sided supplied-statistic permutation selectors.",
+    "dgp": "Independent groups24 and32 scalar observations X~N(delta,1),Y~N(0,1); delta=0,-.5,+.5. Native permutation_test_result recomputes signed sample mean difference on every pooled-row permutation. Named method seeds, default999/smoke32 random permutations, add-one calibration.",
+    "estimand": "Strong equal-distribution null delta=0 yields exchangeability; negative and positive shifts distinguish tail sensitivity. Two-sided selector uses absolute signed statistic. Directional rejection under the opposite shift is not evidence of power against that method's directional alternative.",
+    "methods": [
+      "less",
+      "greater",
+      "two-sided"
+    ],
+    "scenarios": [
+      "equal-distributions",
+      "negative-shift",
+      "positive-shift"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hemerik-goeman-2018"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "equal-distributions"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [
+      [
+        "less",
+        [
+          "equal-distributions",
+          "positive-shift"
+        ]
+      ],
+      [
+        "greater",
+        [
+          "equal-distributions",
+          "negative-shift"
+        ]
+      ],
+      [
+        "two-sided",
+        [
+          "equal-distributions"
+        ]
+      ]
+    ],
+    "comparison_groups": []
+  },
+  "mantel.node-bootstrap-intervals": {
+    "id": "mantel.node-bootstrap-intervals",
+    "family": "mantel",
+    "aim": "Measure native single/paired Pearson and midrank-Spearman node- bootstrap intervals.",
+    "dgp": "40 iid joint binary nodes T~Bernoulli(.5), F=T xor Bernoulli(.25), C=T xor Bernoulli(q), independent errors conditional on T. q=.25 or .125. Distance is absolute bit difference. One supplied iid node-index schedule shared across both correlation arms; original-node duplicate edges are masked by native Mantel bootstrap. Actual host CI/paired-gap wrappers plus native kernel draw validity, default999/smoke32. Any failed draw invalidates the procedure.",
+    "estimand": "Population Pearson correlation of independent-node distances, computed by double enumeration over all8 joint states. Binary midrank Spearman coincides with Pearson. Single target .25; paired target corr(C,T)-corr(F,T)=0 or .3125. Finite-n dependent-edge sample statistic estimates this population functional; no claim of finite-n unbiasedness or exact percentile coverage.",
+    "methods": [
+      "single-pearson",
+      "paired-pearson",
+      "single-spearman",
+      "paired-spearman"
+    ],
+    "scenarios": [
+      "equal-association",
+      "comparator-stronger"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Mantel node-bootstrap original source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "linear.supplied-row-percentile": {
+    "id": "linear.supplied-row-percentile",
+    "family": "linear",
+    "aim": "Compare native specialized pairs refits and general whole-fit supplied-row refits.",
+    "dgp": "64 iid rows: X=(1,Z), Z~N(0,1); Y=.2+.4Z+sigma(Z)epsilon, epsilon~N(0,1) independent. sigma=.5 or .3+.5abs(Z). One named supplied iid row-bootstrap schedule resamples aligned X,Y together. Actual LeastSquares fit in both linear_pairs_replicates and refit_replicates; native percentile_summary95%, default999/smoke32. No model selection or fixed-design residual bootstrap substituted for pairs resampling.",
+    "estimand": "Unconditional slope .4 under both variance laws. Componentwise percentile CI coverage/width and all refit failure counts; descriptive finite-sample performance only, not a coverage certificate.",
+    "methods": [
+      "linear-pairs",
+      "whole-fit-refit"
+    ],
+    "scenarios": [
+      "homoskedastic",
+      "heteroskedastic"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "efron-1979"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "mixture.reoptimized-optimum-percentile": {
+    "id": "mixture.reoptimized-optimum-percentile",
+    "family": "mixture",
+    "aim": "Study intervals for the actually optimized population energy-mixture optimum.",
+    "dgp": "Independent target and candidate samples64 each on support(-1,0,2). Candidates p0=(.6,.3,.1), p1=(.1,.3,.6); target (.3,.4,.3) or (.35,.3,.35). Empirical frequency distributions retain all rows. Independent within-group multinomial64 empirical counts are exact iid row-bootstrap schedules. Recompute complete Gram/cross/self components and invoke native energy_barycentre_weights_batched for the observed sample AND EVERY bootstrap sample, tol1e-5/maxiter1000. Native percentile summary95%, default999/smoke32; all KKT/finite failures retained.",
+    "estimand": "min_{w in simplex2}2c'w-w'Qw-b, exact discrete-population components and independently minimized scalar quadratic. First target positive interior optimum, second target in candidate convex hull with zero optimum. The zero-optimum case is a nonregular boundary stress test; ordinary percentile CI need not cover. This is not the runtime fixed-selected- weight energy bootstrap interval, and does not assert its guarantees.",
+    "methods": [
+      "reoptimized-energy-optimum"
+    ],
+    "scenarios": [
+      "positive-interior-optimum",
+      "zero-optimum-boundary"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "optimized-mixture energy interval primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "mixture.kernel-balance-selection": {
+    "id": "mixture.kernel-balance-selection",
+    "family": "mixture",
+    "aim": "Compare native fully reoptimized legacy kernel-balance calibration with an explicitly invalid frozen-selection diagnostic.",
+    "dgp": "Target16 and two candidate groups12 each, iid scalar N(0,1) under strong exchangeable null; target shifted+1 under alternative. Native corrected_mixture_test kernel_balance, no split, reoptimization in every permutation, default999/smoke32 permutations and bootstrap draws. Diagnostic comparator selects actual kernel_balancing_weights on FULL original data then freezes them in native supplied-statistic two-sample permutations; candidate pooled rows are split12/12 on every draw. Native studentized mixture statistic in both routes. Named method streams.",
+    "estimand": "Strong identical-distribution null gives pooled-row exchangeability for full reoptimization. Kernel-balancing stationarity-residual surrogate is not the exact energy-barycentre objective. Selected-fixed comparator is deliberately double-dipped: rejection frequency is a diagnostic and MUST NOT be described as valid size control or qualification. Native legacy PGD surrogate reports no convergence certificate; this remains unavailable, distinct from observed numerical validity.",
+    "methods": [
+      "reoptimized-kernel-balance",
+      "selected-fixed-diagnostic"
+    ],
+    "scenarios": [
+      "exchangeable-null",
+      "location-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "kernel-balancing selection calibration primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "exchangeable-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "longrun.gaussian-ar1-variability": {
+    "id": "longrun.gaussian-ar1-variability",
+    "family": "longrun",
+    "aim": "Measure finite-bandwidth long-run variance estimation bias and risk.",
+    "dgp": "Stationary zero-mean unit-variance Gaussian AR(1) with rho=0 or .5, n=128 or 512. Use actual plain and Hall-centered Bartlett estimators on the same data with bandwidth 4 or the native n-based automatic rule.",
+    "estimand": "Infinite-lag long-run variance (1+rho)/(1-rho); fixed bandwidth has truncation bias. A long-run variance is not variance of the mean.",
+    "methods": [
+      "plain-fixed4",
+      "centered-fixed4",
+      "plain-auto",
+      "centered-auto"
+    ],
+    "scenarios": [
+      "rho0-n128",
+      "rho0-n512",
+      "rho0.5-n128",
+      "rho0.5-n512"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "newey-west-1987",
+      "hall-1987-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "sharpe.moment-risk": {
+    "id": "sharpe.moment-risk",
+    "family": "sharpe",
+    "aim": "Measure bias and risk of native biased-moment skewness and kurtosis.",
+    "dgp": "Independent normal or standardized lognormal(sigma=.6) observations, n=64 or 256; native sample_skew_kurtosis on the same sample.",
+    "estimand": "Population skew and non-excess kurtosis, independently computed from normal or exact lognormal moments. Finite-sample bias is expected.",
+    "methods": [
+      "sample-skewness",
+      "sample-kurtosis"
+    ],
+    "scenarios": [
+      "normal-n64",
+      "normal-n256",
+      "lognormal-n64",
+      "lognormal-n256"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "sample-moment-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "inequalities.chibar-weight-accuracy": {
+    "id": "inequalities.chibar-weight-accuracy",
+    "family": "moment-inequalities",
+    "aim": "Measure the stochastic native chi-bar weight-vector approximation.",
+    "dgp": "Independent keyed inner Gaussian calibration with identity covariance of dimension three; default 999 draws, smoke 32; native constrained projection and its convergence indicator are retained.",
+    "estimand": "Binding-coordinate weights are Binomial(3,.5): (1,3,3,1)/8. Each outer replicate is one independent weight approximation.",
+    "methods": [
+      "weight-0",
+      "weight-1",
+      "weight-2",
+      "weight-3"
+    ],
+    "scenarios": [
+      "identity-3"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "wolak-1989-source-convention-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "energy.fixed-mixture-risk": {
+    "id": "energy.fixed-mixture-risk",
+    "family": "energy",
+    "aim": "Measure raw empirical V-energy bias for fixed candidate weights.",
+    "dgp": "Independent target and candidate samples on support (-1,0,2): Q1=(.6,.3,.1), Q2=(.1,.3,.6), fixed weights (.25,.75). Target is their mixture or (.7,.2,.1); n=24, candidates each24 or 16 and31. Native balancing and public Euclidean exponent-one mixture scorers; no refitting.",
+    "estimand": "Enumerated population V-energy between target and fixed mixture; empirical V-statistic bias is expected, including under the null.",
+    "methods": [
+      "fixed-mixture-V-energy",
+      "public-mixture-V-energy"
+    ],
+    "scenarios": [
+      "matched-equal",
+      "matched-unequal",
+      "separated-equal",
+      "separated-unequal"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "energy-mixture-source-convention-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.durbin-likelihood": {
+    "id": "spatial.durbin-likelihood",
+    "family": "spatial",
+    "aim": "Evaluate actual SDM/SDEM/general-nesting Gaussian Durbin ML information inference.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. Add spatially lagged x1,x2 with theta=(.2,-.1). SDM rho=.25, lambda=0; SDEM rho=0,lambda=.3; GNS rho=.25,lambda=.3. Actual ML with SAR/SEM/SAC(slx_columns=(1,2)), not SLX regression substituted for Durbin ML.",
+    "estimand": "First slope -.5, first SLX coefficient .2 and last spatial parameter rho=.25 for SDM or lambda=.3 for SDEM/GNS. Actual expected-information normal-Wald intervals/tests; no finite-sample certification.",
+    "methods": [
+      "beta",
+      "theta",
+      "last-spatial"
+    ],
+    "scenarios": [
+      "SDM",
+      "SDEM",
+      "GNS"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Durbin/general-nesting primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "SDM",
+      "SDEM",
+      "GNS"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.period-varying-panel": {
+    "id": "spatial.period-varying-panel",
+    "family": "spatial",
+    "aim": "Evaluate genuine balanced period-varying PanelML pooled/fixed/random effects.",
+    "dgp": "Time-major6 periods by16 nodes. W_t=(.55+.04t)forward+(.45-.04t)backward. Two fixed Gaussian covariates, slope(-.5,.8); intercept.3 only pooled/RE. rho=.25, iid Gaussian innovation SD.5. Pooled alpha=0; fixed/random alpha_i~N(0,1) drawn once per whole panel and retained across periods. y_t=solve(I-rho W_t,X_t beta+alpha+epsilon_t). Actual PanelML effects match DGP. Filtering precedes effect profiling; no commuting W with demeaning.",
+    "estimand": "First slope -.5 and rho=.25, native information normal-Wald inference. RE effects independent of fixed covariates; fixed-effects study conditions on each replicate's generated effects. Variance-component boundary and information failures remain failures, not replaced with pooled inference.",
+    "methods": [
+      "beta",
+      "rho"
+    ],
+    "scenarios": [
+      "pooled",
+      "fixed",
+      "random"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "period-varying spatial panel primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "pooled",
+      "fixed",
+      "random"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.observed-sem": {
+    "id": "spatial.observed-sem",
+    "family": "spatial",
+    "aim": "Evaluate native observed-subvector pooled SEM likelihood.",
+    "dgp": "Four ordered periods,12 active nodes; fixed dense zero-diagonal normalized graph per period and full intercept/covariate design beta=(.3,-.5). Omit outcomes at graph nodes t,t+4 only, preserving full covariates/active graphs. Deterministic selection independent of iid Gaussian innovations SD.5. Full outcome X beta+solve(I-.3W_t,epsilon_t), select only declared observed indices. Actual ObservedPanelML(SEM(),effects=pooled) with marginal observed-subvector Gaussian likelihood and observed covariance.",
+    "estimand": "First slope -.5 and structural lambda=.3. The omitted outcomes remain latent on the full graph; re-normalizing observed subgraphs would change the model and is not performed.",
+    "methods": [
+      "beta",
+      "lambda"
+    ],
+    "scenarios": [
+      "fixed-outcome-selection"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "size",
+      "failures"
+    ],
+    "citation_candidates": [
+      "observed SEM primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "fixed-outcome-selection"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.cross-section-impacts": {
+    "id": "spatial.cross-section-impacts",
+    "family": "spatial",
+    "aim": "Evaluate native exact direct/indirect/total impact delta uncertainty.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. SAR rho=.25 with theta=0 or SDM theta=(.2,-.1). Native ML and spatial_covariance -> spatial_impacts. Report first-covariate impacts using actual native Jacobian covariance, normal95% intervals.",
+    "estimand": "Fixed-graph mean derivatives solve(I-.25W,-.5I+theta1 W). Direct=trace/n, total=sum/n, indirect=total-direct. Truth from independent NumPy full matrix solve; no causal interpretation or derivative of fitted parameters.",
+    "methods": [
+      "direct",
+      "indirect",
+      "total"
+    ],
+    "scenarios": [
+      "SAR",
+      "Durbin"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "LeSage Pace spatial impacts primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.observed-panel-impacts": {
+    "id": "spatial.observed-panel-impacts",
+    "family": "spatial",
+    "aim": "Evaluate actual active-period panel impacts and observed-information delta uncertainty.",
+    "dgp": "Four ordered periods,12 active nodes; fixed dense zero-diagonal normalized graph per period and full intercept/covariate design beta=(.3,-.5). Omit outcomes at graph nodes t,t+4 only, preserving full covariates/active graphs. Deterministic selection independent of iid Gaussian innovations SD.5. Full y_t=solve(I-.25W_t,X_t beta+epsilon_t), actual ObservedPanelML SAR pooled fit, observed covariance and spatial_panel_impacts. Report first covariate/first period's full-active-graph derivative and SE.",
+    "estimand": "First-period fixed full-graph derivative solve(I-.25W0,-.5I): trace/n, off-diagonal sum/n, full sum/n. This is not an average of period SEs or an observed-only-subgraph impact; actual observed-information delta95% CI.",
+    "methods": [
+      "direct",
+      "indirect",
+      "total"
+    ],
+    "scenarios": [
+      "fixed-outcome-selection"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "observed panel impact source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.ols-diagnostics": {
+    "id": "spatial.ols-diagnostics",
+    "family": "spatial",
+    "aim": "Evaluate native regression-adjusted Moran and lag/error specification diagnostics.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. OLS fit under iid null rho=lambda=0, SAR rho=.3 lambda=0, or SEM rho=0 lambda=.3. Native spatial_diagnostics on complete ordinary unweighted intercept OLS sample and exact W. All six actual diagnostics.",
+    "estimand": "Shared iid Gaussian null. Moran uses regression-adjusted normal reference; LM lag/error and competing-alternative-adjusted robust LM use chi- square1, joint SARMA chi-square2. Robust denotes competing lag/error adjustment, not heteroskedastic robustness. Lag/error alternatives examine distinct test sensitivities; not every test targets both departures.",
+    "methods": [
+      "Moran-normal",
+      "lag-LM",
+      "error-LM",
+      "robust-lag-LM",
+      "robust-error-LM",
+      "joint-SARMA-LM"
+    ],
+    "scenarios": [
+      "iid-null",
+      "lag-alternative",
+      "error-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Anselin LM/Moran diagnostic primary sources review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "iid-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.ak-diagnostic": {
+    "id": "spatial.ak-diagnostic",
+    "family": "spatial",
+    "aim": "Evaluate actual Anselin-Kelejian test after spatial IV.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. SAR rho=.25; lambda0 null or .3 alternative, true x slopes unchanged. Actual SpatialIV with x1,x2 lag instruments, then spatial_ak_test retaining actual 2SLS instrument projection and residual correction.",
+    "estimand": "Null independent structural innovations, conditional fixed exogenous graph. Native chi-square1 AK test is not weak-instrument-robust or robust to arbitrary error dependence. No substituted OLS Moran statistic.",
+    "methods": [
+      "Anselin-Kelejian"
+    ],
+    "scenarios": [
+      "independent-errors",
+      "error-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Anselin Kelejian 1997 primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "independent-errors"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.common-factor": {
+    "id": "spatial.common-factor",
+    "family": "spatial",
+    "aim": "Evaluate native SDM nonlinear common-factor Wald test.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. rho=.25 and theta=-rho beta_slopes=(.125,-.2) under restriction-null; alternative theta=(.2,-.1). Actual SDM ML and information covariance then spatial_common_factor_test.",
+    "estimand": "Joint nonlinear restrictions theta_j+rho beta_j=0 for the two slopes; native gradient covariance and chi-square2. Intercept excluded from Durbin expansion. No claim that individually insignificant SLX terms establish common-factor equivalence.",
+    "methods": [
+      "common-factor-Wald"
+    ],
+    "scenarios": [
+      "restriction-null",
+      "restriction-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "spatial common-factor test primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "restriction-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "spatial.nested-likelihood-ratio": {
+    "id": "spatial.nested-likelihood-ratio",
+    "family": "spatial",
+    "aim": "Evaluate explicitly nested interior SAR versus SDM likelihood ratio.",
+    "dgp": "Fixed n48 directional circular graph W=.6 forward+.4 backward, explicit intercept and two fixed Gaussian covariates, beta=(.3,-.5,.8). Independent whole-network replicates with Gaussian innovation SD.5. Exact dense graph solves; no edge-independent substitution. All numerical/rank/boundary failures retained; generic RuntimeError propagates as infrastructure failure. rho=.25; theta=(0,0) under restriction-null or (.2,-.1) under alternative. Fit actual SAR restricted and SDM unrestricted on identical y,X,W. Native spatial_likelihood_ratio assumes nesting explicitly, degrees_of_freedom2, retaining boundary/data/rank failures.",
+    "estimand": "Two zero-SLX restrictions at interior rho; chi-square2 likelihood ratio calibration. Model labels alone are not evidence of nesting; designs here provide the declared actual restrictions.",
+    "methods": [
+      "interior-LR"
+    ],
+    "scenarios": [
+      "restriction-null",
+      "restriction-alternative"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Wilks spatial LR formulation primary source review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "restriction-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "kappa.supplied-delta": {
+    "id": "kappa.supplied-delta",
+    "family": "kappa",
+    "aim": "Compare supplied-kappa delta variability with exact nonlinear variance.",
+    "dgp": "Fixed distance squared d2=1, marginal variances1; supplied kappa equals kappa0+U(-a,a), where kappa0=.5 or 1 and a=.2. Known predeclared SE=a/sqrt(3). Call the native covariance map and delta helper; this is not a fitted kappa estimator.",
+    "estimand": "Mapped covariance entry 1-.5*kappa0^2; exact entry variance (4*kappa0^2*a^2/3+4*a^4/45)/4. Delta variance uses supplied kappa_hat and is only a first-order approximation.",
+    "methods": [
+      "delta-covariance-entry"
+    ],
+    "scenarios": [
+      "kappa0.5",
+      "kappa1"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "se_accuracy",
+      "failures"
+    ],
+    "citation_candidates": [
+      "kappa-delta-source-convention-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "kappa.gaussian-concentration": {
+    "id": "kappa.gaussian-concentration",
+    "family": "kappa",
+    "aim": "Describe actual moment-Jacobian sensitivity, not a weak-IV test.",
+    "dgp": "n128 iid N(0,1) moment observations, constant supplied derivative d=0 or .25, native uncentered Bartlett HAC bandwidth zero.",
+    "estimand": "Population plug-in sensitivity n*d^2; finite-sample inverse HAC makes actual concentration random. The threshold is descriptive.",
+    "methods": [
+      "moment-jacobian-concentration"
+    ],
+    "scenarios": [
+      "zero",
+      "positive"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "kappa-sensitivity-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "covariance.entry-variance": {
+    "id": "covariance.entry-variance",
+    "family": "covariance-estimation",
+    "aim": "Measure native fourth-moment sample covariance entry variance.",
+    "dgp": "n64 or256 iid N4(0,Sigma), Sigma has unit diagonal and all off-diagonal correlations .3. Native fourth-moment estimator on ddof0 sample covariance; record first diagonal entry.",
+    "estimand": "Var(S_11) = 2*(n-1)/n^2 for the ddof0 Gaussian sample covariance.",
+    "methods": [
+      "fourth-moment-entry-variance"
+    ],
+    "scenarios": [
+      "n64",
+      "n256"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "sample-covariance-variance-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "covariance.target-tuning-risk": {
+    "id": "covariance.target-tuning-risk",
+    "family": "covariance-estimation",
+    "aim": "Compare native sample weight rules using actual covariance risk.",
+    "dgp": "n64 iid N4 with unit diagonal and correlations .3. Fixed target is I4 or 1.5I4; compare sample ddof0, native fixed-target optimal plug-in, actual out-of-fold portfolio-variance CV (grid 0,.5,1; four folds), and same-window diagonal target with native plug-in. Same-window and fixed targets have different dependence assumptions.",
+    "estimand": "Population covariance Sigma; trace error and squared Frobenius loss. CV selects out-of-fold portfolio variance, not Frobenius risk.",
+    "methods": [
+      "sample",
+      "fixed-target-optimal",
+      "fixed-target-CV",
+      "same-window-plugin"
+    ],
+    "scenarios": [
+      "fixed-identity",
+      "fixed-scaled"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "frobenius_loss",
+      "failures"
+    ],
+    "citation_candidates": [
+      "covariance-target-tuning-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "covariance.target-tuning-portfolio": {
+    "id": "covariance.target-tuning-portfolio",
+    "family": "covariance-estimation",
+    "aim": "Compare selected covariance rules by known population portfolio risk.",
+    "dgp": "Same paired Gaussian panels and target rules as target-tuning-risk; build minimum-variance weights from each chosen covariance with native ridge_psd(eps=1e-8), then evaluate actual w.T Sigma w.",
+    "estimand": "Oracle minimum unit-sum portfolio variance 1/(1.T Sigma^-1 1); Nonnegative excess risk is a loss, not covariance-estimator bias or Frobenius risk; roundoff-negative excess is clipped to zero.",
+    "methods": [
+      "sample",
+      "fixed-target-optimal",
+      "fixed-target-CV",
+      "same-window-plugin"
+    ],
+    "scenarios": [
+      "fixed-identity",
+      "fixed-scaled"
+    ],
+    "metrics": [
+      "loss",
+      "failures"
+    ],
+    "citation_candidates": [
+      "covariance-target-tuning-source-review-pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "gmm.fixed-moment-hac-wald": {
+    "id": "gmm.fixed-moment-hac-wald",
+    "family": "gmm",
+    "aim": "Evaluate the actual fixed-moment multivariate HAC Wald procedure.",
+    "dgp": "256 ordered observations of a stationary Gaussian vector AR(1). Initial state N(0,Sigma), innovations N(0,(1-phi^2)Sigma), Sigma=((1,.4,0), (.4,1,.2),(0,.2,1)). phi0 or .6; population moment mean zero under null or shifted(.25,0,-.15). Shared data across native gmm_wald bandwidth 0,8,16 and automatic sample-size rule. Plain, uncentered Bartlett Newey-West variability. Separate rank-deficient adverse null sets the third moment to the sum of the first two; host full-rank rejection is retained.",
+    "estimand": "H0 E[g_t]=0 for three supplied fixed moments, chi-square3 reference. No estimated-parameter degrees-of-freedom subtraction or Hansen-J substitution. Fixed finite bandwidth can underaccount serial correlation; b0 is an explicit adverse comparator under AR1. Full-rank variability required for native calibration; singular scenario is an availability stress.",
+    "methods": [
+      "NW-b0",
+      "NW-b8",
+      "NW-b16",
+      "NW-auto"
+    ],
+    "scenarios": [
+      "iid-null",
+      "AR1-null",
+      "iid-shift",
+      "AR1-shift",
+      "rank-deficient-null"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hansen-1982",
+      "newey-west-1987"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "iid-null",
+      "AR1-null",
+      "rank-deficient-null"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "bootstrap.fixed-mixture-energy": {
+    "id": "bootstrap.fixed-mixture-energy",
+    "family": "bootstrap",
+    "aim": "Evaluate native percentile intervals with fixed supplied mixture weights.",
+    "dgp": "Three independent samples on support(-1,0,2). Candidate probabilities (.6,.3,.1) and(.1,.3,.6). Target(.35,.3,.35) in matched scenarios or (.1,.2,.7) in separated scenarios. Sizes32/32/32 or24/32/40. Absolute Euclidean distance exponent1, pooled target/candidate ordering, one-hot membership and actual sizes. Native bootstrap_mixture_energy_interval resamples WITHIN EACH group, preserving group sizes. Prespecified candidate weights(.5,.5) and(.25,.75) held fixed on observed and EVERY bootstrap sample. Named method streams, default999/smoke32 draws.",
+    "estimand": "Exact population raw energy of target versus fixed weighted candidate mixture, independently enumerated over all support pairs. Point estimate is actual native grouped V reduction. These are not optimized-weight or selection-adjusted intervals. Matched half-weight case has zero population energy and nonregular boundary behavior; ordinary percentile coverage may fail and is reported descriptively. All nonfinite inner draws invalidate the procedure and remain counted, never dropped.",
+    "methods": [
+      "prespecified-half",
+      "prespecified-quarter"
+    ],
+    "scenarios": [
+      "matched-equal",
+      "matched-unequal",
+      "separated-equal",
+      "separated-unequal"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "efron-1979"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "survival.spatial-joint-pilot": {
+    "id": "survival.spatial-joint-pilot",
+    "family": "survival",
+    "aim": "Explore actual fixed-draw and refined joint spatial log-time fits.",
+    "dgp": "Three independent periods of eight nodes; W[i,i+1]=.7 and W[i,i-2]=.3 cyclic; X=(1,linspace(-1,1,8)); log T solves (I-rho W) log T=X(.1,.3)+epsilon, epsilon iid Gaussian SD.6. rho=0 or .25. Fixed in advance, independent of all outcomes: first three nodes have administrative censoring at .6; the other five have infinite censoring time. Censor counts are random, including zero or one (analytical paths) and two or three (joint integration); no datasets are selected by censor count. entry zero, free rho. Native keyed integration has two replicates, initial draws rounded up to an even integer from frozen effort and one doubling; independent training and validation keys. Numerical budget and convergence histories are retained.",
+    "estimand": "Structural slope .3 in the latent joint log-time process. Bias and MSE are conditional on successful estimates; failure and numerical status counts remain separate. Adaptive success requires native stability, not just an available last fit. This is a small pilot, not proof of integration accuracy or scientific qualification.",
+    "methods": [
+      "fixed-draw-spatial-ML",
+      "refined-spatial-ML"
+    ],
+    "scenarios": [
+      "rho0",
+      "rho0.25"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "likelihood.gamma-inference": {
+    "id": "likelihood.gamma-inference",
+    "family": "glm",
+    "aim": "Describe gamma slope inference and failures with explicit dispersion.",
+    "dgp": "Fixed intercept/linspace(-1,1) design, beta=(.2,.4), n=128; independent Gamma with variance .6*mean^2 or NB2 with variance mean+.6*mean^2. Fixed-dispersion methods receive the true .6. Each family is a separate study, not a comparison across outcomes.",
+    "estimand": "Log conditional-mean slope .4; normal-Wald intervals at .95.",
+    "methods": [
+      "estimated-model",
+      "fixed-model",
+      "estimated-HC0"
+    ],
+    "scenarios": [
+      "ordinary"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "statsmodels likelihood reference; convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "same-log-mean-slope",
+        [
+          "estimated-model",
+          "fixed-model",
+          "estimated-HC0"
+        ]
+      ]
+    ]
+  },
+  "likelihood.nb2-inference": {
+    "id": "likelihood.nb2-inference",
+    "family": "glm",
+    "aim": "Describe nb2 slope inference and failures with explicit dispersion.",
+    "dgp": "Fixed intercept/linspace(-1,1) design, beta=(.2,.4), n=128; independent Gamma with variance .6*mean^2 or NB2 with variance mean+.6*mean^2. Fixed-dispersion methods receive the true .6. Each family is a separate study, not a comparison across outcomes.",
+    "estimand": "Log conditional-mean slope .4; normal-Wald intervals at .95.",
+    "methods": [
+      "estimated-model",
+      "fixed-model",
+      "estimated-HC0"
+    ],
+    "scenarios": [
+      "ordinary"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "statsmodels likelihood reference; convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "same-log-mean-slope",
+        [
+          "estimated-model",
+          "fixed-model",
+          "estimated-HC0"
+        ]
+      ]
+    ]
+  },
+  "likelihood.probit-inference": {
+    "id": "likelihood.probit-inference",
+    "family": "glm",
+    "aim": "Describe binary and grouped-binomial probit slope inference and failures.",
+    "dgp": "n=128 fixed intercept/linspace(-1,1), beta=(.2,.4); independent binomial responses with trials1 or5 and probability Phi(X beta).",
+    "estimand": "Probit slope .4; normal-Wald intervals at .95.",
+    "methods": [
+      "model",
+      "HC0"
+    ],
+    "scenarios": [
+      "binary",
+      "grouped"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "statsmodels probit reference; convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "same-probit-slope",
+        [
+          "model",
+          "HC0"
+        ]
+      ]
+    ]
+  },
+  "survival.aft-mean-prediction": {
+    "id": "survival.aft-mean-prediction",
+    "family": "survival",
+    "aim": "Describe fitted marginal means at a fixed predictor under censoring/entry.",
+    "dgp": "n=128, intercept/Uniform(-1,1), beta=(.2,.4); Weibull shape1.8, lognormal sigma .6 or log-logistic shape1.8. Independent censoring entry+Exponential(3); delayed-entry draws are conditional on T>entry with entry Uniform(0,.3). Spatial marginals and nonexistent means remain separate numerical tests rather than finite-target bias cells.",
+    "estimand": "Unconditional duration mean at predictor zero; family-specific analytic truth.",
+    "methods": [
+      "fitted-mean"
+    ],
+    "scenarios": [
+      "weibull",
+      "lognormal",
+      "loglogistic",
+      "loglogistic-delayed"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [
+      "flexsurv distributions reference; convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": []
+  },
+  "iv.workflow-inference": {
+    "id": "iv.workflow-inference",
+    "family": "gmm",
+    "aim": "Describe conventional IV slope inference across explicit dependence schemes.",
+    "dgp": "n=128, four independent standard-normal instruments; one endogenous regressor .8*z0+.4*z1+.5*s and outcome .7*d+u. Structural error u=.3*s+noise; independent, instrument-dependent heteroskedastic, stationary AR(.3), 16 independent clusters of8, or weak first stage with instrument loadings multiplied by .03. Cluster shocks are independent of instruments; HAC uses bandwidth4 in retained row order.",
+    "estimand": "First structural coefficient .7, with explicit normal-Wald approximation.",
+    "methods": [
+      "2SLS",
+      "two-step",
+      "iterated"
+    ],
+    "scenarios": [
+      "iid",
+      "heteroskedastic",
+      "hac",
+      "clustered",
+      "weak"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [
+      "hansen-1982",
+      "linearmodels IV reference; convention review pending"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "same-structural-slope",
+        [
+          "2SLS",
+          "two-step",
+          "iterated"
+        ]
+      ]
+    ]
+  },
+  "survival.spatial-seasonal-contrast": {
+    "id": "survival.spatial-seasonal-contrast",
+    "family": "survival",
+    "aim": "Estimate a structural seasonal log-time contrast with two-way fixed effects.",
+    "dgp": "Eight units, three periods. Asymmetric row-standardized ring (.7 right, .3 two to the left). Independent uniform phases at every unit-period. Periodic cubic interpolation through (0, .3, 0, -.3, 0) at quarter cycles; unit effects linspace(-.2,.2,8), period effects (-.15,0,.15). Each period solves (I-.25 W)log T = .2 + unit + period + season + iid N(0,.4^2). All spells enter at zero. Either all fail, or unit zero has a fixed administrative cap of 1 per period. At most one censor per period, so all Gaussian tail probabilities have analytic evaluations. Each method uses the same data, keys, free rho and unpenalized two-way spatial ML. The legacy design uses independent SciPy interpolation columns.",
+    "estimand": "Structural seasonal contrast f(.25)-f(.75)=.6. The methods use different coordinates for the same periodic cubic space. A 95% normal-reference Wald interval uses the full observed-information covariance. Bias/MSE condition on a successful Wald procedure; unavailable intervals count as uncovered. Small-panel incidental-parameter effects are possible.",
+    "methods": [
+      "compositional-Wald",
+      "explicit-basis-Wald"
+    ],
+    "scenarios": [
+      "exact",
+      "administrative"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "coverage",
+      "width",
+      "failures"
+    ],
+    "citation_candidates": [],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "structural-seasonal-contrast",
+        [
+          "compositional-Wald",
+          "explicit-basis-Wald"
+        ]
+      ]
+    ]
+  },
+  "spatial.named-slx": {
+    "id": "spatial.named-slx",
+    "family": "spatial",
+    "aim": "Recover a named neighbor-exposure coefficient on an asymmetric graph.",
+    "dgp": "N=64 directed ring; weights .7 right and .3 two to the left. Independent standard normal x and innovations. y=.2+.4*x+theta*W*x+.6*innovation; theta is zero or .5. Both procedures use identical observations and W.",
+    "estimand": "Coefficient theta on first-order neighbor x. Bias and MSE are conditional on an available estimate; every attempted failure is retained. NumPy least squares on explicitly constructed columns supplies the reference.",
+    "methods": [
+      "named-SLX",
+      "explicit-NumPy"
+    ],
+    "scenarios": [
+      "zero",
+      "spillover"
+    ],
+    "metrics": [
+      "bias",
+      "mse",
+      "failures"
+    ],
+    "citation_candidates": [],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [],
+    "method_metrics": [],
+    "decision_only_methods": [],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "neighbor-coefficient",
+        [
+          "named-SLX",
+          "explicit-NumPy"
+        ]
+      ]
+    ]
+  },
+  "spatial.graph-selection-power": {
+    "id": "spatial.graph-selection-power",
+    "family": "spatial",
+    "aim": "Measure SAR test size and power after independent projection selection.",
+    "dgp": "Twenty units; four equal-mass articles in two dimensions per unit. Two fixed candidate projections select coordinate 0 or 1. Each uses 1D W2 squared, a zero-diagonal RBF and h=0.25 times the median off-diagonal squared distance. The first candidate generates returns. Four independent calibration dates and four subsequent inference dates share fixed units and graphs. The covariate is standard normal; lagged x uses a distinct cyclic forward graph. The DGP is (I-rho*W)y=.2+.5*x-.3*WX+N(0,.6^2 I). rho is 0, .25 or .5. Hold the design constant across replicates and draw the full innovation panel anew.",
+    "estimand": "Two-sided LR for rho=0 in the inference panel at nominal .05 using chi-square with one degree of freedom. Both models refit slopes and innovation variance. Fixed-projection knows the DGP graph; training-selected maximizes training likelihood across two candidates and freezes the graph on inference dates. This estimates rejection under the stated DGP, conditional on the article and covariate design. A failed calibration candidate invalidates selection. No inference on selected direction or continuously learned representation.",
+    "methods": [
+      "fixed-projection",
+      "training-selected"
+    ],
+    "scenarios": [
+      "rho-zero",
+      "rho-quarter",
+      "rho-half"
+    ],
+    "metrics": [
+      "size",
+      "power",
+      "failures"
+    ],
+    "citation_candidates": [
+      "Wilks (1938), doi:10.1214/aoms/1177732360"
+    ],
+    "qualification": "descriptive",
+    "alpha": 0.05,
+    "margin": 0.01,
+    "failure_budget": 0.005,
+    "null_scenarios": [
+      "rho-zero"
+    ],
+    "method_metrics": [],
+    "decision_only_methods": [
+      "fixed-projection",
+      "training-selected"
+    ],
+    "method_null_scenarios": [],
+    "comparison_groups": [
+      [
+        "conditional-spatial-LR",
+        [
+          "fixed-projection",
+          "training-selected"
+        ]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "source_url": "https://users.ssc.wisc.edu/~behansen/econometrics/",
+  "statement_locations": [
+    "Chapter 3, least-squares algebra and the normal equations.",
+    "Chapter 3, Residual Regression, Frisch–Waugh–Lovell theorem."
+  ],
+  "proof_locations": [
+    "Expand the squared loss and remove the mixed product using the normal equations. Chapter 3, least-squares algebra and the normal equations.",
+    "Remove the nuisance contribution using residual orthogonality on both sides. Chapter 3, Residual Regression, Frisch–Waugh–Lovell theorem."
+  ],
+  "claim_ids": [
+    "STATADIC-LSTSQ-001",
+    "STATADIC-FWL-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The source supplies the indicated result or motivation. The registry describes the exact specialization and diagnostic limits.",
+  "source_review": "Compared with the primary source and current STATADIC implementation. Human semantic review pending."
+}

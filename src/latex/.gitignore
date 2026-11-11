@@ -1,0 +1,6 @@
+# Compiled targets, upload bundles and per-project copies of shared inputs are
+# reproducible from tracked sources with `just latex::build` and `bundle`.
+/build/
+/projects/*/build/
+/projects/*/src/statadic-manuscript.sty
+/projects/*/src/refs.bib

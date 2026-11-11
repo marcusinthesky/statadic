@@ -1,0 +1,67 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{statadic-manuscript}[2026/11/05 STATADIC manuscript semantics]
+
+% Semantic commands shared by every project. Document classes, page layout,
+% hyperlinks and venue packages such as pgfplots belong to each project's
+% targets/ adapter, so a chapter never depends on a particular journal layout.
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{array}
+\RequirePackage{booktabs}
+\RequirePackage{siunitx}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{listings}
+\RequirePackage{newunicodechar}
+
+\sisetup{round-pad=false}
+
+% Bibliography metadata keeps publishers' Unicode dashes. Under XeTeX the T1
+% Latin Modern fonts have no Unicode slot for them, so map them to TeX ligatures,
+% which also compile unchanged under arXiv's pdfLaTeX.
+\newunicodechar{–}{--}
+\newunicodechar{—}{---}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% Generated values. A project's analysis script writes \jcDeclareValue bindings
+% to src/generated/values.tex; prose and tables read them through \jcvalue, so
+% no reported number is copied into the manuscript by hand.
+\newcommand{\jcDeclareValue}[2]{%
+  \expandafter\gdef\csname jc@value@#1\endcsname{#2}%
+}
+\newcommand{\jcvalue}[1]{%
+  \ifcsname jc@value@#1\endcsname
+  \csname jc@value@#1\endcsname
+  \else
+  \PackageError{statadic-manuscript}{Undefined generated value '#1'}%
+  {Run just latex::generate for this project.}%
+  \fi
+}
+\newcommand{\jcnum}[1]{\num{\jcvalue{#1}}}
+
+% Monochrome Python listings; no shell escape or external highlighter.
+\lstdefinestyle{statadic}{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true,
+  frame=lines,
+  framesep=4pt,
+  breaklines=true,
+  commentstyle=\itshape,
+  keywordstyle=\bfseries,
+}
+\lstset{style=statadic}
+
+\endinput

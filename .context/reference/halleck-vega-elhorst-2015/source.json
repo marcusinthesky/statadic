@@ -1,0 +1,15 @@
+{
+  "source_url": "https://pure.rug.nl/ws/portalfiles/portal/99108393/THE_SLX_MODEL.pdf",
+  "statement_locations": [
+    "Section 2, Table 1, spatial Durbin row; equation (10)"
+  ],
+  "proof_locations": [
+    "Section 2, equations (8)–(10) and the paragraph following equation (6) on averaging diagonal and off-diagonal effects"
+  ],
+  "claim_ids": [
+    "STATADIC-SPATIAL-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The matrix algebra holds for a supplied multiplier. It does not establish invertibility, causal identification, learned-graph derivatives, delta-method uncertainty or floating-point accuracy.",
+  "source_review": "Compared the reduced form, impact matrix and diagonal/off-diagonal averaging rule to the institutional version of record. Human semantic review pending."
+}

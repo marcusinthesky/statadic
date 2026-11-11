@@ -1,0 +1,45 @@
+[project]
+name = "statadic-docs"
+version = "0.1.0"
+description = "Internal STATADIC documentation and learning labs"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "numpy>=2,<3",
+  "scipy>=1.14.0",
+  "jax[cpu]>=0.11,<0.12",
+  "statadic",
+  "statadic-evidence",
+  "statadic-studies",
+  "statadic-performance",
+  "marimo==0.25.2",
+  "matplotlib>=3.8,<4",
+  "sphinx>=8,<9",
+  "docutils>=0.20,<0.22",
+  "sphinxcontrib-bibtex>=2.6,<3",
+  "jsonschema>=4,<5",
+  "myst-parser>=4,<5",
+  "shibuya>=2026.1.9,<2027",
+]
+
+[dependency-groups]
+dev = ["pytest==8.4.2", "ruff>=0.16.0,<0.17", "playwright>=1.58,<2"]
+
+[tool.uv.sources]
+statadic = { workspace = true }
+statadic-evidence = { workspace = true }
+statadic-studies = { workspace = true }
+statadic-performance = { workspace = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/statadic_docs_labs"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "native: checks against the native STATADIC package",
+  "notebook: executes a marimo notebook",
+]

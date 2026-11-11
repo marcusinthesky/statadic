@@ -1,0 +1,11 @@
+secretspec:
+  enable: false
+require_version: true
+inputs:
+  devenv:
+    url: github:cachix/devenv/e44d88a683bf945c72445babd85f1d2e4e933409?dir=src/modules
+  nixpkgs:
+    url: github:NixOS/nixpkgs/c043004d1c6985732bcc1cbc5a9c9aecbbb4e0f0
+  lean4-nix:
+    url: github:lenianiva/lean4-nix/7711df0784e335267b6aa57a5c8ada62a6bef0bf
+    flake: false

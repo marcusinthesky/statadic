@@ -1,0 +1,27 @@
+{
+  "source_url": "https://doi.org/10.1214/13-AOS1140",
+  "statement_locations": [
+    "Section 5.1, Theorem 22",
+    "Section 3.2, Definition 10, equation (3.3) and the paragraph defining characteristicness on a class of measures; compare Section 6, Proposition 29.",
+    "Theorem 22 on energy and MMD and Proposition 29 on separation through the mean embedding.",
+    "Sections 2 and 5, distance-inducing positive-definite kernels and Theorem 22."
+  ],
+  "proof_locations": [
+    "Section 5.1, proof immediately following Theorem 22",
+    "Section 3.2, equation (3.3) and the following injectivity argument. The squared Hilbert norm and pair formula are attributed there to Gretton et al. (2012), Lemmas 4 and 6.",
+    "Use the energy identity to represent the root as a positive multiple of Hilbert distance. Theorem 22 on energy and MMD and Proposition 29 on separation through the mean embedding.",
+    "Combine finite zero-mass kernel cancellation with the independent-sample lift of the negative-type inequality."
+  ],
+  "claim_ids": [
+    "STATADIC-ENERGY-001",
+    "STATADIC-ENERGY-002",
+    "STATADIC-ENERGY-004",
+    "STATADIC-ENERGY-005",
+    "STATADIC-MMD-007",
+    "STATADIC-ROOTENERGY-001",
+    "STATADIC-ENERGY-008"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The finite identities and the population identities share the generating relation. The population feature theorem identifies zero energy with equality of feature means. See Section 6, Proposition 29 for separation of laws via a characteristic embedding.",
+  "source_review": "Independent agent comparison; human semantic review pending."
+}

@@ -1,0 +1,2342 @@
+{
+  "schema_version": 1,
+  "scope": "Curated primary-paper bibliography for the 46 registered STATADIC families; not an exhaustive literature census.",
+  "records": [
+    {
+      "id": "aitken-1936",
+      "type": "article-journal",
+      "title": "On Least Squares and Linear Combination of Observations",
+      "author": [
+        {
+          "family": "Aitken",
+          "given": "Alexander C."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1936
+          ]
+        ]
+      },
+      "container-title": "Proceedings of the Royal Society of Edinburgh",
+      "URL": "https://www.cambridge.org/core/journals/proceedings-of-the-royal-society-of-edinburgh/article/abs/ivon-least-squares-and-linear-combination-of-observations/7106C26F19F2EBF75BCEE7FA285780B9",
+      "research": {
+        "role": "foundational",
+        "review_depth": "publisher-abstract",
+        "retrieved": "2026-11-01",
+        "note": "Publisher volume year is 1936; often cited as 1935 for the 1934–35 volume. New WLS work is a finite-law scalar specialization, not a complete transcription.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1017/S0370164600014346",
+      "volume": "55",
+      "page": "42-48"
+    },
+    {
+      "id": "stepniak-2010",
+      "type": "article-journal",
+      "title": "From Equivalent Linear Equations to Gauss–Markov Theorem",
+      "author": [
+        {
+          "family": "Stępniak",
+          "given": "Czesław"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "Journal of Inequalities and Applications",
+      "URL": "https://link.springer.com/article/10.1155/2010/259672",
+      "research": {
+        "role": "foundational",
+        "review_depth": "full-text-parsed",
+        "retrieved": "2026-11-01",
+        "note": "Theorems 3.2 and 4.1, pp. 3–5, support the existing repository OLS formalization. Parsed paper read; page-image retrieval failed. Existing proof status not independently rechecked.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1155/2010/259672"
+    },
+    {
+      "id": "white-1980-hc",
+      "type": "article-journal",
+      "title": "A Heteroskedasticity-Consistent Covariance Matrix Estimator and a Direct Test for Heteroskedasticity",
+      "author": [
+        {
+          "family": "White",
+          "given": "Halbert"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1980
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://www.jstor.org/stable/1912934",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2307/1912934",
+      "volume": "48",
+      "issue": "4",
+      "page": "817-838"
+    },
+    {
+      "id": "white-1980-approximation",
+      "type": "article-journal",
+      "title": "Using Least Squares to Approximate Unknown Regression Functions",
+      "author": [
+        {
+          "family": "White",
+          "given": "Halbert"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1980
+          ]
+        ]
+      },
+      "container-title": "International Economic Review",
+      "URL": "https://doi.org/10.2307/2526245",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Background for misspecified regression. The new omitted-signal identity is supporting finite algebra, not the paper’s general asymptotic theorem.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2307/2526245",
+      "volume": "21",
+      "issue": "1",
+      "page": "149-170"
+    },
+    {
+      "id": "mackinnon-white-1985",
+      "type": "article-journal",
+      "title": "Some heteroskedasticity-consistent covariance matrix estimators with improved finite sample properties",
+      "author": [
+        {
+          "family": "MacKinnon",
+          "given": "James G."
+        },
+        {
+          "family": "White",
+          "given": "Halbert"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1985
+          ]
+        ]
+      },
+      "container-title": "Journal of Econometrics",
+      "URL": "https://www.sciencedirect.com/science/article/pii/0304407685901587",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "HC variant provenance and finite-sample comparisons; not a universal exact-coverage guarantee.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/0304-4076(85)90158-7",
+      "volume": "29",
+      "issue": "3",
+      "page": "305-325"
+    },
+    {
+      "id": "newey-west-1987",
+      "type": "article-journal",
+      "title": "A Simple, Positive Semi-Definite, Heteroskedasticity and Autocorrelation Consistent Covariance Matrix",
+      "author": [
+        {
+          "family": "Newey",
+          "given": "Whitney K."
+        },
+        {
+          "family": "West",
+          "given": "Kenneth D."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1987
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://www.nber.org/papers/t0055",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Linked NBER working paper is 1986; bibliographic year and DOI identify the 1987 journal article.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2307/1913610",
+      "volume": "55",
+      "issue": "3",
+      "page": "703-708"
+    },
+    {
+      "id": "hansen-1982",
+      "type": "article-journal",
+      "title": "Large Sample Properties of Generalized Method of Moments Estimators",
+      "author": [
+        {
+          "family": "Hansen",
+          "given": "Lars Peter"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1982
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://larspeterhansen.org/lph_research/large-sample-properties-of-generalized-method-of-moments-estimators/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "GMM consistency, limiting distribution and efficient weighting require full regularity and probabilistic limit theory; open in this bundle.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2307/1912775",
+      "volume": "50",
+      "issue": "4",
+      "page": "1029-1054"
+    },
+    {
+      "id": "nelder-wedderburn-1972",
+      "type": "article-journal",
+      "title": "Generalized Linear Models",
+      "author": [
+        {
+          "family": "Nelder",
+          "given": "John A."
+        },
+        {
+          "family": "Wedderburn",
+          "given": "Robert W. M."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1972
+          ]
+        ]
+      },
+      "container-title": "Journal of the Royal Statistical Society: Series A",
+      "URL": "https://academic.oup.com/jrsssa/article/135/3/370/7110572",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2307/2344614",
+      "volume": "135",
+      "issue": "3",
+      "page": "370-384"
+    },
+    {
+      "id": "wedderburn-1974",
+      "type": "article-journal",
+      "title": "Quasi-likelihood functions, generalized linear models, and the Gauss–Newton method",
+      "author": [
+        {
+          "family": "Wedderburn",
+          "given": "Robert W. M."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1974
+          ]
+        ]
+      },
+      "container-title": "Biometrika",
+      "URL": "https://doi.org/10.1093/biomet/61.3.439",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1093/biomet/61.3.439",
+      "volume": "61",
+      "issue": "3",
+      "page": "439-447"
+    },
+    {
+      "id": "albert-anderson-1984",
+      "type": "article-journal",
+      "title": "On the existence of maximum likelihood estimates in logistic regression models",
+      "author": [
+        {
+          "family": "Albert",
+          "given": "Adelin"
+        },
+        {
+          "family": "Anderson",
+          "given": "John A."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1984
+          ]
+        ]
+      },
+      "container-title": "Biometrika",
+      "URL": "https://academic.oup.com/biomet/article-abstract/71/1/1/349338",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Separation/existence conditions are essential. Successful optimization alone is not an existence or efficiency proof.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1093/biomet/71.1.1",
+      "volume": "71",
+      "issue": "1",
+      "page": "1-10"
+    },
+    {
+      "id": "owen-1988",
+      "type": "article-journal",
+      "title": "Empirical likelihood ratio confidence intervals for a single functional",
+      "author": [
+        {
+          "family": "Owen",
+          "given": "Art B."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1988
+          ]
+        ]
+      },
+      "container-title": "Biometrika",
+      "URL": "https://academic.oup.com/biomet/article-abstract/75/2/237/292883",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1093/biomet/75.2.237",
+      "volume": "75",
+      "issue": "2",
+      "page": "237-249"
+    },
+    {
+      "id": "newey-smith-2004",
+      "type": "article-journal",
+      "title": "Higher Order Properties of GMM and Generalized Empirical Likelihood Estimators",
+      "author": [
+        {
+          "family": "Newey",
+          "given": "Whitney K."
+        },
+        {
+          "family": "Smith",
+          "given": "Richard J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2004
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2004.00482.x",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Higher-order bias is not finite-sample unbiasedness; expansions and assumptions remain unformalized.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/j.1468-0262.2004.00482.x",
+      "volume": "72",
+      "issue": "1",
+      "page": "219-255"
+    },
+    {
+      "id": "mundlak-1978",
+      "type": "article-journal",
+      "title": "On the Pooling of Time Series and Cross Section Data",
+      "author": [
+        {
+          "family": "Mundlak",
+          "given": "Yair"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1978
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://people.stern.nyu.edu/wgreene/Econometrics/Mundlak-1978.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Panel mean-model and correlated-effect provenance. DOI omitted because it was not directly verified in this search.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "46",
+      "issue": "1",
+      "page": "69-85"
+    },
+    {
+      "id": "fama-macbeth-1973",
+      "type": "article-journal",
+      "title": "Risk, Return, and Equilibrium: Empirical Tests",
+      "author": [
+        {
+          "family": "Fama",
+          "given": "Eugene F."
+        },
+        {
+          "family": "MacBeth",
+          "given": "James D."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1973
+          ]
+        ]
+      },
+      "container-title": "Journal of Political Economy",
+      "URL": "https://www.journals.uchicago.edu/doi/10.1086/260061",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1086/260061",
+      "volume": "81",
+      "issue": "3",
+      "page": "607-636"
+    },
+    {
+      "id": "liang-zeger-1986",
+      "type": "article-journal",
+      "title": "Longitudinal data analysis using generalized linear models",
+      "author": [
+        {
+          "family": "Liang",
+          "given": "Kung-Yee"
+        },
+        {
+          "family": "Zeger",
+          "given": "Scott L."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1986
+          ]
+        ]
+      },
+      "container-title": "Biometrika",
+      "URL": "https://academic.oup.com/biomet/article-abstract/73/1/13/246001",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Estimating equations and sandwich background; citation does not imply STATADIC implements every GEE model.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1093/biomet/73.1.13",
+      "volume": "73",
+      "issue": "1",
+      "page": "13-22"
+    },
+    {
+      "id": "cameron-gelbach-miller-2011",
+      "type": "article-journal",
+      "title": "Robust Inference With Multiway Clustering",
+      "author": [
+        {
+          "family": "Cameron",
+          "given": "A. Colin"
+        },
+        {
+          "family": "Gelbach",
+          "given": "Jonah B."
+        },
+        {
+          "family": "Miller",
+          "given": "Douglas L."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2011
+          ]
+        ]
+      },
+      "container-title": "Journal of Business & Economic Statistics",
+      "URL": "https://www.tandfonline.com/doi/abs/10.1198/jbes.2010.07136",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1198/jbes.2010.07136",
+      "volume": "29",
+      "issue": "2",
+      "page": "238-249"
+    },
+    {
+      "id": "driscoll-kraay-1998",
+      "type": "article-journal",
+      "title": "Consistent Covariance Matrix Estimation with Spatially Dependent Panel Data",
+      "author": [
+        {
+          "family": "Driscoll",
+          "given": "John C."
+        },
+        {
+          "family": "Kraay",
+          "given": "Aart C."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1998
+          ]
+        ]
+      },
+      "container-title": "The Review of Economics and Statistics",
+      "URL": "https://doi.org/10.1162/003465398557825",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Large-time-dimension dependence assumptions matter; not an unconditional finite-sample robustness claim.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1162/003465398557825",
+      "volume": "80",
+      "issue": "4",
+      "page": "549-560"
+    },
+    {
+      "id": "kelejian-prucha-1998",
+      "type": "article-journal",
+      "title": "A Generalized Spatial Two-Stage Least Squares Procedure for Estimating a Spatial Autoregressive Model with Autoregressive Disturbances",
+      "author": [
+        {
+          "family": "Kelejian",
+          "given": "Harry H."
+        },
+        {
+          "family": "Prucha",
+          "given": "Ingmar R."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1998
+          ]
+        ]
+      },
+      "container-title": "The Journal of Real Estate Finance and Economics",
+      "URL": "https://www.econ.umd.edu/publication/generalized-spatial-two-stage-least-squares-procedure-estimating-spatial-autoregressive",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "17",
+      "page": "99-121"
+    },
+    {
+      "id": "kelejian-prucha-1999",
+      "type": "article-journal",
+      "title": "A Generalized Moments Estimator for the Autoregressive Parameter in a Spatial Model",
+      "author": [
+        {
+          "family": "Kelejian",
+          "given": "Harry H."
+        },
+        {
+          "family": "Prucha",
+          "given": "Ingmar R."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1999
+          ]
+        ]
+      },
+      "container-title": "International Economic Review",
+      "URL": "https://onlinelibrary.wiley.com/doi/10.1111/1468-2354.00027",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/1468-2354.00027",
+      "volume": "40",
+      "issue": "2",
+      "page": "509-533"
+    },
+    {
+      "id": "lee-2004",
+      "type": "article-journal",
+      "title": "Asymptotic Distributions of Quasi-Maximum Likelihood Estimators for Spatial Autoregressive Models",
+      "author": [
+        {
+          "family": "Lee",
+          "given": "Lung-fei"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2004
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://doi.org/10.1111/j.1468-0262.2004.00558.x",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/j.1468-0262.2004.00558.x",
+      "volume": "72",
+      "issue": "6",
+      "page": "1899-1925"
+    },
+    {
+      "id": "kapoor-kelejian-prucha-2007",
+      "type": "article-journal",
+      "title": "Panel data models with spatially correlated error components",
+      "author": [
+        {
+          "family": "Kapoor",
+          "given": "Mudit"
+        },
+        {
+          "family": "Kelejian",
+          "given": "Harry H."
+        },
+        {
+          "family": "Prucha",
+          "given": "Ingmar R."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2007
+          ]
+        ]
+      },
+      "container-title": "Journal of Econometrics",
+      "URL": "https://www.sciencedirect.com/science/article/pii/S0304407606002259",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Spatial-panel source. Exact model and moment conventions must be matched; hybrid survival guarantees do not follow.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "140",
+      "issue": "1",
+      "page": "97-130"
+    },
+    {
+      "id": "kelejian-prucha-2010",
+      "type": "article-journal",
+      "title": "Specification and estimation of spatial autoregressive models with autoregressive and heteroskedastic disturbances",
+      "author": [
+        {
+          "family": "Kelejian",
+          "given": "Harry H."
+        },
+        {
+          "family": "Prucha",
+          "given": "Ingmar R."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "Journal of Econometrics",
+      "URL": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2888178/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/j.jeconom.2009.10.025"
+    },
+    {
+      "id": "wei-1992",
+      "type": "article-journal",
+      "title": "The accelerated failure time model: A useful alternative to the Cox regression model in survival analysis",
+      "author": [
+        {
+          "family": "Wei",
+          "given": "L. J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1992
+          ]
+        ]
+      },
+      "container-title": "Statistics in Medicine",
+      "URL": "https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4780111409",
+      "research": {
+        "role": "model-background",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "AFT background, not a direct proof for every implemented Weibull/lognormal censoring, truncation, recurrent-spell or spatial hybrid likelihood.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1002/sim.4780111409",
+      "volume": "11",
+      "issue": "14-15",
+      "page": "1871-1879"
+    },
+    {
+      "id": "aronow-samii-assenova-2015",
+      "type": "article-journal",
+      "title": "Cluster–Robust Variance Estimation for Dyadic Data",
+      "author": [
+        {
+          "family": "Aronow",
+          "given": "Peter M."
+        },
+        {
+          "family": "Samii",
+          "given": "Cyrus"
+        },
+        {
+          "family": "Assenova",
+          "given": "Valentina A."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2015
+          ]
+        ]
+      },
+      "container-title": "Political Analysis",
+      "URL": "https://www.cambridge.org/core/journals/political-analysis/article/abs/clusterrobust-variance-estimation-for-dyadic-data/D43E12BF35240100C7A4ED3C28912C95",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Dyadic covariance source; not a generic guarantee for all dyadic bootstrap schemes.",
+        "proof_status": "not-formalized-by-this-record"
+      }
+    },
+    {
+      "id": "hoerl-kennard-1970",
+      "type": "article-journal",
+      "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
+      "author": [
+        {
+          "family": "Hoerl",
+          "given": "Arthur E."
+        },
+        {
+          "family": "Kennard",
+          "given": "Robert W."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1970
+          ]
+        ]
+      },
+      "container-title": "Technometrics",
+      "URL": "https://www.tandfonline.com/doi/abs/10.1080/00401706.1970.10488634",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Original 1970 article, not later reprint DOI. New scalar-shrinkage lemma is supporting algebra, not the full multivariate ridge risk theorem.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1080/00401706.1970.10488634",
+      "volume": "12",
+      "issue": "1",
+      "page": "55-67"
+    },
+    {
+      "id": "ledoit-wolf-2004",
+      "type": "article-journal",
+      "title": "A well-conditioned estimator for large-dimensional covariance matrices",
+      "author": [
+        {
+          "family": "Ledoit",
+          "given": "Olivier"
+        },
+        {
+          "family": "Wolf",
+          "given": "Michael"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2004
+          ]
+        ]
+      },
+      "container-title": "Journal of Multivariate Analysis",
+      "URL": "https://www.sciencedirect.com/science/article/pii/S0047259X03000964",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Large-dimensional covariance shrinkage. New fixed scalar oracle result does not prove data-adaptive covariance shrinkage performance.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/S0047-259X(03)00096-4",
+      "volume": "88",
+      "issue": "2",
+      "page": "365-411"
+    },
+    {
+      "id": "chen-etal-2010",
+      "type": "article-journal",
+      "title": "Shrinkage Algorithms for MMSE Covariance Estimation",
+      "author": [
+        {
+          "family": "Chen",
+          "given": "Yilun"
+        },
+        {
+          "family": "Wiesel",
+          "given": "Ami"
+        },
+        {
+          "family": "Eldar",
+          "given": "Yonina C."
+        },
+        {
+          "family": "Hero",
+          "given": "Alfred O."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "IEEE Transactions on Signal Processing",
+      "URL": "https://ieeexplore.ieee.org/abstract/document/5484583",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Oracle-approximating/Rao–Blackwell shrinkage family. DOI omitted rather than inferred.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "58",
+      "issue": "10"
+    },
+    {
+      "id": "lo-2002",
+      "type": "article-journal",
+      "title": "The Statistics of Sharpe Ratios",
+      "author": [
+        {
+          "family": "Lo",
+          "given": "Andrew W."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2002
+          ]
+        ]
+      },
+      "container-title": "Financial Analysts Journal",
+      "URL": "https://rpc.cfainstitute.org/research/financial-analysts-journal/2002/the-statistics-of-sharpe-ratios",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "58",
+      "issue": "4",
+      "page": "36-52"
+    },
+    {
+      "id": "ledoit-wolf-2008",
+      "type": "article-journal",
+      "title": "Robust performance hypothesis testing with the Sharpe ratio",
+      "author": [
+        {
+          "family": "Ledoit",
+          "given": "Olivier"
+        },
+        {
+          "family": "Wolf",
+          "given": "Michael"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2008
+          ]
+        ]
+      },
+      "container-title": "Journal of Empirical Finance",
+      "URL": "https://www.ledoit.net/jef2008_abstract.htm",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/j.jempfin.2008.03.002",
+      "volume": "15",
+      "issue": "5",
+      "page": "850-859"
+    },
+    {
+      "id": "bailey-lopezdeprado-2014",
+      "type": "article-journal",
+      "title": "The Deflated Sharpe Ratio: Correcting for Selection Bias, Backtest Overfitting, and Non-Normality",
+      "author": [
+        {
+          "family": "Bailey",
+          "given": "David H."
+        },
+        {
+          "family": "López de Prado",
+          "given": "Marcos"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2014
+          ]
+        ]
+      },
+      "container-title": "The Journal of Portfolio Management",
+      "URL": "https://doi.org/10.3905/jpm.2014.40.5.094",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Selection and non-normality adjustment; no assumption-free immunity to adaptive research choices.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.3905/jpm.2014.40.5.094",
+      "volume": "40",
+      "issue": "5"
+    },
+    {
+      "id": "schoenberg-1938",
+      "type": "article-journal",
+      "title": "Metric Spaces and Positive Definite Functions",
+      "author": [
+        {
+          "family": "Schoenberg",
+          "given": "Isaac J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1938
+          ]
+        ]
+      },
+      "container-title": "Transactions of the American Mathematical Society",
+      "URL": "https://pages.stat.wisc.edu/~wahba/stat860/pdf1/schoenberg.1938.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "44",
+      "issue": "3",
+      "page": "522-536"
+    },
+    {
+      "id": "szekely-rizzo-bakirov-2007",
+      "type": "article-journal",
+      "title": "Measuring and testing dependence by correlation of distances",
+      "author": [
+        {
+          "family": "Székely",
+          "given": "Gábor J."
+        },
+        {
+          "family": "Rizzo",
+          "given": "Maria L."
+        },
+        {
+          "family": "Bakirov",
+          "given": "Nail K."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2007
+          ]
+        ]
+      },
+      "container-title": "The Annals of Statistics",
+      "URL": "https://doi.org/10.1214/009053607000000505",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/009053607000000505",
+      "volume": "35",
+      "issue": "6",
+      "page": "2769-2794"
+    },
+    {
+      "id": "szekely-rizzo-2013",
+      "type": "article-journal",
+      "title": "Energy statistics: A class of statistics based on distances",
+      "author": [
+        {
+          "family": "Székely",
+          "given": "Gábor J."
+        },
+        {
+          "family": "Rizzo",
+          "given": "Maria L."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2013
+          ]
+        ]
+      },
+      "container-title": "Journal of Statistical Planning and Inference",
+      "URL": "https://pages.stat.wisc.edu/~wahba/stat860public/pdf4/Energy/JSPI5102.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/j.jspi.2013.03.018"
+    },
+    {
+      "id": "gretton-etal-2012",
+      "type": "article-journal",
+      "title": "A Kernel Two-Sample Test",
+      "author": [
+        {
+          "family": "Gretton",
+          "given": "Arthur"
+        },
+        {
+          "family": "Borgwardt",
+          "given": "Karsten M."
+        },
+        {
+          "family": "Rasch",
+          "given": "Malte J."
+        },
+        {
+          "family": "Schölkopf",
+          "given": "Bernhard"
+        },
+        {
+          "family": "Smola",
+          "given": "Alexander"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2012
+          ]
+        ]
+      },
+      "container-title": "Journal of Machine Learning Research",
+      "URL": "https://jmlr.org/papers/v13/gretton12a.html",
+      "research": {
+        "role": "foundational",
+        "review_depth": "statement-and-page-image-reviewed",
+        "retrieved": "2026-11-01",
+        "note": "Lemma 6, equation (3), printed p. 728 visually inspected. U uses distinct within pairs and all cross pairs; new proofs assume corresponding pair moments on a finite law.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "13",
+      "page": "723-773"
+    },
+    {
+      "id": "sejdinovic-etal-2013",
+      "type": "article-journal",
+      "title": "Equivalence of distance-based and RKHS-based statistics in hypothesis testing",
+      "author": [
+        {
+          "family": "Sejdinovic",
+          "given": "Dino"
+        },
+        {
+          "family": "Sriperumbudur",
+          "given": "Bharath"
+        },
+        {
+          "family": "Gretton",
+          "given": "Arthur"
+        },
+        {
+          "family": "Fukumizu",
+          "given": "Kenji"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2013
+          ]
+        ]
+      },
+      "container-title": "The Annals of Statistics",
+      "URL": "https://arxiv.org/abs/1207.6076",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/13-AOS1140",
+      "volume": "41",
+      "issue": "5",
+      "page": "2263-2291"
+    },
+    {
+      "id": "rizzo-szekely-2010",
+      "type": "article-journal",
+      "title": "DISCO analysis: A nonparametric extension of analysis of variance",
+      "author": [
+        {
+          "family": "Rizzo",
+          "given": "Maria L."
+        },
+        {
+          "family": "Székely",
+          "given": "Gábor J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "The Annals of Applied Statistics",
+      "URL": "https://pages.stat.wisc.edu/~wahba/stat860public/pdf4/Energy/disco-AOAS245.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/09-AOAS245",
+      "volume": "4",
+      "issue": "2",
+      "page": "1034-1055"
+    },
+    {
+      "id": "gower-1966",
+      "type": "article-journal",
+      "title": "Some distance properties of latent root and vector methods used in multivariate analysis",
+      "author": [
+        {
+          "family": "Gower",
+          "given": "John C."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1966
+          ]
+        ]
+      },
+      "container-title": "Biometrika",
+      "URL": "https://academic.oup.com/biomet/article-abstract/53/3-4/325/246598",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1093/biomet/53.3-4.325",
+      "volume": "53",
+      "issue": "3-4",
+      "page": "325-338"
+    },
+    {
+      "id": "anderson-2006",
+      "type": "article-journal",
+      "title": "Distance-Based Tests for Homogeneity of Multivariate Dispersions",
+      "author": [
+        {
+          "family": "Anderson",
+          "given": "Marti J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2006
+          ]
+        ]
+      },
+      "container-title": "Biometrics",
+      "URL": "https://doi.org/10.1111/j.1541-0420.2005.00440.x",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/j.1541-0420.2005.00440.x",
+      "volume": "62",
+      "issue": "1",
+      "page": "245-253"
+    },
+    {
+      "id": "mantel-1967",
+      "type": "article-journal",
+      "title": "The Detection of Disease Clustering and a Generalized Regression Approach",
+      "author": [
+        {
+          "family": "Mantel",
+          "given": "Nathan"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1967
+          ]
+        ]
+      },
+      "container-title": "Cancer Research",
+      "URL": "https://aacrjournals.org/cancerres/article/27/2_Part_1/209/476508/The-Detection-of-Disease-Clustering-and-a",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "27",
+      "issue": "2 Part 1",
+      "page": "209-220"
+    },
+    {
+      "id": "vardi-zhang-2000",
+      "type": "article-journal",
+      "title": "The multivariate L1-median and associated data depth",
+      "author": [
+        {
+          "family": "Vardi",
+          "given": "Yehuda"
+        },
+        {
+          "family": "Zhang",
+          "given": "Cun-Hui"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2000
+          ]
+        ]
+      },
+      "container-title": "Proceedings of the National Academy of Sciences",
+      "URL": "https://pmc.ncbi.nlm.nih.gov/articles/PMC26449/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1073/pnas.97.4.1423",
+      "volume": "97",
+      "issue": "4",
+      "page": "1423-1426"
+    },
+    {
+      "id": "agueh-carlier-2011",
+      "type": "article-journal",
+      "title": "Barycenters in the Wasserstein Space",
+      "author": [
+        {
+          "family": "Agueh",
+          "given": "Martial"
+        },
+        {
+          "family": "Carlier",
+          "given": "Guillaume"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2011
+          ]
+        ]
+      },
+      "container-title": "SIAM Journal on Mathematical Analysis",
+      "URL": "https://epubs.siam.org/doi/10.1137/100805741",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1137/100805741",
+      "volume": "43",
+      "page": "904-924"
+    },
+    {
+      "id": "bonneel-etal-2015",
+      "type": "article-journal",
+      "title": "Sliced and Radon Wasserstein Barycenters of Measures",
+      "author": [
+        {
+          "family": "Bonneel",
+          "given": "Nicolas"
+        },
+        {
+          "family": "Rabin",
+          "given": "Julien"
+        },
+        {
+          "family": "Peyré",
+          "given": "Gabriel"
+        },
+        {
+          "family": "Pfister",
+          "given": "Hanspeter"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2015
+          ]
+        ]
+      },
+      "container-title": "Journal of Mathematical Imaging and Vision",
+      "URL": "https://researchportal.ip-paris.fr/en/publications/sliced-and-radon-wasserstein-barycenters-of-measures/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Online 2014, journal issue 2015. Finite projection designs need not inherit full distribution-separation guarantees.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1007/s10851-014-0506-3",
+      "volume": "51",
+      "issue": "1",
+      "page": "22-45"
+    },
+    {
+      "id": "kuhn-1955",
+      "type": "article-journal",
+      "title": "The Hungarian method for the assignment problem",
+      "author": [
+        {
+          "family": "Kuhn",
+          "given": "Harold W."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1955
+          ]
+        ]
+      },
+      "container-title": "Naval Research Logistics Quarterly",
+      "URL": "https://onlinelibrary.wiley.com/doi/10.1002/nav.3800020109",
+      "research": {
+        "role": "algorithm",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1002/nav.3800020109",
+      "volume": "2",
+      "issue": "1-2",
+      "page": "83-97"
+    },
+    {
+      "id": "peyre-cuturi-2019",
+      "type": "article-journal",
+      "title": "Computational Optimal Transport: With Applications to Data Science",
+      "author": [
+        {
+          "family": "Peyré",
+          "given": "Gabriel"
+        },
+        {
+          "family": "Cuturi",
+          "given": "Marco"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2019
+          ]
+        ]
+      },
+      "container-title": "Foundations and Trends in Machine Learning",
+      "URL": "https://www.nowpublishers.com/article/Details/MAL-073",
+      "research": {
+        "role": "survey",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Academic monograph/survey rather than the original source of every transport theorem; used for orientation.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1561/2200000073",
+      "volume": "11",
+      "issue": "5-6",
+      "page": "355-607"
+    },
+    {
+      "id": "hemerik-goeman-2018",
+      "type": "article-journal",
+      "title": "Exact testing with random permutations",
+      "author": [
+        {
+          "family": "Hemerik",
+          "given": "Jesse"
+        },
+        {
+          "family": "Goeman",
+          "given": "Jelle"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2018
+          ]
+        ]
+      },
+      "container-title": "TEST",
+      "URL": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6405018/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Distinguish full-group invariance from random-permutation construction, inclusion of identity, and tie conventions.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1007/s11749-017-0571-1",
+      "volume": "27",
+      "page": "811-825"
+    },
+    {
+      "id": "phipson-smyth-2010",
+      "type": "article-journal",
+      "title": "Permutation P-values Should Never Be Zero: Calculating Exact P-values When Permutations Are Randomly Drawn",
+      "author": [
+        {
+          "family": "Phipson",
+          "given": "Belinda"
+        },
+        {
+          "family": "Smyth",
+          "given": "Gordon K."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "Statistical Applications in Genetics and Molecular Biology",
+      "URL": "https://www.degruyterbrill.com/document/doi/10.2202/1544-6115.1585/html",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Add-one arithmetic alone is not a proof of randomization validity. Article 39.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.2202/1544-6115.1585",
+      "volume": "9",
+      "issue": "1"
+    },
+    {
+      "id": "efron-1979",
+      "type": "article-journal",
+      "title": "Bootstrap Methods: Another Look at the Jackknife",
+      "author": [
+        {
+          "family": "Efron",
+          "given": "Bradley"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1979
+          ]
+        ]
+      },
+      "container-title": "The Annals of Statistics",
+      "URL": "https://doi.org/10.1214/aos/1176344552",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/aos/1176344552",
+      "volume": "7",
+      "issue": "1",
+      "page": "1-26"
+    },
+    {
+      "id": "kunsch-1989",
+      "type": "article-journal",
+      "title": "The Jackknife and the Bootstrap for General Stationary Observations",
+      "author": [
+        {
+          "family": "Künsch",
+          "given": "Hans R."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1989
+          ]
+        ]
+      },
+      "container-title": "The Annals of Statistics",
+      "URL": "https://people.math.ethz.ch/~hkuensch/papers/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "17",
+      "issue": "3",
+      "page": "1217-1241"
+    },
+    {
+      "id": "politis-romano-1994",
+      "type": "article-journal",
+      "title": "The Stationary Bootstrap",
+      "author": [
+        {
+          "family": "Politis",
+          "given": "Dimitris N."
+        },
+        {
+          "family": "Romano",
+          "given": "Joseph P."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1994
+          ]
+        ]
+      },
+      "container-title": "Journal of the American Statistical Association",
+      "URL": "https://doi.org/10.1080/01621459.1994.10476870",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1080/01621459.1994.10476870",
+      "volume": "89",
+      "issue": "428",
+      "page": "1303-1313"
+    },
+    {
+      "id": "politis-white-2004",
+      "type": "article-journal",
+      "title": "Automatic Block-Length Selection for the Dependent Bootstrap",
+      "author": [
+        {
+          "family": "Politis",
+          "given": "Dimitris N."
+        },
+        {
+          "family": "White",
+          "given": "Halbert"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2004
+          ]
+        ]
+      },
+      "container-title": "Econometric Reviews",
+      "URL": "https://www.tandfonline.com/doi/abs/10.1081/ETC-120028836",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Must be read with Patton–Politis–White (2009) correction; do not use original stationary-bootstrap constant without review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1081/ETC-120028836",
+      "volume": "23",
+      "issue": "1",
+      "page": "53-70"
+    },
+    {
+      "id": "patton-politis-white-2009",
+      "type": "article-journal",
+      "title": "Correction to “Automatic Block-Length Selection for the Dependent Bootstrap” by D. Politis and H. White",
+      "author": [
+        {
+          "family": "Patton",
+          "given": "Andrew"
+        },
+        {
+          "family": "Politis",
+          "given": "Dimitris N."
+        },
+        {
+          "family": "White",
+          "given": "Halbert"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2009
+          ]
+        ]
+      },
+      "container-title": "Econometric Reviews",
+      "URL": "https://www.tandfonline.com/doi/full/10.1080/07474930802459016",
+      "research": {
+        "role": "correction",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Correction to the stationary-bootstrap block-size algorithm and relevant theoretical constants.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1080/07474930802459016",
+      "volume": "28",
+      "issue": "4",
+      "page": "372-375"
+    },
+    {
+      "id": "holm-1979",
+      "type": "article-journal",
+      "title": "A Simple Sequentially Rejective Multiple Test Procedure",
+      "author": [
+        {
+          "family": "Holm",
+          "given": "Sture"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1979
+          ]
+        ]
+      },
+      "container-title": "Scandinavian Journal of Statistics",
+      "URL": "https://www.jstor.org/stable/4615733",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Primary full text not accessible here. Only the union-bound supporting result is newly formalized; Holm’s complete ordering proof remains open.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "6",
+      "issue": "2",
+      "page": "65-70"
+    },
+    {
+      "id": "benjamini-hochberg-1995",
+      "type": "article-journal",
+      "title": "Controlling the False Discovery Rate: A Practical and Powerful Approach to Multiple Testing",
+      "author": [
+        {
+          "family": "Benjamini",
+          "given": "Yoav"
+        },
+        {
+          "family": "Hochberg",
+          "given": "Yosef"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1995
+          ]
+        ]
+      },
+      "container-title": "Journal of the Royal Statistical Society: Series B",
+      "URL": "https://academic.oup.com/jrsssb/article/57/1/289/7035855",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Original independence conditions matter; not arbitrary-dependence FDR control.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/j.2517-6161.1995.tb02031.x",
+      "volume": "57",
+      "issue": "1",
+      "page": "289-300"
+    },
+    {
+      "id": "romano-wolf-2005",
+      "type": "article-journal",
+      "title": "Stepwise Multiple Testing as Formalized Data Snooping",
+      "author": [
+        {
+          "family": "Romano",
+          "given": "Joseph P."
+        },
+        {
+          "family": "Wolf",
+          "given": "Michael"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2005
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2005.00615.x",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1111/j.1468-0262.2005.00615.x",
+      "volume": "73",
+      "issue": "4",
+      "page": "1237-1282"
+    },
+    {
+      "id": "schuirmann-1987",
+      "type": "article-journal",
+      "title": "A comparison of the two one-sided tests procedure and the power approach for assessing the equivalence of average bioavailability",
+      "author": [
+        {
+          "family": "Schuirmann",
+          "given": "Donald J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1987
+          ]
+        ]
+      },
+      "container-title": "Journal of Pharmacokinetics and Biopharmaceutics",
+      "URL": "https://doi.org/10.1007/BF01068419",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1007/BF01068419",
+      "volume": "15",
+      "issue": "6",
+      "page": "657-680"
+    },
+    {
+      "id": "berger-hsu-1996",
+      "type": "article-journal",
+      "title": "Bioequivalence Trials, Intersection–Union Tests and Equivalence Confidence Sets",
+      "author": [
+        {
+          "family": "Berger",
+          "given": "Roger L."
+        },
+        {
+          "family": "Hsu",
+          "given": "Jason C."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1996
+          ]
+        ]
+      },
+      "container-title": "Statistical Science",
+      "URL": "https://www.public.asu.edu/~rlberge1/papers/statsci96.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "full-statement-parsed",
+        "retrieved": "2026-11-01",
+        "note": "Section 3, Theorem 1, p. 288 parsed and reviewed. Page image blocked by host access policy. New result is finite-law two-component level bound, not exact-size or optimal-power theorem.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "11",
+      "issue": "4",
+      "page": "283-319"
+    },
+    {
+      "id": "andrews-soares-2010",
+      "type": "article-journal",
+      "title": "Inference for Parameters Defined by Moment Inequalities Using Generalized Moment Selection",
+      "author": [
+        {
+          "family": "Andrews",
+          "given": "Donald W. K."
+        },
+        {
+          "family": "Soares",
+          "given": "Gustavo"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://onlinelibrary.wiley.com/doi/10.3982/ECTA7502",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.3982/ECTA7502",
+      "volume": "78",
+      "issue": "1",
+      "page": "119-157"
+    },
+    {
+      "id": "wolak-1989",
+      "type": "article-journal",
+      "title": "Testing inequality constraints in linear econometric models",
+      "author": [
+        {
+          "family": "Wolak",
+          "given": "Frank A."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1989
+          ]
+        ]
+      },
+      "container-title": "Journal of Econometrics",
+      "URL": "https://www.sciencedirect.com/science/article/pii/0304407689900948",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "41",
+      "issue": "2",
+      "page": "205-235"
+    },
+    {
+      "id": "genz-1992",
+      "type": "article-journal",
+      "title": "Numerical Computation of Multivariate Normal Probabilities",
+      "author": [
+        {
+          "family": "Genz",
+          "given": "Alan"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1992
+          ]
+        ]
+      },
+      "container-title": "Journal of Computational and Graphical Statistics",
+      "URL": "https://www.tandfonline.com/doi/abs/10.1080/10618600.1992.10477010",
+      "research": {
+        "role": "algorithm",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1080/10618600.1992.10477010",
+      "volume": "1",
+      "issue": "2"
+    },
+    {
+      "id": "golub-welsch-1969",
+      "type": "article-journal",
+      "title": "Calculation of Gauss quadrature rules",
+      "author": [
+        {
+          "family": "Golub",
+          "given": "Gene H."
+        },
+        {
+          "family": "Welsch",
+          "given": "John H."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1969
+          ]
+        ]
+      },
+      "container-title": "Mathematics of Computation",
+      "URL": "https://doi.org/10.1090/S0025-5718-69-99647-1",
+      "research": {
+        "role": "algorithm",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1090/S0025-5718-69-99647-1",
+      "volume": "23",
+      "issue": "106",
+      "page": "221-230"
+    },
+    {
+      "id": "higham-1988",
+      "type": "article-journal",
+      "title": "Computing a nearest symmetric positive semidefinite matrix",
+      "author": [
+        {
+          "family": "Higham",
+          "given": "Nicholas J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1988
+          ]
+        ]
+      },
+      "container-title": "Linear Algebra and its Applications",
+      "URL": "https://www.sciencedirect.com/science/article/pii/0024379588902236",
+      "research": {
+        "role": "algorithm",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Candidate method-family source. Exact implementation correspondence and complete theorem coverage require review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1016/0024-3795(88)90223-6",
+      "volume": "103",
+      "page": "103-118"
+    },
+    {
+      "id": "kuhn-tucker-1951",
+      "type": "paper-conference",
+      "title": "Nonlinear Programming",
+      "author": [
+        {
+          "family": "Kuhn",
+          "given": "Harold W."
+        },
+        {
+          "family": "Tucker",
+          "given": "Albert W."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1951
+          ]
+        ]
+      },
+      "container-title": "Proceedings of the Second Berkeley Symposium on Mathematical Statistics and Probability",
+      "URL": "https://digicoll.lib.berkeley.edu/record/112776",
+      "research": {
+        "role": "optimality",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Necessary conditions need constraint qualifications; sufficiency needs appropriate convexity. No numerical solver convergence is proved in this bundle.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "page": "481-492"
+    },
+    {
+      "id": "rao-1945",
+      "type": "article-journal",
+      "title": "Information and accuracy attainable in the estimation of statistical parameters",
+      "author": [
+        {
+          "family": "Rao",
+          "given": "C. Radhakrishna"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1945
+          ]
+        ]
+      },
+      "container-title": "Bulletin of the Calcutta Mathematical Society",
+      "URL": "https://repository.ias.ac.in/71593/",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Primary institution metadata located; direct fetch returned HTTP 403. New finite information inequality is a proof step only, with the score cross-moment supplied as a premise.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "37",
+      "issue": "3",
+      "page": "81-91"
+    },
+    {
+      "id": "morris-white-crowther-2019",
+      "type": "article-journal",
+      "title": "Using simulation studies to evaluate statistical methods",
+      "author": [
+        {
+          "family": "Morris",
+          "given": "Tim P."
+        },
+        {
+          "family": "White",
+          "given": "Ian R."
+        },
+        {
+          "family": "Crowther",
+          "given": "Michael J."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2019
+          ]
+        ]
+      },
+      "container-title": "Statistics in Medicine",
+      "URL": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6492164/",
+      "research": {
+        "role": "validation",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Design simulations by aims, data-generating mechanisms, estimands, methods, and performance measures; retain Monte Carlo error and failures.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1002/sim.8086",
+      "volume": "38",
+      "issue": "11",
+      "page": "2074-2102"
+    },
+    {
+      "id": "hoeffding-1948",
+      "type": "article-journal",
+      "title": "A Class of Statistics with Asymptotically Normal Distribution",
+      "author": [
+        {
+          "family": "Hoeffding",
+          "given": "Wassily"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1948
+          ]
+        ]
+      },
+      "container-title": "The Annals of Mathematical Statistics",
+      "URL": "https://www.jstor.org/stable/i312755",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Original U-statistics foundation identified in the journal issue. DOI resolver was inaccessible; no asymptotic-normality proof is supplied in this bundle.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "19",
+      "issue": "3",
+      "page": "293-325"
+    },
+    {
+      "id": "sriperumbudur-etal-2010",
+      "type": "article-journal",
+      "title": "Hilbert Space Embeddings and Metrics on Probability Measures",
+      "author": [
+        {
+          "family": "Sriperumbudur",
+          "given": "Bharath K."
+        },
+        {
+          "family": "Gretton",
+          "given": "Arthur"
+        },
+        {
+          "family": "Fukumizu",
+          "given": "Kenji"
+        },
+        {
+          "family": "Schölkopf",
+          "given": "Bernhard"
+        },
+        {
+          "family": "Lanckriet",
+          "given": "Gert R. G."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2010
+          ]
+        ]
+      },
+      "container-title": "Journal of Machine Learning Research",
+      "URL": "https://www.jmlr.org/papers/v11/sriperumbudur10a.html",
+      "research": {
+        "role": "foundational",
+        "review_depth": "publisher-abstract",
+        "retrieved": "2026-11-01",
+        "note": "Characteristic-kernel and embedding conditions; finite empirical unbiasedness does not establish distribution separation.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "11",
+      "issue": "50",
+      "page": "1517-1561"
+    },
+    {
+      "id": "lyons-2013",
+      "type": "article-journal",
+      "title": "Distance covariance in metric spaces",
+      "author": [
+        {
+          "family": "Lyons",
+          "given": "Russell"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2013
+          ]
+        ]
+      },
+      "container-title": "The Annals of Probability",
+      "URL": "https://rdlyons.pages.iu.edu/pdf/dcov-published.pdf",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Read with Lyons 2018 errata before selecting any theorem. Strong negative type and integration assumptions are separate obligations; not formalized here.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/12-AOP803",
+      "volume": "41",
+      "issue": "5",
+      "page": "3284-3305"
+    },
+    {
+      "id": "lyons-2018-errata",
+      "type": "article-journal",
+      "title": "Errata to “Distance covariance in metric spaces”",
+      "author": [
+        {
+          "family": "Lyons",
+          "given": "Russell"
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            2018
+          ]
+        ]
+      },
+      "container-title": "The Annals of Probability",
+      "URL": "https://scholarworks.iu.edu/dspace/items/5c7cbd93-72a1-4834-a5fe-e7b51359155d",
+      "research": {
+        "role": "correction",
+        "review_depth": "institutional-record",
+        "retrieved": "2026-11-01",
+        "note": "Corrects statements and proofs in Lyons 2013; mandatory companion when reviewing the affected results.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "DOI": "10.1214/17-AOP1233",
+      "volume": "46",
+      "issue": "4"
+    },
+    {
+      "id": "swamy-arora-1972",
+      "type": "article-journal",
+      "title": "The Exact Finite Sample Properties of the Estimators of Coefficients in the Error Components Regression Models",
+      "author": [
+        {
+          "family": "Swamy",
+          "given": "P. A. V. B."
+        },
+        {
+          "family": "Arora",
+          "given": "S. S."
+        }
+      ],
+      "issued": {
+        "date-parts": [
+          [
+            1972
+          ]
+        ]
+      },
+      "container-title": "Econometrica",
+      "URL": "https://www.jstor.org/stable/1909405",
+      "research": {
+        "role": "foundational",
+        "review_depth": "primary-search-record",
+        "retrieved": "2026-11-01",
+        "note": "Random-effects/error-components source. Journal issue and article identity located; article text was not accessible. No finite-sample guarantee is imported without source review.",
+        "proof_status": "not-formalized-by-this-record"
+      },
+      "volume": "40",
+      "issue": "2",
+      "page": "261-275"
+    }
+  ]
+}

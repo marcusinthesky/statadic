@@ -1,0 +1,29 @@
+{
+  "source_url": "https://jmlr.org/papers/volume13/gretton12a/gretton12a.pdf",
+  "statement_locations": [
+    "Lemma 6, equation (3), p. 728",
+    "Lemma 4 and its proof (§2.2), and the biased empirical kernel formula (§2.2, eq. 5, p. 729)",
+    "Lemma 4 (§2.2), squared Hilbert norm of the mean-embedding difference; empirical expression (5), p. 729",
+    "Section 2.2, equation (5), p. 729, the within/cross/within empirical kernel sum",
+    "Equation (5), p. 729"
+  ],
+  "proof_locations": [
+    "Lemma 6 proof, p. 729, empirical U-statistic and sample-average argument",
+    "Lemma 4 identifies the mean-embedding norm. The derivation preceding (5) substitutes sample means. STATADIC's real-weight, shared-reference linear-kernel reduction is proved in its Lean module.",
+    "Lemma 4 supplies the squared-norm representation. The nonnegativity proof for STATADIC's equal-total, possibly signed linear-kernel weights applies STATADIC-MMD-002.",
+    "The paragraph before (5) derives the empirical sums. Zero-weight padding is a STATADIC refinement proved by splitting the finite sums into original and padded indices.",
+    "Lemma 6 proof, empirical feature-space mean expansion, p. 729",
+    "Lemma 6 proof, observation that the U estimate may be negative, p. 729"
+  ],
+  "claim_ids": [
+    "STATADIC-MMD-001",
+    "STATADIC-MMD-002",
+    "STATADIC-MMD-003",
+    "STATADIC-MMD-006",
+    "STATADIC-MMD-004",
+    "STATADIC-MMD-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Gretton et al. supply the original mean-embedding and empirical MMD formulas. The registry distinguishes the finite-moment proof step from STATADIC's weighted, linear-kernel and zero-padding refinements. This dossier does not certify IID assumptions or numerical execution.",
+  "source_review": "Integrating-agent comparison of Lemma 6, equation (3), and its empirical-estimator proof step, pp. 728–729; human semantic review pending."
+}

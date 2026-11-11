@@ -1,0 +1,9 @@
+{% if rows %}
+| Record | Description |
+| --- | --- |
+{% for row in rows %}
+| [{{ row.label | replace('\\', '\\\\') | replace('[', '\\[') | replace(']', '\\]') | replace('|', '\\|') }}]({{ row.path | relative_to(this.directory) }}) | {{ row.description | replace('\\', '\\\\') | replace('|', '\\|') | replace('\n', ' ') }} |
+{% endfor %}
+{% else %}
+_No records yet._
+{% endif %}

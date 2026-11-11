@@ -1,0 +1,23 @@
+{
+  "source_url": "https://jhanley.biostat.mcgill.ca/bios601/Likelihood/NelderWedderburn1972.pdf",
+  "statement_locations": [
+    "Section 2.1, pp. 372–373, working weights and modified dependent variate",
+    "Canonical exponential-family model and log-link Poisson mean in the GLM framework, pp. 370–373.",
+    "§2.1, pp. 372–373, score equation (7), expected curvature (8) and canonical working weights."
+  ],
+  "proof_locations": [
+    "Section 2.1, p. 373, from score equation (7) and expected second derivative (8) to the linear system (9)",
+    "Collect each row’s exposure and count contributions into their totals. Canonical exponential-family model and log-link Poisson mean in the GLM framework, pp. 370–373.",
+    "Rewrite the two softplus terms as the canonical likelihood, differentiate the softplus, then differentiate the logistic mean.",
+    "Differentiate the linear term and exponential cumulant twice, holding the offset fixed."
+  ],
+  "claim_ids": [
+    "STATADIC-GLM-001",
+    "STATADIC-POISSON-001",
+    "STATADIC-GLM-002",
+    "STATADIC-GLM-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry states the assumptions, exact scope and Python correspondence.",
+  "source_review": "Compared the source equations with the mathematical statement and listed restrictions. Human semantic review pending."
+}

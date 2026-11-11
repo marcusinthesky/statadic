@@ -1,0 +1,17 @@
+{
+  "source_url": "https://doi.org/10.1093/biomet/62.2.441",
+  "statement_locations": [
+    "Pages 441–442, choosing an effect on one portion and evaluating it on an independent portion."
+  ],
+  "proof_locations": [
+    "Integrate the held-out bound over training outcomes in the true-null event using the product law.",
+    "Enumerate the union of the first row and first column of the 20 by 20 rank grid. The example is derived here."
+  ],
+  "claim_ids": [
+    "STATADIC-SELECTION-001",
+    "STATADIC-SELECTION-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Claim records distinguish published arguments from derived specializations and counterexamples.",
+  "source_review": "Source and implementation compared. Human semantic review pending."
+}

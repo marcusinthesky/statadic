@@ -1,0 +1,15 @@
+{
+  "source_url": "https://doi.org/10.1017/CBO9780511802256",
+  "statement_locations": [
+    "Chapter 2, Lemmas 2.2 (portmanteau) and 2.8 (Slutsky)."
+  ],
+  "proof_locations": [
+    "Use Slutsky with the inverse scale, then portmanteau for continuity sets. Positive finite-sample scale gives the two-sided interval membership identity."
+  ],
+  "claim_ids": [
+    "STATADIC-WALD-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Claim records distinguish published arguments from derived specializations and counterexamples.",
+  "source_review": "Source and implementation compared. Human semantic review pending."
+}

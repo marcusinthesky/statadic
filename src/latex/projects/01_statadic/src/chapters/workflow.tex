@@ -1,0 +1,90 @@
+\section{Workflow}\label{sec:workflow}
+
+\Cref{lst:ols} fits ordinary least squares once and attaches two
+heteroskedasticity-consistent covariance procedures
+\citep{white-1980,mackinnon-white-1985} to the retained fit.
+
+\lstinputlisting[float=t,caption={Two covariance procedures on one retained
+fit.},label={lst:ols}]{listings/ols.py}
+
+The coefficients do not change with the covariance procedure. Here the slope
+estimate is \jcnum{ols-hc3-x-estimate} under both, while its standard error
+is \jcnum{ols-hc0-x-se} under HC0 and \jcnum{ols-hc3-x-se} under
+HC3. The normal reference behind the 95\% interval
+$[\jcnum{ols-hc3-x-lower}, \jcnum{ols-hc3-x-upper}]$ is chosen explicitly
+when the report is formed. Requesting a covariance does not select a reference
+distribution, and \texttt{report} computes no default $p$-values. Replacing
+HC0 with HC3 changes the uncertainty estimate, but it is not a new point
+estimator, and neither procedure is thereby shown to have accurate
+finite-sample coverage (\cref{sec:coverage}).
+
+\Cref{lst:poisson} carries a Poisson regression with exposure from fitting to
+publication outputs. Given arrays \texttt{load}, \texttt{hours} and
+\texttt{incidents} for \jcnum{poisson-n-observations} facilities, the model sets
+$\log \mu_i = \beta_0 + \beta_1 \mathrm{load}_i + \log \mathrm{hours}_i$, so
+exposure enters with coefficient one rather than as an estimated regressor.
+STATADIC supports model-based, HC0 and HC1 covariance for this family and rejects
+HC2 and HC3.
+
+\lstinputlisting[float=t,caption={From a Poisson fit to publication outputs.},
+label={lst:poisson}]{listings/poisson.py}
+
+The model is fitted directly from a mapping of named arrays; eager Arrow,
+Polars and pandas tables are accepted in the same position. Only the declared
+roles are read, and explicit 64-bit inputs are rejected rather than narrowed
+when JAX's 64-bit mode is off. Each prediction kind requires only the roles it
+uses. The expected count needs the exposure, but the rate per unit of exposure
+does not, so the listing predicts it from \texttt{load} alone.
+
+The listing produces three kinds of output, each with a deliberately narrow
+capability:
+\begin{itemize}
+  \item \texttt{Report} retains unrounded estimates, availability states,
+    metrics and metadata. It renders them as text, HTML or a LaTeX tabular
+    without refitting. \Cref{tab:poisson} is that tabular, included unchanged:
+    columns that no row populates are omitted, numbers are set in math mode, a
+    visible note states the confidence level, reference distribution and
+    covariance, and the remaining metadata are kept as TeX comments.
+  \item \texttt{PlotSpec} retains precomputed coordinates and renders them
+    through Matplotlib or as native PGFplots source.
+    \texttt{prediction\_line} evaluates the fitted predictor on the grid and
+    retains the resulting coordinates without computing anything else.
+    \Cref{fig:rate} is the PGFplots source, included unchanged. Because
+    PGFplots keeps axes and coordinates in TeX, the manuscript controls
+    typography and styling.
+  \item \texttt{fit.save\_predictor} writes a prediction artifact: a JSON
+    manifest with schema version \jcvalue{artifact-schema-version} and a
+    checksummed little-endian payload of \jcvalue{artifact-payload-bytes}
+    bytes for the two coefficients.
+\end{itemize}
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{The HC1 inference report of \cref{lst:poisson}, rendered by
+  \texttt{Report.to\_latex} and included unchanged.}
+  \label{tab:poisson}
+  \input{generated/poisson-report}
+\end{table}
+
+Loading the artifact restores only the capability
+\texttt{\jcvalue{artifact-capabilities}}, with the fitted design and the
+exposure role. Its expected counts and rates on new rows match the live fit's,
+with a maximum absolute difference of \jcnum{artifact-prediction-difference},
+but it does not restore covariance, identification evidence or inference. An
+analysis snapshot likewise restores only
+\texttt{\jcvalue{snapshot-capabilities}}, and re-rendering it reproduces the
+original LaTeX exactly. Plot labels written as raw TeX are refused on loading
+unless the caller declares the snapshot trusted. Neither artifact uses Python
+object serialization.
+
+\begin{figure}[t]
+  \centering
+  \input{generated/poisson-rate}
+  \caption{Fitted Poisson incident rate per hour of exposure, built by
+    \texttt{prediction\_line} and rendered by \texttt{PlotSpec.to\_pgfplots}
+    in \cref{lst:poisson}. The estimated slope is
+    \jcnum{poisson-load-estimate}, with an HC1 standard error of
+  \jcnum{poisson-load-se}.}
+  \label{fig:rate}
+\end{figure}

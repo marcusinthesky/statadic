@@ -1,0 +1,22 @@
+{
+  "source_url": "https://www.econstor.eu/bitstream/10419/189084/1/qed_wp_0537.pdf",
+  "statement_locations": [
+    "Section 2, equations (7)–(9), residual second moment and HC2 correction",
+    "Section 2, equations (7)–(9) and the surrounding leverage correction discussion; the STATADIC HC3 convention is the uncentered residual inflation described in Long and Ervin (2000), §2."
+  ],
+  "proof_locations": [
+    "Section 2, equation (7) and preceding discussion; finite homoskedastic specialization",
+    "Expand the variance of the fixed linear combination and cancel off-diagonal covariances. This derivation uses the stated sufficient assumptions; Section 2, equations (7)–(9) and the surrounding leverage correction discussion; the STATADIC HC3 convention is the uncentered residual inflation described in Long and Ervin (2000), §2.",
+    "Sandwich each inverse row factor between one and its maximum over the leverage interval. This derivation uses the stated sufficient assumptions; Section 2, equations (7)–(9) and the surrounding leverage correction discussion; the STATADIC HC3 convention is the uncentered residual inflation described in Long and Ervin (2000), §2.",
+    "Combine diffuse oracle squared-error concentration with the fitted residual replacement bound. This derivation uses the stated sufficient assumptions; Section 2, equations (7)–(9) and the surrounding leverage correction discussion; the STATADIC HC3 convention is the uncentered residual inflation described in Long and Ervin (2000), §2."
+  ],
+  "claim_ids": [
+    "STATADIC-LINEAR-008",
+    "STATADIC-HC-001",
+    "STATADIC-HC-003",
+    "STATADIC-HC-004"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim specializes the residual moment to spherical second moments and finite laws; it does not prove heteroskedastic unbiasedness or asymptotic results. The accessible source is the authors' 1985 revised working paper.",
+  "source_review": "Independent agent comparison on 2026-11-06; human semantic review pending."
+}

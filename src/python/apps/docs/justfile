@@ -1,0 +1,48 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
+
+app := source_directory()
+runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project " + app + " --offline --frozen --package statadic-docs"
+
+default:
+    @just --list
+
+# Prepare the pinned LaTeX bundle for offline report checks.
+setup:
+    bash "{{app}}/../../../../infra/nix/retry-tex-setup.sh" {{runner}} python "{{app}}/scripts/compile_report.py"
+
+# Build the documentation and native lab snapshots.
+build *args:
+    {{runner}} python "{{app}}/scripts/build.py" "$@"
+
+# Serve an already built site locally.
+serve:
+    {{runner}} python -m http.server --bind 127.0.0.1 --directory "{{app}}/build/html" 8000
+
+# Open a lab in the local marimo editor.
+lab slug:
+    {{runner}} python "{{app}}/scripts/lab.py" "$1"
+
+# Validate app code, labs, tests, and the complete site.
+check:
+    just check-size
+    {{runner}} ruff check "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
+    {{runner}} ruff format --check "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
+    {{runner}} marimo check --strict "{{app}}"/notebooks/*.py
+    {{runner}} python "{{app}}/scripts/check_examples.py"
+    JAX_ENABLE_X64=0 {{runner}} pytest -q -c "{{app}}/pyproject.toml" "{{app}}/tests"
+    JAX_ENABLE_X64=1 {{runner}} pytest -q -c "{{app}}/pyproject.toml" -m native "{{app}}/tests"
+    {{runner}} python "{{app}}/scripts/build.py"
+
+# Enforce the frozen onboarding budget, including code and text includes.
+check-size:
+    {{runner}} python "{{app}}/scripts/check_size.py"
+
+# Inspect built HTML in an installed Chrome/Chromium; retain screenshots and hashes.
+check-browser *args:
+    {{runner}} python "{{app}}/scripts/check_browser.py" "$@"
+
+# Explicitly format app sources with the same policy used by check.
+fmt:
+    {{runner}} ruff check --fix "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
+    {{runner}} ruff format "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"

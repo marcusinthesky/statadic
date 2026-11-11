@@ -1,0 +1,15 @@
+{
+  "source_url": "https://arxiv.org/pdf/2107.04071",
+  "statement_locations": [
+    "Equations (3) and (5), Euclidean distance of normalized vectors."
+  ],
+  "proof_locations": [
+    "Normalize the two inputs in the chord formula. The fibre calculation and ambient triangle argument are spelled out here."
+  ],
+  "claim_ids": [
+    "STATADIC-GROUND-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The registry distinguishes the source statement, STATADIC specialization, runtime observations and outstanding conditions.",
+  "source_review": "Primary source compared with the exact-real argument. Human semantic review pending."
+}

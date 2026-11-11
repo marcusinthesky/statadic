@@ -1,0 +1,18 @@
+{
+  "searle_1971": "searle-1971",
+  "casella_berger_2002": "casella-berger-2002",
+  "lehmann_casella_1998": "lehmann-casella-1998",
+  "wooldridge_2010": "wooldridge-2010",
+  "szekely_rizzo_2013": "szekely-rizzo-2013",
+  "gretton_etal_2012": "gretton-etal-2012",
+  "sejdinovic_etal_2013": "sejdinovic-equivalence-2013",
+  "phipson_smyth_2010": "phipson-smyth-2010",
+  "wilson_1927": "wilson-1927",
+  "morris_etal_2019": "morris-etal-2019",
+  "higham_2002": "higham-2002",
+  "hansen_1982": "hansen-1982",
+  "van_der_vaart_1998": "van-der-vaart-1998",
+  "peyre_cuturi_2019": "peyre-cuturi-2019",
+  "lean_reference": "lean-reference",
+  "marimo_testing": "marimo-testing"
+}

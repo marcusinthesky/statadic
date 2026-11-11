@@ -1,0 +1,38 @@
+[project]
+name = "statadic-workspace"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["apps/*", "packages/*"]
+
+[dependency-groups]
+dev = [
+  "hatchling==1.27.0",
+  "tach==0.35.3",
+]
+
+[tool.statadic_architecture.workspace_dependencies]
+statadic = []
+statadic_evidence = []
+statadic_publishing = ["statadic", "statadic_evidence"]
+statadic_studies = ["statadic", "statadic_evidence"]
+statadic_performance = ["statadic", "statadic_evidence"]
+statadic_docs_labs = ["statadic", "statadic_evidence", "statadic_studies", "statadic_performance"]
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pyrefly]
+project-includes = ["apps", "packages"]
+python-version = "3.13"
+
+[tool.pytest.ini_options]
+testpaths = ["packages", "apps"]
+addopts = ["--import-mode=importlib"]

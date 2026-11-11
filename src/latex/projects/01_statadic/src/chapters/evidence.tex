@@ -1,0 +1,145 @@
+\section{Evidence from the recorded source}\label{sec:evidence}
+
+One script in the paper's source tree produces every result in this section.
+It runs in float64 on CPU with fixed seeds, against STATADIC
+\jcvalue{statadic-version} with package source \jcvalue{package-source-state}
+relative to base revision \texttt{\jcvalue{revision}}, JAX
+\jcvalue{jax-version} and
+Python \jcvalue{python-version}. It also executes \cref{lst:ols,lst:poisson}
+verbatim.
+
+\subsection{Numerical agreement with independent software}\label{sec:agreement}
+
+\Cref{tab:agreement} compares STATADIC with statsmodels
+\jcvalue{statsmodels-version}, dcor \jcvalue{dcor-version} and lifelines
+\jcvalue{lifelines-version} on synthetic fixtures:
+\begin{itemize}
+  \item a heteroskedastic linear model with $n = 400$;
+  \item a Poisson model with exposure and $n = 400$;
+  \item two Gaussian samples of sizes 200 and 150, for energy distance;
+  \item a Weibull accelerated failure time (AFT) model with $n = 400$ and
+    \jcvalue{censored-share}\% right censoring.
+\end{itemize}
+
+Differences are at rounding level except for the survival model, where each
+library stops an iterative optimizer at its own tolerance. One convention
+differs: the HC1 standard errors of the statsmodels GLM equal its HC0 values,
+whereas STATADIC's HC1 applies the factor $n/(n-p)$ to covariance, and hence
+$\sqrt{n/(n-p)}$ to standard errors. Without that factor the HC1 difference is
+\jcnum{hc1-unscaled-difference}. Agreement on a fixture is
+evidence of numerical conformance for that configuration, not of statistical
+validity.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Maximum absolute differences between STATADIC and independent software
+  in float64.}
+  \label{tab:agreement}
+  \setlength{\tabcolsep}{4pt}
+  \input{generated/agreement-table}
+
+  \smallskip
+  \footnotesize\textsuperscript{a}Compared after applying $\sqrt{n/(n-p)}$ to
+  statsmodels' HC0 values; see the text.
+\end{table}
+
+\subsection{Covariance choice and coverage}\label{sec:coverage}
+
+\Cref{tab:agreement} shows that STATADIC computes the HC estimators correctly. It
+does not show that intervals built from them cover. To illustrate the
+difference, we generated $y_i = 1 + 0.5 x_i + \sqrt{x_i}\,\varepsilon_i$, with
+$\log x_i$ and $\varepsilon_i$ independent standard normal. Sample sizes ran
+from 25 to 1600, with \jcvalue{trials} trials each. Each trial fits least
+squares once and attaches HC0, HC1, HC2 and HC3 covariance to that same fit;
+the slope interval uses the normal reference at 95\%, and an unavailable
+interval counts as uncovered. The study uses STATADIC's numerical estimator bricks
+under \texttt{jax.jit} and \texttt{jax.vmap}, so one compiled program evaluates
+every trial of a cell.
+
+\begin{figure}[t]
+  \centering
+  \pgfplotsset{every axis/.append style={ymin=\jcvalue{coverage-ymin},ymax=1,
+      tick label style={font=\footnotesize},label style={font=\footnotesize},
+  title style={font=\small}}}
+  \input{generated/coverage-hc0}\hfill\input{generated/coverage-hc1}
+
+  \medskip
+  \input{generated/coverage-hc2}\hfill\input{generated/coverage-hc3}
+  \caption{Coverage of nominal 95\% slope intervals on one retained fit per
+    trial. Wilson 95\% intervals for the coverage proportion are drawn but are
+    mostly narrower than the markers. The dashed line marks the nominal
+    level. Each panel is a \texttt{PlotSpec} rendered
+  to PGFplots; the manuscript sets a common vertical range.}
+  \label{fig:coverage}
+\end{figure}
+
+\Cref{fig:coverage} reports the results with Wilson intervals
+\citep{wilson-1927}. At $n = 25$, coverage rises from
+\jcnum{coverage-hc0-25} for HC0 to \jcnum{coverage-hc3-25} for HC3. This is
+consistent with the small-sample advantage of HC3 reported by
+\citet{long-ervin-2000}. No estimator reaches the nominal level in this design:
+at $n = 1600$ coverage is \jcnum{coverage-hc0-1600} for HC0 and
+\jcnum{coverage-hc3-1600} for HC3, because heavy-tailed leverage slows
+convergence. A numerically exact covariance computation can therefore
+accompany a miscalibrated inferential procedure, which is why STATADIC records
+these as separate claims. The study illustrates that distinction; it does not
+qualify any HC estimator.
+
+\subsection{Retained qualification records}
+
+The repository also retains prespecified statistical studies run before this
+revision. Each uses 10{,}000 trials per scenario, failure-inclusive accounting
+and fixed acceptance criteria; for nominal 95\% intervals, the one-sided 95\%
+lower bound on coverage must be at least 0.94. \Cref{tab:aft} reproduces the
+ordinary AFT records verbatim from the repository's validation guide. Of the
+eight cells, \jcvalue{aft-qualified} qualify and \jcvalue{aft-inconclusive} are
+inconclusive, and the inconclusive assertions remain failing rather than being
+relaxed.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Retained ordinary AFT qualification records: Wald coverage,
+  10{,}000 trials per cell, float64.}
+  \label{tab:aft}
+  \input{generated/retained-aft-table}
+\end{table}
+
+Other records are adverse:
+\begin{itemize}
+  \item The public Sharpe-ratio interval at $T = 128$ covered
+    \jcvalue{sharpe-gaussian}, \jcvalue{sharpe-skewed} and
+    \jcvalue{sharpe-dependent} of 10{,}000 Gaussian, skewed and
+    dependent-return trials, each reported as excess error.
+  \item Spatial survival likelihoods under high censoring miss their numerical
+    integration target.
+\end{itemize}
+These records were not re-executed for this paper, and qualification of a
+frozen release remains outstanding.
+
+\subsection{Computation}\label{sec:performance}
+
+\Cref{tab:timing} times STATADIC's linear-kernel V-statistic MMD against an
+explicit evaluation of the left-hand side of \cref{thm:linear-mmd} through
+three Gram matrices. Both samples have $d = \jcvalue{timing-dimension}$
+dimensions and uniform masses, so the equal-mass hypothesis holds, and the two
+routes agree to rounding.
+
+The mean route grows linearly with $n$, while the Gram route grows
+quadratically: once compiled, it is about \jcvalue{timing-ratio-8000} times
+slower at $n = 8000$. First calls include tracing and compilation. Timings are
+medians of \jcvalue{timing-repeats} synchronized warm calls on one
+\jcvalue{cpu-model} with \jcvalue{cpu-count} logical CPUs. They are
+single-machine measurements, not the repository's multi-process benchmark
+protocol, and they imply nothing about accelerators, which have not been
+measured.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Linear-kernel $\mathrm{MMD}^2$: STATADIC's mean route against explicit
+  Gram evaluation, float64 on CPU.}
+  \label{tab:timing}
+  \input{generated/timing-table}
+\end{table}

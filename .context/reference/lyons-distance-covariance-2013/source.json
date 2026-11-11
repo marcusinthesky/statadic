@@ -1,0 +1,21 @@
+{
+  "source_url": "https://rdlyons.pages.iu.edu/pdf/dcov-published.pdf",
+  "statement_locations": [
+    "Section 3, equation (3.1), p. 3291; Euclidean negative type, pp. 3292–3293; equation (3.3), p. 3293",
+    "Section 3, finite negative type (3.1) and its measure form (3.3).",
+    "Section 3, first-moment probability measures, inequalities (3.1)–(3.3)."
+  ],
+  "proof_locations": [
+    "Section 3, pp. 3292–3293; Euclidean Riesz embedding (Lean uses Gaussian projection instead)",
+    "STATADIC lifts finite inequalities by integrating independent finite samples and removing the within-sample diagonal bias.",
+    "Apply the metric triangle inequality to dominate each pair expectation by two marginal first moments, then invoke STATADIC’s finite-sample lift."
+  ],
+  "claim_ids": [
+    "STATADIC-ENERGY-003",
+    "STATADIC-ENERGY-006",
+    "STATADIC-ENERGY-007"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "STATADIC-ENERGY-003 covers finite Euclidean data. The population claims lift the finite negative-type inequality under explicit integrability hypotheses. The empirical averaging proof is STATADIC’s alternative to the embedding argument.",
+  "source_review": "Independent agent comparison on 2026-11-06; human semantic review pending."
+}

@@ -1,0 +1,206 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+# The upstream Tectonic bundle these manuscripts are pinned to. Only
+# bundle-refresh reads it: it is 2.9 GB on a third-party host that rate-limits
+# (HTTP 429), so no build depends on it.
+upstream_bundle := "https://data1.fullyjustified.net/tlextras-2022.0r0.tar"
+
+# The subset of that bundle every project resolves, vendored in Git LFS, so
+# every compile is offline and the pin is these bytes rather than first use.
+vendored_bundle := "bundle/tlextras-2022.0r0-statadic.zip"
+
+# Analyses compare STATADIC with optional reference packages; `just setup-references`
+# prepares this locked environment without pruning the development workspace.
+analysis := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV UV_PROJECT_ENVIRONMENT=" + source_directory() + "/../../.cache/statadic-reference-venv JAX_PLATFORMS=cpu uv run --project " + source_directory() + "/../python --offline --frozen --package statadic --group reference python -I"
+
+default:
+    @just --list
+
+# Fetch the vendored bundle's Git LFS content (network); builds never download TeX.
+setup:
+    git lfs pull --include "src/latex/{{ vendored_bundle }}"
+    test "$(head -c 2 '{{ vendored_bundle }}')" = PK
+
+# Install the shared style and generated bibliography into a project workspace.
+_prepare project:
+    test -f "projects/{{ project }}/Tectonic.toml"
+    install -m 0644 templates/statadic-manuscript.sty "projects/{{ project }}/src/statadic-manuscript.sty"
+    install -m 0644 refs.bib "projects/{{ project }}/src/refs.bib"
+
+# Create a project from the compiling template; refuses invalid or existing paths.
+new slug:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! "{{ slug }}" =~ ^[0-9A-Za-z][0-9A-Za-z_-]*$ ]]; then
+      echo "project slug must contain only letters, digits, underscores and hyphens" >&2
+      exit 2
+    fi
+    destination="projects/{{ slug }}"
+    if [[ -e "$destination" ]]; then
+      echo "$destination already exists" >&2
+      exit 2
+    fi
+    cp -R projects/_template "$destination"
+    rm -rf "$destination/build"
+    sed -i 's/^name = "latex-template"$/name = "{{ slug }}"/' "$destination/Tectonic.toml"
+    just _prepare "{{ slug }}"
+    echo "created src/latex/$destination"
+
+# Regenerate a project's numbers, tables and figures from its analysis script.
+generate project="01_statadic":
+    test -f "projects/{{ project }}/analysis/generate.py"
+    {{ analysis }} "projects/{{ project }}/analysis/generate.py"
+
+# Compile one target to projects/<project>/build/<target>/ from the vendored bundle.
+build project="01_statadic" target="arxiv":
+    just _prepare "{{ project }}"
+    cd "projects/{{ project }}" && tectonic -X build --untrusted --only-cached --keep-logs --keep-intermediates --target "{{ target }}"
+    bash tools/check-log "projects/{{ project }}/build/{{ target }}/{{ target }}.log"
+
+# Rebuild a target whenever an input changes.
+watch project="01_statadic" target="draft":
+    just _prepare "{{ project }}"
+    cd "projects/{{ project }}" && tectonic -X watch --exec "build --untrusted --only-cached --keep-logs --target {{ target }}"
+
+# Stage, archive and recompile a clean upload bundle beside the compiled target.
+bundle project="01_statadic" target="arxiv":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    just build "{{ project }}" "{{ target }}"
+    root="$(pwd)"
+    project="projects/{{ project }}"
+    output="$root/$project/build/{{ target }}"
+    stage="$output/bundle"
+    rm -rf "$stage"
+    mkdir -p "$stage"
+    install -m 0644 "$project/src/targets/{{ target }}.tex" "$stage/main.tex"
+    for file in metadata.tex body.tex appendix.tex statadic-manuscript.sty refs.bib; do
+      if [[ -f "$project/src/$file" ]]; then install -m 0644 "$project/src/$file" "$stage/$file"; fi
+    done
+    for directory in chapters generated listings; do
+      if [[ -d "$project/src/$directory" ]]; then cp -R "$project/src/$directory" "$stage/"; fi
+    done
+    install -m 0644 "$output/{{ target }}.bbl" "$stage/main.bbl"
+    archive="$output/{{ target }}.tar.gz"
+    (cd "$stage" && LC_ALL=C find . -type f -printf '%P\n' | sort \
+      | tar --owner=0 --group=0 --numeric-owner --mtime=@315532800 -cf - -T - \
+      | gzip -n > "$archive")
+    # Audit: unpack into an empty directory and recompile from the vendored bundle only.
+    audit="$(mktemp -d)"
+    trap 'rm -rf "$audit"' EXIT
+    tar -xzf "$archive" -C "$audit"
+    tectonic -X compile --untrusted --only-cached --bundle "$root/{{ vendored_bundle }}" \
+      --keep-logs --outdir "$audit" "$audit/main.tex" >/dev/null
+    bash tools/check-log "$audit/main.log"
+    echo "wrote $archive ($(tar -tzf "$archive" | wc -l) files; clean recompile passed)"
+
+# Compile every target of every project from the vendored bundle.
+smoke:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for toml in projects/*/Tectonic.toml; do
+      project="$(basename "$(dirname "$toml")")"
+      rg -q '^bundle = "\.\./\.\./{{ vendored_bundle }}"$' "$toml" \
+        || { echo "$toml must point at the vendored bundle" >&2; exit 1; }
+      for target in $(rg -o '^name = "([^"]+)"$' -r '$1' "$toml" | tail -n +2); do
+        just build "$project" "$target"
+      done
+    done
+
+# Rebuild the vendored bundle subset from the pinned upstream. Needs the network.
+# Run after adding a \usepackage or font size the subset lacks, then commit the zip.
+bundle-refresh:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    root="$(pwd)"
+    work="$(mktemp -d)"
+    trap 'rm -rf "$work"' EXIT
+    # A scratch cache, never ~/.cache/Tectonic: the subset must be exactly what
+    # these projects resolve, not whatever a developer's cache accumulated.
+    export TECTONIC_CACHE_DIR="$work/cache"
+    mkdir -p "$TECTONIC_CACHE_DIR"
+    retry() {
+      for attempt in 1 2 3 4 5 6; do
+        if "$@" >/dev/null; then return 0; fi
+        if (( attempt == 6 )); then return 1; fi
+        echo "  upstream fetch failed; retrying in $(( attempt * 60 ))s" >&2
+        sleep $(( attempt * 60 ))
+      done
+    }
+    for toml in projects/*/Tectonic.toml; do
+      project="$(basename "$(dirname "$toml")")"
+      just _prepare "$project"
+      cp -R "projects/$project" "$work/$project"
+      rm -rf "$work/$project/build"
+      sed -i 's|^bundle = .*|bundle = "{{ upstream_bundle }}"|' "$work/$project/Tectonic.toml"
+      for target in $(rg -o '^name = "([^"]+)"$' -r '$1' "$toml" | tail -n +2); do
+        echo "warming $project/$target"
+        retry bash -c "cd '$work/$project' && tectonic -X build --untrusted --target '$target'"
+      done
+    done
+    # Keep the native STATADIC PGFplots closure even before a project adopts it.
+    retry tectonic -X compile --untrusted --bundle "{{ upstream_bundle }}" --outdir "$work" \
+      tools/tests/fixtures/pgfplots/main.tex
+    # The companion's ordinary article also needs the default-size fonts and bibliography.
+    mkdir -p "$work/publishing"
+    cp tools/tests/fixtures/publishing/main.tex refs.bib "$work/publishing/"
+    retry tectonic -X compile --untrusted --bundle "{{ upstream_bundle }}" \
+      --outdir "$work/publishing" "$work/publishing/main.tex"
+    stage="$work/stage"
+    cp -R "$TECTONIC_CACHE_DIR"/bundles/data/*/ "$stage"
+    # SHA256SUM identifies a local bundle and keys Tectonic's cached format file.
+    rm -f "$stage/SHA256SUM"
+    (cd "$stage" && LC_ALL=C find . -type f -printf '%P\n' | sort | xargs -r sha256sum \
+      | sha256sum | cut -d' ' -f1) > "$work/SHA256SUM"
+    mv "$work/SHA256SUM" "$stage/SHA256SUM"
+    mkdir -p "$(dirname '{{ vendored_bundle }}')"
+    # Deterministic archive: sorted entries and a fixed 1980 timestamp.
+    python3 -I - "$stage" "$root/{{ vendored_bundle }}" <<'PY'
+    import pathlib, sys, zipfile
+    stage, target = pathlib.Path(sys.argv[1]), sys.argv[2]
+    with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in sorted(p for p in stage.rglob("*") if p.is_file()):
+            info = zipfile.ZipInfo(path.relative_to(stage).as_posix(), (1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            archive.writestr(info, path.read_bytes())
+    PY
+    echo "wrote {{ vendored_bundle }} ($(du -h '{{ vendored_bundle }}' | cut -f1))"
+
+# Compile a PlotSpec.to_pgfplots fragment to a viewable PDF beside it (or to OUT).
+preview fragment out="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    source_file="$(realpath "{{ fragment }}")"
+    destination="{{ out }}"
+    [[ -n "$destination" ]] || destination="${source_file%.*}.preview.pdf"
+    destination="$(realpath -m "$destination")"
+    work="$(mktemp -d)"
+    trap 'rm -rf "$work"' EXIT
+    printf '%s\n' '\documentclass[11pt]{article}' '\usepackage{pgfplots}' \
+      '\pgfplotsset{compat=1.18}' '\pagestyle{empty}' '\begin{document}' \
+      "\\input{$source_file}" '\end{document}' > "$work/preview.tex"
+    tectonic -X compile --untrusted --only-cached --bundle "$(realpath '{{ vendored_bundle }}')" \
+      --outdir "$work" "$work/preview.tex" >/dev/null
+    mv "$work/preview.pdf" "$destination"
+    echo "preview: $destination"
+
+# Hand-authored TeX sources; generated bindings and installed copies are excluded.
+_sources := "rg --files -g '*.tex' -g '*.sty' -g '!projects/*/src/generated/**' -g '!projects/*/src/statadic-manuscript.sty' -g '!projects/*/build/**' -g '!tools/tests/**'"
+
+# Format hand-authored TeX sources (explicit write).
+fmt:
+    {{ _sources }} | xargs -r tex-fmt
+
+# Verify formatting without changing files.
+fmt-check:
+    {{ _sources }} | xargs -r tex-fmt --check
+
+# Run ChkTeX over hand-authored sources.
+lint:
+    {{ _sources }} | xargs -r -n 1 chktex -q -I0 -l .chktexrc
+
+# Format, lint and compile every target offline.
+check: fmt-check lint smoke
+
+test: smoke

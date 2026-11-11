@@ -1,0 +1,652 @@
+{
+  "schema_version": 1,
+  "registry_source": {
+    "repository": "marcusinthesky/statadic",
+    "commit": "52268aa5078d94c9bf8b092c7655fbf3ae54031a",
+    "path": "src/lean/registry/methods.json",
+    "blob_sha": "79d567a2a24c72609c9b90d0951366f7bfc3df50"
+  },
+  "coverage": "All 46 registry family IDs have a literature or explicit applicability record; this is not all theorem or all API coverage.",
+  "families": [
+    {
+      "id": "package",
+      "title": "Package entry point",
+      "kind": "software-contract",
+      "references": [],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Metadata and public export review; estimator guarantees are not applicable to a package entry point.",
+      "closed": false
+    },
+    {
+      "id": "api",
+      "title": "Public model workflows",
+      "kind": "software-contract",
+      "references": [],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Preserve retained-state, shape, availability, preparation and reporting contracts; no automatic statistical guarantee follows from an interface.",
+      "closed": false
+    },
+    {
+      "id": "association",
+      "title": "Distance association and group decomposition",
+      "kind": "scientific-family",
+      "references": [
+        "szekely-rizzo-bakirov-2007",
+        "rizzo-szekely-2010",
+        "anderson-2006",
+        "mantel-1967",
+        "lyons-2013",
+        "lyons-2018-errata"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Match the exact statistic, ground geometry, centering, group null and permutation unit.",
+      "closed": false
+    },
+    {
+      "id": "core",
+      "title": "Mathematical domains and contracts",
+      "kind": "scientific-family",
+      "references": [
+        "schoenberg-1938",
+        "sejdinovic-etal-2013",
+        "sriperumbudur-etal-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Prove each declared law on its actual carrier and equality relation; declarations are not proofs.",
+      "closed": false
+    },
+    {
+      "id": "discrepancy",
+      "title": "Energy, kernel and transport discrepancies",
+      "kind": "scientific-family",
+      "references": [
+        "szekely-rizzo-2013",
+        "gretton-etal-2012",
+        "sejdinovic-etal-2013",
+        "peyre-cuturi-2019"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Population existence, empirical conventions, separation and transport conditions remain distinct.",
+      "closed": false
+    },
+    {
+      "id": "estimation",
+      "title": "Statistical estimation",
+      "kind": "scientific-family",
+      "references": [
+        "aitken-1936",
+        "stepniak-2010",
+        "hansen-1982",
+        "rao-1945"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-WLS-001",
+        "STATADIC-RESEARCH-BIAS-001",
+        "STATADIC-RESEARCH-INFORMATION-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "No universal efficiency theorem: specify comparison class, estimand, risk, sampling law and asymptotic regime.",
+      "closed": false
+    },
+    {
+      "id": "geometry",
+      "title": "Ground geometry and embeddings",
+      "kind": "scientific-family",
+      "references": [
+        "schoenberg-1938",
+        "gower-1966",
+        "sriperumbudur-etal-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Metric versus pseudometric laws, PSD, carrier restrictions and embedding equivalence.",
+      "closed": false
+    },
+    {
+      "id": "inference",
+      "title": "Statistical inference and resampling",
+      "kind": "scientific-family",
+      "references": [
+        "hemerik-goeman-2018",
+        "phipson-smyth-2010",
+        "efron-1979",
+        "berger-hsu-1996"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-FWER-001",
+        "STATADIC-RESEARCH-TOST-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Finite level, asymptotic coverage and sampling calibration are separate.",
+      "closed": false
+    },
+    {
+      "id": "model",
+      "title": "Statistical model specifications",
+      "kind": "scientific-family",
+      "references": [
+        "nelder-wedderburn-1972",
+        "hansen-1982",
+        "wei-1992"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Identify the distribution, estimand, observation mechanism and model-specific identification conditions.",
+      "closed": false
+    },
+    {
+      "id": "operators",
+      "title": "Numerical and algebraic operators",
+      "kind": "scientific-family",
+      "references": [
+        "gower-1966",
+        "newey-west-1987",
+        "higham-1988"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Operator-by-operator algebraic laws and numerical semantics; source family alone cannot certify them.",
+      "closed": false
+    },
+    {
+      "id": "optimize",
+      "title": "Optimization algorithms",
+      "kind": "scientific-family",
+      "references": [
+        "kuhn-tucker-1951",
+        "higham-1988",
+        "kuhn-1955"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Separate exact optimization specifications from convergence, tolerances and floating-point bounds.",
+      "closed": false
+    },
+    {
+      "id": "sample",
+      "title": "Samples and observations",
+      "kind": "software-contract",
+      "references": [],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Observation identity, weighting semantics, missing data and alignment need interface review, not an efficiency theorem.",
+      "closed": false
+    },
+    {
+      "id": "testing",
+      "title": "Scientific testing utilities",
+      "kind": "validation-methodology",
+      "references": [
+        "morris-white-crowther-2019"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Check study design, independent reference construction, trial denominators and Monte Carlo error.",
+      "closed": false
+    },
+    {
+      "id": "linear",
+      "title": "Linear OLS and WLS",
+      "kind": "scientific-family",
+      "references": [
+        "stepniak-2010",
+        "aitken-1936",
+        "white-1980-approximation"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-WLS-001",
+        "STATADIC-RESEARCH-BIAS-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "General square-integrable and random-design extensions; WLS construction and feasible weighting remain open.",
+      "closed": false
+    },
+    {
+      "id": "glm",
+      "title": "Generalized linear models",
+      "kind": "scientific-family",
+      "references": [
+        "nelder-wedderburn-1972",
+        "wedderburn-1974",
+        "albert-anderson-1984"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Existence (including separation), score identities, information, consistency and regularity for each link/likelihood.",
+      "closed": false
+    },
+    {
+      "id": "gmm",
+      "title": "Generalized method of moments",
+      "kind": "scientific-family",
+      "references": [
+        "hansen-1982",
+        "newey-smith-2004"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Identification, uniform convergence, asymptotic normality, efficient weighting and complete regularity proofs.",
+      "closed": false
+    },
+    {
+      "id": "gel",
+      "title": "Generalized empirical likelihood",
+      "kind": "scientific-family",
+      "references": [
+        "owen-1988",
+        "newey-smith-2004"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Moment feasibility, higher-order expansions, empirical likelihood limit laws and selected statistic conventions.",
+      "closed": false
+    },
+    {
+      "id": "panel",
+      "title": "Panel estimation",
+      "kind": "scientific-family",
+      "references": [
+        "mundlak-1978",
+        "swamy-arora-1972",
+        "fama-macbeth-1973"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Match within/between/first-difference/random-effects/Fama–MacBeth assumptions, unbalanced samples and variance components.",
+      "closed": false
+    },
+    {
+      "id": "spatial",
+      "title": "Spatial estimation",
+      "kind": "scientific-family",
+      "references": [
+        "kelejian-prucha-1998",
+        "kelejian-prucha-1999",
+        "lee-2004",
+        "kapoor-kelejian-prucha-2007",
+        "kelejian-prucha-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Spatial-weight normalization, identification, covariance, moment and asymptotic assumptions for each estimator.",
+      "closed": false
+    },
+    {
+      "id": "survival",
+      "title": "Survival and AFT models",
+      "kind": "scientific-family",
+      "references": [
+        "wei-1992"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Source match for implemented Weibull/lognormal likelihoods, delayed entry, censoring and repeated/spatial spells is incomplete. AFT overview is not sufficient.",
+      "closed": false
+    },
+    {
+      "id": "dyadic",
+      "title": "Dyadic models",
+      "kind": "scientific-family",
+      "references": [
+        "aronow-samii-assenova-2015"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Dyad/node dependence and bootstrap unit; covariance result does not establish every resampling procedure.",
+      "closed": false
+    },
+    {
+      "id": "covariance-estimation",
+      "title": "Covariance estimation and shrinkage",
+      "kind": "scientific-family",
+      "references": [
+        "ledoit-wolf-2004",
+        "chen-etal-2010",
+        "hoerl-kennard-1970"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-SHRINK-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Full matrix-loss and data-adaptive shrinkage guarantees are not closed by a scalar deterministic-weight lemma.",
+      "closed": false
+    },
+    {
+      "id": "sharpe",
+      "title": "Sharpe ratio estimation and inference",
+      "kind": "scientific-family",
+      "references": [
+        "lo-2002",
+        "ledoit-wolf-2008",
+        "bailey-lopezdeprado-2014"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Serial dependence, higher moments, strategy selection and multiple-testing assumptions must match each reported statistic.",
+      "closed": false
+    },
+    {
+      "id": "ground",
+      "title": "Ground metrics and kernels",
+      "kind": "scientific-family",
+      "references": [
+        "schoenberg-1938",
+        "sejdinovic-etal-2013",
+        "sriperumbudur-etal-2010",
+        "lyons-2013",
+        "lyons-2018-errata"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Prove primitive laws, negative type and characteristicness with admissible input restrictions.",
+      "closed": false
+    },
+    {
+      "id": "embedding",
+      "title": "Geometric embeddings",
+      "kind": "scientific-family",
+      "references": [
+        "gower-1966"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Centered Gram PSD, negative-eigenvalue handling and retained out-of-sample extension.",
+      "closed": false
+    },
+    {
+      "id": "median",
+      "title": "Geometric median",
+      "kind": "scientific-family",
+      "references": [
+        "vardi-zhang-2000"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Existence, uniqueness conditions and modified Weiszfeld handling at observed support points.",
+      "closed": false
+    },
+    {
+      "id": "barycentre",
+      "title": "Distribution barycentres",
+      "kind": "scientific-family",
+      "references": [
+        "agueh-carlier-2011",
+        "bonneel-etal-2015",
+        "peyre-cuturi-2019"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Distinguish free-support Wasserstein from fixed-candidate kernel/simplex barycentres; match objective-specific guarantees.",
+      "closed": false
+    },
+    {
+      "id": "energy",
+      "title": "Energy discrepancy",
+      "kind": "scientific-family",
+      "references": [
+        "szekely-rizzo-2013",
+        "sejdinovic-etal-2013",
+        "lyons-2013",
+        "lyons-2018-errata"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "General-law nonnegativity and separation; finite identities do not establish the full metric theorem.",
+      "closed": false
+    },
+    {
+      "id": "mmd",
+      "title": "Kernel maximum mean discrepancy",
+      "kind": "scientific-family",
+      "references": [
+        "gretton-etal-2012",
+        "hoeffding-1948",
+        "sriperumbudur-etal-2010",
+        "sejdinovic-etal-2013"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-MMD-U-001",
+        "STATADIC-RESEARCH-MMD-V-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "IID-to-moment bridge, RKHS existence, characteristicness and limit distributions remain open.",
+      "closed": false
+    },
+    {
+      "id": "transport",
+      "title": "Optimal transport discrepancies",
+      "kind": "scientific-family",
+      "references": [
+        "kuhn-1955",
+        "bonneel-etal-2015",
+        "peyre-cuturi-2019"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Ground costs, balanced masses, finite projection design and exact/approximate solver distinctions.",
+      "closed": false
+    },
+    {
+      "id": "permutation",
+      "title": "Permutation inference",
+      "kind": "scientific-family",
+      "references": [
+        "hemerik-goeman-2018",
+        "phipson-smyth-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Random subsampling, group action, exchangeability, ties, add-one construction and failures require matched theorem statements.",
+      "closed": false
+    },
+    {
+      "id": "bootstrap",
+      "title": "Bootstrap inference",
+      "kind": "scientific-family",
+      "references": [
+        "efron-1979",
+        "kunsch-1989",
+        "politis-romano-1994"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Consistency and coverage for the selected statistic under its actual dependence and resampling scheme.",
+      "closed": false
+    },
+    {
+      "id": "block-length",
+      "title": "Block-length selection",
+      "kind": "scientific-family",
+      "references": [
+        "politis-white-2004",
+        "patton-politis-white-2009"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Implement and prove the corrected rule and its regularity conditions, not the uncorrected 2004 formula.",
+      "closed": false
+    },
+    {
+      "id": "multiplicity",
+      "title": "Multiple testing",
+      "kind": "scientific-family",
+      "references": [
+        "holm-1979",
+        "benjamini-hochberg-1995",
+        "romano-wolf-2005"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-FWER-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Only the union-bound building block is proposed here; stepdown/FDR/resampling dependence conditions remain open.",
+      "closed": false
+    },
+    {
+      "id": "equivalence",
+      "title": "Equivalence inference",
+      "kind": "scientific-family",
+      "references": [
+        "schuirmann-1987",
+        "berger-hsu-1996"
+      ],
+      "proposed_claims": [
+        "STATADIC-RESEARCH-TOST-001"
+      ],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Calibrated one-sided procedures, margin meaning, null union, confidence-set conventions and power remain separate.",
+      "closed": false
+    },
+    {
+      "id": "moment-inequalities",
+      "title": "Moment inequality inference",
+      "kind": "scientific-family",
+      "references": [
+        "wolak-1989",
+        "andrews-soares-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Moment selection, chi-bar-square weights, boundary and dependence conditions; do not treat optimization as calibration.",
+      "closed": false
+    },
+    {
+      "id": "linear-covariance",
+      "title": "Linear-model inference covariances",
+      "kind": "scientific-family",
+      "references": [
+        "white-1980-hc",
+        "mackinnon-white-1985",
+        "newey-west-1987",
+        "cameron-gelbach-miller-2011"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Estimator-specific leverage corrections, degrees of freedom, HAC bandwidth and cluster asymptotics.",
+      "closed": false
+    },
+    {
+      "id": "glm-covariance",
+      "title": "GLM inference covariances",
+      "kind": "scientific-family",
+      "references": [
+        "wedderburn-1974",
+        "liang-zeger-1986",
+        "white-1980-hc"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Model-based versus sandwich uncertainty and misspecification assumptions; exact finite coverage is not implied.",
+      "closed": false
+    },
+    {
+      "id": "panel-covariance",
+      "title": "Panel inference covariances",
+      "kind": "scientific-family",
+      "references": [
+        "liang-zeger-1986",
+        "driscoll-kraay-1998",
+        "cameron-gelbach-miller-2011"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Within-transformed dependence, cluster unit, time dimension and finite corrections.",
+      "closed": false
+    },
+    {
+      "id": "spatial-covariance",
+      "title": "Spatial inference and diagnostics",
+      "kind": "scientific-family",
+      "references": [
+        "kelejian-prucha-2010",
+        "lee-2004",
+        "kapoor-kelejian-prucha-2007"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Match graph-weight and disturbance structures; identify exact diagnostic null laws.",
+      "closed": false
+    },
+    {
+      "id": "operators-panel",
+      "title": "Panel operators",
+      "kind": "scientific-family",
+      "references": [
+        "mundlak-1978",
+        "swamy-arora-1972"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Prove demeaning, alignment and unbalanced-panel identities; source selection for each transformation still needs review.",
+      "closed": false
+    },
+    {
+      "id": "operators-spatial",
+      "title": "Spatial operators",
+      "kind": "scientific-family",
+      "references": [
+        "kelejian-prucha-1998",
+        "kelejian-prucha-2010"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Weight row normalization, invertibility and moment operators under explicit matrix restrictions.",
+      "closed": false
+    },
+    {
+      "id": "operators-longrun",
+      "title": "Long-run covariance operators",
+      "kind": "scientific-family",
+      "references": [
+        "newey-west-1987",
+        "driscoll-kraay-1998"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Kernel PSD, bandwidth rates and stationarity/dependence assumptions.",
+      "closed": false
+    },
+    {
+      "id": "optimize-integration",
+      "title": "Gaussian numerical integration",
+      "kind": "scientific-family",
+      "references": [
+        "genz-1992",
+        "golub-welsch-1969"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Quadrature/integration domain, error estimates and floating-point accumulation.",
+      "closed": false
+    },
+    {
+      "id": "optimize-psd",
+      "title": "Positive-semidefinite optimization",
+      "kind": "scientific-family",
+      "references": [
+        "higham-1988"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Specify the matrix norm, symmetry and PSD cone; jitter is not necessarily the same nearest-matrix problem.",
+      "closed": false
+    },
+    {
+      "id": "optimize-simplex",
+      "title": "Simplex optimization",
+      "kind": "scientific-family",
+      "references": [
+        "kuhn-tucker-1951"
+      ],
+      "proposed_claims": [],
+      "literature_mapping": "candidate; semantic implementation match not certified",
+      "remaining_obligation": "Exact KKT/convex-optimality, feasibility preservation, termination and numerical certificates.",
+      "closed": false
+    }
+  ]
+}

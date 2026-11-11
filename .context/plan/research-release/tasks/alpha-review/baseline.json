@@ -1,0 +1,117 @@
+{
+  "candidate": "17fdc5410de31356df72d6fc6459853ca39260f9",
+  "base": "52268aa5078d94c9bf8b092c7655fbf3ae54031a",
+  "public_modules": 209,
+  "public_names": 2380,
+  "resolved_targets": 1835,
+  "public_source_manifest_mismatches": [],
+  "catalogue_owners": 208,
+  "scientific_procedures": 47,
+  "catalogued_variants": 237,
+  "source_statuses": {
+    "verified-method-source": 32,
+    "source-unresolved": 205
+  },
+  "citation_linked_variants": 121,
+  "study_mapped_variants": 216,
+  "claims": 153,
+  "exact_claim_linked_targets": 92,
+  "curated_comparisons": 8,
+  "exact_comparison_targets": 10,
+  "changed_paths": 1433,
+  "slice_assignment_counts": {
+    "infrastructure": 14,
+    "delivery": 801,
+    "measures": 221,
+    "linear-conditional": 100,
+    "dependent-models": 142,
+    "moments": 60,
+    "shared-contracts": 95
+  },
+  "chat_logs": [
+    {
+      "path": ".tmp/chat_logs/Assess STATADIC Publication Status (2026-11-09).md",
+      "sha256": "7dba5536916a89377ddc3a4a64e625ba0681f641093a4976f48900da84fbf4b4",
+      "bytes": 336964,
+      "lines": 5826
+    },
+    {
+      "path": ".tmp/chat_logs/Benchmark statadic Methods (2026-11-09).md",
+      "sha256": "cb4fe5934925b56b336d0f45b6697709c78ef30b2f331a55467cbfdf23abfd8f",
+      "bytes": 6126,
+      "lines": 61
+    },
+    {
+      "path": ".tmp/chat_logs/Grammar Of Statistics (2026-11-09).md",
+      "sha256": "aec1ba8389316437a1f4b6a88e608dc09c037af4011b5b3baa579e8b43c4d22f",
+      "bytes": 253128,
+      "lines": 3857
+    },
+    {
+      "path": ".tmp/chat_logs/Lean4 Role In STATADIC (2026-11-09).md",
+      "sha256": "21198a3e69182b4e12091cc1d32c4c9f4c4b67263289eb579430610c66177bea",
+      "bytes": 99309,
+      "lines": 943
+    },
+    {
+      "path": ".tmp/chat_logs/Lean4 role and purpose (2026-11-09).md",
+      "sha256": "13bfa281c104933870581c55c70770d9940e6152d8a28573b7d30cee676a858f",
+      "bytes": 173303,
+      "lines": 2273
+    },
+    {
+      "path": ".tmp/chat_logs/Review STATADIC Branch (2026-11-09).md",
+      "sha256": "4019fd5af7840d45a70440fcb26cbbb55f2180ff8c9d749d8c952375171106d4",
+      "bytes": 93409,
+      "lines": 1111
+    },
+    {
+      "path": ".tmp/chat_logs/Review STATADIC OLS API (2026-11-09).md",
+      "sha256": "777001c56b879e89609accc5bf34b735522a2382cfaa10af445470ba483651bf",
+      "bytes": 129239,
+      "lines": 2736
+    },
+    {
+      "path": ".tmp/chat_logs/Review STATADIC OLS API review.md",
+      "sha256": "c64110c80a92e490fbfa25676a7da0681dac8bc579ae9e5111239e9c812b6be1",
+      "bytes": 126205,
+      "lines": 2375
+    },
+    {
+      "path": ".tmp/chat_logs/Review proposals (2026-11-09).md",
+      "sha256": "8e44d71045b6e94a9992afb8bceaa426d32c8e498d52bff786641012e170b2a3",
+      "bytes": 71502,
+      "lines": 1065
+    },
+    {
+      "path": ".tmp/chat_logs/Unit Test Comparison (2026-11-09).md",
+      "sha256": "ad2e521480696a9776aaa414e0e05bf968bccfbc32f1a80bcedd6b1417c6ab00",
+      "bytes": 19913,
+      "lines": 363
+    }
+  ],
+  "limits": [
+    "Counts describe metadata links, not proof coverage or scientific qualification.",
+    "Every path is assigned; pending status is not a completed review.",
+    "Known semantic inventory omissions are recorded as findings, not silently added to source registries.",
+    "No tests, certification or campaigns run by this audit."
+  ],
+  "registered_study_designs": 83,
+  "path_inspection_counts": {
+    "inspected-see-log": 1433
+  },
+  "variant_declared_mc_metric_counts": {
+    "bias": 165,
+    "mse": 165,
+    "size": 123,
+    "power": 55,
+    "coverage": 101
+  },
+  "registered_design_metric_counts": {
+    "bias": 61,
+    "mse": 61,
+    "size": 45,
+    "power": 26,
+    "coverage": 35
+  }
+}

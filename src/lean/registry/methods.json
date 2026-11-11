@@ -1,0 +1,1125 @@
+{
+  "schema_version": 1,
+  "methods": [
+    {
+      "id": "package",
+      "title": "Package entry point",
+      "module_prefixes": [
+        "statadic"
+      ],
+      "obligations": [
+        {
+          "title": "Review package metadata and exported entry points",
+          "kind": "interface-review",
+          "source_status": "source-unresolved",
+          "id": "package-001"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "title": "Public model workflows",
+      "module_prefixes": [
+        "statadic.api"
+      ],
+      "obligations": [
+        {
+          "title": "Identify mathematical contracts of exposed models and reporting workflows",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "id": "api-001"
+        }
+      ]
+    },
+    {
+      "id": "association",
+      "title": "Distance association and group decomposition",
+      "module_prefixes": [
+        "statadic.association"
+      ],
+      "obligations": [
+        {
+          "title": "Establish stated association and group-decomposition identities under their sampling and metric assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "association-001",
+          "related_claims": [
+            "STATADIC-DISCO-001"
+          ]
+        },
+        {
+          "id": "association-002",
+          "title": "Nested-design trace decomposition of a fixed response functional",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "scope": "Full-rank orthonormal nested designs and a fixed double-centered response Gram; no spectral truncation. Finite algebra does not provide a nuisance sampling model, calibration or geometry law."
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "title": "Mathematical domains and contracts",
+      "module_prefixes": [
+        "statadic.core"
+      ],
+      "obligations": [
+        {
+          "title": "Map each asserted domain and transformation law to its hypotheses and a published source",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "id": "core-001",
+          "related_claims": [
+            "STATADIC-GROUND-001",
+            "STATADIC-ROOTENERGY-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "discrepancy",
+      "title": "Energy, kernel and transport discrepancies",
+      "module_prefixes": [
+        "statadic.discrepancy"
+      ],
+      "obligations": [
+        {
+          "title": "Establish energy and kernel discrepancy equivalence under stated assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "id": "discrepancy-001",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-ENERGY-004"
+          ]
+        },
+        {
+          "title": "Identify transport and empirical discrepancy properties and their source-specific hypotheses",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "discrepancy-002"
+        }
+      ]
+    },
+    {
+      "id": "estimation",
+      "title": "Statistical estimation",
+      "module_prefixes": [
+        "statadic.estimation"
+      ],
+      "obligations": [
+        {
+          "title": "Establish unbiasedness and efficiency for the stated fixed-design linear model",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "id": "estimation-001",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-LINEAR-009",
+            "STATADIC-LINEAR-010"
+          ],
+          "scope": "Supported full-column-rank fixed-design OLS, all coefficient contrasts and linear unbiased competitors. Arbitrary probability laws with appropriate first or second moments. Rank-deficient designs, random designs and numerical execution are outside this scope."
+        },
+        {
+          "title": "Identify model-specific identification, bias and efficiency results for remaining estimators",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "estimation-002"
+        }
+      ]
+    },
+    {
+      "id": "geometry",
+      "title": "Ground geometry and embeddings",
+      "module_prefixes": [
+        "statadic.geometry"
+      ],
+      "obligations": [
+        {
+          "title": "Establish applicable metric, kernel and embedding laws under explicit domain restrictions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "geometry-001",
+          "related_claims": [
+            "STATADIC-NEIGHBOUR-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "inference",
+      "title": "Statistical inference and resampling",
+      "module_prefixes": [
+        "statadic.inference"
+      ],
+      "obligations": [
+        {
+          "title": "Establish exact full-group permutation test level under invariance",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "id": "inference-001",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-RANDOMIZATION-003",
+            "STATADIC-RANDOMIZATION-006"
+          ]
+        },
+        {
+          "title": "Identify source-specific validity and coverage claims for remaining inference procedures",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "inference-002",
+          "related_claims": [
+            "STATADIC-SELECTION-001",
+            "STATADIC-SELECTION-002",
+            "STATADIC-WALD-001"
+          ]
+        },
+        {
+          "id": "inference-003",
+          "title": "Response and Freedman-Lane reduced-residual geometric permutation calibration",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "scope": "Separate exchangeable one-way response permutations from approximate nuisance-adjusted reduced-residual schedules on fixed geometry and a frozen design. Enumeration alone does not make nuisance calibration exact."
+        }
+      ]
+    },
+    {
+      "id": "model",
+      "title": "Statistical model specifications",
+      "module_prefixes": [
+        "statadic.model"
+      ],
+      "obligations": [
+        {
+          "title": "Identify statistical assumptions and published model properties for each model family",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "model-001",
+          "related_claims": [
+            "STATADIC-POISSON-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operators",
+      "title": "Numerical and algebraic operators",
+      "module_prefixes": [
+        "statadic.operators"
+      ],
+      "obligations": [
+        {
+          "title": "Identify algebraic and numerical properties of each operator under stated preconditions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "operators-001",
+          "related_claims": [
+            "STATADIC-FWL-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optimize",
+      "title": "Optimization algorithms",
+      "module_prefixes": [
+        "statadic.optimize"
+      ],
+      "obligations": [
+        {
+          "title": "Identify published feasibility, optimality and convergence results for each supported solver",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "id": "optimize-001",
+          "related_claims": [
+            "STATADIC-LSTSQ-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sample",
+      "title": "Samples and observations",
+      "module_prefixes": [
+        "statadic.sample"
+      ],
+      "obligations": [
+        {
+          "title": "Review sample construction and any asserted mathematical contracts",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "id": "sample-001",
+          "related_claims": [
+            "STATADIC-SAMPLE-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "testing",
+      "title": "Scientific testing utilities",
+      "module_prefixes": [
+        "statadic.testing"
+      ],
+      "obligations": [
+        {
+          "title": "Review generated examples and checked mathematical axioms against their explicit contracts",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "id": "testing-001",
+          "related_claims": [
+            "STATADIC-QUALIFICATION-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "linear",
+      "title": "Linear OLS and WLS",
+      "module_prefixes": [
+        "statadic.estimation.linear"
+      ],
+      "obligations": [
+        {
+          "id": "linear-001",
+          "title": "Fixed-design OLS unbiasedness and Gauss–Markov variance ordering",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-LINEAR-009",
+            "STATADIC-LINEAR-010"
+          ],
+          "scope": "Supported full-column-rank fixed-design OLS, all coefficient contrasts and linear unbiased competitors. Arbitrary probability laws with appropriate first or second moments. Rank-deficient designs, random designs and numerical execution are outside this scope."
+        },
+        {
+          "id": "linear-002",
+          "title": "WLS optimality under correctly specified error covariance",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-LINEAR-011"
+          ],
+          "scope": "Supported positive fixed diagonal precisions and a fixed full-column-rank design. Arbitrary square-integrable response laws and all linear unbiased contrasts. General GLS and data-estimated weights fall outside this model."
+        }
+      ]
+    },
+    {
+      "id": "glm",
+      "title": "Generalized linear models",
+      "module_prefixes": [
+        "statadic.estimation.glm",
+        "statadic.model.glm",
+        "statadic.estimation.likelihood",
+        "statadic.model.likelihood",
+        "statadic.optimize.glm"
+      ],
+      "obligations": [
+        {
+          "id": "glm-001",
+          "title": "Gaussian, binomial/logit/probit, Poisson, Gamma and NB2 score and likelihood properties under their model assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-GLM-001",
+            "STATADIC-POISSON-001",
+            "STATADIC-GLM-002",
+            "STATADIC-GLM-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gmm",
+      "title": "Generalized method of moments",
+      "module_prefixes": [
+        "statadic.estimation.gmm",
+        "statadic.inference.gmm",
+        "statadic.estimation.iv",
+        "statadic.inference.iv",
+        "statadic.estimation.moments",
+        "statadic.api.moments"
+      ],
+      "obligations": [
+        {
+          "id": "gmm-001",
+          "title": "Identification and asymptotic covariance under explicit moment and regularity assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-GMM-004",
+            "STATADIC-GMM-005",
+            "STATADIC-GMM-006",
+            "STATADIC-GMM-007",
+            "STATADIC-GMM-008",
+            "STATADIC-GMM-009",
+            "STATADIC-GMM-010",
+            "STATADIC-GMM-011",
+            "STATADIC-JTEST-001",
+            "STATADIC-JTEST-002",
+            "STATADIC-JTEST-003"
+          ],
+          "scope": "Finite-dimensional affine moment model with a valid population zero and nonsingular limiting weighted Gram. Identification, consistency, coefficient and actual-weight sandwich limits, efficiency and efficient Hansen J calibration are derived under the indicated LLN, CLT and weight conditions. Independent finite-moment rows supply primitive LLN and CLT cases.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "gel",
+      "title": "Generalized empirical likelihood",
+      "module_prefixes": [
+        "statadic.estimation.gel",
+        "statadic.inference.gel"
+      ],
+      "obligations": [
+        {
+          "id": "gel-001",
+          "title": "GEL moment conditions and estimator or test validity under published assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-GEL-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "panel",
+      "title": "Panel estimation",
+      "module_prefixes": [
+        "statadic.estimation.panel",
+        "statadic.api.panel"
+      ],
+      "obligations": [
+        {
+          "id": "panel-001",
+          "title": "Fixed-effects and random-effects model identification and covariance assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-KKP-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "spatial",
+      "title": "Spatial estimation",
+      "module_prefixes": [
+        "statadic.estimation.spatial",
+        "statadic.api.spatial",
+        "statadic.model.survival.spatial"
+      ],
+      "obligations": [
+        {
+          "id": "spatial-001",
+          "title": "Spatial lag, error and IV/GMM identification and estimand assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-GMM-001",
+            "STATADIC-GMM-002",
+            "STATADIC-IV-001",
+            "STATADIC-KKP-001",
+            "STATADIC-SPATIAL-001",
+            "STATADIC-SPATIAL-002",
+            "STATADIC-SPATIAL-004",
+            "STATADIC-SPATIAL-005",
+            "STATADIC-SPATIAL-006",
+            "STATADIC-IV-002",
+            "STATADIC-IV-003",
+            "STATADIC-GMM-004"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "survival",
+      "title": "Survival and AFT models",
+      "module_prefixes": [
+        "statadic.estimation.survival",
+        "statadic.model.survival",
+        "statadic.api.survival",
+        "statadic.inference.survival"
+      ],
+      "obligations": [
+        {
+          "id": "survival-001",
+          "title": "Weibull and lognormal AFT likelihoods under censoring and truncation assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-SURVIVAL-001",
+            "STATADIC-SURVIVAL-002",
+            "STATADIC-SURVIVAL-003",
+            "STATADIC-SURVIVAL-004",
+            "STATADIC-SURVIVAL-005"
+          ],
+          "scope": "Positive-time Weibull or lognormal AFT conditional on covariates, positive fixed scale, independent right censoring, fixed delayed entry with positive admission probability and parameter-distinct censoring. The paired observation law, conditional likelihood and original-time densities establish the implemented model.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "dyadic",
+      "title": "Dyadic models",
+      "module_prefixes": [
+        "statadic.estimation.dyadic",
+        "statadic.model.dyadic",
+        "statadic.inference.dyadic",
+        "statadic.api.dyadic"
+      ],
+      "obligations": [
+        {
+          "id": "dyadic-001",
+          "title": "Dyadic dependence, estimator and bootstrap validity under stated assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-DYADIC-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "covariance-estimation",
+      "title": "Covariance estimation and shrinkage",
+      "module_prefixes": [
+        "statadic.estimation.covariance",
+        "statadic.api.covariance"
+      ],
+      "obligations": [
+        {
+          "id": "covariance-estimation-001",
+          "title": "Sample covariance, shrinkage and cross-validation properties under specified assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-SHRINKAGE-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sharpe",
+      "title": "Sharpe ratio estimation and inference",
+      "module_prefixes": [
+        "statadic.estimation.sharpe",
+        "statadic.inference.sharpe"
+      ],
+      "obligations": [
+        {
+          "id": "sharpe-001",
+          "title": "Sharpe ratio estimators, differences and multiple-testing corrections under source-specific assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-SHARPE-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ground",
+      "title": "Ground metrics and kernels",
+      "module_prefixes": [
+        "statadic.geometry.ground"
+      ],
+      "obligations": [
+        {
+          "id": "ground-001",
+          "title": "Metric and pseudometric laws and positive-definiteness by geometry and domain",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-GROUND-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "embedding",
+      "title": "Principal-coordinate and feature embeddings",
+      "module_prefixes": [
+        "statadic.geometry.embedding",
+        "statadic.api.embedding",
+        "statadic.api.ordination",
+        "statadic.api.ordination_terms",
+        "statadic.geometry.shortest_paths"
+      ],
+      "obligations": [
+        {
+          "id": "embedding-001",
+          "title": "PCoA and distance-matrix embedding under appropriate Euclidean conditions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope": "Classical multidimensional scaling for finite, symmetric, hollow squared distances. PSD of the double-centered Gram matrix characterizes Euclidean realizability. Finite truncation uses the explicit discarded-spectrum bound.",
+          "claims": [
+            "STATADIC-EMBEDDING-001",
+            "STATADIC-EMBEDDING-002",
+            "STATADIC-EMBEDDING-003"
+          ],
+          "scope_review": "agent-reviewed"
+        },
+        {
+          "id": "embedding-002",
+          "title": "Centered PSD-kernel principal coordinates under kernel-specific hypotheses",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "scope": "Kernel PCA with an explicitly declared PSD kernel and training-only centering. Existing finite distance classical-scaling claims do not prove the kernel construction, population consistency or eigenvector smoothness."
+        },
+        {
+          "id": "embedding-003",
+          "title": "Union-kNN geodesic construction and its stated Isomap limitations",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "scope": "Finite original-length union-kNN graph, explicit disconnection rejection and retained signed classical-scaling spectrum. Manifold recovery, neighborhood selection and population laws require separate assumptions and are not established by a finite shortest-path calculation."
+        },
+        {
+          "id": "embedding-004",
+          "title": "Frozen out-of-sample feature, kernel, distance and geodesic extensions",
+          "kind": "contract-review",
+          "source_status": "source-unresolved",
+          "scope": "Training-only centering/scaling and exact ordered references, with each Isomap query attached independently to frozen training paths. No inverse/preimage, rank-change smoothness or predictive-calibration theorem is asserted."
+        }
+      ]
+    },
+    {
+      "id": "median",
+      "title": "Geometric median",
+      "module_prefixes": [
+        "statadic.geometry.median"
+      ],
+      "obligations": [
+        {
+          "id": "median-001",
+          "title": "Existence and optimality of geometric medians under stated assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope": "Existence for a nonempty finite unweighted sample in a proper metric space, including finite-dimensional Euclidean data. For nonnegative weighted Euclidean distances, the coincident-mass force criterion characterizes exact optimality. Positive stopping tolerances and iteration convergence require separate evidence.",
+          "claims": [
+            "STATADIC-MEDIAN-001",
+            "STATADIC-MEDIAN-002",
+            "STATADIC-MEDIAN-003",
+            "STATADIC-MEDIAN-004",
+            "STATADIC-MEDIAN-005"
+          ],
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "barycentre",
+      "title": "Distribution barycentres",
+      "module_prefixes": [
+        "statadic.geometry.barycentre"
+      ],
+      "obligations": [
+        {
+          "id": "barycentre-001",
+          "title": "MMD and Wasserstein barycentre existence and optimality under relevant assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-BARYCENTRE-001",
+            "STATADIC-BARYCENTRE-002",
+            "STATADIC-BARYCENTRE-003",
+            "STATADIC-BARYCENTRE-004",
+            "STATADIC-BARYCENTRE-005",
+            "STATADIC-BARYCENTRE-006"
+          ],
+          "scope": "Finite PSD-kernel target-directed MMD mixtures, and finite uniform equal-cardinality Euclidean Wasserstein supports. Global existence and optimality certificates cover the simplex objective and the fixed-cardinality squared-cost objective. Two-source matched barycentres include arbitrary weights at p=2 and equal weights at p≥1. Alternating free-support iterates have an objective descent guarantee.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "energy",
+      "title": "Energy discrepancy",
+      "module_prefixes": [
+        "statadic.discrepancy.mmd.energy"
+      ],
+      "obligations": [
+        {
+          "id": "energy-001",
+          "title": "Energy and kernel quadratic identity under specified generating relation",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-ENERGY-005"
+          ]
+        },
+        {
+          "id": "energy-002",
+          "title": "Energy nonnegativity under negative-type or positive-semidefinite assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-ENERGY-002",
+            "STATADIC-ENERGY-003",
+            "STATADIC-ENERGY-006",
+            "STATADIC-ENERGY-007",
+            "STATADIC-ENERGY-008"
+          ],
+          "scope": "Population energy for independent draws under a symmetric, zero-diagonal negative-type ground with integrable pair discrepancies. A finite first metric moment suffices in the stated metric setting. A PSD generating kernel induces the requisite finite negative-type condition.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "mmd",
+      "title": "Kernel maximum mean discrepancy",
+      "module_prefixes": [
+        "statadic.discrepancy.mmd"
+      ],
+      "obligations": [
+        {
+          "id": "mmd-001",
+          "title": "Kernel MMD nonnegativity and separation under positive-definiteness and characteristic-kernel assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-MMD-007"
+          ],
+          "scope_review": "agent-reviewed",
+          "scope": "Population kernel discrepancy on a class of probability measures with an integrable Hilbert feature map. Separation holds exactly when the class mean embedding is injective."
+        }
+      ]
+    },
+    {
+      "id": "transport",
+      "title": "Optimal transport discrepancies",
+      "module_prefixes": [
+        "statadic.discrepancy.transport"
+      ],
+      "obligations": [
+        {
+          "id": "transport-001",
+          "title": "Wasserstein and sliced transport distance and optimization properties under relevant assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-TRANSPORT-001",
+            "STATADIC-TRANSPORT-002",
+            "STATADIC-TRANSPORT-003",
+            "STATADIC-TRANSPORT-004",
+            "STATADIC-TRANSPORT-005"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "permutation",
+      "title": "Permutation inference",
+      "module_prefixes": [
+        "statadic.inference.resampling.permutation"
+      ],
+      "obligations": [
+        {
+          "id": "permutation-001",
+          "title": "Exact full-group level under invariance and conservative ties",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-RANDOMIZATION-003",
+            "STATADIC-RANDOMIZATION-006"
+          ]
+        },
+        {
+          "id": "permutation-002",
+          "title": "Random-permutation or add-one validity under separate sampling assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-RANDOMIZATION-002",
+            "STATADIC-RANDOMIZATION-004",
+            "STATADIC-RANDOMIZATION-005"
+          ],
+          "scope": "Finite null-invariant transformation group, arbitrary measurable data with an invariant probability law, and independent uniform transformations drawn with replacement. The upper tail uses inclusive ties and the observed-rank add-one convention.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "bootstrap",
+      "title": "Bootstrap inference",
+      "module_prefixes": [
+        "statadic.inference.resampling.bootstrap",
+        "statadic.inference.resampling.blocks"
+      ],
+      "obligations": [
+        {
+          "id": "bootstrap-001",
+          "title": "Bootstrap and block-bootstrap validity under method-specific dependence conditions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-BOOTSTRAP-001",
+            "STATADIC-BOOTSTRAP-002",
+            "STATADIC-EQUIVALENCE-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "block-length",
+      "title": "Block-length selection",
+      "module_prefixes": [
+        "statadic.inference.resampling.block_length"
+      ],
+      "obligations": [
+        {
+          "id": "block-length-001",
+          "title": "Published block-length selection assumptions and optimality",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-BLOCKLENGTH-001",
+            "STATADIC-BLOCKLENGTH-002",
+            "STATADIC-BLOCKLENGTH-003",
+            "STATADIC-BLOCKLENGTH-004",
+            "STATADIC-BLOCKLENGTH-005"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multiplicity",
+      "title": "Multiple testing",
+      "module_prefixes": [
+        "statadic.inference.multiplicity"
+      ],
+      "obligations": [
+        {
+          "id": "multiplicity-001",
+          "title": "Familywise error or false-discovery control for each correction under stated dependence assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-MULTIPLICITY-001",
+            "STATADIC-MULTIPLICITY-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "equivalence",
+      "title": "Equivalence inference",
+      "module_prefixes": [
+        "statadic.inference.equivalence"
+      ],
+      "obligations": [
+        {
+          "id": "equivalence-001",
+          "title": "Null calibration of the one-sided bootstrap discrepancy-margin test under its resampling and selection assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-EQUIVALENCE-001",
+            "STATADIC-SELECTION-001",
+            "STATADIC-SELECTION-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "moment-inequalities",
+      "title": "Moment inequality inference",
+      "module_prefixes": [
+        "statadic.inference.gms",
+        "statadic.inference.wolak"
+      ],
+      "obligations": [
+        {
+          "id": "moment-inequalities-001",
+          "title": "Moment-inequality calibration under published null and regularity conditions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-INEQUALITY-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "linear-covariance",
+      "title": "Linear-model inference covariances",
+      "module_prefixes": [
+        "statadic.inference.linear_covariance"
+      ],
+      "obligations": [
+        {
+          "id": "linear-covariance-001",
+          "title": "HC covariance variants under independent heteroskedastic errors",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-LINEAR-007",
+            "STATADIC-LINEAR-008",
+            "STATADIC-LINEAR-012",
+            "STATADIC-HC-001",
+            "STATADIC-HC-002",
+            "STATADIC-HC-003",
+            "STATADIC-HC-004"
+          ],
+          "scope": "Fixed-design independent heteroskedastic OLS. Under the stated moment bounds, diffuse normalized contrast loadings and vanishing maximum leverage, HC0, HC1, HC2 and HC3 estimate the target sampling variance in mean absolute error.",
+          "scope_review": "agent-reviewed"
+        },
+        {
+          "id": "linear-covariance-002",
+          "title": "HAC and clustered covariance under appropriate temporal or cluster dependence assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-HAC-003",
+            "STATADIC-HAC-004",
+            "STATADIC-HAC-005",
+            "STATADIC-HAC-006",
+            "STATADIC-HAC-007",
+            "STATADIC-CLUSTER-001",
+            "STATADIC-CLUSTER-002",
+            "STATADIC-COVBRIDGE-001"
+          ],
+          "scope": "Bartlett HAC with a growing lag window under summable stationary covariance and fourth-order dependence control, or cluster covariance under the stated sparse dependency and moment conditions. Passing to fitted residual scores requires the substitution rate and an appropriate stable bread.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "glm-covariance",
+      "title": "GLM inference covariances",
+      "module_prefixes": [
+        "statadic.inference.glm_covariance",
+        "statadic.inference.likelihood"
+      ],
+      "obligations": [
+        {
+          "id": "glm-covariance-001",
+          "title": "Model-based and robust GLM covariance under corresponding assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-GLMCOV-001",
+            "STATADIC-GLMCOV-002",
+            "STATADIC-GLMCOV-003",
+            "STATADIC-GLMCOV-004",
+            "STATADIC-GLMCOV-005"
+          ],
+          "scope": "Regular fitted canonical binomial/logit and Poisson/log GLMs. Conditional on the score CLT, nonsingular sensitivity LLN, negligible scaled fitted-score residual and normalized fitted-meat LLN, the robust sandwich estimates the coefficient-limit covariance. Correct working variances recover the model information.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "panel-covariance",
+      "title": "Panel inference covariances",
+      "module_prefixes": [
+        "statadic.inference.panel_covariance"
+      ],
+      "obligations": [
+        {
+          "id": "panel-covariance-001",
+          "title": "Clustered and panel covariance formulas under their dependence assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-PANELCOV-001",
+            "STATADIC-PANELCOV-002",
+            "STATADIC-PANELCOV-003",
+            "STATADIC-CLUSTER-001",
+            "STATADIC-CLUSTER-002",
+            "STATADIC-COVBRIDGE-001"
+          ],
+          "scope": "One- and two-way cluster pair kernels under sparse cluster dependence, pooled-time and within-entity Bartlett kernels on an aligned time grid, with the score replacement condition for fitted residuals. The row identities specify which lag/stationarity and moment conditions apply to each contrast.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "spatial-covariance",
+      "title": "Spatial inference and diagnostics",
+      "module_prefixes": [
+        "statadic.inference.spatial"
+      ],
+      "obligations": [
+        {
+          "id": "spatial-covariance-001",
+          "title": "Spatial covariance and diagnostics under specified dependence and weight structure",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-SPATIAL-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operators-panel",
+      "title": "Panel operators",
+      "module_prefixes": [
+        "statadic.operators.panel"
+      ],
+      "obligations": [
+        {
+          "id": "operators-panel-001",
+          "title": "Within transformation and panel design identities under appropriate panel structure",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-PANEL-001",
+            "STATADIC-PANEL-002",
+            "STATADIC-PANEL-003",
+            "STATADIC-PANEL-004",
+            "STATADIC-PANEL-005",
+            "STATADIC-PANEL-006"
+          ],
+          "scope": "Weighted within-entity and two-way additive fixed effects on the retained finite panel with positive weights. Product weights on a complete rectangle give a closed form. On an unbalanced roster the two group normal equations and membership of the removed component in the additive span certify the unique weighted residual. A finite iterate that is an exact fixed point satisfies this certificate. The numerical stopping tolerance and the identification of remaining slopes require separate evidence.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "operators-spatial",
+      "title": "Spatial operators",
+      "module_prefixes": [
+        "statadic.operators.spatial"
+      ],
+      "obligations": [
+        {
+          "id": "operators-spatial-001",
+          "title": "Spatial weight and moment-operator properties under specified matrix conditions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved"
+        }
+      ]
+    },
+    {
+      "id": "operators-longrun",
+      "title": "Long-run covariance operators",
+      "module_prefixes": [
+        "statadic.operators.longrun"
+      ],
+      "obligations": [
+        {
+          "id": "operators-longrun-001",
+          "title": "HAC and long-run covariance estimators under kernel and dependence assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "claims": [
+            "STATADIC-HAC-001",
+            "STATADIC-HAC-002",
+            "STATADIC-HAC-003",
+            "STATADIC-HAC-004",
+            "STATADIC-HAC-005",
+            "STATADIC-HAC-006",
+            "STATADIC-HAC-007",
+            "STATADIC-COVBRIDGE-001"
+          ],
+          "scope": "Bartlett kernel and 1/N lag normalization on a regular time index. The raw and sample-centered time-series estimators converge in probability when score moments and dependence satisfy the stated bounds, the bandwidth grows, and (b+1)²/N tends to zero.",
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "optimize-integration",
+      "title": "Gaussian numerical integration",
+      "module_prefixes": [
+        "statadic.optimize.integration"
+      ],
+      "obligations": [
+        {
+          "id": "optimize-integration-001",
+          "title": "Gaussian quadrature or integration accuracy under stated integrand assumptions",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-INTEGRATION-001",
+            "STATADIC-INTEGRATION-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optimize-psd",
+      "title": "Positive-semidefinite optimization",
+      "module_prefixes": [
+        "statadic.optimize.psd"
+      ],
+      "obligations": [
+        {
+          "id": "optimize-psd-001",
+          "title": "Positive-semidefinite projection and eigenvalue repair properties",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope": "Spectral-floor feasibility, trace distortion and Frobenius projection for a symmetric input. Exact diagonal-dual feasibility certifies nearest correlation before the final positive floor. Positive rescaling restores prescribed variances; numerical convergence and post-floor Frobenius optimality are separate.",
+          "claims": [
+            "STATADIC-PSD-001",
+            "STATADIC-PSD-002",
+            "STATADIC-PSD-003",
+            "STATADIC-PSD-004",
+            "STATADIC-PSD-005"
+          ],
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "optimize-simplex",
+      "title": "Simplex optimization",
+      "module_prefixes": [
+        "statadic.optimize.simplex"
+      ],
+      "obligations": [
+        {
+          "id": "optimize-simplex-001",
+          "title": "Simplex feasibility and convex-objective optimality under explicit hypotheses",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope": "Real affine quadratic on the ordinary or uniformly capped simplex, with symmetric curvature positive semidefinite on the equality tangent. Feasibility is characterized, and exact KKT or valid linearization-gap evidence warrants the stated optimality conclusion.",
+          "claims": [
+            "STATADIC-SIMPLEX-003",
+            "STATADIC-SIMPLEX-001",
+            "STATADIC-SIMPLEX-002"
+          ],
+          "scope_review": "agent-reviewed"
+        }
+      ]
+    },
+    {
+      "id": "linear-diagnostics",
+      "title": "OLS residual and influence diagnostics",
+      "module_prefixes": [
+        "statadic.inference.linear_diagnostics",
+        "statadic.api.diagnostics"
+      ],
+      "obligations": [
+        {
+          "id": "linear-diagnostics-001",
+          "title": "Finite algebra of the Durbin-Watson range, Jarque-Bera zero set and deleted-row studentization",
+          "kind": "published-theorem",
+          "source_status": "source-matched",
+          "scope_review": "agent-reviewed",
+          "claims": [
+            "STATADIC-DW-001",
+            "STATADIC-JB-001",
+            "STATADIC-INFLUENCE-001"
+          ],
+          "scope": "Unweighted OLS residuals of a valid identified fit with positive residual degrees of freedom. The finite identities used by the statistics; no reference distribution."
+        },
+        {
+          "id": "linear-diagnostics-002",
+          "title": "Asymptotic chi-square calibration of the Breusch-Pagan, White, Breusch-Godfrey, Jarque-Bera and RESET statistics",
+          "kind": "published-theorem",
+          "source_status": "source-unresolved",
+          "related_claims": [
+            "STATADIC-JB-001"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=30mm]{geometry}
+\usepackage[round,authoryear]{natbib}
+\usepackage{microtype}
+\usepackage{statadic-manuscript}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{lineno}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\crefname{lstlisting}{Listing}{Listings}
+
+\input{metadata}
+\input{generated/values}
+\input{generated/ols-hc3-values}
+\input{generated/ols-hc0-values}
+\input{generated/poisson-values}
+\input{generated/statadic-mathematics}
+\hypersetup{pdftitle={\papertitle},pdfauthor={\paperauthors}}
+
+\title{\papertitle}
+\author{\paperauthors}
+\date{Draft of \today}
+
+\begin{document}
+\linenumbers
+
+\maketitle
+
+\begin{abstract}
+  \input{chapters/abstract}
+\end{abstract}
+
+\noindent\textit{Keywords:} \paperkeywords
+
+\input{body}
+\input{chapters/declarations}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

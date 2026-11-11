@@ -1,0 +1,15 @@
+{
+  "source_url": "https://ledoit.net/honey.pdf",
+  "statement_locations": [
+    "Section 3.2, equation (2) and Appendix A, equation (3)."
+  ],
+  "proof_locations": [
+    "The paper constructs the target and blend. The portfolio-level certificate is derived here by decomposing the equicorrelation quadratic form."
+  ],
+  "claim_ids": [
+    "STATADIC-SHRINKAGE-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives each specialization and its assumptions, diagnostics and limits.",
+  "source_review": "Compared the indicated source with the formula and STATADIC branch implementation. Human semantic review pending."
+}

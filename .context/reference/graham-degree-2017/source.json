@@ -1,0 +1,15 @@
+{
+  "source_url": "https://bryangraham.github.io/econometrics/downloads/publications/Econometrica_v85n4_2017/BSG_Econometrica_v85n4_2017.pdf",
+  "statement_locations": [
+    "Section 1, equation (1) and Assumption 1, pp. 1037–1038. These give the additive endpoint contribution to the link index."
+  ],
+  "proof_locations": [
+    "Reparameterization of the additive endpoint term in equation (1) for the reference-coded linear design in STATADIC. The reference-coding proof is derived here."
+  ],
+  "claim_ids": [
+    "STATADIC-DYADIC-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives the exact assumptions and diagnostic scope of each mapping.",
+  "source_review": "Compared with the source formula and STATADIC path; human semantic review pending."
+}

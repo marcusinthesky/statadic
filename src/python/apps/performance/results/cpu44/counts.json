@@ -1,0 +1,48 @@
+{
+  "revisions": {
+    "parent": "99c1b00b69e204940f9332e27f19697807537d1a",
+    "candidate": "667c7136f4c304b02a39a013ab183c2b41e1f3b5"
+  },
+  "cases": 44,
+  "workers": 528,
+  "warm_vs_parent": {
+    "faster": 36,
+    "mixed": 7,
+    "slower": 1
+  },
+  "candidate_vs_parent_first": {
+    "lower": 43,
+    "equal": 0,
+    "higher": 1
+  },
+  "candidate_vs_parent_warm": {
+    "lower": 40,
+    "equal": 0,
+    "higher": 4
+  },
+  "candidate_vs_parent_peak": {
+    "lower": 43,
+    "equal": 0,
+    "higher": 1
+  },
+  "warm_vs_reference": {
+    "faster": 30,
+    "slower": 11,
+    "mixed": 3
+  },
+  "candidate_vs_reference_first": {
+    "lower": 1,
+    "equal": 0,
+    "higher": 43
+  },
+  "candidate_vs_reference_warm": {
+    "lower": 33,
+    "equal": 0,
+    "higher": 11
+  },
+  "candidate_vs_reference_peak": {
+    "lower": 2,
+    "equal": 0,
+    "higher": 42
+  }
+}

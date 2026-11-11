@@ -1,0 +1,19 @@
+{
+  "source_url": "https://doi.org/10.1093/biomet/53.3-4.325",
+  "statement_locations": [
+    "Section 3, equations (7)–(8) and the PSD/coordinate construction on p. 330."
+  ],
+  "proof_locations": [
+    "PSD factorization and squared-distance calculation following equations (7)–(8).",
+    "Expand the centered coordinates in equations (7)–(8) for the converse; use a real PSD factor for sufficiency.",
+    "Extension of the spectral coordinate construction for STATADIC’s absolute eigenvalue cutoff. The explicit two-threshold error bound is derived here."
+  ],
+  "claim_ids": [
+    "STATADIC-EMBEDDING-001",
+    "STATADIC-EMBEDDING-002",
+    "STATADIC-EMBEDDING-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The registry distinguishes the source statement, STATADIC specialization, runtime observations and outstanding conditions.",
+  "source_review": "Primary source compared with the exact-real argument. Human semantic review pending."
+}

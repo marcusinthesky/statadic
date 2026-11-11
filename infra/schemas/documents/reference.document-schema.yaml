@@ -1,0 +1,28 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+maxTokens: 1500
+frontmatter:
+  type: object
+  required: [type, title, description]
+  properties:
+    type:
+      type: string
+      pattern: \S
+    title:
+      type: string
+      pattern: \S
+      maxLength: 160
+    description:
+      type: string
+      pattern: \S
+      maxLength: 240
+    links:
+      type: array
+      items:
+        type: string
+        pattern: \S
+      uniqueItems: true
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1

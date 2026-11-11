@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "comparisons": {
+    "weighted-hc3": {
+      "symbols": ["statadic.estimation.linear.LeastSquares.estimate", "statadic.inference.linear_covariance.hc_covariance"],
+      "pytest": "src/python/packages/statadic/tests/testing/test_precision_references.py::test_weighted_least_squares_hc3_matches_statsmodels",
+      "reference": "statsmodels.api.WLS.fit(cov_type='HC3')",
+      "quantity": "Weighted coefficients, HC3 covariance matrix and slope sign.",
+      "tolerance": "rtol = atol = 2e-5 in float32 or 2e-11 with x64 enabled. Slope sign agrees exactly.",
+      "boundary": "Eight observations, nonuniform positive weights and a full-rank intercept/slope design. Reference receives the same quantized inputs."
+    },
+    "poisson-exposure": {
+      "symbols": ["statadic.estimation.glm.PoissonMLE.estimate"],
+      "pytest": "src/python/packages/statadic/tests/testing/test_precision_references.py::test_poisson_prediction_matches_statsmodels",
+      "reference": "statsmodels.api.GLM with families.Poisson",
+      "quantity": "Coefficients, fitted means and in-sample predictions with offset and exposure.",
+      "tolerance": "rtol = atol = 1e-4 in float32 or 1e-6 in float64.",
+      "boundary": "Twelve counts with positive exposures. The comparison concerns a converged fit on this design."
+    },
+    "affine-gmm": {
+      "symbols": ["statadic.estimation.gmm.FixedWeightGMM.estimate", "statadic.inference.gmm.covariance.gmm_covariance"],
+      "pytest": "src/python/packages/statadic/tests/testing/test_precision_references.py::test_scaled_gmm_fit_and_covariance_match_scipy",
+      "reference": "scipy.linalg.lstsq and a NumPy empirical moment sandwich",
+      "quantity": "Fitted coefficients and covariance after rescaling one moment derivative by 0.001.",
+      "tolerance": "rtol = 2e-5 in float32 or 2e-11 with x64 enabled. Coefficient atol = 0 and covariance atol = 1e-10.",
+      "boundary": "Exactly identified two-parameter affine problem, four moment observations, identity weight and plain long-run covariance."
+    },
+    "bartlett-hac": {
+      "symbols": ["statadic.operators.longrun.newey_west"],
+      "pytest": "src/python/packages/statadic/tests/migration/test_t75_3_statsmodels.py::test_newey_west_matches_statsmodels_hac_sandwich",
+      "reference": "statsmodels.stats.sandwich_covariance.cov_hac",
+      "quantity": "OLS sandwich formed from STATADIC's uncentered Bartlett meat after restoring its sample-size scale.",
+      "tolerance": "rtol = 1e-11 and atol = 1e-13.",
+      "boundary": "Eight float64 observations, bandwidth two and no finite-sample correction. The test fixes the bandwidth."
+    },
+    "holm-decisions": {
+      "symbols": ["statadic.inference.multiplicity.equivalence_multiplicity_control"],
+      "pytest": "src/python/packages/statadic/tests/inference/test_multiplicity.py::test_holm_matches_step_down_oracle",
+      "reference": "Independent sequential Holm step-down loop in the test module",
+      "quantity": "Boolean rejection decision at every hypothesis, including ties.",
+      "tolerance": "Exact array equality.",
+      "boundary": "Generated lists of one to twelve dyadic p-values, alpha 0.125. Null validity of the input p-values is a separate scientific assumption."
+    },
+    "powered-transport-dual": {
+      "symbols": ["statadic.discrepancy.transport.exact.balanced_wasserstein_from_cost_result"],
+      "pytest": "src/python/packages/statadic/tests/discrepancy/transport/test_exact.py::test_powered_assignment_attains_independent_transport_dual",
+      "reference": "scipy.optimize.linprog, HiGHS primal and dual",
+      "quantity": "Native rooted cost raised back to p versus dual objective, reduced costs and complementary slackness.",
+      "tolerance": "Objective rtol = 2e-6 and atol = 0. Slack is at least -1e-10 and the mass-times-slack absolute tolerance is 1e-10.",
+      "boundary": "Uniform masses on a 3 by 3 cost matrix with repeated rows at p = 1, 2, 3."
+    },
+    "finite-energy": {
+      "symbols": ["statadic.discrepancy.mmd.energy.energy_distance"],
+      "pytest": "src/python/packages/statadic/tests/discrepancy/mmd/test_energy_independent_reference.py::test_scalar_energy_matches_nested_unequal_count_reference",
+      "reference": "Independent nested finite-pair energy_v sum",
+      "quantity": "Scalar Euclidean empirical V-energy for exponents 0.5, 1 and 1.5.",
+      "tolerance": "Relative and absolute tolerances both 1e-12.",
+      "boundary": "Uniform empirical laws with unequal counts and repeated atoms. The U-statistic and population moment conditions require separate evidence."
+    },
+    "capped-simplex": {
+      "symbols": ["statadic.optimize.simplex.simplex_qp_result"],
+      "pytest": "src/python/packages/statadic/tests/optimize/test_simplex_qp.py::test_capped_qp_agrees_with_independent_scipy",
+      "reference": "scipy.optimize.minimize, SLSQP",
+      "quantity": "Simplex weights, objective, and reported first-order gap against an independent constrained fit.",
+      "tolerance": "Weight atol = 2e-7 with rtol = 0. Objective absolute tolerance 2e-9. Observed excess may exceed the reported gap by at most 1e-10.",
+      "boundary": "Five weights and a seeded PSD quadratic with a linear term, using upper bounds 1.0 and 0.3."
+    }
+  }
+}

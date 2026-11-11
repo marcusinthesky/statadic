@@ -1,0 +1,25 @@
+{
+  "source_url": "https://doi.org/10.1073/pnas.97.4.1423",
+  "statement_locations": [
+    "Definition of the weighted L1 objective and the unit-direction residual and site multiplicity on pp. 1423–1424.",
+    "Opening discussion, p. 1423, uniqueness unless the observations are collinear.",
+    "Opening discussion of the collinear exception, p. 1423."
+  ],
+  "proof_locations": [
+    "The force and site-mass criterion in the modified Weiszfeld argument. The global objective-gap inequality is derived by supporting the norm.",
+    "The finite L1 objective from the paper is used here; this existence proof uses compactness of a closed ball in a proper metric space.",
+    "The site-mass optimality criterion. STATADIC derives necessity using a directional quadratic majorant and sufficiency using the global supporting bound.",
+    "STATADIC midpoint proof from equality in the Hilbert-space triangle inequality, combined with finite-sample existence.",
+    "STATADIC exact two-point demonstration of the collinear exception."
+  ],
+  "claim_ids": [
+    "STATADIC-MEDIAN-001",
+    "STATADIC-MEDIAN-002",
+    "STATADIC-MEDIAN-003",
+    "STATADIC-MEDIAN-004",
+    "STATADIC-MEDIAN-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The registry distinguishes the source statement, STATADIC specialization, runtime observations and outstanding conditions.",
+  "source_review": "Primary source compared with the exact-real argument. Human semantic review pending."
+}

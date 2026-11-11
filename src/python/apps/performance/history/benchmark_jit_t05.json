@@ -1,0 +1,86 @@
+[
+  {
+    "phase": "corrected_mixture_test (permutation null + bootstrap)",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 200}",
+    "mean_ms": 2753.7752269903044,
+    "std_ms": 187.84302571774904,
+    "peak_rss_mb": 755.4296875
+  },
+  {
+    "phase": "bootstrap_confidence_interval",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 200}",
+    "mean_ms": 7.0217895961832255,
+    "std_ms": 1.1469516587565116,
+    "peak_rss_mb": 769.41015625
+  },
+  {
+    "phase": "statistics._energy_terms",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 200}",
+    "mean_ms": 0.5687572003807873,
+    "std_ms": 0.6426835478922026,
+    "peak_rss_mb": 775.41015625
+  },
+  {
+    "phase": "statistics.energy_distance",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 200}",
+    "mean_ms": 1.403958402806893,
+    "std_ms": 2.689196501174488,
+    "peak_rss_mb": 776.78515625
+  },
+  {
+    "phase": "corrected_mixture_test (permutation null + bootstrap)",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 500}",
+    "mean_ms": 2516.8261523358524,
+    "std_ms": 102.3836500208685,
+    "peak_rss_mb": 839.640625
+  },
+  {
+    "phase": "bootstrap_confidence_interval",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 500}",
+    "mean_ms": 6.078743998659775,
+    "std_ms": 1.392718886495049,
+    "peak_rss_mb": 839.640625
+  },
+  {
+    "phase": "statistics._energy_terms",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 500}",
+    "mean_ms": 0.4985921957995742,
+    "std_ms": 0.661288351895231,
+    "peak_rss_mb": 839.640625
+  },
+  {
+    "phase": "statistics.energy_distance",
+    "shape": "{'n': 40, 'm': 40, 'd': 5, 'K': 3, 'num_permutations': 500}",
+    "mean_ms": 0.042950804345309734,
+    "std_ms": 0.009343316032585489,
+    "peak_rss_mb": 839.640625
+  },
+  {
+    "phase": "corrected_mixture_test (permutation null + bootstrap)",
+    "shape": "{'n': 100, 'm': 100, 'd': 10, 'K': 5, 'num_permutations': 200}",
+    "mean_ms": 3944.726528997611,
+    "std_ms": 267.2181124788052,
+    "peak_rss_mb": 1067.7734375
+  },
+  {
+    "phase": "bootstrap_confidence_interval",
+    "shape": "{'n': 100, 'm': 100, 'd': 10, 'K': 5, 'num_permutations': 200}",
+    "mean_ms": 9.400960599305108,
+    "std_ms": 1.5895326410645694,
+    "peak_rss_mb": 1067.7734375
+  },
+  {
+    "phase": "statistics._energy_terms",
+    "shape": "{'n': 100, 'm': 100, 'd': 10, 'K': 5, 'num_permutations': 200}",
+    "mean_ms": 0.6584275979548693,
+    "std_ms": 0.687348404746031,
+    "peak_rss_mb": 1067.7734375
+  },
+  {
+    "phase": "statistics.energy_distance",
+    "shape": "{'n': 100, 'm': 100, 'd': 10, 'K': 5, 'num_permutations': 200}",
+    "mean_ms": 3.4213049977552146,
+    "std_ms": 6.42808535718664,
+    "peak_rss_mb": 1067.7734375
+  }
+]

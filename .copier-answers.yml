@@ -1,0 +1,17 @@
+_commit: v0.1.0-alpha
+_src_path: https://github.com/marcusinthesky/exordio.git
+agents:
+- codex
+author: Marcus Gawronsky
+description: Statistical computation, formal mathematical foundations, and reproducible
+    validation.
+languages:
+- python
+- lean
+- latex
+project_name: STATADIC
+project_slug: statadic
+secrets: false
+workflows:
+- planning
+- reference

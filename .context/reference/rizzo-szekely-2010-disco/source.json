@@ -1,0 +1,15 @@
+{
+  "source_url": "https://pages.stat.wisc.edu/~wahba/stat860/pdf4/Energy/disco-AOAS245.pdf",
+  "statement_locations": [
+    "Section 2, equations (2.3), (2.5) and (2.6), Theorem 2, pp. 1039–1040."
+  ],
+  "proof_locations": [
+    "Proof of Theorem 2 and its Appendix calculation for unequal group sizes. Reordering group sums gives the decomposition. STATADIC uses finite conditional negative definiteness for the sign supplied in the Euclidean setting by Theorem 1(i)."
+  ],
+  "claim_ids": [
+    "STATADIC-DISCO-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives the exact assumptions and diagnostic scope of each mapping.",
+  "source_review": "Compared with the source formula and STATADIC path; human semantic review pending."
+}

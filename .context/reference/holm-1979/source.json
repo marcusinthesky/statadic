@@ -1,0 +1,19 @@
+{
+  "source_url": "https://www.ime.usp.br/~abe/lista/pdf4R8xPVzCnX.pdf",
+  "doi": "10.2307/4615733",
+  "statement_locations": [
+    "Section 2, p. 66, classical Bonferroni rule",
+    "Section 2, Scheme 1 and Theorem 1, pp. 66–67"
+  ],
+  "proof_locations": [
+    "Section 2, p. 66, Boole inequality argument",
+    "Theorem 1, p. 67, first true null and Boole inequality"
+  ],
+  "claim_ids": [
+    "STATADIC-MULTIPLICITY-001",
+    "STATADIC-MULTIPLICITY-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Each bound is conditional on marginally valid true-null p-values. No independence assumption is needed.",
+  "source_review": "Compared the original article to the native Lean statements and both Python decision rules. Human semantic review pending."
+}

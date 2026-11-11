@@ -1,0 +1,64 @@
+name: Release preflight
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+concurrency:
+  group: release-validation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  preflight:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - run: bash infra/nix/ci-capacity.sh prepare
+      - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
+      - uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a
+        with:
+          primary-key: nix-release-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'infra/nix/**') }}
+          restore-prefixes-first-match: nix-release-${{ runner.arch }}-
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/tectonic
+            ~/.cache/mathlib
+          key: release-tools-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}
+      - run: bash infra/nix/install-devenv.sh
+      - name: Prepare locked inputs
+        run: |
+          set -o pipefail
+          devenv shell -- just setup 2>&1 | tee build/ci/setup.log
+          bash infra/nix/ci-capacity.sh diagnose provisioned
+      - name: Prepare locked reference environment
+        run: devenv shell -- just setup-references
+      - name: Check release candidate without long scientific campaigns
+        run: devenv shell -- just release-preflight
+      - name: Verify retained archive round trip
+        run: >-
+          devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV
+          uv run --project src/python --offline --frozen --package statadic-docs
+          python src/python/apps/docs/scripts/release.py
+          --verify-archive build/release-preflight.tar --allow-preflight
+      - name: Final capacity
+        if: always()
+        run: bash infra/nix/ci-capacity.sh diagnose final
+      - name: Retain release evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-evidence-${{ runner.arch }}
+          path: |
+            build/ci/
+            build/release-preflight.tar
+          include-hidden-files: true
+          retention-days: 0

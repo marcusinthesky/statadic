@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "source-bound-research-prototype",
+  "exact_mask_theorem": "StatadicFormal.Discrepancy.MMD.maskedReduction_eq_leading",
+  "bindings": {
+    "masked_sum": {
+      "source": "src/python/packages/statadic/src/statadic/sample/packed.py",
+      "function": "masked_sum",
+      "ast_sha256": "10924c6ae6951650b6e46495bee7353b6d429f857955761c5293a31c7bcfc83b"
+    },
+    "pair_chunks": {
+      "source": "src/python/packages/statadic/src/statadic/sample/packed.py",
+      "function": "pair_chunks",
+      "ast_sha256": "12925d0bc4f268044134c9ab52a81a35f3f04ab16b3861897c5535955b565c8c"
+    },
+    "mmd_squared_matrix": {
+      "source": "src/python/packages/statadic/src/statadic/discrepancy/mmd/matrix.py",
+      "function": "mmd_squared_matrix",
+      "ast_sha256": "517334ebc3e0abaf3e675059a8362cfce15d23faa57ccb59e63ae9b152e2dd0a"
+    },
+    "empirical_mmd": {
+      "source": "src/python/packages/statadic/src/statadic/discrepancy/mmd/scalar.py",
+      "function": "_mmd_squared_core",
+      "ast_sha256": "773f8b412016d41d360fee5add2a099010712ef636adf7eb1cf7fd1c0b8e49b0"
+    },
+    "shared_reference": {
+      "source": "src/python/packages/statadic/src/statadic/discrepancy/mmd/scalar.py",
+      "function": "_shared_reference",
+      "ast_sha256": "45391fa1a80714fa5becfbb7126cd95d9e811b870e66b79e751cd1dc767ab31b"
+    },
+    "linear_mmd_cross": {
+      "source": "src/python/packages/statadic/src/statadic/discrepancy/mmd/weighted.py",
+      "function": "_linear_mmd_cross",
+      "ast_sha256": "70ff91a78484b1cbcaab2207a0ca905c751b7cf0b5b8dff2128b4941f4c68f8f"
+    }
+  },
+  "unresolved_gates": [
+    "source-operation semantics and array broadcasting",
+    "pytree batching and inactive atom masking",
+    "packed/scalar MMD exact equivalence",
+    "IEEE rounding, overflow and numerical error",
+    "XLA lowering, compiler and runtime trust"
+  ],
+  "python_formally_verified": false
+}

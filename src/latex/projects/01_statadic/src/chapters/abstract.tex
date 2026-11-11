@@ -1,0 +1,22 @@
+Statistical software is used both to compute research results and to support
+the claims researchers publish about them. Numerical implementations,
+statistical assumptions, machine-checked proofs, validation studies and
+publication outputs are nevertheless usually maintained as separate products,
+which makes it hard to say which guarantees survive when a method is extended,
+recombined or optimized. We present STATADIC, a Python library on JAX that
+separates data representation, model specification, estimation, inference and
+reporting into reusable components with explicit contracts, while retaining a
+conventional fit-then-infer workflow. A companion Lean~4 development registers
+machine-checked statements, links them to the Python functions they concern
+and records which relationships remain unverified. Structured reports, native
+PGFplots figures and restricted prediction artifacts carry computed results
+into manuscripts without refitting. Every number in this paper is regenerated
+from the recorded source based on revision
+\texttt{\jcvalue{revision}}. STATADIC agrees with statsmodels, dcor
+and lifelines to within \jcnum{agreement-aft-max} on matched fixtures. On one
+retained fit, replacing HC0 by HC3 covariance raises slope-interval coverage at
+$n = 25$ from \jcnum{coverage-hc0-25} to \jcnum{coverage-hc3-25} without
+reaching the nominal 0.95. A linear-kernel MMD reduction avoids Gram matrices
+entirely. STATADIC does not claim that its proofs verify compiled JAX programs, or
+that numerical agreement establishes statistical validity; it makes these
+distinctions explicit.

@@ -1,0 +1,73 @@
+/* Local Latin Modern, black on white, with Delft-blue links and focus. */
+@font-face { font-family: "STATADIC Roman"; src: url(brand/fonts/lmroman.woff2) format("woff2"); font-display: swap; }
+@font-face { font-family: "STATADIC Roman"; src: url(brand/fonts/lmroman-italic.woff2) format("woff2"); font-style: italic; font-display: swap; }
+@font-face { font-family: "STATADIC Roman"; src: url(brand/fonts/lmroman-bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "STATADIC Mono"; src: url(brand/fonts/lmmono.woff2) format("woff2"); font-display: swap; }
+
+:root, html.light {
+  color-scheme: light;
+  --paper: #ffffff;
+  --rule: #d6d6d6;
+  --ink: #000000;
+  --blue: #1d3f8f;
+  --sy-f-text: "STATADIC Roman", "Latin Modern Roman", "Computer Modern", Georgia, serif;
+  --sy-f-heading: var(--sy-f-text);
+  --sy-f-mono: "STATADIC Mono", ui-monospace, monospace;
+  --sy-c-background: var(--paper);
+  --sy-c-background-contrast: var(--ink);
+  --sy-c-text: var(--ink);
+  --sy-c-heading: var(--ink);
+  --sy-c-bold: var(--ink);
+  --sy-c-link: var(--blue);
+  --sy-c-link-hover: #102b68;
+  --sy-c-light: var(--ink);
+  --sy-c-border: var(--rule);
+  --sy-c-divider: var(--rule);
+  --sy-c-surface: var(--paper);
+  --sy-c-foot-background: var(--paper);
+  --sy-c-background-dropback: var(--paper);
+  --code-block-background: var(--paper);
+}
+
+body, .sy-head, .sy-foot, .sy-content, .sy-lside, .sy-rside { background: var(--paper); }
+.sy-head-blur { backdrop-filter: none; box-shadow: none; }
+.sy-head-brand, .sy-head-links, .globaltoc, .statadic-colophon { font-family: var(--sy-f-text); }
+.sy-head-brand strong { font-weight: 700; color: var(--ink); }
+.sy-head-brand img { width: 28px; height: 28px; object-fit: contain; }
+.sy-head-brand img + strong { display: inline; }
+.sy-head-links { font-size: 1rem; }
+.yue { font-size: 1.125rem; line-height: 1.65; }
+.yue h1, .yue h2, .yue h3, .yue h4, .yue h5, .yue h6 {
+  font-family: var(--sy-f-heading); font-weight: 700; letter-spacing: normal;
+}
+.yue h1 { font-size: 2.4rem; line-height: 1.2; }
+.yue h2 { font-size: 1.75rem; line-height: 1.3; }
+.yue h3 { font-size: 1.35rem; line-height: 1.35; }
+.yue a, .statadic-colophon a { color: var(--blue); text-decoration: underline; text-underline-offset: .2em; }
+.yue a:hover, .statadic-colophon a:hover { color: var(--sy-c-link-hover); }
+.yue .headerlink { text-decoration: none; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--blue); outline-offset: 4px;
+}
+.yue pre { font-size: .88rem; line-height: 1.55; border: 1px solid var(--rule); border-radius: 0; }
+.yue pre, .yue .highlight { background: var(--code-block-background); }
+.yue table { font-size: 1rem; }
+.statadic-study-plot { display: block; width: 100%; height: auto; }
+.yue td, .yue th { vertical-align: top; }
+.sy-main { min-width: 0; }
+.sy-main .yue { max-width: 70ch; }
+.statadic-colophon { margin-top: 3rem; font-size: .9rem; line-height: 1.6; }
+.navigation { flex-wrap: wrap; }
+.navigation > div { flex: 1 1 12rem; min-width: 0; }
+.navigation a { max-width: 100%; }
+.navigation .page-info { min-width: 0; overflow-wrap: anywhere; }
+
+@media (prefers-reduced-motion: reduce) {
+  .light .sy-head-brand img.light-logo,
+  .light .sy-head-brand img.dark-logo { display: none; }
+}
+
+@media (max-width: 480px) {
+  .yue { font-size: 1.05rem; }
+  .yue h1 { font-size: 2rem; }
+}

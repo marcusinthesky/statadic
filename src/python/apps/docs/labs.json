@@ -1,0 +1,56 @@
+{
+  "origin_revision": "89a59b400fdba1280ed7d35753e6c2085cdd8136",
+  "marimo": "0.25.2",
+  "runtime": "native-python",
+  "labs": [
+    {
+      "slug": "ground-geometry",
+      "notebook": "00_ground_geometry.py",
+      "title": "What does distance notice?",
+      "objective": "Direction, magnitude and valid inputs",
+      "execution": "instant"
+    },
+    {
+      "slug": "energy-distance",
+      "notebook": "01_energy_distance.py",
+      "title": "Can a distance miss scale?",
+      "objective": "Raw versus rooted energy, with explicit ground",
+      "execution": "instant"
+    },
+    {
+      "slug": "permutation-evidence",
+      "notebook": "02_permutation_evidence.py",
+      "title": "Is this difference surprising?",
+      "objective": "Shuffle labels and interpret evidence",
+      "execution": "submit"
+    },
+    {
+      "slug": "regression",
+      "notebook": "03_regression_lab.py",
+      "title": "A fitted line is not the whole story",
+      "objective": "Point estimates, residuals and uncertainty",
+      "execution": "instant"
+    },
+    {
+      "slug": "distributional-workflow",
+      "notebook": "04_distributional_workflow.py",
+      "title": "When a row is a distribution",
+      "objective": "Training geometry and retained landmark prediction",
+      "execution": "submit"
+    },
+    {
+      "slug": "calibration",
+      "notebook": "05_calibration_lab.py",
+      "title": "A p-value is not validation",
+      "objective": "Repeated experiments and Monte Carlo uncertainty",
+      "execution": "submit"
+    },
+    {
+      "slug": "study-results",
+      "notebook": "06_study_results.py",
+      "title": "U or V: where does bias come from?",
+      "objective": "Compare finite-sample MMD bias with the registered study",
+      "execution": "submit"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+set shell := ["bash", "-uc"]
+set positional-arguments
+
+# Check focused test ownership without importing the scientific implementation.
+test-layout *args:
+    env -u VIRTUAL_ENV uv run --locked pytest-layout-enforcer check "$@"
+
+# Run cached fast tests in this project's own process and pytest configuration.
+test *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-forceselect "$@"
+
+# Run the complete fast suite without Testmon selection.
+test-fresh *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon "$@"
+
+# Run every test independently of the affected-test cache.
+test-all *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "" --no-testmon "$@"
+
+# Report serial fast-test durations without profiling-plugin setup.
+test-durations *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon -n 0 --durations=20 "$@"
+
+alias test-changed := test
+
+# Report branch coverage for the complete fast suite, with no percentage gate.
+test-coverage *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon --cov=statadic --cov-branch --cov-report=term-missing --cov-report=html --cov-fail-under=0 "$@"
+
+# Monitor serial fast tests; do not combine the shared SQLite store with xdist.
+test-monitor *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked --group profiling pytest -q -p no:tach -n 0 -m "not slow" --no-testmon --durations=20 "$@"
+
+# Require every selected live software comparison to execute without skips/xfails.
+test-external *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked --group reference pytest -q -p no:monitor -p no:tach -n 0 -m external_reference --no-testmon --require-external-references -o junit_family=legacy --hypothesis-profile=statadic-reference "$@"
+
+# Run matched independent references in the caller-selected JAX precision process.
+test-precision-references *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked --group reference pytest -q -p no:monitor -p no:tach -n 0 -m external_reference --no-testmon --require-external-references -o junit_family=legacy tests/testing/test_precision_references.py tests/testing/test_survival_references.py "$@"
+
+# Run complete prespecified trial studies independently of the fast tier.
+test-qualification *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked --group reference pytest -q -p no:monitor -p no:tach -n 0 -m qualification --no-testmon -o junit_family=legacy "$@"
+
+# Check this package with its self-contained Ruff policy.
+lint *args:
+    env -u VIRTUAL_ENV uv run --locked ruff check src tests scripts "$@"
+    env -u VIRTUAL_ENV uv run --locked ruff format --check src tests scripts "$@"
+
+# Report potentially unused code for review; public and dynamic uses need context.
+dead-code:
+    env -u VIRTUAL_ENV uv run --locked vulture src/statadic tests scripts --min-confidence 60
+
+# Check package source/tests without depending on workspace Pyrefly discovery.
+typecheck *args:
+    env -u VIRTUAL_ENV uv run --locked python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "--project-excludes", "src/statadic/sample/alternatives.py", "--project-excludes", "src/statadic/sample/reduction.py", "--project-excludes", "src/statadic/core/matrices.py", "--project-excludes", "src/statadic/core/transforms.py", "src", "tests", "scripts", *sys.argv[1:]], check=True)' "$@"
+    just typecheck-shapes
+
+# Check native shape owners and reject invalid compositions in an isolated environment.
+typecheck-shapes *args:
+    env -u VIRTUAL_ENV uv run --locked --isolated --group shapes python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "src/statadic/core/matrices.py", "src/statadic/core/transforms.py", "src/statadic/sample/alternatives.py", "src/statadic/sample/reduction.py", "tests/shapes", *sys.argv[1:]], check=True)' "$@"
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 uv run --locked --isolated --group shapes pytest -q -p no:monitor -p no:tach -n 0 --no-testmon tests/shapes
+
+# Report which declared return shapes Pyrefly actually checks.
+typecheck-shape-coverage *args:
+    env -u VIRTUAL_ENV python3 scripts/shape_coverage.py "$@"
+
+# Audit full-package shape annotations and experimental stub compatibility.
+typecheck-shapes-all *args:
+    env -u VIRTUAL_ENV uv run --locked --isolated --group shapes python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "src", "tests", "scripts", *sys.argv[1:]], check=True)' "$@"
+
+# Build and qualify installed wheels and standalone sdist development.
+test-artifacts *args:
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked python scripts/check_distribution.py "$@"
+
+# Local install-compatibility matrix (tox-uv): Python 3.13-3.14 at the lowest
+# and highest declared dependency versions, one environment at a time.
+compat *args:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --locked --isolated --no-dev --group compat tox run "$@"

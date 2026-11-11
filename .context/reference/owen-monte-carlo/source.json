@@ -1,0 +1,15 @@
+{
+  "source_url": "https://artowen.su.domains/mc/Ch-intro.pdf",
+  "statement_locations": [
+    "Chapter 2, §§2.1 and 2.9, variance of the sample mean and Chebyshev intervals."
+  ],
+  "proof_locations": [
+    "Expand the variance of a sum into pair covariances. Chapter 2, §§2.1 and 2.9, variance of the sample mean and Chebyshev intervals."
+  ],
+  "claim_ids": [
+    "STATADIC-INTEGRATION-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The source supplies the indicated result or motivation. The registry describes the exact specialization and diagnostic limits.",
+  "source_review": "Compared with the primary source and current STATADIC implementation. Human semantic review pending."
+}

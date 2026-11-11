@@ -1,0 +1,40 @@
+% Keep the synthetic companion's ordinary article closure in the vendored bundle.
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\begin{document}
+\section*{A synthetic regression}
+Heteroskedasticity-consistent uncertainty \cite{white-1980,mackinnon-white-1985}.
+
+\begin{table}
+  \centering
+  \caption{Regression inference}
+  \begin{tabular}{@{}lS[table-format=1.4,group-digits=integer]S[table-format=1.5,group-digits=integer]S[table-format=1.4,group-digits=integer]S[table-format=1.4,group-digits=integer]@{}}
+    \toprule
+    Parameter & {Estimate} & {SE} & \multicolumn{2}{c}{95\% CI} \\
+    \cmidrule(lr){4-5}
+     & & & {Lower} & {Upper} \\
+    \midrule
+    intercept & 0.8906 & 0.1076 & 0.6798 & 1.101 \\
+    x & 0.8304 & 0.05268 & 0.7272 & 0.9337 \\
+    \midrule
+    n\_observations & {\num{40}} & & & \\
+    \bottomrule
+  \end{tabular}
+  \par 95\% intervals; $10^{-9}$ shows script-size fonts.
+\end{table}
+
+\begin{tikzpicture}
+  \begin{axis}[width=10cm,height=6cm,xlabel={Fitted values},ylabel={Response residuals}]
+    \addplot[only marks] coordinates {(1,0.1) (2,-0.2) (3,0.1)};
+    \addplot[dashed,no marks] coordinates {(1,0) (3,0)};
+  \end{axis}
+\end{tikzpicture}
+
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}

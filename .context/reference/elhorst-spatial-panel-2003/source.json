@@ -1,0 +1,15 @@
+{
+  "source_url": "https://doi.org/10.1177/0160017603253791",
+  "statement_locations": [
+    "Fixed Effects Model, equations (7) and (8), the repeated single-filter log determinant for spatial error and spatial lag, respectively"
+  ],
+  "proof_locations": [
+    "The two displayed likelihoods each use one common filter. STATADIC derives the product of two potentially noncommuting, period-specific filters using block determinants and multiplicativity."
+  ],
+  "claim_ids": [
+    "STATADIC-SPATIAL-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "source_review": "Agent comparison of the cited formulas with the Lean definitions. Human semantic review pending.",
+  "scope_note": "The published formulas motivate the implementation. The STATADIC-specific refinements and their assumptions are stated in the claim registry."
+}

@@ -1,0 +1,15 @@
+{
+  "source_url": "https://proceedings.mlr.press/v32/cuturi14.pdf",
+  "statement_locations": [
+    "Section 4, equation (8) and Algorithm 2, support-location update with fixed transport plans."
+  ],
+  "proof_locations": [
+    "Quadratic support update specialized to equal-cardinality uniform sources, a full step and normalized source weights."
+  ],
+  "claim_ids": [
+    "STATADIC-BARYCENTRE-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The registry distinguishes the source statement, STATADIC specialization, runtime observations and outstanding conditions.",
+  "source_review": "Primary source compared with the exact-real argument. Human semantic review pending."
+}

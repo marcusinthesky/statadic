@@ -1,0 +1,86 @@
+{
+  "baseline_revision": "dadeeccf4b53d303d61f81c63aa37bf8e540ae05",
+  "baseline_definitions": 1711,
+  "current_definitions": 1717,
+  "new_definitions": [
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_external_preflight_imports_only_selected_nodes",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_marker_implications_are_validated",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_requirement_marker_arguments_are_validated",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_scope_policy_accepts_one_inherited_declaration",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_scope_policy_checks_all_nodes_before_selection",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_unknown_marker_still_fails_under_strict_markers"
+  ],
+  "review_batches": {
+    "7": 214,
+    "8": 213,
+    "4": 214,
+    "5": 214,
+    "2": 214,
+    "1": 214,
+    "3": 214,
+    "6": 214
+  },
+  "registered_markers": 20,
+  "before_missing_scopes": 360,
+  "before_conflicting_scopes": 1,
+  "before_redundant_scopes": 2,
+  "effective_marker_counts": {
+    "component": 893,
+    "contract": 788,
+    "e2e": 1,
+    "external_reference": 90,
+    "integration": 291,
+    "needs_import_hook": 9,
+    "numerical": 153,
+    "performance": 9,
+    "property": 276,
+    "qualification": 19,
+    "reference": 273,
+    "regression": 97,
+    "requires_optional": 100,
+    "requires_program": 36,
+    "slow": 107,
+    "smoke": 2,
+    "statistical": 33,
+    "subprocess": 49,
+    "typing": 46,
+    "unit": 532
+  },
+  "reviewed_behavior_changes": [
+    "src/python/packages/statadic/tests/discrepancy/mmd/energy/test_balancing.py::TestEnergyTestKernelPairwiseMax::test_outlier_detection",
+    "src/python/packages/statadic/tests/discrepancy/mmd/test_components.py::TestEnergyComponents::test_energy_components_diagonal",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_native_hypothesis_profile_is_effective",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_optional_reference_distinguishes_absent_from_broken",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_required_reference_policy",
+    "src/python/packages/statadic/tests/testing/test_validation_support.py::test_test_process_respects_explicit_jax_precision"
+  ],
+  "errors": [],
+  "native_collection": {
+    "before_cases": 3092,
+    "after_cases": 3113,
+    "new_cases": 21,
+    "missing_original_cases": [],
+    "lanes": {
+      "fast": {
+        "original_cases": 2928,
+        "current_cases": 2949,
+        "original_selection_preserved": true
+      },
+      "external": {
+        "original_cases": 248,
+        "current_cases": 248,
+        "original_selection_preserved": true
+      },
+      "qualification": {
+        "original_cases": 47,
+        "current_cases": 47,
+        "original_selection_preserved": true
+      },
+      "typing": {
+        "original_cases": 57,
+        "current_cases": 57,
+        "original_selection_preserved": true
+      }
+    }
+  }
+}

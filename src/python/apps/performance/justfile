@@ -1,0 +1,30 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
+app := source_directory()
+runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project '" + app + "/../..' --offline --frozen --package statadic-performance --group dev"
+
+check:
+    {{ runner }} python -m ruff check '{{ app }}/src' '{{ app }}/scripts' '{{ app }}/tests'
+    {{ runner }} python -m ruff format --check '{{ app }}/src' '{{ app }}/scripts' '{{ app }}/tests'
+    {{ runner }} python -m pytest -q '{{ app }}/tests'
+
+fmt:
+    {{ runner }} python -m ruff format '{{ app }}/src' '{{ app }}/scripts' '{{ app }}/tests'
+
+smoke *args:
+    {{ runner }} python -m statadic_performance.cli smoke "$@"
+
+bench output:
+    {{ runner }} python -m statadic_performance.cli bench --output "$1"
+
+compare baseline candidate *args:
+    {{ runner }} python -m statadic_performance.cli compare "$1" "$2" "${@:3}"
+
+profile output:
+    {{ runner }} python -m statadic_performance.cli profile --output "$1"
+
+report campaign *args:
+    {{ runner }} python -m statadic_performance.cli report "$1" "${@:2}"
+
+reference *args:
+    {{ runner }} python -m statadic_performance.reference "$@"

@@ -1,0 +1,47 @@
+# Documentation ownership
+
+STATADIC's package documentation is the canonical source; Sphinx reads it directly
+with this application's configuration. The app owns the lab notebooks, their
+helpers, and the tooling needed to build and test the site. Static snapshots and
+source downloads are generated in ignored build output, never in authored source.
+The app is an internal workspace consumer and does not add documentation
+dependencies to STATADIC's distribution. A successful site build does not qualify
+scientific results or prove mathematical claims.
+
+The build selects publication exports explicitly, never by scanning ambient
+campaign directories. Release selections follow orchestrator verification of
+the wheel and scope. Rendering distinguishes historical reports and selected
+release reports; neither label itself grants qualification. Figures read the
+retained summary's uncertainty bounds, failures and frozen decision thresholds,
+without rerunning trials or replacing scientific dispositions.
+
+The formal section consumes a current compiled Lean certification artifact.
+Canonical Markdown stubs project registry content at Sphinx source-read time;
+tracked documentation never acquires generated proof badges. Bibliographic
+metadata comes from the same governed references and BibTeX export as LaTeX.
+The build certifies proofs and renders the blueprint before Sphinx; unresolved
+all-method obligations are visible and remain distinct from integrity failures.
+
+The website uses Shibuya's article layout with licensed local serif fonts and a
+small black/Delft-blue stylesheet. The supplied curve-fit SVG is the header logo
+and favicon; the rest of the presentation remains free of decorative artwork.
+Documentation separates learning, tasks, concepts, reference and evidence.
+The short onboarding sources retain a frozen word budget; the complete OLS
+chapter and comprehensive references sit outside
+that entry path. The canonical OLS example owns the numerical teaching recipe;
+the native marimo lab owns reactive controls and display. Tutorials render the
+actual example outputs. No browser-WASM or hosted-kernel runtime is introduced.
+
+The release runner owns retained build artifacts and an isolated installed-wheel
+test environment. It exports reference dependencies from the workspace lock,
+never installs editable STATADIC into that environment, and records source/artifact
+hashes and per-study dispositions. Its verification rejects changed evidence or
+source trees. Human source-fidelity review remains separate from compilation.
+
+An explicit release scope retains every required variant's canonical campaign
+cells and selects additional statistical tests by exact parameterized node.
+Missing, duplicate, skipped or extra supplemental cells fail verification, as do
+changed test, mapping, wheel or scope identities. A campaign-only variant has an
+explicit route rather than inheriting unrelated statistical tests. The default
+release retains all-method qualification. Bounded numerical controls cannot
+satisfy a separate large spatial-survival accuracy or refit contract.

@@ -1,0 +1,52 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
+
+app := source_directory()
+runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project " + app + " --offline --frozen --package statadic-studies"
+
+default:
+    @just --list
+
+check:
+    {{runner}} ruff check "{{app}}/src" "{{app}}/tests"
+    {{runner}} ruff format --check "{{app}}/src" "{{app}}/tests"
+    {{runner}} pytest -q -c "{{app}}/pyproject.toml" "{{app}}/tests"
+    {{runner}} statadic-studies check --repository "{{app}}/../../../.."
+
+suite *args:
+    {{runner}} statadic-studies suite "$@"
+
+run *args:
+    {{runner}} statadic-studies run "$@"
+
+resume *args:
+    {{runner}} statadic-studies resume "$@"
+
+merge *args:
+    {{runner}} statadic-studies merge "$@"
+
+summarize *args:
+    {{runner}} statadic-studies summarize "$@"
+
+export *args:
+    {{runner}} statadic-studies export "$@"
+
+verify *args:
+    {{runner}} statadic-studies verify "$@"
+
+fmt:
+    {{runner}} ruff check --fix "{{app}}/src" "{{app}}/tests"
+    {{runner}} ruff format "{{app}}/src" "{{app}}/tests"
+
+# Retained installed-wheel environment; no campaign runs during preparation.
+installed-prepare directory x64="1":
+    {{runner}} python -m statadic_studies.installation prepare "{{directory}}" --repository "{{app}}/../../../.." --uv "$(command -v uv)" --x64 "{{x64}}"
+
+installed-run preparation directory *args:
+    {{runner}} python -m statadic_studies.installation run "{{preparation}}" "{{directory}}" "${@:3}"
+
+installed-resume preparation directory:
+    {{runner}} python -m statadic_studies.installation resume "{{preparation}}" "{{directory}}"
+
+installed-status preparation directory:
+    {{runner}} python -m statadic_studies.installation status "{{preparation}}" "{{directory}}"

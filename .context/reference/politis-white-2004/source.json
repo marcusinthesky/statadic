@@ -1,0 +1,18 @@
+{
+  "source_url": "https://www.math.ucsd.edu/~politis/SBblock-revER.pdf",
+  "statement_locations": [
+    "Sections 3.2–3.3, equations (6) and (11), cube-root minimizer of the large-sample MSE; stationary constant corrected in 2009.",
+    "Sections 3.2–3.3, flat-top lag sums (8), (13), finite dependence in Theorems 3.2(iii) and 3.3(iii)."
+  ],
+  "proof_locations": [
+    "Minimize the two leading terms following Theorem 3.1, substituting the corrected variance factor in the stationary case.",
+    "Appendix proofs of Theorems 3.2–3.3, control of the two tapered lag pilots. Finite-support sufficient-condition specialization."
+  ],
+  "claim_ids": [
+    "STATADIC-BLOCKLENGTH-002",
+    "STATADIC-BLOCKLENGTH-004"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See the claim registry for assumptions, diagnostics and limits.",
+  "source_review": "Checked the original formula, the 2009 correction and the two lower bounds in the native implementation. Human semantic review pending."
+}

@@ -1,0 +1,53 @@
+{
+  "source_url": "https://larspeterhansen.org/wp-content/uploads/2016/11/Hansen-econometrica-GMM.pdf",
+  "statement_locations": [
+    "Section 2, p. 1034, sample criterion preceding Definition 2.1",
+    "Theorem 2.1(iii), unique zero of the population moments; Section 3, Definition 3.1.",
+    "Theorem 3.1, covariance of the limiting GMM distribution, p. 1042.",
+    "Section 2, Theorem 2.1, consistency of the GMM estimator.",
+    "Theorem 3.1, limiting distribution under Assumptions 3.1–3.6.",
+    "Theorem 3.1, p. 1042, normal law and asymptotic covariance.",
+    "Theorem 3.2 and the paragraph after the theorem on inverse long-run covariance weighting.",
+    "Theorem 2.1, sample-moment convergence and identification.",
+    "Theorem 2.1(iii), unique population root; Section 4, specification tests based on residual moments.",
+    "Theorem 3.1, inverse derivative in the limiting response.",
+    "Section 4, sample orthogonality conditions at estimated parameters and Lemmas 4.1–4.2, pp. 1049–1050.",
+    "Section 4, Lemma 4.2, pp. 1049–1050.",
+    "Theorem 3.1 and Assumptions 3.3–3.5, asymptotic normality of sample orthogonality conditions."
+  ],
+  "proof_locations": [
+    "Finite affine specialization. The normal-equation and norm-gap derivation is supplied here for the criterion used in Definition 2.1.",
+    "Affine specialization of the population orthogonality condition and weighted normal equations.",
+    "Continuity at a nonsingular limit, applied to the sandwich in Theorem 3.1.",
+    "Finite-dimensional affine variant using continuous mapping at the unique population moment root.",
+    "Proof of Theorem 3.1, transfer of the moment limit through the limiting estimating equations.",
+    "Apply the Gaussian linear transformation step and expand the covariance in Theorem 3.1.",
+    "Appendix proof of Theorem 3.2, factorization of the covariance difference into a nonnegative matrix.",
+    "Apply the vector strong law directly to the affine row coefficients and the normal-equation limit.",
+    "STATADIC counterexample obtained by choosing a moment violation in the derivative column space.",
+    "STATADIC one-moment sensitivity example for the normal-equation map.",
+    "Substitute fitted residual moments into the quadratic and take the score and response limits.",
+    "Appendix proof of Lemma 4.2, whitened idempotent residual projection and its rank.",
+    "Appendix proof of Lemma 4.2, identify the whitened residual projection and count its rank.",
+    "Independent finite-second-moment specialization of the score CLT with scalar projection and Cramér–Wold."
+  ],
+  "claim_ids": [
+    "STATADIC-GMM-003",
+    "STATADIC-GMM-004",
+    "STATADIC-GMM-005",
+    "STATADIC-GMM-006",
+    "STATADIC-GMM-007",
+    "STATADIC-GMM-008",
+    "STATADIC-GMM-009",
+    "STATADIC-GMM-010",
+    "STATADIC-IV-002",
+    "STATADIC-IV-003",
+    "STATADIC-JTEST-001",
+    "STATADIC-JTEST-002",
+    "STATADIC-JTEST-003",
+    "STATADIC-GMM-011"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See each claim for assumptions, Python correspondence and limits. Locally derived special cases and counterexamples are identified separately from published results.",
+  "source_review": "Primary text and source locators reviewed. Human semantic review pending."
+}

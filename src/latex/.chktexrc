@@ -1,0 +1,11 @@
+## ChkTeX policy for `just latex::lint`. Correctness (unresolved references,
+## citations and glyphs) is gated by tools/check-log and the compile itself;
+## ChkTeX is style. Suppressed classes fire falsely on math-heavy prose:
+## 1 (command terminated with space), 2 (nbsp before inline math), 3 (enclose
+## braces), 8 (dash length), 12/13 (interword and intersentence spacing),
+## 24 (space before \label), 26 (space before punctuation), 35/36/38
+## (math and quote heuristics) and 46 (use \( \) instead of $ $).
+CmdLine
+{
+    -n1 -n2 -n3 -n8 -n12 -n13 -n24 -n26 -n35 -n36 -n38 -n46
+}

@@ -1,0 +1,24 @@
+{
+  "source_url": "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf",
+  "statement_locations": [
+    "Sections 4.2.3 and 5.5.3, sufficiency of the KKT conditions for convex problems.",
+    "Section 4.2.3, first-order optimality inequality (4.21).",
+    "Section 2.2.4, probability simplex with added coordinate upper bounds.",
+    "Section 4.2.3, first-order optimality inequality (4.21) for differentiable convex objectives."
+  ],
+  "proof_locations": [
+    "Expand the quadratic around the candidate and use convex curvature on feasible displacements. Sections 4.2.3 and 5.5.3, sufficiency of the KKT conditions for convex problems.",
+    "Lower-bound the competitor’s quadratic by its tangent affine function. Section 4.2.3, first-order optimality inequality (4.21).",
+    "Sum the coordinate ceilings to get necessity. Section 2.2.4, probability simplex with added coordinate upper bounds.",
+    "Specialize convex quadratic expansion to feasible simplex displacements; minimize the linearization over simplex vertices."
+  ],
+  "claim_ids": [
+    "STATADIC-SIMPLEX-001",
+    "STATADIC-SIMPLEX-002",
+    "STATADIC-SIMPLEX-003",
+    "STATADIC-BARYCENTRE-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The source supplies the indicated result or motivation. The registry describes the exact specialization and diagnostic limits.",
+  "source_review": "Compared with the primary source and current STATADIC implementation. Human semantic review pending."
+}

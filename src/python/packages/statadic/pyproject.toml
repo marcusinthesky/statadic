@@ -1,0 +1,480 @@
+[project]
+name = "statadic"
+version = "0.5.0a1"
+description = "Composable statistics on JAX, with inspectable assumptions and reproducible evidence."
+readme = "README.md"
+# Broader Python support requires its own interpreter, wheel and import-hook
+# qualification; the contributor workspace remains pinned to Python 3.13.
+requires-python = ">=3.13,<3.15"
+# Floors are exercised by the local installed-wheel compatibility lane.
+# See [tool.tox]; retained results state the selected test scope.
+dependencies = [
+  # Qualify the next series separately, including multinomial shape semantics.
+  "jax[cpu]>=0.11.0,<0.12",
+  # 0.3.2 misses runtime shape/type violations the contract tests require.
+  "jaxtyping>=0.3.3",
+  "lineax>=0.1.0",
+  # projection_simplex arrives in 0.2.3, assignment.hungarian_algorithm in 0.2.4.
+  "optax>=0.2.4",
+  "optimistix>=0.1.0",
+  "qpax>=0.1.0",
+]
+
+[project.optional-dependencies]
+# Host table preparation is optional; numerical workflows remain array based.
+# polars <1.3 frames fail the table input contract.
+data = ["polars>=1.3,<3", "pyarrow>=24.0,<27"]
+# Lowest releases with wheels for each supported CPython.
+plot = [
+  "matplotlib>=3.9.2,<4; python_version < '3.14'",
+  "matplotlib>=3.10.5,<4; python_version >= '3.14'",
+]
+
+[dependency-groups]
+# Locked orchestration; isolated wheel environments resolve range endpoints.
+compat = ["tox>=4.67,<5", "tox-uv>=1.37,<2", "uv>=0.13.7,<0.14"]
+dev = [
+  "numpy>=2.0.0,<3.0.0",
+  # Contributor typing contracts use the same qualified JAX series as runtime.
+  "jax[cpu]>=0.11.0,<0.12",
+  "ruff>=0.16.0,<0.17",
+  "vulture>=2.14,<3",
+  "prek",
+  "pytest",
+  "pytest-cov",
+  # Process parallelism. STATADIC's fast tier is a broad flat tail (T51 measured
+  # 1,302 passed + 12 skipped / 129 s on 8 workers); see the OMP_NUM_THREADS
+  # note in this package's justfile for why the worker thread budget must be
+  # pinned alongside it.
+  "pytest-xdist",
+  "pytest-layout-enforcer @ git+https://github.com/marcusinthesky/pytest-layout-enforcer.git@4a1911f444e30328e7e01a0c885f24486807021b",
+  "pydoclint",
+  # Keep strict diagnostics on the validated checker series; newer presets
+  # require their own reviewed migration rather than changing contributor gates.
+  "pyrefly>=1.4,<1.5",
+  # Static declarations only; `statadic.core.typing` erases them at runtime.
+  "pyrefly-shape-extensions==1.4.0",
+  "marimo>=0.8.0",
+  "matplotlib>=3.8.0",
+  "seaborn>=0.13.0",
+  "pytest-testmon",
+  "deptry",
+  "beartype>=0.22.9",
+  "hypothesis>=6.164.0",
+  # Test-only reference oracle. t65 retired the last runtime SciPy call from
+  # `src/statadic` (`SCIPY_BOUNDARIES` is now the empty tuple), so SciPy is no
+  # longer a dependency of the shipped wheel. The suite still checks statadic's
+  # `jax.scipy` ports — chi-bar-square, Sharpe tails, Mantel, NNLS, kappa —
+  # against upstream SciPy, which is what this entry buys.
+  "scipy>=1.14.0",
+  # Exercise/type-check the shipped optional table adapter in standalone dev.
+  # These remain optional extras in the runtime wheel.
+  "polars>=1.3,<3",
+  "pyarrow>=24.0,<27",
+]
+# Resource monitoring is serial and opt-in; keep its auto-loaded plugin out of
+# ordinary parallel test environments.
+profiling = ["pytest-monitor"]
+# Shape-aware stubs enable inference on install, so they stay out of `dev`.
+shapes = [
+  "jax-pyrefly-stubs==1.4.0",
+  "pyrefly-numpy-stubs==1.4.0",
+]
+# Independent software or trusted-library oracles used by the opt-in
+# independent-reference test suite. Keep these out of both the
+# runtime wheel and the default `dev` environment: `uv sync --package statadic
+# --group reference` is the explicit opt-in. Every importing test gates its
+# oracle through `optional_reference`, so the default suite remains
+# collectable when this group is absent.
+reference = [
+  "libpysal>=4.15.0",
+  "spreg>=1.9.0",
+  # Qualified AFT oracle with pandas 3. Newer releases cap pandas below 3;
+  # package-conflict forks are unsupported by the pinned uv2nix toolchain.
+  "lifelines==0.30.0",
+  "dcor>=0.6.0",
+  "statsmodels>=0.14.0",
+  "glum>=3.1.0",
+  "linearmodels>=7.1",
+  "POT>=0.9.5",
+  "scikit-learn>=1.5.0",
+  "scikit-bio>=0.6.0",
+  "arch>=7.0.0",
+  "PyPortfolioOpt>=1.5.5",
+]
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/statadic"]
+
+# Self-contained package policy: standalone sdist development needs no parent
+# configuration. Keep the workspace baseline and STATADIC overrides explicit here.
+[tool.ruff]
+required-version = ">=0.16.0,<0.17"
+target-version = "py313"
+line-length = 88
+src = ["."]
+force-exclude = true
+unsafe-fixes = false
+show-fixes = true
+
+[tool.ruff.lint]
+# Stable maximal policy plus the exact preview rules accepted for this campaign.
+# `explicit-preview-rules` prevents future preview additions from entering via a
+# family prefix or `ALL` without an explicit policy decision.
+select = ["ALL"]
+extend-select = [
+  "PLW0717",
+  "PLW1514",
+  "RUF067",
+  "RUF069",
+  "I",
+  "DOC",
+  # Preview rules are explicit because the workspace enables
+  # `explicit-preview-rules`. These are scoped to STATADIC until the rest of the
+  # workspace has a reviewed baseline for the same checks.
+  "PLC2701",
+  "PLR0904",
+  "PLR0914",
+  "PLR0916",
+  "PLR1702",
+  "PLR6301",
+  "RUF029",
+  "RUF047",
+  "RUF050",
+  "RUF052",
+  "RUF066",
+  "RUF072",
+]
+external = ["pydoclint"]
+preview = true
+explicit-preview-rules = true
+fixable = ["ALL"]
+ignore = [
+  # Ruff formatter incompatibilities.
+  "COM812",
+  "COM819",
+  "D206",
+  "D300",
+  "E111",
+  "E114",
+  "E117",
+  "ISC001",
+  "ISC002",
+  "Q000",
+  "Q001",
+  "Q002",
+  "Q003",
+  "W191",
+  # Mutually exclusive pydocstyle conventions: retain D211 and D212.
+  "D203",
+  "D213",
+  # No repository copyright-holder/header convention exists. A generic
+  # placeholder would satisfy the syntax without creating a valid notice.
+  "CPY001",
+  # Scientific kernels and CLI callbacks can have several independent inputs;
+  # group parameters only when the domain provides a coherent configuration.
+  "PLR0913",
+  "PLR0917",
+]
+allowed-confusables = [
+  "\u03c3",
+  "\u00d7",
+  "\u03b1",
+  "\u2139",
+  "\u211d",
+  "\u00b5"
+]  # σ, ×, α, ℹ, ℝ, µ (intentional scientific notation)
+# \u00b5 is MICRO SIGN, not \u03bc GREEK SMALL LETTER MU: it is the SI
+# prefix in timing units (`520 µs`), which is what the benchmark prose in
+# `geometry/neighbour.py` quotes. Listed rather than rewritten so a recorded
+# measurement is never silently retyped.
+#
+# \u2013 EN DASH is deliberately NOT listed. It separates numeric ranges in a
+# handful of docstrings, but blanket-allowing it would also mask a
+# hyphen/minus mix-up in `paper3/empirical.py`, which carries three of the
+# seven repo-wide occurrences. The single statadic site is rewritten instead.
+
+[tool.ruff.lint.flake8-builtins]
+strict-checking = true
+# These are established STATADIC stage names, not accidental top-level modules.
+# Keep strict checking for every other stdlib-shaped module name.
+allowed-modules = ["random", "statistics", "typing"]
+
+[tool.ruff.lint.flake8-bandit]
+check-typed-exception = true
+
+[tool.ruff.lint.flake8-self]
+# Internal predictor lowering is shared by model and composite term owners.
+extend-ignore-names = ["_prepare_term"]
+
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"pipeline".msg = "statadic is the lowest product layer and must not import pipeline."
+"simulation".msg = "statadic is the lowest product layer and must not import simulation."
+"importlib.import_module".msg = "Use a static import; dynamic imports hide dependency edges."
+"importlib.reload".msg = "Do not reload modules; it creates hidden, order-dependent state."
+"importlib.util.find_spec".msg = "Centralize optional-dependency probing in one reviewed boundary module."
+"importlib.util.module_from_spec".msg = "Do not construct modules dynamically outside the approved loader."
+"importlib.util.spec_from_file_location".msg = "Do not load Python files by path outside the approved loader."
+"pkgutil.resolve_name".msg = "Use a static reference; string name resolution evades import analysis."
+"pydoc.locate".msg = "Use a static reference; string lookup evades import and type analysis."
+"runpy.run_module".msg = "Use a normal entry point; runtime module execution hides dependencies."
+"runpy.run_path".msg = "Use a normal entry point; path execution bypasses package boundaries."
+"sys.path".msg = "Do not mutate import search paths; fix packaging and source roots instead."
+"sys.meta_path".msg = "Custom import hooks belong only in a dedicated, reviewed loader."
+"sys.path_hooks".msg = "Custom path hooks belong only in a dedicated, reviewed loader."
+"sys.modules".msg = "Do not inject or replace modules; it creates invisible dependency behavior."
+
+[tool.ruff.lint.extend-per-file-ignores]
+# Ruff parses jaxtyping's space-delimited shape strings as forward references;
+# F722 is therefore a false positive for these checked mathematical dimensions.
+# The t46.5 entries are new: `ground/metrics.py` and the energy implementation
+# carried 29 bare `jnp.ndarray` annotations before the migration, so they had
+# no shape strings and needed no entry; converting them to jaxtyping is what
+# makes F722 fire. The energy family was split behind its stable façade in
+# t50; the live ignores therefore follow the private MMD owner modules.
+#
+# Every entry below is live. t46.10 pruned the three that were not, and each
+# removal was measured with `ruff check --isolated --select F722 <file>` rather
+# than reasoned about:
+#
+#   * `src/statadic/wasserstein.py` and `src/statadic/optimize.py` — the paths no longer
+#     exist. The first was a re-export shim t46.10 deleted; the second became
+#     the `statadic/optimize/` package, so its entry is re-keyed to the two members
+#     that carry the shape strings (`simplex.py` 15 hits, `psd.py` 2).
+#   * `src/statadic/discrepancy/transport/exact.py` and `src/statadic/geometry/neighbour.py` —
+#     0 hits each. t46.5 pre-landed them on the expectation that t46.9 would
+#     convert those two modules to `Float[np.ndarray, ...]`; t46.9 did not, so
+#     the modules still carry `NDArray[np.float64]` / bare `np.ndarray` and the
+#     ignores suppress nothing. An unused ignore is not harmless: it would also
+#     suppress a *genuinely* broken forward annotation in the same file. They
+#     are removed; whoever lands the conversion re-adds them in the same commit.
+#
+# t55.3 added six modules and measured each the same way. Only
+# `_mmd/branded.py` earns an entry (4 hits, all `Float[Array, " d"]` on the
+# `reference` parameter of the overload set it mirrors from `_mmd/matrix.py`).
+# `discrepancy/provenance.py`, `association/decomposition.py`,
+# `core/matrices.py`, `core/statistics.py`, and `sample/evidence.py` are 0 hits
+# and deliberately get none: their shape constraints ride on the domain/law/
+# origin parameters rather than on jaxtyping shape strings.
+#
+# `inference/` deliberately gets no entry here. Those four modules suppress F722
+# inline, per annotation (`# noqa: F722  # jaxtyping shape`), and t56 kept that
+# style when it added the scalar `Float[Array, ""]` boundary — see the comment
+# at the head of `src/statadic/inference/resampling/bootstrap.py`. A file-level entry would be
+# the broader tool: it would also suppress a genuinely broken forward annotation
+# elsewhere in those files, which is the failure the note above about unused
+# ignores is guarding against.
+"src/statadic/discrepancy/mmd/components.py" = ["F722"]
+"src/statadic/discrepancy/mmd/energy/mixture.py" = ["F722"]
+"src/statadic/discrepancy/mmd/energy/matrix.py" = ["F722"]
+"src/statadic/discrepancy/mmd/energy/scalar.py" = ["F722"]
+"src/statadic/discrepancy/mmd/energy/statistics.py" = ["F722"]
+"src/statadic/discrepancy/mmd/branded.py" = ["F722"]
+"src/statadic/discrepancy/mmd/functional.py" = ["F722"]
+"src/statadic/discrepancy/mmd/matrix.py" = ["F722"]
+"src/statadic/discrepancy/mmd/scalar.py" = ["F722"]
+"src/statadic/discrepancy/metrize.py" = ["F722"]
+"src/statadic/discrepancy/transport/exact.py" = ["F722"]
+"src/statadic/discrepancy/transport/sliced.py" = ["F722"]
+"src/statadic/discrepancy/transport/univariate.py" = ["F722"]
+"src/statadic/geometry/barycentre/wasserstein/measure.py" = ["F722"]
+"src/statadic/geometry/ground/metrics.py" = ["F722"]
+"src/statadic/geometry/ground/_strategy.py" = ["F722"]
+"src/statadic/geometry/ground/similarities.py" = ["F722"]
+"src/statadic/optimize/psd.py" = ["F722"]
+"src/statadic/optimize/simplex.py" = ["F722"]
+# jaxtyping evaluates these annotations without PEP 695 function locals.
+# Keep quoted native dimensions so the runtime shape adapter can erase them.
+"src/statadic/sample/alternatives.py" = ["F722", "UP037"]
+"src/statadic/sample/reduction.py" = ["F722", "UP037"]
+"src/statadic/core/transforms.py" = ["UP037"]
+"src/statadic/core/matrices.py" = ["UP037"]
+# Test-local helpers use relative imports under pytest's importlib mode.
+"tests/**" = ["TID252", "TID251", "PLC2701", "PLR6301"]
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+quote-annotations = true
+runtime-evaluated-decorators = ["typer.Typer.callback", "typer.Typer.command"]
+
+[tool.ruff.lint.per-file-ignores]
+# Test directories use pytest's importlib discovery without package scaffolding.
+"**/tests/**" = ["S101", "INP001"]
+"**/notebooks/**" = ["F821", "B018"]
+# Generated marimo cache mirrors fixed, locally-authored analytical queries;
+# keep S608 active for every hand-maintained Python and notebook source.
+"**/notebooks/__marimo__/**" = ["S608"]
+
+# These settings are also passed explicitly by the dependency/cycle recipes;
+# keeping them here makes a bare `ruff analyze` use the same import graph.
+[tool.ruff.analyze]
+preview = true
+detect-string-imports = true
+string-imports-min-dots = 1
+type-checking-imports = true
+direction = "dependencies"
+
+[tool.ruff.format]
+preview = false
+docstring-code-format = true
+
+[tool.pydoclint]
+style = "google"
+arg-type-hints-in-docstring = false
+check-return-types = false
+
+[tool.pytest-layout-enforcer]
+include-packages = true
+require-tests = false
+# These suites have explicit cross-module or test-support responsibilities.
+# Focused reference comparisons stay beside their scientific owners.
+exclude-tests = [
+  "migration/**",
+  "qualification/**",
+  "shapes/**",
+  "testing/**",
+  "contracts/**",
+  "integration/**",
+]
+
+[[tool.pytest-layout-enforcer.layouts]]
+source = "src/statadic"
+tests = "tests"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+# Default gate excludes tests marked slow; run the full suite with
+# `pytest -m ""`.
+#
+# Importlib keeps same-named test modules in different subdirectories distinct.
+addopts = [
+  "-m",
+  "not slow",
+  "--import-mode=importlib",
+  "--strict-markers",
+]
+markers = [
+  # Scope: exactly one inherited scope for each test.
+  "unit: one isolated operation or small, self-contained behavior",
+  "component: one coherent estimator, model, diagnostic, or subsystem",
+  "integration: multiple components interacting or a real dependency/backend boundary",
+  "e2e: a complete user-visible workflow through the public API or CLI",
+
+  # Purpose: zero or more, based on the assertions that establish the result.
+  "contract: verifies an explicit API or component promise, precondition, or postcondition",
+  "numerical: verifies numerical accuracy, stability, conditioning, or convergence",
+  "reference: compares with an independent implementation, analytic result, published value, or trusted fixture",
+  "property: verifies a mathematical invariant or relation between inputs and outputs",
+  "statistical: verifies an operating characteristic under a known data-generating process",
+  "regression: reproduces an observed defect or previously broken behavior",
+  "performance: measures and asserts a non-functional performance characteristic",
+  "smoke: checks that a major capability starts and completes",
+
+  # Selection, execution, and dependency requirements.
+  "slow: outside the normal local or pull-request latency budget (>2s)",
+  "external_reference: compares against an optional live software dependency; also requires reference and requires_optional(name)",
+  "qualification: runs a prespecified statistical procedure; also requires statistical",
+  "typing: selects static typing contract tests, usually against a type checker",
+  "subprocess: launches one or more subprocesses",
+  "requires_optional(name): requires the named optional Python dependency",
+  "requires_program(name): requires an external executable or statistical package",
+  "needs_import_hook: requires tests/conftest.py's runtime annotation import hook",
+]
+
+# deptry: per-project dependency hygiene (unused / missing / transitive / misplaced).
+# Each workspace member carries its own block (deptry has no config inheritance);
+# PEP 735 dev-groups are auto-exempt from DEP002.
+[tool.deptry]
+extend_exclude = ["notebooks", "scripts"]
+# statadic imports its own package absolutely; mark first-party so self-imports are
+# not reported as transitive dependencies (DEP003).
+known_first_party = ["statadic"]
+
+[tool.deptry.per_rule_ignores]
+# `statadic/testing/fixtures.py` imports pytest at module scope — `@pytest.fixture`
+# is a decorator, so it cannot be deferred the way that module defers `jax`.
+# It ships in the wheel but is explicitly loaded only by test conftests,
+# so pytest stays a dev dependency rather than becoming
+# a runtime one for every consumer of the library.
+DEP004 = ["pytest"]
+
+# Local install-compatibility matrix for the published wheel; not part of
+# `just check`, which only exercises the single resolution in `uv.lock`.
+# Every supported Python runs the fast tier against the built wheel at both
+# ends of the declared ranges:
+#   lowest  -> uv `lowest-direct`: every floor in [project] and the extras
+#   highest -> the newest releases those ranges admit
+# Opt-in templates (`env_base`) are listed by `tox list` but never run by
+# default; their name's leading factor switches settings through `factor.*`:
+#   x32-3.N-highest -> process default precision float32 (JAX_ENABLE_X64=0)
+# Examples: `just compat` (whole matrix, one environment at a time),
+# `just compat -f lowest`, `just compat -e x32-3.13-highest -- tests/core`,
+# `just compat -e 3.13-highest -- tests --lf` (rerun that environment's failures).
+[tool.tox]
+requires = ["tox>=4.67", "tox-uv>=1.37"]
+env_list = [{ product = [{ prefix = "3.", start = 13, stop = 14 }, ["lowest", "highest"]] }]
+
+[tool.tox.env_run_base]
+description = "fast tier against the installed wheel"
+package = "wheel"
+# Extras are installed so their declared ranges are qualified too.
+extras = ["data", "plot"]
+# Test tools only. numpy and scipy arrive through jax and stay transitive so a
+# `lowest` environment cannot raise them above what a user would resolve.
+# Floors match `uv.lock`, so `lowest` reproduces the locked tool versions.
+# pyrefly drives the static typing contracts; pytest-testmon only supplies the
+# `--no-testmon` option that subprocess pytest runs in the suite pass.
+deps = [
+  "pytest>=8.4.2",
+  "pytest-xdist>=3.8.0",
+  "pytest-testmon>=2.2.0",
+  "hypothesis>=6.164.0",
+  "beartype>=0.22.9",
+  "pyrefly>=1.4,<1.5",
+  "pyrefly-shape-extensions==1.4.0",
+]
+uv_resolution = { replace = "if", condition = "factor.lowest", then = "lowest-direct", "else" = "highest" }
+# Managed CPython builds behave like a user's interpreter; a host or Nix
+# interpreter can lack the loader paths manylinux wheels expect.
+uv_python_preference = "only-managed"
+# Precision and device are explicit inputs, not host accidents; the conftest
+# keeps a preset JAX_ENABLE_X64. UV_NO_BUILD makes a floor without a wheel for
+# this Python fail resolution instead of compiling an sdist. Compilation
+# caches are jaxlib-specific, so each environment keeps its own.
+set_env = { OMP_NUM_THREADS = "1", OPENBLAS_NUM_THREADS = "1", MKL_NUM_THREADS = "1", NUMEXPR_NUM_THREADS = "1", UV_NO_BUILD = "1", JAX_PLATFORMS = "cpu", JAX_ENABLE_X64 = { replace = "if", condition = "factor.x32", then = "0", "else" = "1" }, JAX_COMPILATION_CACHE_DIR = "{env_dir}{/}jax-cache" }
+commands_pre = [
+  [
+    "python",
+    "scripts/check_compat_environment.py",
+    "{env_dir}{/}compat-environment.json",
+  ],
+]
+commands = [
+  [
+    "pytest",
+    "-q",
+    "-o",
+    "cache_dir={env_dir}{/}.pytest_cache",
+    "--junitxml={env_dir}{/}compat-tests.xml",
+    "-n",
+    "auto",
+    "--maxprocesses",
+    { replace = "env", name = "STATADIC_COMPAT_WORKERS", default = "2" },
+    { replace = "posargs", default = ["tests"], extend = true },
+  ],
+]
+
+[tool.tox.env_base.x32]
+description = "fast tier with float32 process precision on {factor:py}"
+factors = [{ py = { prefix = "3.", start = 13, stop = 14 } }, ["highest"]]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

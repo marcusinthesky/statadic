@@ -1,0 +1,11 @@
+[project]
+name = "proof-blueprint"
+version = "0.1.0"
+requires-python = ">=3.13,<3.14"
+dependencies = ["leanblueprint==0.0.20", "pygraphviz==2.0.4", "setuptools>=80,<81"]
+
+[tool.uv]
+package = false
+# Link against the pinned Nix Graphviz rather than a wheel's bundled libraries.
+no-binary-package = ["pygraphviz"]
+no-build-isolation-package = ["pygraphviz"]

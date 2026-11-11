@@ -1,0 +1,109 @@
+\section{Layers of assurance}\label{sec:assurance}
+
+Reproducible execution and mathematical verification answer different
+questions. STATADIC records five kinds of evidence separately
+(\cref{tab:layers}) and treats none as a substitute for another.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Kinds of evidence STATADIC records, and what each cannot establish
+  alone.}
+  \label{tab:layers}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\linewidth}
+      >{\raggedright\arraybackslash}p{0.36\linewidth}
+    >{\raggedright\arraybackslash}p{0.36\linewidth}@{}}
+    \toprule
+    Layer & Question answered & Not established alone \\
+    \midrule
+    Lean~4 statement & Does the stated proposition follow from its hypotheses? &
+    That Python or compiled JAX code computes it \\
+    Implementation correspondence & Is the cited source unchanged since
+    review? & Semantic equivalence or IEEE behaviour \\
+    Numerical reference & Does a computation agree with independent software? &
+    Statistical validity \\
+    Statistical study & How does a complete procedure behave under specified
+    data-generating processes? & Behaviour under other processes \\
+    Performance measurement & What does a workload cost on given hardware? &
+    Correctness \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Machine-checked statements}
+
+The Lean development builds on Mathlib with Lean \jcvalue{lean-toolchain}. A
+claim registry gives each formal result a stable identifier. It records the
+published source and location, the assumptions and conclusion, the relationship
+to the Python implementation and the limitations. Certification compiles every
+first-party module and rejects admitted proofs, custom axioms and placeholder
+propositions, accepting only \texttt{propext}, \texttt{Classical.choice} and
+\texttt{Quot.sound}. Statement pins bind each reviewed theorem to the audited
+source graph, so a changed definition invalidates its review.
+
+The registry exports certified statements as manuscript macros, and
+\cref{thm:mmd,thm:linear-mmd} are typeset from that export rather than
+retyped.
+
+\begin{theorem}[\texttt{STATADIC-MMD-001}]\label{thm:mmd}
+  \statadicstatement{STATADIC-MMD-001}
+\end{theorem}
+\begin{proof}[Proof outline]
+  \statadicproof{STATADIC-MMD-001}
+\end{proof}
+
+Such results are deliberately narrow in scope. \Cref{thm:mmd} formalizes a
+finite-moment step in the argument that the U-statistic MMD estimator is
+unbiased \citep[Lemma~6]{gretton-etal-2012}. The pair moments are hypotheses.
+The iid sampling construction, the reproducing-kernel interpretation,
+implementation correspondence and calibration remain separate obligations.
+
+At this revision the registry holds \jcvalue{claim-count} claims. For all
+\jcvalue{claims-review-pending}, agent review was performed and human semantic
+review is pending. A separate method
+inventory lists \jcvalue{obligation-count} obligations across
+\jcvalue{method-groups} method groups: \jcvalue{obligations-source-unresolved}
+await a source and \jcvalue{obligations-open} are open. The formal programme
+therefore covers selected steps, not the library's methods.
+
+\subsection{Correspondence to implementations}
+
+A proof about finite sums says nothing about masking with \texttt{jnp.where},
+reduction order or XLA lowering. STATADIC therefore keeps a source-bound
+correspondence prototype rather than asserting verification. The prototype:
+\begin{itemize}
+  \item records abstract-syntax-tree hashes of the \jcvalue{pinned-functions}
+    Python functions that implement the MMD reductions;
+  \item proves in Lean the exact rational identity behind their padding mask;
+  \item lists \jcvalue{unresolved-gates} unresolved gates, including IEEE
+    rounding and compiler trust.
+\end{itemize}
+
+Any change to a bound function fails the check until the change is reviewed and
+the pin explicitly renewed. The current comparison reports
+\jcvalue{pins-awaiting-review} changed functions awaiting pin review.
+
+\subsection{Algebra, optimization and floating point}
+
+For a linear kernel $k(x, y) = \langle x, y \rangle$ and weighted empirical
+measures, the V-statistic MMD admits a shortcut, stated in
+\cref{thm:linear-mmd} as an algorithm refinement over exact reals.
+
+\begin{theorem}[\texttt{STATADIC-MMD-002}]\label{thm:linear-mmd}
+  \statadicstatement{STATADIC-MMD-002}
+\end{theorem}
+\begin{proof}[Proof outline]
+  \statadicproof{STATADIC-MMD-002}
+\end{proof}
+
+The left-hand side is the V-statistic written through three Gram matrices.
+STATADIC evaluates the right-hand side, centred at a reference atom, which avoids
+forming those matrices (\cref{sec:performance}). Centring also avoids the
+cancellation that expanding $\lVert a - b \rVert^2$ invites when coordinates
+are large. The equal-mass hypothesis is essential: STATADIC's linear Gram kernel
+is uncentred, so when total masses differ the reference does not cancel and
+the two sides need not agree.
+
+Human semantic review of the claim is pending. The proof does not verify
+floating-point arithmetic or the JAX implementation; the numerical witness and
+measured cost in \cref{sec:performance} are separate evidence.

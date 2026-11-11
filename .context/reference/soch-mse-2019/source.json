@@ -1,0 +1,15 @@
+{
+  "source_url": "https://statproofbook.github.io/P/mse-bnv.html",
+  "statement_locations": [
+    "Proof P5, theorem equation MSE"
+  ],
+  "proof_locations": [
+    "Proof P5, equations MSE-ref1 and MSE-ref2"
+  ],
+  "claim_ids": [
+    "STATADIC-MOMENTS-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Exact assumptions, specializations, proof steps and remaining limitations belong to the canonical claim registry. Proof status is generated only from a current build and axiom audit.",
+  "source_review": "Independent agent comparison; human semantic review pending."
+}

@@ -1,0 +1,915 @@
+{
+  "candidate": "17fdc5410de31356df72d6fc6459853ca39260f9",
+  "meaning": "Review-only editorial recommendations; no production feature status or scientific approval is changed. Every substantive variant retains its own selectors/evidence limits. Procedure workstream pointers are shared coordination/dependency context, not inherited defects in every variant. Direct variant findings are a deliberately bounded exact exception map; missing entries are not signoff.",
+  "procedures": {
+    "linear.ols-wls": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R01",
+        "R02",
+        "R04"
+      ]
+    },
+    "linear.covariance": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 7,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R02",
+        "R04"
+      ]
+    },
+    "parameter.inference": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04"
+      ]
+    },
+    "glm.canonical": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R01"
+      ]
+    },
+    "glm.covariance": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04"
+      ]
+    },
+    "gmm.affine-estimation": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "gmm.actual-fit-covariance": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04"
+      ]
+    },
+    "gmm.tests": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R07"
+      ]
+    },
+    "gel.estimation-tests": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 12,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R07"
+      ]
+    },
+    "panel.estimation": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 6,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R01",
+        "R04"
+      ]
+    },
+    "panel.covariance": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 8,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04"
+      ]
+    },
+    "spatial.point-estimation": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 5,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R09",
+        "R12"
+      ]
+    },
+    "spatial.iv-gmm": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 5,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R07"
+      ]
+    },
+    "spatial.panel": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 5,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R09",
+        "R10",
+        "R12"
+      ]
+    },
+    "spatial.covariance-impacts": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 11,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04",
+        "R09"
+      ]
+    },
+    "spatial.diagnostics": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 9,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04"
+      ]
+    },
+    "survival.independent": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 5,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R09"
+      ]
+    },
+    "survival.spatial": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R09"
+      ]
+    },
+    "dyadic.estimation-bootstrap": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R04",
+        "R14"
+      ]
+    },
+    "covariance.sample-shrinkage": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "covariance.target-tuning": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "sharpe.point": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "sharpe.psr-dsr": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "sharpe.interval-difference": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "sharpe.multiple": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "mmd.estimation": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 16,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "mmd.cosine-prototypes": {
+      "recommendation": "narrow-before-retention",
+      "rationale": "Keep only the supported normalization and truthful pooled-mean evidence.",
+      "variants": 1,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R02",
+        "R03",
+        "R06"
+      ]
+    },
+    "energy.estimation": {
+      "recommendation": "narrow-before-retention",
+      "rationale": "Keep signed schemes; bind/refuse metric refinement by actual ground.",
+      "variants": 6,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R03",
+        "R06"
+      ]
+    },
+    "transport.empirical": {
+      "recommendation": "narrow-before-retention",
+      "rationale": "Retain exact/projected transport with their distinct weighting/projection conventions; repair the demonstrated quantile arithmetic. Sinkhorn is a separate numerical contract.",
+      "variants": 8,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R03",
+        "R11"
+      ]
+    },
+    "permutation.two-sample": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "group.permutation-tests": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "mantel.inference": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "mixture.optimized-test": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "equivalence.test": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "equivalence.familywise": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "bootstrap.mean": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 7,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "bootstrap.mixture-row-refits": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 3,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "moment.inequalities": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "kappa.delta-boundary": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "longrun.estimation": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "median.location": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 2,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "pca.population-subspace": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 1,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "sampler.alternatives": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 5,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "likelihood.regression": {
+      "recommendation": "retain-core-after-repair",
+      "rationale": "Central alpha workflow or supporting numerical contract; current qualification is not established.",
+      "variants": 18,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R01",
+        "R05"
+      ]
+    },
+    "iv.regression": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 17,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R07",
+        "R08"
+      ]
+    },
+    "survival.mean": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain distinct closed-form Weibull/lognormal/loglogistic/spatial-lognormal means under their own finite-moment and availability domains. The RMST underflow finding does not establish defects in these means.",
+      "variants": 4,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": []
+    },
+    "spatial.projected-graph-regression": {
+      "recommendation": "experimental-outside-core",
+      "rationale": "Retain scientific distinctions, expose experimental scope, and defer qualification claims until method-specific source/calibration/current-identity gates pass.",
+      "variants": 6,
+      "qualification": "not-established-for-candidate",
+      "common_gates": [
+        "R13",
+        "R14",
+        "source/proof-fidelity",
+        "current-independent-reference",
+        "applicable-statistical-metrics",
+        "named-JAX-targets",
+        "post-freeze-resource-claim"
+      ],
+      "workflow_items": [
+        "R01",
+        "R09",
+        "R12"
+      ]
+    }
+  },
+  "semantic_omissions": {
+    "positive-Poisson/hurdle": "register/defer under F006",
+    "calibrated-linear-diagnostics": "register under F014"
+  },
+  "outside_statistical_denominator": "Numerical contracts such as barycentres, PCoA and QP still require mathematical, numerical, JAX and resource review; interface-only operations may have inapplicable statistical metrics with a reason.",
+  "numerical_contracts": {
+    "log-logistic-restricted-mean": {
+      "recommendation": "narrow-until-R09",
+      "finding": "F022",
+      "limit": "RMST quadrature is separate from the four closed-form unrestricted-mean variants."
+    },
+    "barycentre-and-spectral-AD": {
+      "recommendation": "narrow-until-R11",
+      "findings": [
+        "F026",
+        "F027"
+      ]
+    },
+    "coordinate-QP": {
+      "recommendation": "repair-before-resource-claim",
+      "finding": "F035"
+    },
+    "variable-mass-sinkhorn": {
+      "recommendation": "retain-bounded-experimental-numerical-contract",
+      "evidence": "Independent positive-interior two-atom value, coordinate/mass-logit gradients, Hessian/HVP, JIT/vmap/change and unconverged controls passed.",
+      "remaining": "float32, zero-mass boundaries, conditioning/global convergence and post-freeze resource evidence",
+      "denominator": "outside the237 statistical variants"
+    }
+  },
+  "direct_variant_findings": {
+    "gmm.tests.affine-profiled-hansen-j": [
+      "F018"
+    ],
+    "gel.estimation-tests.affine-cue-lr": [
+      "F019"
+    ],
+    "gel.estimation-tests.affine-el-lr": [
+      "F019"
+    ],
+    "gel.estimation-tests.affine-et-lr": [
+      "F019"
+    ],
+    "spatial.panel.constant-w-kkp-full-weights": [
+      "F024"
+    ],
+    "transport.empirical.empirical-one-dimensional-w2": [
+      "F030"
+    ],
+    "transport.empirical.empirical-one-dimensional-powered-w2": [
+      "F030"
+    ],
+    "transport.empirical.weighted-unequal-support-quantile-w2": [
+      "F030"
+    ],
+    "likelihood.regression.gamma.estimated.model": [
+      "F009"
+    ],
+    "likelihood.regression.gamma.estimated.HC0": [
+      "F009"
+    ],
+    "likelihood.regression.gamma.estimated.HC1": [
+      "F009"
+    ],
+    "likelihood.regression.gamma.fixed.model": [
+      "F009"
+    ],
+    "likelihood.regression.gamma.fixed.HC0": [
+      "F009"
+    ],
+    "likelihood.regression.gamma.fixed.HC1": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.estimated.model": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.estimated.HC0": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.estimated.HC1": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.fixed.model": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.fixed.HC0": [
+      "F009"
+    ],
+    "likelihood.regression.nb2.fixed.HC1": [
+      "F009"
+    ]
+  },
+  "direct_finding_limit": "Finding triggers and caller conditions in findings.md control. F009 requires estimator substitution; F019 is retained affine-profile identification; F024 concerns full weights only. Direct map is not exhaustive of shared host/numerical findings."
+}

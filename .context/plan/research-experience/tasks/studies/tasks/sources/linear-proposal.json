@@ -1,0 +1,102 @@
+{
+  "audit_date": "2026-11-04",
+  "mode": "read-only proposal; no shared-root source, catalogue or reference writes",
+  "sources_reviewed_search_results": 15,
+  "sources": [
+    {
+      "key": "mackinnon-white-1985",
+      "url": "http://qed.econ.queensu.ca/working_papers/papers/qed_wp_537.pdf",
+      "locator": "Section 2, printed working-paper page 2, equations (1)-(4)",
+      "metadata": "MacKinnon, James G.; White, Halbert (1985). Journal of Econometrics 29(3):305-325. DOI10.1016/0304-4076(85)90158-7. Author-hosted working paper includes later updated references; cited equations independently inspected."
+    },
+    {
+      "key": "stepniak-gauss-markov-2010",
+      "url": "https://link.springer.com/content/pdf/10.1155/2010/259672.pdf",
+      "locator": "Theorem3.2 and(3.3)-(3.5),p3; model(4.2),Theorem4.1 and(4.4)-(4.5),pp4-5",
+      "scope": "Modern self-contained proof; not claimed to be the seminal historical introduction of OLS."
+    }
+  ],
+  "approval_proposals": [
+    {
+      "variant_id": "linear.ols-wls.ols",
+      "citation_keys": [
+        "mackinnon-white-1985",
+        "stepniak-gauss-markov-2010"
+      ],
+      "source_evidence": {
+        "locator": "MacKinnonWhite1985 Section2 equations(1)-(3),p2; Stepniak2010 Theorem3.2,p3 and Theorem4.1,p4",
+        "scope": "Full-column-rank unweighted OLS target beta_hat=(X^T X)^(-1)X^T y under a linear model with mean-zero errors; normal equations and Gauss-Markov result under spherical covariance. Source-to-estimator-definition correspondence only; no proof of STATADIC QR factorization, IEEE behavior, deficient-rank extension or all inferential references."
+      },
+      "required_symbol_narrowing": [
+        "statadic.estimation.linear.LeastSquares",
+        "statadic.estimation.linear.LeastSquares.fit"
+      ]
+    },
+    {
+      "variant_id": "linear.covariance.classical",
+      "citation_keys": [
+        "mackinnon-white-1985"
+      ],
+      "source_evidence": {
+        "locator": "Section2 equation(4),printed working-paper p2",
+        "scope": "Unweighted full-rank OLS only: estimated sampling covariance RSS/(n-p)*(X^T X)^(-1), matching native classical_covariance with all relative precisions1 and extra multiplier1. Assumes independent homoskedastic errors for its classical interpretation. Exact finite t/F references require fixed X and Gaussian errors and remain separate reference decisions. Does not separately review arbitrary finite_sample_correction or weighted-precision extension."
+      },
+      "required_symbol_narrowing": [
+        "statadic.inference.linear_covariance.classical_covariance"
+      ]
+    }
+  ],
+  "correction_proposals": [
+    {
+      "variant_id": "linear.covariance.hc3",
+      "recommended_status": "source-unresolved",
+      "retain_citation_keys": [
+        "mackinnon-white-1985"
+      ],
+      "locator": "Author WP537 Section2 equations(10)-(13),printed pp3-4",
+      "corrected_evidence": "MacKinnonWhite1985 original jackknife HC3 includes BOTH prefactor(n-1)/n and recentering subtraction(n-1)/n^2 gamma gamma^T, gamma=(X^T X)^(-1)X^T u*, u*_i=u_i/(1-h_i). STATADIC conventional HC3 instead uses the uncentered sandwich with squared leverage denominators and default multiplier1. The leverage adjustment and asymptotic relationship are reviewed; equality to the original finite-sample centered jackknife is not established. A later primary exact conventional formula is needed before approving that full variant. Reference distributions and weighted-OLS extensions are separate."
+    }
+  ],
+  "blocked_proposals": [
+    {
+      "variant_id": "linear.ols-wls.analytic-precision-wls",
+      "blocker": "Stepniak2010 specifies spherical covariance; whitening yields a clear mathematical specialization, but this wave did not review a primary explicit analytic-precision WLS formula, variance-scale normalization or Aitken original. Do not extend unweighted source approval automatically."
+    },
+    {
+      "variant_id": "parameter.inference.normal-coefficient-interval",
+      "blocker": "MacKinnonWhite1985 Section3 uses normal critical values in simulations, not universal exact normal calibration with estimated scale. Retain unresolved until a bounded reference-formula approval is distinguished from validity across arbitrary fitted uncertainty carriers."
+    },
+    {
+      "variant_id": "parameter.inference.student-t-coefficient-interval",
+      "blocker": "MacKinnonWhite1985 Section2 states exact fixed-X Gaussian t/F inference, but a generic carrier-level variant covers more than classical OLS. Student1908 mean-only result does not by itself approve arbitrary regression/robust covariance. Need explicit bound to classical Gaussian OLS and independently inspected inversion formula/df mapping."
+    },
+    {
+      "variant_id": "parameter.inference.f-linear-restriction",
+      "blocker": "Exact multi-restriction numerator rank/denominator residual-df formula not independently read in a primary full text in this wave; general exact t/F mention insufficient for blanket shared-provider approval."
+    },
+    {
+      "variant_id": "parameter.inference.chi-square-linear-restriction",
+      "blocker": "General Wald covariance consistency/CLT and full-row-rank assumptions require their own source review; no blanket inference from OLS point definition."
+    }
+  ],
+  "later_primary_candidate": {
+    "suggested_key": "long-ervin-2000",
+    "canonical_record_exists": false,
+    "title": "Using Heteroscedasticity Consistent Standard Errors in the Linear Regression Model",
+    "authors": [
+      "J. Scott Long",
+      "Laurie H. Ervin"
+    ],
+    "journal": "The American Statistician",
+    "volume": "54",
+    "issue": "3",
+    "pages": "217-224",
+    "year": 2000,
+    "doi": "10.1080/00031305.2000.10474549",
+    "publisher_url": "https://www.tandfonline.com/doi/abs/10.1080/00031305.2000.10474549",
+    "author_url": "https://jslsoc.sitehost.iu.edu/research_hccm.htm",
+    "pdf_candidate": "https://nielsen.sites.oasis.unc.edu/soci709/odocs/00TAS.pdf",
+    "status": "publisher metadata and author linkage verified; fetched PDF text is garbled, exact HC3 formula NOT yet reviewed; no approval proposed",
+    "date_caution": "1998 received date and2012 online date are not journal publication year2000."
+  }
+}
