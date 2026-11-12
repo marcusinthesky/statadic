@@ -8,8 +8,10 @@ description: "Composable statistics on JAX, from a first regression to inspectab
 
 *stat·adic* · /stəˈtædɪk/ · stuh-TAD-ik
 
-A coined name from **statistic + dyadic**: statistics, with roots in relationships
-between pairs of observations.
+A coined name from **statistic + dyadic**. A
+[dyad](https://www.merriam-webster.com/dictionary/dyad) is a pair considered
+together: two people, two observations, two parts of a whole. STATADIC suggests
+statistical methods coming together in one analysis.
 
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange)](src/python/packages/statadic/CHANGELOG.md)
 [![Python 3.13–3.14](https://img.shields.io/badge/python-3.13%E2%80%933.14-3776AB?logo=python&logoColor=white)](src/python/packages/statadic/docs/start/installation.md)

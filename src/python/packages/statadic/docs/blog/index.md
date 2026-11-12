@@ -12,4 +12,16 @@ repository and how they shape its development process.
 
 ## Posts
 
-No posts have been published yet.
+### [Introducing Statadic: From Statistical Question to Published Result](introducing-statadic.md)
+
+12 November 2026 · Marcus Gawronsky
+
+A first look at Statadic's composable workflow, from regression to manuscript,
+and the mathematics, reference comparisons and statistical evidence behind it.
+
+:::{toctree}
+:hidden:
+:maxdepth: 1
+
+introducing-statadic
+:::
