@@ -11,6 +11,7 @@ concurrency:
 jobs:
   regressions:
     name: Early regressions (${{ matrix.runner }})
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -23,11 +24,19 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - uses: ./.github/actions/python-ci-setup
+      - id: python
+        uses: ./.github/actions/python-ci-setup
         with:
           cache-suffix: regressions
+          prepare-offline-install: 'true'
       - name: Replay current numerical regressions
         run: bash infra/nix/ci-capacity.sh run regressions devenv shell --profile python-ci -- just ci-regressions
+      - name: Save compiled programs
+        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ${{ runner.temp }}/statadic-jax-cache
+          key: ${{ steps.python.outputs.jax-cache-key }}
       - name: Retain early diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -37,6 +46,7 @@ jobs:
           retention-days: 7
   check-nontest:
     name: Non-test checks (${{ matrix.runner }})
+    timeout-minutes: 90
     needs: regressions
     strategy:
       fail-fast: false
@@ -68,11 +78,13 @@ jobs:
             ~/.cache/uv
             ~/.cache/tectonic
             ~/.cache/mathlib
-          key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-check
+          key: tools-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json', 'infra/release/check_offline_install.py') }}-check
           restore-keys: |
             tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
       - run: bash infra/nix/install-devenv.sh
       - run: devenv shell -- just setup
+      - name: Prepare isolated wheel installation inputs
+        run: bash infra/nix/ci-capacity.sh run offline-install devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --all-packages python infra/release/check_offline_install.py --prepare --output build/ci/offline-install
       - uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
           primary-key: ${{ steps.nix-cache.outputs.primary-key }}
@@ -108,6 +120,7 @@ jobs:
           retention-days: 7
   plan:
     name: Python test inventory (${{ matrix.runner }})
+    timeout-minutes: 20
     needs: regressions
     strategy:
       fail-fast: false
@@ -120,17 +133,24 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - uses: ./.github/actions/python-ci-setup
+      - id: python
+        uses: ./.github/actions/python-ci-setup
         with:
           cache-suffix: plan
       - name: Restore test timings
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: build/ci/timing/durations.json
-          key: timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-
+            timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-
       - run: devenv shell --profile python-ci -- just ci-test-plan --durations build/ci/timing/durations.json --output build/ci/plan
+      - name: Save compiled programs
+        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ${{ runner.temp }}/statadic-jax-cache
+          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: plan-${{ matrix.runner }}
@@ -138,6 +158,7 @@ jobs:
           if-no-files-found: error
   shard:
     name: Python tests (${{ matrix.runner }}, shard ${{ matrix.shard }})
+    timeout-minutes: 90
     needs: plan
     strategy:
       fail-fast: false
@@ -155,7 +176,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - uses: ./.github/actions/python-ci-setup
+      - id: python
+        uses: ./.github/actions/python-ci-setup
         with:
           cache-suffix: shard-${{ matrix.shard }}
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -164,6 +186,12 @@ jobs:
           path: build/ci/plan
       - name: Execute shard
         run: bash infra/nix/ci-capacity.sh run shard-${{ matrix.shard }} devenv shell --profile python-ci -- just ci-test-shard --plan build/ci/plan --shard ${{ matrix.shard }} --output build/ci/shard-${{ matrix.shard }}
+      - name: Save compiled programs
+        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ${{ runner.temp }}/statadic-jax-cache
+          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -177,8 +205,62 @@ jobs:
           name: shard-diagnostics-${{ matrix.runner }}-${{ matrix.shard }}
           path: build/ci/
           retention-days: 7
+  timings:
+    name: Retain test timings (${{ matrix.runner }})
+    if: ${{ always() && !cancelled() && needs.plan.result == 'success' }}
+    needs: [plan, shard]
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - name: Restore previous test timings
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/timing-inputs/plan
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: shard-${{ matrix.runner }}-[0-3]
+          path: build/ci/timing-shards
+      - name: Retain completed measurements independently of validation status
+        shell: bash
+        run: |
+          for index in 0 1 2 3; do
+            source="build/ci/timing-shards/shard-${{ matrix.runner }}-${index}"
+            if [[ -d "$source" ]]; then
+              mv "$source" "build/ci/timing-inputs/shard-${index}"
+            fi
+          done
+          python3 infra/nix/ci_shards.py timings --inputs build/ci/timing-inputs --previous build/ci/timing/durations.json --output build/ci/timing/durations.json
+      - name: Save test timings
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Retain timing diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: timings-${{ matrix.runner }}
+          path: build/ci/timing/
+          retention-days: 7
   check:
     name: check (${{ matrix.runner }})
+    timeout-minutes: 30
     if: always()
     needs: [check-nontest, plan, shard]
     strategy:
@@ -203,7 +285,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - uses: ./.github/actions/python-ci-setup
+      - id: python
+        uses: ./.github/actions/python-ci-setup
         with:
           cache-suffix: aggregate
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -216,7 +299,7 @@ jobs:
           path: build/ci/inputs/component
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          pattern: shard-${{ matrix.runner }}-*
+          pattern: shard-${{ matrix.runner }}-[0-3]
           path: build/ci/downloaded-shards
       - name: Verify complete and disjoint test execution
         shell: bash
@@ -225,13 +308,12 @@ jobs:
             mv "build/ci/downloaded-shards/shard-${{ matrix.runner }}-${index}" "build/ci/inputs/shard-${index}"
           done
           devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen python infra/nix/ci_shards.py aggregate --inputs build/ci/inputs --output build/ci/receipt
-          mkdir -p build/ci/timing
-          cp build/ci/receipt/durations.json build/ci/timing/durations.json
-      - name: Save test timings
+      - name: Save compiled programs
+        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
-          path: build/ci/timing/durations.json
-          key: timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/statadic-jax-cache
+          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: checkout-check-${{ matrix.runner }}

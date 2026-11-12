@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import platform
 import shlex
@@ -49,7 +50,7 @@ def assign(universe: list[str], durations: dict[str, float]) -> dict[str, int]:
     usable = {
         name: float(value)
         for name, value in durations.items()
-        if name in counts and isinstance(value, (int, float)) and 0 < value < 86400
+        if name in counts and _valid_duration(value)
     }
     rate = (
         sum(usable.values()) / sum(counts[name] for name in usable) if usable else 1.0
@@ -104,13 +105,180 @@ def _identity() -> dict:
 
 def _write(path: Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(value, sort_keys=True, indent=2) + "\n", encoding="utf-8"
-    )
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(value, sort_keys=True, indent=2) + "\n", encoding="utf-8"
+        )
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _valid_duration(value: object) -> bool:
+    return type(value) in (int, float) and 0 < value < 86400 and math.isfinite(value)
+
+
+def _duration_cache(path: Path | None) -> dict:
+    if path is None or not path.exists():
+        return {}
+    try:
+        values = _load(path)
+        if not isinstance(values, dict):
+            raise TypeError("timing cache must contain a file-duration mapping")
+        return {
+            name: float(value)
+            for name, value in values.items()
+            if _valid_duration(value)
+        }
+    except (OSError, ValueError, TypeError) as error:
+        print(f"Ignoring invalid prior timings: {error}", file=sys.stderr)
+        return {}
+
+
+def _timing_identity() -> dict:
+    """Bind timing hints to this checkout without loading the scientific runtime."""
+    revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    return {
+        "revision": revision,
+        "source_files": source_snapshot(ROOT),
+        "architecture": platform.machine(),
+        "run_id": os.environ.get("GITHUB_RUN_ID"),
+        "run_attempt": os.environ.get("GITHUB_RUN_ATTEMPT"),
+        "backend": "cpu",
+        "x64": "1",
+        "profile": "statadic",
+        "flags": FLAGS,
+        "shards": N_SHARDS,
+        "seed": os.environ.get("STATADIC_CI_SEED", revision),
+        "xla_flags": os.environ.get("XLA_FLAGS", ""),
+    }
+
+
+def _timing_plan(plan: dict, identity: dict) -> None:
+    recorded = plan.get("identity", {})
+    if (
+        plan.get("schema_version") != 1
+        or not isinstance(recorded, dict)
+        or any(recorded.get(key) != value for key, value in identity.items())
+        or not all(
+            isinstance(recorded.get(key), str) and recorded[key]
+            for key in ("seed", "python", "interpreter", "jax", "jaxlib")
+        )
+        or not isinstance(recorded.get("xla_flags"), str)
+    ):
+        raise ValueError("Timing plan identity differs from this checkout or run")
+    universe = plan.get("universe")
+    assignment = plan.get("assignment")
+    if (
+        not isinstance(universe, list)
+        or not universe
+        or any(not isinstance(node, str) or not node for node in universe)
+        or len(universe) != len(set(universe))
+        or not isinstance(assignment, dict)
+        or set(assignment) != {node.split("::", 1)[0] for node in universe}
+        or any(
+            type(index) is not int or index not in range(N_SHARDS)
+            for index in assignment.values()
+        )
+    ):
+        raise ValueError("Timing plan collection or assignment is invalid")
+
+
+def _completed_duration(record: dict) -> float:
+    """Failures provide timing evidence only after their entire lifecycle ended."""
+    if not isinstance(record, dict):
+        raise TypeError("Timing node must contain its lifecycle reports")
+    reports = record.get("reports", {})
+    durations = record.get("durations", {})
+    if (
+        not isinstance(reports, dict)
+        or not isinstance(durations, dict)
+        or set(reports) != set(durations)
+        or set(reports) - {"setup", "call", "teardown"}
+        or not {"setup", "teardown"} <= set(reports)
+        or any(
+            not isinstance(values, list)
+            or len(values) != 1
+            or values[0] not in ("passed", "failed", "skipped")
+            for values in reports.values()
+        )
+        or (reports.get("setup") == ["passed"]) != ("call" in reports)
+        or any(
+            not isinstance(values, list)
+            or len(values) != 1
+            or type(values[0]) not in (int, float)
+            or not 0 <= values[0] < 86400
+            or not math.isfinite(values[0])
+            for values in durations.values()
+        )
+    ):
+        raise ValueError("Timing node is incomplete, duplicated or invalid")
+    total = sum(values[0] for values in durations.values())
+    if not _valid_duration(total):
+        raise ValueError("Timing node duration is invalid")
+    return total
+
+
+def _checkpoint_timings(record: dict, plan: dict, digest: str, shard: int) -> dict:
+    if (
+        record.get("schema_version") != 1
+        or record.get("kind") != "test-timings"
+        or record.get("plan_sha256") != digest
+        or type(record.get("shard")) is not int
+        or record["shard"] != shard
+        or record.get("execution") != {"workers": 2, "distribution": "load"}
+    ):
+        raise ValueError("Timing checkpoint provenance or execution differs")
+    selected = {
+        node
+        for node in plan["universe"]
+        if plan["assignment"][node.split("::", 1)[0]] == shard
+    }
+    nodes = record.get("nodes")
+    if not isinstance(nodes, dict) or set(nodes) - selected:
+        raise ValueError("Timing checkpoint contains unexpected nodes")
+    completed = {node: _completed_duration(value) for node, value in nodes.items()}
+    files = {node.split("::", 1)[0] for node in selected}
+    timings = {}
+    for filename in files:
+        expected = {node for node in selected if node.split("::", 1)[0] == filename}
+        if expected <= completed.keys():
+            total = sum(completed[node] for node in expected)
+            if _valid_duration(total):
+                timings[filename] = total
+    return timings
+
+
+def collect_timings(inputs: Path, identity: dict, previous: Path | None = None) -> dict:
+    """Merge complete-file timing hints; these are never a successful receipt."""
+    path = inputs / "plan/plan.json"
+    plan = _load(path)
+    _timing_plan(plan, identity)
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    timings = {
+        name: value
+        for name, value in _duration_cache(previous).items()
+        if name in plan["assignment"]
+    }
+    for shard in range(N_SHARDS):
+        checkpoint = inputs / f"shard-{shard}/timings.json"
+        if not checkpoint.is_file():
+            continue
+        try:
+            timings.update(_checkpoint_timings(_load(checkpoint), plan, digest, shard))
+        except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+            print(
+                f"Ignoring invalid timing checkpoint {checkpoint}: {error}",
+                file=sys.stderr,
+            )
+    return timings
 
 
 def _pytest(
@@ -151,7 +319,15 @@ def _pytest(
         *args,
     ]
     if shard is not None:
-        command.append(f"--junitxml={output.parent.resolve() / 'junit.xml'}")
+        command.extend(
+            [
+                f"--junitxml={output.parent.resolve() / 'junit.xml'}",
+                "-o",
+                "faulthandler_timeout=180",
+                "--durations=25",
+                "--durations-min=1.0",
+            ]
+        )
     print(f"CI pytest seed: {seed}\nCI command: {shlex.join(command)}", flush=True)
     with (
         (output.parent / "pytest.log").open("wb") as log,
@@ -341,6 +517,14 @@ def main() -> int:
     shard.add_argument("--plan", type=Path, required=True)
     shard.add_argument("--shard", type=int, choices=range(N_SHARDS), required=True)
     shard.add_argument("--output", type=Path, required=True)
+    replay = subs.add_parser(
+        "replay", help="Replay a shard without creating check evidence"
+    )
+    replay.add_argument("--plan", type=Path, required=True)
+    replay.add_argument("--shard", type=int, choices=range(N_SHARDS), required=True)
+    replay.add_argument("--output", type=Path, required=True)
+    replay.add_argument("--workers", type=int, choices=(1, 2), default=2)
+    replay.add_argument("--dist", choices=("load", "loadfile"), default="load")
     component = subs.add_parser("component")
     component.add_argument("--output", type=Path, required=True)
     aggregate = subs.add_parser("aggregate")
@@ -348,7 +532,18 @@ def main() -> int:
     aggregate.add_argument("--output", type=Path, required=True)
     regressions = subs.add_parser("regressions")
     regressions.add_argument("--seed", default=None)
+    timings = subs.add_parser(
+        "timings", help="Retain timing hints even when checks fail"
+    )
+    timings.add_argument("--inputs", type=Path, required=True)
+    timings.add_argument("--output", type=Path, required=True)
+    timings.add_argument("--previous", type=Path)
     args = parser.parse_args()
+    if args.action == "timings":
+        durations = collect_timings(args.inputs, _timing_identity(), args.previous)
+        _write(args.output, durations)
+        print(f"Retained timings for {len(durations)} complete test files")
+        return 0
     identity = _identity()
     if args.action == "regressions":
         env = os.environ.copy()
@@ -395,9 +590,7 @@ def main() -> int:
         universe = result["universe"]
         if status != 0 or not universe or len(universe) != len(set(universe)):
             raise ValueError("Full CI collection failed or was empty/duplicated")
-        durations = (
-            _load(args.durations) if args.durations and args.durations.exists() else {}
-        )
+        durations = _duration_cache(args.durations)
         _write(
             args.output / "plan.json",
             {
@@ -408,12 +601,20 @@ def main() -> int:
             },
         )
         return 0
-    if args.action == "shard":
+    if args.action in ("shard", "replay"):
         plan = _load(args.plan / "plan.json")
         if plan["identity"] != identity:
             raise ValueError("CI test plan identity changed")
         args.output.mkdir(parents=True, exist_ok=True)
         result_path = args.output / "pytest.json"
+        if args.action == "replay":
+            print("Diagnostic replay only; this command does not create a CI receipt")
+            return _pytest(
+                ["-v", "-n", str(args.workers), "--dist", args.dist],
+                result_path,
+                args.shard,
+                args.plan / "plan.json",
+            )
         status = _pytest(
             ["-v", "-n", "2"], result_path, args.shard, args.plan / "plan.json"
         )

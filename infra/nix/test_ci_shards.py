@@ -3,9 +3,11 @@
 import hashlib
 import json
 import os
+import signal
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -168,6 +170,11 @@ class ShardTests(unittest.TestCase):
                 result.stdout.index("CI failure:"), result.stdout.index(" FAILURES ")
             )
             self.assertIn("early diagnostic", result.stdout)
+            checkpoint = json.loads((root / "timings.json").read_text())
+            self.assertEqual(
+                checkpoint["nodes"]["test_failure.py::test_failure"]["reports"]["call"],
+                ["failed"],
+            )
 
     def test_xdist_reports_exact_selected_nodes_and_setup_skips(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -220,6 +227,83 @@ class ShardTests(unittest.TestCase):
                 {"passed", "skipped"},
             )
             self.assertTrue(all("teardown" in v for v in observed["reports"].values()))
+
+    def test_completed_file_timings_are_retained_before_other_file_finishes(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "test_complete.py").write_text("def test_pass(): pass\n")
+            (root / "test_wait.py").write_text(
+                "import time\ndef test_wait(): time.sleep(120)\n"
+            )
+            ci_shards._write(
+                root / "plan.json",
+                {
+                    "universe": [
+                        "test_complete.py::test_pass",
+                        "test_wait.py::test_wait",
+                    ],
+                    "assignment": {"test_complete.py": 0, "test_wait.py": 0},
+                },
+            )
+            env = os.environ.copy()
+            env.update(
+                PYTHONPATH=str(ci_shards.INFRA),
+                STATADIC_CI_PLUGIN_OUTPUT=str(root / "result.json"),
+                STATADIC_CI_PLAN=str(root / "plan.json"),
+                STATADIC_CI_SHARD="0",
+            )
+            env.pop("PYTEST_ADDOPTS", None)
+            env.pop("PYTEST_PLUGINS", None)
+            with subprocess.Popen(
+                [
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    "-p",
+                    "ci_shard_plugin",
+                    "-p",
+                    "no:monitor",
+                    "-p",
+                    "no:tach",
+                    "-n",
+                    "2",
+                    "-q",
+                    "test_complete.py",
+                    "test_wait.py",
+                ],
+                cwd=root,
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            ) as child:
+                try:
+                    deadline = time.monotonic() + 15
+                    checkpoint = root / "timings.json"
+                    observed = {}
+                    while time.monotonic() < deadline:
+                        if checkpoint.exists():
+                            observed = json.loads(checkpoint.read_text())
+                            if "test_complete.py::test_pass" in observed["nodes"]:
+                                break
+                        if child.poll() is not None:
+                            self.fail(child.stdout.read().decode())
+                        time.sleep(0.05)
+                    self.assertIn(
+                        "test_complete.py::test_pass", observed.get("nodes", {})
+                    )
+                    self.assertNotIn("test_wait.py::test_wait", observed["nodes"])
+                    self.assertIsNone(child.poll())
+                    self.assertFalse((root / "result.json").exists())
+                    self.assertTrue((root / "last-started.json").exists())
+                    active = json.loads((root / "last-started.json").read_text())[
+                        "active"
+                    ]
+                    self.assertNotIn("test_complete.py::test_pass", active)
+                finally:
+                    if child.poll() is None:
+                        os.killpg(child.pid, signal.SIGTERM)
+                    child.communicate(timeout=10)
 
     def test_receipt_requires_exact_complete_successful_shards(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -63,6 +63,31 @@ uv run --project src/python --offline --frozen --package statadic-docs python in
 uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/release -p 'test_*.py' -v
 ```
 
+## Offline consumer installation
+
+Before the expensive validation jobs, prepare and check the source-free publishing
+environment with the pinned Python runner:
+
+```bash
+devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --all-packages --group reference python infra/release/check_offline_install.py --prepare --output build/ci/offline-install
+```
+
+The helper exports the production dependency closure to `pylock.toml`, retaining
+the reviewed lock's exact artifact URLs and hashes. Only `--prepare` downloads
+missing artifacts, and uv selects wheels for the current interpreter and
+architecture. When building the workspace wheels, it uses hashed build constraints
+exported from the workspace's existing development lock; `--prepare` also fetches
+those build inputs. The helper then discards the prepared environment and repeats
+the install in a fresh environment with network and registry resolution disabled. It
+installs the newly built workspace wheels without dependency resolution, checks
+their dependency metadata, and verifies imports come from that isolated
+environment. `build/ci/offline-install` retains the exported lock and successful
+install receipt. Run without `--prepare` to require all artifacts to be cached.
+
+The publishing reconstruction test uses the same installer before exercising the
+installed wheels. A successful workspace `uv sync` or a cached package index alone
+does not establish that this independent offline consumer installation works.
+
 ## Release evidence
 
 The manual and tag workflow runs a bounded artifact preflight. A complete release

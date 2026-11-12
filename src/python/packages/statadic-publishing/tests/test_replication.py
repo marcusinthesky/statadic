@@ -82,37 +82,17 @@ def test_fresh_wheel_replication(tmp_path: Path) -> None:
         check=True,
     )
     python = venv / "bin/python"
-    # Reproduce the recorded environment: unpinned resolution can select newer
-    # jaxlib releases whose float32 kernels differ in the last bits.
-    constraints = tmp_path / "constraints.txt"
+    # Install the lock's artifact URLs/hashes without resolving registry
+    # candidates from incidental uv cache metadata. Keep the consumer isolated.
     subprocess.run(
         [
-            uv,
-            "export",
-            "--offline",
-            "--frozen",
-            "--package",
-            "statadic-publishing",
-            "--no-dev",
-            "--no-emit-workspace",
-            "--no-hashes",
-            "--output-file",
-            str(constraints),
-        ],
-        cwd=WORKSPACE,
-        env=env,
-        check=True,
-    )
-    subprocess.run(
-        [
-            uv,
-            "pip",
-            "install",
-            "--offline",
+            sys.executable,
+            str(WORKSPACE.parents[1] / "infra/release/check_offline_install.py"),
             "--python",
             str(python),
-            "--constraints",
-            str(constraints),
+            "--output",
+            str(tmp_path / "install"),
+            "--wheels",
             *map(str, sorted(wheels.glob("*.whl"))),
         ],
         cwd=tmp_path,

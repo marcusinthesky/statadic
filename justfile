@@ -25,8 +25,9 @@ setup:
 check-source:
     bash infra/nix/check.sh
     env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/nix -p 'test_*.py'
-    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff check infra/nix
-    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format --check infra/nix
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/release -p 'test_*.py'
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff check infra/nix infra/release
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format --check infra/nix infra/release
     {{ workflow }} check
 
 # Check source, views and selected languages without repairing files.
@@ -67,7 +68,7 @@ test:
 fmt:
     nixfmt devenv.nix infra/nix/devenv.nix infra/nix/pkgs/schematter.nix infra/nix/pkgs/lean-toolchain.nix infra/nix/pkgs/agentsync.nix
     rumdl fmt .
-    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format infra/nix
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format infra/nix infra/release
     just python::fmt
     just lean::fmt
     just latex::fmt

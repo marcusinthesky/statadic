@@ -4,10 +4,16 @@ inputs:
   cache-suffix:
     required: true
     description: Unique cache namespace for this Python job.
+  prepare-offline-install:
+    default: 'false'
+    description: Prepare and verify the exact locked artifacts for isolated wheel installs.
 outputs:
   cpu-fingerprint:
     description: CPU features and compiler flags used by the compilation cache.
     value: ${{ steps.cpu.outputs.fingerprint }}
+  jax-cache-key:
+    description: Compatible compilation cache key to save after test execution.
+    value: ${{ steps.jax-cache.outputs.cache-primary-key }}
 runs:
   using: composite
   steps:
@@ -23,7 +29,7 @@ runs:
       uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         path: ~/.cache/uv
-        key: uv-python-ci-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}
+        key: uv-python-ci-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/release/check_offline_install.py') }}
     - shell: bash
       run: bash infra/nix/install-devenv.sh
     - shell: bash
@@ -32,6 +38,10 @@ runs:
       with:
         primary-key: ${{ steps.nix-cache.outputs.primary-key }}
         gc-max-store-size-linux: 3G
+    - name: Verify isolated offline installation
+      if: inputs.prepare-offline-install == 'true'
+      shell: bash
+      run: bash infra/nix/ci-capacity.sh run offline-install devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --all-packages --group reference python infra/release/check_offline_install.py --prepare --output build/ci/offline-install
     - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         path: ~/.cache/uv
@@ -48,7 +58,8 @@ runs:
         echo 'JAX_PLATFORMS=cpu' >> "$GITHUB_ENV"
         echo 'JAX_ENABLE_X64=1' >> "$GITHUB_ENV"
     - name: Restore compiled programs
-      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+      id: jax-cache
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
       with:
         path: ${{ runner.temp }}/statadic-jax-cache
         key: jax-v3-${{ runner.os }}-${{ runner.arch }}-${{ steps.cpu.outputs.fingerprint }}-x64-${{ hashFiles('src/python/uv.lock', 'devenv.lock') }}-${{ inputs.cache-suffix }}-${{ github.run_id }}-${{ github.run_attempt }}

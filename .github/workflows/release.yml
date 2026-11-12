@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Test release version checks
-        run: python3 -m unittest discover -s infra/release -p 'test_*.py' -v
+        run: python3 -m unittest discover -s infra/release -p 'test_check_version.py' -v
       - name: Check package, lock, registry and tag versions
         id: version
         run: python3 infra/release/check_version.py
