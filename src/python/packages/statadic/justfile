@@ -7,11 +7,13 @@ test-layout *args:
 
 # Run cached fast tests in this project's own process and pytest configuration.
 test *args:
-    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-forceselect "$@"
+    seed_args=(); if [[ -n "${STATADIC_CI_SEED:-}" ]]; then seed_args+=("--hypothesis-seed=$STATADIC_CI_SEED"); fi; \
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-forceselect "${seed_args[@]}" "$@"
 
 # Run all fast tests while recording dependencies for later affected-test runs.
 test-record *args:
-    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-noselect "$@"
+    seed_args=(); if [[ -n "${STATADIC_CI_SEED:-}" ]]; then seed_args+=("--hypothesis-seed=$STATADIC_CI_SEED"); fi; \
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-noselect "${seed_args[@]}" "$@"
 
 # Execute package docstring examples independently of Testmon selection.
 doctest:
@@ -19,7 +21,8 @@ doctest:
 
 # Run the complete fast suite without Testmon selection.
 test-fresh *args:
-    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon "$@"
+    seed_args=(); if [[ -n "${STATADIC_CI_SEED:-}" ]]; then seed_args+=("--hypothesis-seed=$STATADIC_CI_SEED"); fi; \
+    env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon "${seed_args[@]}" "$@"
 
 # Run every test independently of the affected-test cache.
 test-all *args:

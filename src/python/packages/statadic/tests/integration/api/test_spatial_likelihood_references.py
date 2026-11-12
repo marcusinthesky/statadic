@@ -245,7 +245,7 @@ def test_random_effects_lag_panel_matches_spreg(  # noqa: PLR0914 -- one matched
 @pytest.mark.requires_optional("spreg")
 @pytest.mark.requires_optional("libpysal")
 @pytest.mark.requires_optional("statsmodels")
-def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914
+def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914, PLR0915
     optional_reference: Callable[[str], ModuleType],
 ) -> None:
     """Random-effects SEM equals spreg's own objective at statadic's estimate."""
@@ -271,22 +271,27 @@ def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914
     q = np.kron(one @ one.T / periods, identity)
     lagged = np.kron(np.eye(periods), weights)
 
-    def spreg_loglik(parameters: tuple[float, float]) -> float:
-        value = spreg_re.err_c_loglik_ord(
-            parameters,
-            evals,
-            evecs,
-            units,
-            periods,
-            response,
-            design,
-            lagged @ response,
-            lagged @ design,
-            q @ response,
-            q @ design,
-            identity,
-            graph.sparse,
+    def objective(parameters: np.typing.NDArray[np.float64]) -> float:
+        return float(
+            spreg_re.err_c_loglik_ord(
+                parameters,
+                evals,
+                evecs,
+                units,
+                periods,
+                response,
+                design,
+                lagged @ response,
+                lagged @ design,
+                q @ response,
+                q @ design,
+                identity,
+                graph.sparse,
+            )
         )
+
+    def spreg_loglik(parameters: tuple[float, float]) -> float:
+        value = objective(np.asarray(parameters))
         # Constants and the nt/2 log(nt) offset spreg leaves out of its logll.
         return float(
             -value
@@ -295,17 +300,41 @@ def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914
             + total / 2 * np.log(total)
         )
 
-    # Match spreg's optimizer without its unrelated, sometimes singular vm inversion.
-    def objective(parameters: np.typing.NDArray[np.float64]) -> float:
-        return -spreg_loglik((float(parameters[0]), float(parameters[1])))
-
-    peer = optimize.minimize(
-        objective,
-        (0.0, 0.1),
-        bounds=((-1.0, 1.0), (0.0, 10000.0)),
-        method="L-BFGS-B",
-    )
-    assert peer.success
+    # Stay inside the singular spatial endpoints; phi's bound is fixture-specific.
+    bounds = ((-0.999, 0.999), (0.001, 10.0))
+    peers = [
+        optimize.minimize(
+            objective,
+            start,
+            bounds=bounds,
+            method="Powell",
+            options={"xtol": 1e-10, "ftol": 1e-13, "maxiter": 1000},
+        )
+        for start in ((0.0, 0.1), (0.4, 1.0))
+    ]
+    for peer in peers:
+        assert peer.success
+        assert np.isfinite(peer.fun)
+        assert all(
+            lo < value < hi for value, (lo, hi) in zip(peer.x, bounds, strict=True)
+        )
+        step = 1e-5
+        gradient = np.array(
+            [
+                (
+                    objective(peer.x + step * direction)
+                    - objective(peer.x - step * direction)
+                )
+                / (2 * step)
+                for direction in np.eye(2)
+            ]
+        )
+        assert np.all(np.isfinite(gradient))
+        gradient_tolerance = 1e-4
+        assert np.max(np.abs(gradient)) < gradient_tolerance
+    np.testing.assert_allclose(peers[0].x[0], peers[1].x[0], rtol=0, atol=2e-6)
+    np.testing.assert_allclose(peers[0].x[1] ** 2, peers[1].x[1] ** 2, rtol=1e-5)
+    peer = peers[0]
     peer_lam, peer_phi = peer.x
     np.testing.assert_allclose(
         fitted.core.log_likelihood, spreg_loglik((lam, phi)), atol=2e-6

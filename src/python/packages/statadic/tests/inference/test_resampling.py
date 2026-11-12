@@ -322,7 +322,10 @@ def test_rank_failed_refit_is_retained_and_invalidates_summary() -> None:
     )
     result = linear_pairs_replicates(fit, schedule, chunk=1)
     np.testing.assert_array_equal(result.valid, [True, False])
-    assert int(result.status[1]) == ReplicateStatus.INVALID_REFIT
+    assert int(result.status[1]) in (
+        ReplicateStatus.INVALID_REFIT,
+        ReplicateStatus.SOLVER_FAILURE,
+    )
     assert int(result.requested_count) == len(schedule.draw_ids)
     assert int(result.valid_count) == 1
     assert int(result.failed_count) == 1
@@ -346,6 +349,18 @@ def test_generic_refit_preserves_solver_failure_reason() -> None:
     schedule = row_resample_schedule(_ROWS, n_observations=4)
     result = refit_replicates(schedule, lambda _: failed, chunk=2)
     np.testing.assert_array_equal(result.status, ReplicateStatus.SOLVER_FAILURE)
+    assert int(result.failed_count) == len(_ROWS)
+
+
+@pytest.mark.component
+@pytest.mark.contract
+def test_generic_refit_distinguishes_invalid_fit_from_solver_failure() -> None:
+    """Status precedence does not depend on a platform's singular QR output."""
+    fit = LeastSquares().estimate(LinearProblem(jnp.ones((4, 1)), jnp.arange(4.0)))
+    invalid = replace(fit, valid=jnp.zeros((), dtype=bool))
+    schedule = row_resample_schedule(_ROWS, n_observations=4)
+    result = refit_replicates(schedule, lambda _: invalid, chunk=2)
+    np.testing.assert_array_equal(result.status, ReplicateStatus.INVALID_REFIT)
     assert int(result.failed_count) == len(_ROWS)
 
 

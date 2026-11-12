@@ -1,0 +1,56 @@
+name: Prepare Python CI
+description: Prepare pinned Python inputs and save reusable caches before validation.
+inputs:
+  cache-suffix:
+    required: true
+    description: Unique cache namespace for this Python job.
+outputs:
+  cpu-fingerprint:
+    description: CPU features and compiler flags used by the compilation cache.
+    value: ${{ steps.cpu.outputs.fingerprint }}
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: bash infra/nix/ci-capacity.sh prepare
+    - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
+    - id: nix-cache
+      uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
+      with:
+        primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
+        restore-prefixes-first-match: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-
+    - id: uv-cache
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: ~/.cache/uv
+        key: uv-python-ci-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}
+    - shell: bash
+      run: bash infra/nix/install-devenv.sh
+    - shell: bash
+      run: devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv sync --project src/python --locked --all-packages --group reference
+    - uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
+      with:
+        primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+        gc-max-store-size-linux: 3G
+    - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: ~/.cache/uv
+        key: ${{ steps.uv-cache.outputs.cache-primary-key }}
+    - name: Identify compilation target
+      id: cpu
+      shell: bash
+      run: |
+        fingerprint=$( { LC_ALL=C lscpu | awk '/^(Architecture|Model name|Flags|Features):/'; printf '%s\n' "${XLA_FLAGS:-}"; } | sha256sum | cut -d' ' -f1 )
+        echo "fingerprint=${fingerprint}" >> "$GITHUB_OUTPUT"
+        echo "JAX_COMPILATION_CACHE_DIR=$RUNNER_TEMP/statadic-jax-cache" >> "$GITHUB_ENV"
+        echo 'JAX_COMPILATION_CACHE_MAX_SIZE=268435456' >> "$GITHUB_ENV"
+        echo 'JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS=0' >> "$GITHUB_ENV"
+        echo 'JAX_PLATFORMS=cpu' >> "$GITHUB_ENV"
+        echo 'JAX_ENABLE_X64=1' >> "$GITHUB_ENV"
+    - name: Restore compiled programs
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+      with:
+        path: ${{ runner.temp }}/statadic-jax-cache
+        key: jax-v3-${{ runner.os }}-${{ runner.arch }}-${{ steps.cpu.outputs.fingerprint }}-x64-${{ hashFiles('src/python/uv.lock', 'devenv.lock') }}-${{ inputs.cache-suffix }}-${{ github.run_id }}-${{ github.run_attempt }}
+        restore-keys: |
+          jax-v3-${{ runner.os }}-${{ runner.arch }}-${{ steps.cpu.outputs.fingerprint }}-x64-${{ hashFiles('src/python/uv.lock', 'devenv.lock') }}-${{ inputs.cache-suffix }}-

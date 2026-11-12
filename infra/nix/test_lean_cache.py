@@ -1,12 +1,11 @@
 """Lean setup fetches the discovered Mathlib imports, never an accidental full cache."""
 
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
-
+from pathlib import Path
 
 JUSTFILE = Path(__file__).resolve().parents[2] / "src/lean/justfile"
 
@@ -40,6 +39,7 @@ class LeanCacheTests(unittest.TestCase):
                 env=env,
                 capture_output=True,
                 text=True,
+                check=False,
                 timeout=10,
             )
             args = root / "lake-args"

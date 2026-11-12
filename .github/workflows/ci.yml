@@ -9,7 +9,35 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  check:
+  regressions:
+    name: Early regressions (${{ matrix.runner }})
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/python-ci-setup
+        with:
+          cache-suffix: regressions
+      - name: Replay current numerical regressions
+        run: bash infra/nix/ci-capacity.sh run regressions devenv shell --profile python-ci -- just ci-regressions
+      - name: Retain early diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: regression-diagnostics-${{ matrix.runner }}
+          path: build/ci/
+          retention-days: 7
+  check-nontest:
+    name: Non-test checks (${{ matrix.runner }})
+    needs: regressions
     strategy:
       fail-fast: false
       matrix:
@@ -19,22 +47,21 @@ jobs:
       JAX_PLATFORMS: cpu
       JAX_ENABLE_X64: '1'
       STATADIC_CI_MEMORY_BOUNDED: '1'
-      STATADIC_TEST_MODE: ${{ github.event_name == 'pull_request' && 'affected' || 'record' }}
+      STATADIC_CI_SEED: ${{ github.sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - name: Prepare runner capacity
-        run: bash infra/nix/ci-capacity.sh prepare
+      - run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - name: Restore Nix store
-        id: nix-cache
+      - id: nix-cache
         uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
-      - name: Restore tool downloads
-        id: tools-cache
+          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-full-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
+          restore-prefixes-first-match: |
+            nix-v3-${{ runner.os }}-${{ runner.arch }}-full-
+            nix-v2-${{ runner.os }}-${{ runner.arch }}-
+      - id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: |
@@ -44,47 +71,31 @@ jobs:
           key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-check
           restore-keys: |
             tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
-      - name: Install matching devenv
-        run: bash infra/nix/install-devenv.sh
-      - name: Prepare dependencies
-        run: |
-          set -o pipefail
-          devenv shell -- just setup 2>&1 | tee build/ci/setup.log
-          bash infra/nix/ci-capacity.sh diagnose provisioned
-      # Save before validation: a failed test or lost runner must not discard setup.
-      - name: Save prepared Nix store
-        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
+      - run: bash infra/nix/install-devenv.sh
+      - run: devenv shell -- just setup
+      - uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
           primary-key: ${{ steps.nix-cache.outputs.primary-key }}
           gc-max-store-size-linux: 3G
-      - name: Save prepared tool downloads
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: |
             ~/.cache/uv
             ~/.cache/tectonic
             ~/.cache/mathlib
           key: ${{ steps.tools-cache.outputs.cache-primary-key }}
-      - name: Restore test dependencies
-        id: test-cache
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+      - name: Run non-test checks
+        run: bash infra/nix/ci-capacity.sh run check-nontest devenv shell -- just check-ci-nontest
+      - name: Record successful checks
+        run: |
+          mkdir -p build/ci/component
+          cp build/ci/check-nontest.log build/ci/component/component.log
+          devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen python infra/nix/ci_shards.py component --output build/ci/component
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          path: src/python/packages/statadic/.testmondata*
-          # Testmon cannot trace source-inspection or child-interpreter dependencies.
-          # Python changes invalidate the database too; unchanged runs and prose
-          # edits reuse passing results. Never cross these input fingerprints.
-          key: testmon-v1-${{ runner.os }}-${{ runner.arch }}-x64-cpu-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**', 'justfile', 'src/python/uv.lock', 'src/python/pyproject.toml', 'src/python/packages/*/pyproject.toml', 'src/python/apps/*/pyproject.toml', 'src/python/justfile', 'src/python/packages/*/justfile', '.github/workflows/ci.yml') }}-${{ hashFiles('src/python/packages/statadic/src/**/*.py', 'src/python/packages/statadic/tests/**/*.py', 'src/python/packages/statadic/scripts/**/*.py') }}-${{ hashFiles('src/python/packages/statadic/tests/**', 'src/python/packages/statadic/src/**', 'src/python/packages/statadic/scripts/**', '!src/python/**/*.py', '!**/__pycache__/**', '!**/.pytest_cache/**', '!**/.hypothesis/**') }}-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: |
-            testmon-v1-${{ runner.os }}-${{ runner.arch }}-x64-cpu-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**', 'justfile', 'src/python/uv.lock', 'src/python/pyproject.toml', 'src/python/packages/*/pyproject.toml', 'src/python/apps/*/pyproject.toml', 'src/python/justfile', 'src/python/packages/*/justfile', '.github/workflows/ci.yml') }}-${{ hashFiles('src/python/packages/statadic/src/**/*.py', 'src/python/packages/statadic/tests/**/*.py', 'src/python/packages/statadic/scripts/**/*.py') }}-${{ hashFiles('src/python/packages/statadic/tests/**', 'src/python/packages/statadic/src/**', 'src/python/packages/statadic/scripts/**', '!src/python/**/*.py', '!**/__pycache__/**', '!**/.pytest_cache/**', '!**/.hypothesis/**') }}-
-      - name: Validate
-        id: validate
-        run: bash infra/nix/ci-capacity.sh run check devenv shell -- just check
-      - name: Save passing test dependencies
-        if: ${{ !cancelled() && steps.validate.outputs.fast-tests-passed == 'true' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: src/python/packages/statadic/.testmondata*
-          key: ${{ steps.test-cache.outputs.cache-primary-key }}
+          name: component-${{ matrix.runner }}
+          path: build/ci/component/
+          if-no-files-found: error
       - name: Final capacity
         if: always()
         run: bash infra/nix/ci-capacity.sh diagnose final
@@ -92,15 +103,150 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: validation-${{ runner.arch }}
-          path: |
-            build/ci/
-            src/python/apps/docs/build/html/
-            src/lean/build/certification.json
-          retention-days: 0
-
+          name: non-test-diagnostics-${{ runner.arch }}
+          path: build/ci/
+          retention-days: 7
+  plan:
+    name: Python test inventory (${{ matrix.runner }})
+    needs: regressions
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/python-ci-setup
+        with:
+          cache-suffix: plan
+      - name: Restore test timings
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-
+      - run: devenv shell --profile python-ci -- just ci-test-plan --durations build/ci/timing/durations.json --output build/ci/plan
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/plan/
+          if-no-files-found: error
+  shard:
+    name: Python tests (${{ matrix.runner }}, shard ${{ matrix.shard }})
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        shard: [0, 1, 2, 3]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+      JAX_COMPILATION_CACHE_DIR: /tmp/statadic-jax-cache
+      JAX_COMPILATION_CACHE_MAX_SIZE: '268435456'
+      JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS: '0'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/python-ci-setup
+        with:
+          cache-suffix: shard-${{ matrix.shard }}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/plan
+      - name: Execute shard
+        run: bash infra/nix/ci-capacity.sh run shard-${{ matrix.shard }} devenv shell --profile python-ci -- just ci-test-shard --plan build/ci/plan --shard ${{ matrix.shard }} --output build/ci/shard-${{ matrix.shard }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: shard-${{ matrix.runner }}-${{ matrix.shard }}
+          path: build/ci/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+      - name: Retain shard diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: shard-diagnostics-${{ matrix.runner }}-${{ matrix.shard }}
+          path: build/ci/
+          retention-days: 7
+  check:
+    name: check (${{ matrix.runner }})
+    if: always()
+    needs: [check-nontest, plan, shard]
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - name: Require every validation component
+        env:
+          DEPENDENCY_RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          read -ra results <<< "$DEPENDENCY_RESULTS"
+          for result in "${results[@]}"; do
+            if [[ "$result" != success ]]; then
+              echo "A required validation component did not pass: $result" >&2
+              exit 1
+            fi
+          done
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/python-ci-setup
+        with:
+          cache-suffix: aggregate
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/inputs/plan
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: component-${{ matrix.runner }}
+          path: build/ci/inputs/component
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: shard-${{ matrix.runner }}-*
+          path: build/ci/downloaded-shards
+      - name: Verify complete and disjoint test execution
+        shell: bash
+        run: |
+          for index in 0 1 2 3; do
+            mv "build/ci/downloaded-shards/shard-${{ matrix.runner }}-${index}" "build/ci/inputs/shard-${index}"
+          done
+          devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen python infra/nix/ci_shards.py aggregate --inputs build/ci/inputs --output build/ci/receipt
+          mkdir -p build/ci/timing
+          cp build/ci/receipt/durations.json build/ci/timing/durations.json
+      - name: Save test timings
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: checkout-check-${{ matrix.runner }}
+          path: build/ci/receipt/
+          if-no-files-found: error
+  pr-release:
+    name: Release preflight
+    if: github.event_name == 'pull_request'
+    needs: check
+    uses: ./.github/workflows/release-validation.yml
+    with:
+      check_receipt_artifact: checkout-check
   reference-validation:
     name: Reference validation (${{ matrix.runner }})
+    needs: regressions
     strategy:
       fail-fast: false
       matrix:
@@ -109,6 +255,7 @@ jobs:
     timeout-minutes: 120
     env:
       STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -120,8 +267,8 @@ jobs:
         id: nix-cache
         uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
+          restore-prefixes-first-match: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-
       - name: Restore reference downloads
         id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -133,7 +280,7 @@ jobs:
       - name: Prepare locked reference environment
         run: |
           set -o pipefail
-          devenv shell -- just setup-references 2>&1 | tee build/ci/reference-setup.log
+          devenv shell --profile python-ci -- just setup-references 2>&1 | tee build/ci/reference-setup.log
       - name: Save prepared Nix store
         uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
@@ -146,7 +293,7 @@ jobs:
           key: ${{ steps.tools-cache.outputs.cache-primary-key }}
       - name: Validate live references and precision
         id: validate_references
-        run: bash infra/nix/ci-capacity.sh run reference-validation devenv shell -- just validate-references
+        run: bash infra/nix/ci-capacity.sh run reference-validation devenv shell --profile python-ci -- just validate-references
       - name: Retain reference evidence
         if: always() && (steps.validate_references.outcome == 'success' || steps.validate_references.outcome == 'failure')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

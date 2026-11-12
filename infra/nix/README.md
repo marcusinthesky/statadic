@@ -31,11 +31,24 @@ cgroup usage every 30 seconds. These measurements remain in the Actions console
 if a lost runner cannot upload its final artifacts. CI retains diagnostics on
 failure; x86-64 and ARM64 validation do not cancel one another.
 
-Workflows restore a shared Nix store per architecture and locked environment,
+Workflows restore a Nix store per architecture, profile and locked environment,
 then save the prepared store before running validation. Tool downloads are saved
 at the same boundary. A later test failure therefore leaves setup reusable.
 The store save collects unreferenced paths toward a 3 GiB target; live environment
 roots remain protected. No publishing credentials are needed for these caches.
+
+The `python-ci` profile supplies the pinned Python, uv, Just and native runtime
+without Lean or TeX. Regression, collection and shard jobs prepare only Python
+inputs. The default development shell retains the complete toolchain. CI saves
+JAX's persistent compilation cache separately for each architecture, CPU identity,
+locked environment and shard, with a 256 MiB limit per cache. Cached compilation
+still executes each test; local Testmon remains available for affected tests.
+
+`ci_shards.py` plans four complete Python shards, retains canonical node outcomes
+and verifies their disjoint, exhaustive coverage alongside the remaining root
+checks. A passing aggregate is bound to the checked-out sources, environment and
+workflow run. PR release preflight can consume that same-run receipt; standalone
+release checks still execute the full checkout gate.
 
 Hosted scientific tests set `STATADIC_CI_MEMORY_BOUNDED=1` to release in-memory
 JAX compilation caches between test modules. The persistent compilation cache is

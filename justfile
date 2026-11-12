@@ -6,6 +6,7 @@ mod lean 'src/lean/justfile'
 mod latex 'src/latex/justfile'
 mod agents '.agents/justfile'
 workflow := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen --script src/python/scripts/workflow/script.py"
+ci_runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --all-packages --group reference python infra/nix/ci_shards.py"
 
 # Discover this project's commands.
 default:
@@ -20,17 +21,41 @@ setup:
     just agents::apply
     prek install
 
-# Check source, views and selected languages without repairing files.
-check:
+# Check source and authored views without repairing files.
+check-source:
     bash infra/nix/check.sh
     env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/nix -p 'test_*.py'
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff check infra/nix
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format --check infra/nix
     {{ workflow }} check
+
+# Check source, views and selected languages without repairing files.
+check: check-source
     # Documentation tests consume the generated Lean certification.
     just lean::check
     just python::check
     just latex::check
 
     just agents::check
+
+# CI combines these checks with four separately verified Python test shards.
+check-ci-nontest: check-source
+    just lean::check
+    just python::check-ci-nontest
+    just latex::check
+    just agents::check
+
+# Replay the numerical regressions using the same runner as hosted CI.
+ci-regressions *args:
+    {{ ci_runner }} regressions "$@"
+
+# Collect the complete fast-test inventory and assign four disjoint shards.
+ci-test-plan *args:
+    {{ ci_runner }} plan "$@"
+
+# Execute one planned shard and retain canonical test outcomes.
+ci-test-shard *args:
+    {{ ci_runner }} shard "$@"
 
 # Run the selected language tests.
 test:
@@ -42,6 +67,7 @@ test:
 fmt:
     nixfmt devenv.nix infra/nix/devenv.nix infra/nix/pkgs/schematter.nix infra/nix/pkgs/lean-toolchain.nix infra/nix/pkgs/agentsync.nix
     rumdl fmt .
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs ruff format infra/nix
     just python::fmt
     just lean::fmt
     just latex::fmt

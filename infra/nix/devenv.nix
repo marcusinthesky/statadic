@@ -64,4 +64,20 @@
   };
   enterShell = "unset PYTHONPATH PYTHONHOME VIRTUAL_ENV";
   enterTest = "just check";
+  profiles.python-ci.module = {
+    packages = lib.mkForce (
+      with pkgs;
+      [
+        git
+        just
+        python313
+        uv
+        stdenv.cc
+        patchelf
+      ]
+    );
+    env.LEAN_BLUEPRINT_CFLAGS = lib.mkForce "";
+    env.LEAN_BLUEPRINT_LDFLAGS = lib.mkForce "";
+    enterTest = lib.mkForce "";
+  };
 }

@@ -80,6 +80,85 @@ def source_snapshot() -> dict[str, str]:
     }
 
 
+def verify_check_evidence(bundle: Path, manifest: dict) -> None:
+    """Recheck the checkout gate, including imported complete shard evidence."""
+    checks = [lane for lane in manifest["lanes"] if lane["name"] == "check"]
+    if (
+        len(checks) != 1
+        or checks[0].get("status") != "passed"
+        or checks[0].get("returncode") != 0
+    ):
+        raise ValueError("Release requires exactly one successful checkout check")
+    check = checks[0]
+    if "check_receipt" not in manifest:
+        if (
+            check.get("command") != ["just", "check"]
+            or not (bundle / "check.log").is_file()
+        ):
+            raise ValueError("Release lacks its fresh checkout check log")
+        return
+    if manifest.get("mode") != "preflight":
+        raise ValueError("Only preflight can reuse a CI checkout check")
+    provenance = manifest["check_receipt"]
+    if (
+        provenance.get("path") != "check-receipt"
+        or check.get("command") != ["verify-ci-check-receipt", "check-receipt"]
+        or not provenance.get("run_id")
+        or not provenance.get("run_attempt")
+    ):
+        raise ValueError("Invalid CI checkout check provenance")
+    verifier = runpy.run_path(str(ROOT / "infra/nix/ci_shards.py"))["verify_receipt"]
+    receipt_dir = bundle / "check-receipt"
+    verifier(
+        receipt_dir,
+        source_files=manifest["source_files"],
+        revision=manifest["revision"],
+        architecture=manifest["platform"]["machine"],
+        run_id=provenance["run_id"],
+        run_attempt=provenance["run_attempt"],
+    )
+    if digest(receipt_dir / "receipt.json") != provenance.get("sha256"):
+        raise ValueError("CI checkout check receipt changed")
+
+
+def retain_preflight_check(directory: Path, output: Path, manifest: dict) -> None:
+    """Reuse completed checks only from this exact hosted workflow execution."""
+    run_id = os.environ.get("GITHUB_RUN_ID")
+    attempt = os.environ.get("GITHUB_RUN_ATTEMPT")
+    if os.environ.get("GITHUB_ACTIONS") != "true" or not run_id or not attempt:
+        raise ValueError("CI check reuse requires the current GitHub run and attempt")
+    verifier = runpy.run_path(str(ROOT / "infra/nix/ci_shards.py"))["verify_receipt"]
+    verifier(
+        directory,
+        source_files=manifest["source_files"],
+        revision=manifest["revision"],
+        architecture=platform.machine(),
+        run_id=run_id,
+        run_attempt=attempt,
+    )
+    retained = output / "check-receipt"
+    shutil.copytree(directory, retained)
+    manifest["check_receipt"] = {
+        "path": "check-receipt",
+        "sha256": digest(retained / "receipt.json"),
+        "run_id": run_id,
+        "run_attempt": attempt,
+    }
+    manifest["lanes"].append(
+        {
+            "name": "check",
+            "command": ["verify-ci-check-receipt", "check-receipt"],
+            "backend": "cpu",
+            "precision": "float64",
+            "status": "passed",
+            "returncode": 0,
+            "provenance": "Complete checkout checks from this workflow run",
+        }
+    )
+    verify_check_evidence(output, manifest)
+    print("Reused verified checkout checks from this workflow run", flush=True)
+
+
 def junit_summary(path: Path) -> dict:
     """Preserve per-cell dispositions independently of test execution success."""
     root = ET.parse(path).getroot()
@@ -235,6 +314,7 @@ def verify(
         verify_inventory(bundle, manifest["files"])
     except ValueError as error:
         raise ValueError(f"Release evidence changed: {error}") from error
+    verify_check_evidence(bundle, manifest)
     verify_reference_indexes(bundle, manifest)
     rendered = documentation_evidence(bundle, manifest.get("method_evaluations", []))
     if rendered != manifest.get("documentation_evidence"):
@@ -293,6 +373,11 @@ def main() -> int:
     parser.add_argument(
         "--mode", choices=("preflight", "qualification"), default="qualification"
     )
+    parser.add_argument(
+        "--preflight-check-receipt",
+        type=Path,
+        help="Reuse a complete same-run CI checkout receipt in hosted preflight only",
+    )
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument(
         "--scope",
@@ -322,6 +407,10 @@ def main() -> int:
         help="Retain all evidence, including hidden files, in a deterministic tar",
     )
     args = parser.parse_args()
+    if args.preflight_check_receipt is not None and (
+        args.mode != "preflight" or args.verify or args.verify_archive
+    ):
+        parser.error("CI checkout receipts apply only to executing preflight")
     configure_execution_policy()
     scope = None
     if (
@@ -472,7 +561,11 @@ def main() -> int:
             manifest["method_evaluations"] = inspect_campaigns(
                 ROOT, args.campaign, scope=scope
             )
-        execute("check", ["just", "check"])
+        if args.preflight_check_receipt is None:
+            execute("check", ["just", "check"])
+        else:
+            retain_preflight_check(args.preflight_check_receipt, output, manifest)
+            write_json(output / "manifest.json", manifest)
         if args.mode == "preflight":
             execute("release-documentation", documentation_command([]))
         # Preserve completed proof/docs evidence even if a later scientific lane fails.
@@ -651,6 +744,10 @@ def main() -> int:
                 "-o",
                 "junit_family=legacy",
             ]
+            if environment.get("STATADIC_CI_SEED"):
+                seed = environment["STATADIC_CI_SEED"]
+                base.append(f"--hypothesis-seed={seed}")
+                print(f"Installed-package Hypothesis seed: {seed}", flush=True)
             if scope is not None:
                 from statadic_docs_labs.numerical_contracts import (
                     retain_results,

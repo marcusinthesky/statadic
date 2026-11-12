@@ -121,10 +121,12 @@ def main(arguments: list[str] | None = None) -> int:
         )
         results = []
         for name, gate in gates(notebook):
+            print(f"Checking {label}: {name}", flush=True)
             problem = gate()
             results.append((name, problem is None))
             if problem is not None:
                 failures.setdefault(label, {})[name] = problem
+                print(f"\n--- {label}: {name}\n{problem}", file=sys.stderr, flush=True)
         rows.append((label, results))
     width = max((len(label) for label, _ in rows), default=8)
     names = [name for name, _ in rows[0][1]] if rows else []

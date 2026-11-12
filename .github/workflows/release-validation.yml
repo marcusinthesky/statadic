@@ -2,6 +2,12 @@ name: Release preflight
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      check_receipt_artifact:
+        description: Same-run checkout check receipt artifact prefix.
+        required: false
+        type: string
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -17,6 +23,7 @@ jobs:
     timeout-minutes: 360
     env:
       STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -27,8 +34,10 @@ jobs:
         id: nix-cache
         uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-full-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
+          restore-prefixes-first-match: |
+            nix-v3-${{ runner.os }}-${{ runner.arch }}-full-
+            nix-v2-${{ runner.os }}-${{ runner.arch }}-
       - name: Restore tool downloads
         id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -62,7 +71,23 @@ jobs:
             ~/.cache/mathlib
           key: ${{ steps.tools-cache.outputs.cache-primary-key }}
       - name: Check release candidate without long scientific campaigns
+        if: inputs.check_receipt_artifact == '' || inputs.check_receipt_artifact == null
         run: bash infra/nix/ci-capacity.sh run release-preflight devenv shell -- just release-preflight
+      - name: Download same-run checkout check receipt
+        if: inputs.check_receipt_artifact != '' && inputs.check_receipt_artifact != null
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: ${{ inputs.check_receipt_artifact }}-${{ matrix.runner }}
+          path: build/ci/checkout-check
+      - name: Check release candidate with verified checkout checks
+        if: inputs.check_receipt_artifact != '' && inputs.check_receipt_artifact != null
+        run: >-
+          bash infra/nix/ci-capacity.sh run release-preflight devenv shell --
+          env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV
+          uv run --project src/python --offline --frozen --package statadic-docs
+          python src/python/apps/docs/scripts/release.py --mode preflight
+          --output build/release-preflight --archive build/release-preflight.tar
+          --preflight-check-receipt build/ci/checkout-check
       - name: Verify retained archive round trip
         run: >-
           devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV

@@ -29,6 +29,46 @@ def references() -> ModuleType:
 
 @pytest.mark.integration
 @pytest.mark.regression
+@pytest.mark.parametrize("seed", [None, "a" * 40])
+def test_failed_reference_lane_streams_and_retains_seeded_output(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capfdbinary: pytest.CaptureFixture[bytes],
+    references: ModuleType,
+    seed: str | None,
+) -> None:
+    """The live log and retained bytes include failure output and exact argv."""
+    executable = tmp_path / "just"
+    executable.write_text(
+        "#!/bin/sh\nprintf 'args:%s\\n' \"$@\"\nprintf 'failure:\\377\\n' >&2\nexit 7\n"
+    )
+    executable.chmod(0o755)
+    monkeypatch.setenv("PATH", str(tmp_path))
+    if seed is None:
+        monkeypatch.delenv("STATADIC_CI_SEED", raising=False)
+    else:
+        monkeypatch.setenv("STATADIC_CI_SEED", seed)
+    lane = references._run_lane(  # noqa: SLF001 -- exercise the subprocess boundary
+        "external-float64", "test-external", "true", tmp_path, tmp_path, ()
+    )
+    stdout = capfdbinary.readouterr().out
+    retained = (tmp_path / "external-float64.log").read_bytes()
+    assert lane["status"] == "failed"
+    expected_exit = 7
+    assert lane["returncode"] == expected_exit
+    assert retained in stdout
+    assert b"failure:\xff\n" in retained
+    assert b"JAX_ENABLE_X64=true" in stdout
+    if seed is None:
+        assert b"--hypothesis-seed=" not in retained
+        assert b"STATADIC_CI_SEED=<unset>" in stdout
+    else:
+        assert f"--hypothesis-seed={seed}".encode() in retained
+        assert f"STATADIC_CI_SEED={seed}".encode() in stdout
+
+
+@pytest.mark.integration
+@pytest.mark.regression
 @pytest.mark.parametrize("outcome", ["", "<failure/>", "<error/>", "<skipped/>"])
 def test_reference_evidence_requires_completed_comparisons(
     tmp_path: Path,

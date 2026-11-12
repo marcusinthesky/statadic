@@ -35,7 +35,9 @@ _INFORMATION_NOTE = (
     "AIC (Akaike 1974), BIC (Schwarz 1978), HQIC (Hannan and Quinn 1979)."
 )
 
-_GAUSSIAN_REASON = "Gaussian log likelihood needs a valid fit with positive SSE."
+_GAUSSIAN_REASON = (
+    "Gaussian log likelihood needs a valid fit with resolvable positive SSE."
+)
 _INVALID_FIT_REASON = "Needs a valid least-squares fit."
 _NO_VARIATION_REASON = "The response has no variation about its weighted mean."
 _ZERO_RESPONSE_REASON = "The response is zero in every row."
@@ -154,16 +156,59 @@ def _r_metric(name: str, value: float, reason: str) -> Metric:
     return Metric(name, None, available=False, unavailable_reason=reason)
 
 
+def _residual_scale_resolvable(core: LinearFit) -> bool:
+    """Reject residuals indistinguishable from rounding in the fitted solve.
+
+    The bound uses the solver dtype and weighted rowwise absolute products. It
+    is a numerical availability policy, not proof that the true SSE is zero.
+    Host arithmetic and scaled hypot avoid squaring tiny or large values.
+    """
+    dtype = core.parameters.dtype
+    epsilon = float(jnp.finfo(dtype).eps)
+    beta = [float(value) for value in core.parameters.tolist()]
+    design = core.design.tolist()
+    outcome = [float(value) for value in core.outcome.tolist()]
+    residuals = [float(value) for value in core.residuals.tolist()]
+    weights = [float(value) for value in core.relative_precision.tolist()]
+    try:  # noqa: PLW0717
+        roots = [math.sqrt(value) for value in weights]
+        b = [root * value for root, value in zip(roots, outcome, strict=True)]
+        residual = [root * value for root, value in zip(roots, residuals, strict=True)]
+        products = [
+            root
+            * math.fsum(
+                abs(float(x) * coefficient)
+                for x, coefficient in zip(row, beta, strict=True)
+            )
+            for root, row in zip(roots, design, strict=True)
+        ]
+        scale = math.hypot(*b) + math.hypot(*products)
+        norm = math.hypot(*residual)
+        bound = 8.0 * max(core.design.shape) * epsilon * scale
+        return math.isfinite(norm) and math.isfinite(bound) and norm > bound
+    except (OverflowError, ValueError):
+        return False
+
+
 def gaussian_least_squares_summary(core: LinearFit) -> LikelihoodSummary:
     """Return the Gaussian likelihood of a least-squares fit at its profiled scale.
 
     The log likelihood is evaluated at the maximum-likelihood scale with the
     analytic precision weights, and ``k`` counts the design rank plus that
-    scale. It is NaN when the fit is invalid or the weighted SSE is not positive.
+    scale. It is NaN when the fit is invalid or the weighted residual norm is
+    no larger than eight times the solver epsilon and maximum design dimension,
+    multiplied by the weighted outcome and absolute fitted-product norms. This
+    treats near-exact fits as unavailable at the solver's precision.
     """
     n = int(core.n_observations)
     weighted_sse = float(core.weighted_sse)
-    usable = bool(core.valid) and n > 0 and weighted_sse > 0.0
+    usable = (
+        bool(core.valid)
+        and n > 0
+        and math.isfinite(weighted_sse)
+        and weighted_sse > 0.0
+        and _residual_scale_resolvable(core)
+    )
     log_likelihood = math.nan
     if usable:
         weights = jnp.asarray(core.relative_precision, dtype=jnp.float64)

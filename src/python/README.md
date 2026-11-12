@@ -25,18 +25,32 @@ tests Testmon selects as affected; with `CI` set it runs the complete fast suite
 as does `just python::test-fresh`. CI may explicitly set `STATADIC_TEST_MODE` to
 `record` to run all fast tests while recording dependencies, or `affected` to
 select tests from a compatible Testmon database. `fresh` disables selection and
-recording; release checks force it. A missing database makes `affected` run the
-full fast suite. Hosted PR checks use `affected`; pushes to `main` use `record`.
-Only a successful fast-test phase saves its database, even if a later gate fails.
-Cache keys isolate architecture, precision, dependencies, configuration and test
-assets. Library, test and package-script changes also invalidate the database:
-source-inspection tests and child interpreters have dependencies Testmon cannot
-trace. Repeated runs and documentation edits can reuse passing results; reference
-and release lanes still execute in full. STATADIC tests cache compiled JAX programs in
+recording; standalone release checks force it. A missing database makes `affected`
+run the full fast suite.
+Hosted checks run four complete fast-test shards per architecture, independently
+of Testmon. A collected inventory and canonical execution reports establish that
+the shards cover every selected test exactly once. Local Testmon remains the
+affected-test loop; source-inspection tests and child interpreters have dependencies
+it cannot trace, so it is not the hosted coverage authority. Reference and installed
+release lanes execute in full. STATADIC tests cache compiled JAX programs in
 `$XDG_CACHE_HOME/statadic/jax-tests` (default `~/.cache`); delete it to reclaim
 space. Optional reference and qualification suites remain explicit package
 commands. `just python::build` writes a wheel and sdist to ignored
 `src/python/dist/`.
+
+For the hosted regression loop, prepare the locked Python inputs once:
+
+```bash
+devenv --profile python-ci shell -- env -u VIRTUAL_ENV uv sync --project src/python --locked --all-packages --group reference
+devenv --profile python-ci shell -- just ci-regressions
+```
+
+This runs the recorded numerical regressions before Lean, TeX and site setup.
+Its printed Hypothesis seed can be replayed with `just ci-regressions --seed SEED`.
+The data seeds 58 and 132638 are permanent explicit examples, independent of the
+Hypothesis generation seed. The full hosted shards retain the ordinary example
+budgets. Their logs show failing nodes and tracebacks as they finish; diagnostics
+include timing, memory, selected nodes and exact execution identity.
 
 The [documentation app](apps/docs/README.md) builds the learning site and native labs.
 

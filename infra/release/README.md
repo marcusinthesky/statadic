@@ -23,9 +23,9 @@ For each release:
    matching `statadic` version in `src/python/uv.lock`. Use the locked uv tooling
    to refresh the lock. Review and refresh the Lean public API inventory with
    `just lean::inventory-refresh` so its package version agrees.
-2. Open a pull request. Changes to release configuration or version inputs run
-   the complete preflight as a dry run, without publishing. The normal CI gates
-   still apply.
+2. Open a pull request. CI runs the complete preflight as a dry run, without
+   publishing. Its checkout gate consumes the verified results of that same
+   run's four Python shards and remaining repository checks.
 3. After merging, push an exact package-version tag, for example `v0.5.0a1`.
    Supported prerelease suffixes are `aN`, `bN` and `rcN`; they are marked as
    prereleases on GitHub. Versions are explicit; commits do not trigger bumps.
@@ -36,6 +36,19 @@ on Linux x86-64 and ARM64 and verifies its retained archive. Both runners must
 succeed before publication. PyPI receives the exact x86-64 preflight wheel and
 sdist, already exercised by the installed-distribution checks. The wheel is
 platform independent; dependencies such as JAX supply their own platform wheels.
+
+PR preflight follows the complete CI aggregate rather than repeating its checkout
+suite. `--preflight-check-receipt PATH` accepts only a completed receipt from the
+same source revision, architecture, GitHub run and attempt. Its retained node
+reports must prove complete, non-overlapping execution and successful repository
+checks. The release archive contains this receipt and verifies it again. Wheel
+and sdist builds, installed-distribution checks, live references and both precision
+lanes still execute separately. The Release workflow keeps the PR version check;
+PR preflight statuses now belong to CI. Update any required status selection to
+the new CI preflight names when adopting this workflow.
+
+Tag and manually dispatched releases, and local `just release-preflight`, run
+fresh checkout checks by default. Qualification rejects imported CI receipts.
 
 After PyPI succeeds, the workflow creates a GitHub release with those same
 distributions and `SHA256SUMS`. Detailed preflight evidence remains in each

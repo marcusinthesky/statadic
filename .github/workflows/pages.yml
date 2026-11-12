@@ -38,8 +38,10 @@ jobs:
         id: nix-cache
         uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-full-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
+          restore-prefixes-first-match: |
+            nix-v3-${{ runner.os }}-${{ runner.arch }}-full-
+            nix-v2-${{ runner.os }}-${{ runner.arch }}-
       - name: Restore tool downloads
         id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830

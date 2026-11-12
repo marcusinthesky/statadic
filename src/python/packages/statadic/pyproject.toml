@@ -58,6 +58,8 @@ dev = [
   "matplotlib>=3.8.0",
   "seaborn>=0.13.0",
   "pytest-testmon",
+  # JAX's bounded persistent compilation cache requires a file lock.
+  "filelock>=4.2,<5",
   "deptry",
   "beartype>=0.22.9",
   "hypothesis>=6.164.0",

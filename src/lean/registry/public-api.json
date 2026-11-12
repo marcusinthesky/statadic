@@ -34,7 +34,7 @@
     "api/dyadic.py": "112b0b69cbb45f73a44cd1751b781ebbf116325b5771a722b0a2d631c2d6112f",
     "api/embedding.py": "81f9afa4af07fd8346030344ef13ef3811f51f6f2e50aa63d0bd58bdd3faddd7",
     "api/estimand.py": "d968dd5c88257d3af1e56dbe18ae98057b3a9303e70e4ccf25a96d6bfaa1bf28",
-    "api/fit_statistics.py": "d530441266977b7ae49eb09530d35ccb55e84c20da7eb4888d0cae82dc714256",
+    "api/fit_statistics.py": "509c965a43752c1fabbb5e804c8aeb90fd835bbced21185e9b5ce73681436f2f",
     "api/hypotheses.py": "1757426d0595f35a287fdf33ad01a71b47daef5711bc67fb68ad7bc691f32749",
     "api/inference.py": "d3a9d6dba614eb21f3da7e4b29e82a67cd55cd6f9c6196deeb42117c148daba2",
     "api/inputs.py": "9d61678ad973668725dd2ffce766bdac7ce5bbde380db0fdf4f7eb84e8d9a849",

@@ -3455,6 +3455,7 @@ compat = [
 dev = [
     { name = "beartype" },
     { name = "deptry" },
+    { name = "filelock" },
     { name = "hypothesis" },
     { name = "jax" },
     { name = "marimo" },
@@ -3522,6 +3523,7 @@ compat = [
 dev = [
     { name = "beartype", specifier = ">=0.22.9" },
     { name = "deptry" },
+    { name = "filelock", specifier = ">=4.2,<5" },
     { name = "hypothesis", specifier = ">=6.164.0" },
     { name = "jax", extras = ["cpu"], specifier = ">=0.11.0,<0.12" },
     { name = "marimo", specifier = ">=0.8.0" },

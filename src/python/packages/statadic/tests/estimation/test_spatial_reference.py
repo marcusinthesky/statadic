@@ -59,8 +59,10 @@ def _sample(seed: int = 126) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 @pytest.mark.parametrize("durbin", [False, True])
 @examples(6)
 @example(seed=126)
+@example(seed=58)
+@example(seed=132638)
 @given(seed=st.integers(0, 2**32 - 1))
-def test_spatial_ml_state_and_information_match_spreg(
+def test_spatial_ml_state_and_information_match_spreg(  # noqa: PLR0914
     optional_reference: Callable[[str], ModuleType],
     *,
     model: Literal["sar", "sem"],
@@ -109,13 +111,25 @@ def test_spatial_ml_state_and_information_match_spreg(
     restriction = np.zeros((1, fit.parameters.shape[-1]))
     restriction[0, -1] = 1
     test = linear_restriction_test(covariance, restriction, 0.0, reference="chi2")
-    np.testing.assert_allclose(
-        test.test.statistic, oracle.z_stat[-1][0] ** 2, rtol=1e-5
+    beta = float(fit.parameters[-1])
+    se = float(intervals.estimate.se[-1])
+    oracle_beta = float(np.asarray(oracle.betas).ravel()[-1])
+    oracle_se = float(np.asarray(oracle.std_err).ravel()[-1])
+    beta_error = 2e-6 + 1e-7 * abs(oracle_beta)
+    se_error = 1e-7 + 1e-5 * abs(oracle_se)
+    assert np.isfinite(se)
+    assert se > 0
+    assert oracle_se > se_error
+    z_error = beta_error / (oracle_se - se_error) + (
+        abs(oracle_beta) * se_error / (oracle_se * (oracle_se - se_error))
     )
+    z = beta / se
+    np.testing.assert_allclose(z, oracle.z_stat[-1][0], rtol=0, atol=z_error)
+    np.testing.assert_allclose(test.test.statistic, z**2, rtol=1e-9, atol=1e-11)
     assert test.valid
     assert test.numerator_df == 1
     np.testing.assert_allclose(
-        test.test.pvalue, oracle.z_stat[-1][1], rtol=1e-5, atol=1e-9
+        test.test.pvalue, 2 * stats.norm.sf(abs(z)), rtol=1e-9, atol=1e-12
     )
     expected_ci = (
         np.asarray(oracle.betas).ravel()[None, :]

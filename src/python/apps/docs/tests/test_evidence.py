@@ -174,6 +174,15 @@ def _reference_manifest(tmp_path):
                 "reference_index": receipt,
             }
         )
+    (tmp_path / "check.log").write_text("Completed checkout checks\n")
+    manifest["lanes"].append(
+        {
+            "name": "check",
+            "command": ["just", "check"],
+            "status": "passed",
+            "returncode": 0,
+        }
+    )
     return manifest
 
 

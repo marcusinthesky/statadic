@@ -417,8 +417,16 @@ def test_pooled_fixed_graph_optimizer_parity(
     # profile values (above, rtol 1e-10) are the exact comparison and the fitted
     # log-likelihoods agree to the optimiser tolerance, rtol 1e-6.
     if model != "sac":
+        assert fit_fast.valid
+        assert fit_general.valid
+        assert fit_fast.solver.converged
+        assert fit_general.solver.converged
+        # Each scalar search terminates with a bracket of estimator.tolerance.
         np.testing.assert_allclose(
-            fit_fast.parameters, fit_general.parameters, rtol=1e-8, atol=1e-10
+            fit_fast.parameters,
+            fit_general.parameters,
+            rtol=1e-8,
+            atol=2 * estimator.tolerance,
         )
         np.testing.assert_allclose(fit_fast.sigma2, fit_general.sigma2, rtol=1e-8)
     if model == "sac":

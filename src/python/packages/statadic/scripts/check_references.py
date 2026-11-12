@@ -8,7 +8,9 @@ import hashlib
 import json
 import os
 import platform
+import shlex
 import subprocess
+import sys
 import time
 from importlib.metadata import distribution, distributions
 from pathlib import Path
@@ -206,26 +208,44 @@ def _run_lane(
 ) -> dict[str, object]:
     report = output / f"{name}.xml"
     command = ["just", recipe, f"--junitxml={report}"]
+    seed = os.environ.get("STATADIC_CI_SEED")
+    if seed:
+        command.append(f"--hypothesis-seed={seed}")
     environment = dict(os.environ, JAX_ENABLE_X64=x64)
     start = time.monotonic()
-    with (output / f"{name}.log").open("w", encoding="utf-8") as log:
-        completed = subprocess.run(  # fixed repository recipes  # noqa: S603
+    sys.stdout.write(
+        f"Reference lane {name}: Python {platform.python_version()}, "
+        f"JAX_ENABLE_X64={x64}, STATADIC_CI_SEED={seed or '<unset>'}\n"
+    )
+    sys.stdout.write(f"Reference command: {shlex.join(command)}\n")
+    sys.stdout.flush()
+    with (output / f"{name}.log").open("wb") as log:
+        process = subprocess.Popen(  # fixed repository recipes  # noqa: S603
             command,
             cwd=package,
             env=environment,
-            stdout=log,
+            stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            check=False,
         )
+        if process.stdout is None:
+            message = "Reference subprocess output pipe was not created"
+            raise RuntimeError(message)
+        with process.stdout:
+            while chunk := os.read(process.stdout.fileno(), 65536):
+                log.write(chunk)
+                log.flush()
+                sys.stdout.buffer.write(chunk)
+                sys.stdout.buffer.flush()
+        returncode = process.wait()
     lane: dict[str, object] = {
         "name": name,
         "command": command,
         "jax_enable_x64": x64 == "true",
-        "returncode": completed.returncode,
+        "returncode": returncode,
         "seconds": time.monotonic() - start,
         "status": "failed",
     }
-    if completed.returncode == 0:
+    if returncode == 0:
         try:
             results = read_results(report, required)
             lane["results"] = results

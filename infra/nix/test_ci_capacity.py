@@ -1,13 +1,12 @@
 """Runner telemetry must preserve command results and useful failure output."""
 
 import os
-from pathlib import Path
 import signal
 import subprocess
 import tempfile
 import time
 import unittest
-
+from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("ci-capacity.sh").resolve()
 
@@ -81,6 +80,7 @@ class CapacityTests(unittest.TestCase):
                     cwd=root,
                     capture_output=True,
                     text=True,
+                    check=False,
                     timeout=10,
                 )
                 self.assertEqual(result.returncode, status, result.stderr)
@@ -98,6 +98,7 @@ class CapacityTests(unittest.TestCase):
                 cwd=root,
                 capture_output=True,
                 text=True,
+                check=False,
                 timeout=10,
             )
             self.assertEqual(result.returncode, 0, result.stderr)

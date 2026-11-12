@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+import math
+import os
+import subprocess
+import sys
+from dataclasses import replace
 from typing import TYPE_CHECKING
 
 import jax
@@ -12,8 +17,10 @@ from hypothesis import given
 from hypothesis import strategies as st
 from statadic.api.data import RelativePrecision
 from statadic.api.design import Intercept, Linear
+from statadic.api.fit_statistics import gaussian_least_squares_summary
 from statadic.api.inference import HC, ModelBased
 from statadic.api.regression import Regression
+from statadic.estimation.linear import LeastSquares, LinearProblem
 
 from ..._budgets import examples
 from ..._validation.linear import linear_cases, ols_oracle
@@ -213,6 +220,143 @@ def test_constant_response_r_squared_is_unavailable() -> None:
             "The response has no variation about its weighted mean."
         )
     _assert_likelihood_unavailable(metrics)
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+@pytest.mark.parametrize("weighted", [False, True])
+@pytest.mark.parametrize("scale", [1e-3, 1e3])
+def test_likelihood_precision_policy_respects_scaling(
+    dtype: str, scale: float, *, weighted: bool
+) -> None:
+    """Exact fits and resolved residuals retain their meaning under rescaling."""
+    x = jnp.arange(5, dtype=dtype)
+    weights = (
+        jnp.asarray([1, 2, 3, 4, 5], dtype=dtype) * scale
+        if weighted
+        else jnp.ones_like(x)
+    )
+    design = jnp.column_stack((jnp.ones_like(x), x))
+    estimator = LeastSquares()
+    exact = estimator.estimate(LinearProblem(design, scale * (2 + x), weights))
+    zero = estimator.estimate(LinearProblem(design, jnp.zeros_like(x), weights))
+    noisy = estimator.estimate(
+        LinearProblem(
+            design,
+            scale * (2 + x + jnp.asarray([0, 0, 0.01, 0, 0], dtype=dtype)),
+            weights,
+        )
+    )
+    assert bool(exact.valid)
+    assert bool(noisy.valid)
+    assert bool(zero.valid)
+    assert math.isnan(gaussian_least_squares_summary(exact).log_likelihood)
+    assert math.isnan(gaussian_least_squares_summary(zero).log_likelihood)
+    assert math.isfinite(gaussian_least_squares_summary(noisy).log_likelihood)
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_likelihood_residual_threshold_includes_cancelling_products(dtype: str) -> None:
+    """A cancellation-sensitive scale rejects roundoff but retains resolved noise."""
+    x = jnp.asarray([[1, 1], [1, 2], [1, 3], [1, 4]], dtype=dtype)
+    y = jnp.asarray([0, -1000, -2000, -3000], dtype=dtype)
+    core = LeastSquares().estimate(LinearProblem(x, y))
+    assert bool(core.valid)
+    beta = np.asarray(core.parameters, dtype=float)
+    matrix = np.asarray(x, dtype=float)
+    bound = (
+        8
+        * max(x.shape)
+        * np.finfo(np.dtype(dtype)).eps
+        * (
+            np.linalg.norm(np.asarray(y, dtype=float))
+            + np.linalg.norm(np.abs(matrix) @ np.abs(beta))
+        )
+    )
+    for factor, available in [(0.5, False), (2.0, True)]:
+        residual = jnp.full(y.shape, factor * bound / math.sqrt(y.size), dtype=dtype)
+        witness = replace(core, residuals=residual, weighted_sse=jnp.sum(residual**2))
+        assert (
+            math.isfinite(gaussian_least_squares_summary(witness).log_likelihood)
+            == available
+        )
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_likelihood_independent_weight_and_response_scaling(dtype: str) -> None:
+    """Common precision scaling cancels, while response scaling shifts log L."""
+    x = jnp.arange(5, dtype=dtype)
+    design = jnp.column_stack((jnp.ones_like(x), x))
+    response = jnp.asarray([2, 3, 4.2, 5, 6], dtype=dtype)
+    weights = jnp.asarray([0.01, 0.1, 1, 10, 100], dtype=dtype)
+    estimator = LeastSquares()
+
+    def likelihood(y: jax.Array, w: jax.Array) -> float:
+        fit = estimator.estimate(LinearProblem(design, y, w))
+        assert bool(fit.valid)
+        return gaussian_least_squares_summary(fit).log_likelihood
+
+    baseline = likelihood(response, weights)
+    assert math.isfinite(baseline)
+    for factor in (0.01, 100.0):
+        assert likelihood(response, weights * factor) == pytest.approx(
+            baseline, abs=0.005
+        )
+        assert likelihood(response * factor, weights) == pytest.approx(
+            baseline - response.size * math.log(factor), abs=0.005
+        )
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+def test_likelihood_unresolvable_nonfinite_inputs_are_unavailable() -> None:
+    """Invalid retained numerical operands cannot produce a likelihood."""
+    x = jnp.arange(4.0)
+    design = jnp.column_stack((jnp.ones_like(x), x))
+    fit = LeastSquares().estimate(
+        LinearProblem(design, jnp.array([1.0, 2.0, 4.0, 5.0]))
+    )
+    assert math.isfinite(gaussian_least_squares_summary(fit).log_likelihood)
+    for invalid in (
+        replace(fit, design=fit.design.at[0, 0].set(jnp.inf)),
+        replace(fit, residuals=fit.residuals.at[0].set(jnp.nan)),
+    ):
+        assert math.isnan(gaussian_least_squares_summary(invalid).log_likelihood)
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+@pytest.mark.subprocess
+def test_likelihood_policy_with_x64_disabled() -> None:
+    """A float32-only process uses its actual solve precision."""
+    script = """
+import math
+import jax
+import jax.numpy as jnp
+from statadic.api.fit_statistics import gaussian_least_squares_summary
+from statadic.estimation.linear import LeastSquares, LinearProblem
+assert not jax.config.x64_enabled
+x = jnp.arange(5, dtype=jnp.float32)
+design = jnp.column_stack((jnp.ones_like(x), x))
+estimator = LeastSquares()
+exact = estimator.estimate(LinearProblem(design, 2 + x))
+noisy = estimator.estimate(LinearProblem(design, 2 + x + jnp.array([0, 0, 0.01, 0, 0])))
+assert math.isnan(gaussian_least_squares_summary(exact).log_likelihood)
+assert math.isfinite(gaussian_least_squares_summary(noisy).log_likelihood)
+"""
+    completed = subprocess.run(  # noqa: S603 -- fixed interpreter and source
+        [sys.executable, "-c", script],
+        env=os.environ | {"JAX_ENABLE_X64": "0"},
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
 
 
 @pytest.mark.unit
