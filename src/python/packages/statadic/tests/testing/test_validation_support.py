@@ -141,6 +141,47 @@ def _run_policy(
 @pytest.mark.integration
 @pytest.mark.contract
 @pytest.mark.subprocess
+@pytest.mark.parametrize("enabled", ["0", "1"])
+def test_compilation_cache_cleanup_is_opt_in_and_module_scoped(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, enabled: str
+) -> None:
+    """Each module releases caches after its tests only in bounded CI mode."""
+    monkeypatch.setenv("STATADIC_CI_MEMORY_BOUNDED", enabled)
+    source = """
+import gc
+import inspect
+import jax
+import pytest
+from pathlib import Path
+
+events = Path("events")
+def record(event):
+    with events.open("a") as stream:
+        stream.write(event + "\\n")
+jax.clear_caches = lambda: record("clear")
+def collect():
+    if inspect.currentframe().f_back.f_code.co_name == "_release_compiled_memory":
+        record("collect")
+gc.collect = collect
+@pytest.mark.unit
+def test_one():
+    record("one")
+@pytest.mark.unit
+def test_two():
+    record("two")
+"""
+    result = _run_policy(tmp_path, source)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert (tmp_path / "events").read_text().splitlines() == [
+        "one",
+        "two",
+        *(["clear", "collect"] if enabled == "1" else []),
+    ]
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+@pytest.mark.subprocess
 @pytest.mark.parametrize(
     ("scenario", "body", "expected_code", "diagnostic"),
     [

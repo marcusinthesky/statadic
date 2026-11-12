@@ -55,9 +55,9 @@ architecture-fmt:
     env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff check --fix scripts/architecture
     env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format scripts/architecture
 
-# Locally Testmon selects affected tests; CI runs the complete fast suite.
+# CI can explicitly record a full baseline or select affected tests.
 test-check:
-    if [ -n "${CI:-}" ]; then just statadic::test-fresh; else just statadic::test; fi
+    case "${STATADIC_TEST_MODE:-}" in affected) just statadic::test ;; record) just statadic::test-record ;; fresh) just statadic::test-fresh ;; '') if [ -n "${CI:-}" ]; then just statadic::test-fresh; else just statadic::test; fi ;; *) echo "Invalid STATADIC_TEST_MODE" >&2; exit 2 ;; esac; if [[ "${STATADIC_TEST_MODE:-}" = affected || "${STATADIC_TEST_MODE:-}" = record ]] && [[ -n "${GITHUB_OUTPUT:-}" ]]; then printf '%s\n' 'fast-tests-passed=true' >> "$GITHUB_OUTPUT"; fi
 
 check: architecture test-layout lint typecheck test-check build
     just statadic::doctest

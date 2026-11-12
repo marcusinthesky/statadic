@@ -1,9 +1,12 @@
 """Reject altered release evidence and incomplete scientific execution lanes."""
 
 import json
+import os
 import runpy
 import subprocess
 import sys
+import threading
+import time
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -12,6 +15,43 @@ from statadic_evidence import extract_archive, inventory, write_archive
 
 APP = Path(__file__).resolve().parents[1]
 RELEASE = runpy.run_path(str(APP / "scripts/release.py"))
+
+
+def test_release_lane_streams_bytes_before_exit(tmp_path, capfdbinary):
+    log = tmp_path / "lane.log"
+    proceed = tmp_path / "proceed"
+    command = [
+        sys.executable,
+        "-c",
+        "import os, pathlib, sys, time; "
+        "os.write(1, b'first\\xff'); "
+        "p = pathlib.Path(sys.argv[1]); "
+        "exec('while not p.exists():\\n time.sleep(0.01)'); "
+        "os.write(2, b'second'); sys.exit(7)",
+        str(proceed),
+    ]
+    results = []
+    thread = threading.Thread(
+        target=lambda: results.append(
+            RELEASE["run_logged"](command, cwd=tmp_path, env=os.environ, log_path=log)
+        )
+    )
+    thread.start()
+    try:
+        deadline = time.monotonic() + 10
+        while (not log.exists() or log.read_bytes() != b"first\xff") and (
+            time.monotonic() < deadline
+        ):
+            time.sleep(0.01)
+        assert log.read_bytes() == b"first\xff"
+        assert capfdbinary.readouterr().out == b"first\xff"
+    finally:
+        proceed.touch()
+        thread.join(timeout=10)
+    assert not thread.is_alive()
+    assert results[0].returncode == 7
+    assert log.read_bytes() == b"first\xffsecond"
+    assert capfdbinary.readouterr().out == b"second"
 
 
 def test_evidence_rejects_tampering_and_stale_sources(tmp_path, monkeypatch):
@@ -171,9 +211,10 @@ def test_failed_command_still_writes_manifest_and_log(tmp_path, monkeypatch):
 
     def failed(command, **kwargs):
         environments.append(kwargs["env"])
+        kwargs["log_path"].touch()
         return subprocess.CompletedProcess(command, 7)
 
-    monkeypatch.setattr(subprocess, "run", failed)
+    monkeypatch.setitem(main.__globals__, "run_logged", failed)
     assert main() == 1
     manifest = json.loads((tmp_path / "bundle/manifest.json").read_text())
     assert manifest["status"] == "failed"
@@ -234,7 +275,7 @@ def test_interruption_retains_running_lane_without_passing(tmp_path, monkeypatch
     def interrupted(*args, **kwargs):
         raise KeyboardInterrupt
 
-    monkeypatch.setattr(subprocess, "run", interrupted)
+    monkeypatch.setitem(main.__globals__, "run_logged", interrupted)
     assert main() == 1
     manifest = json.loads((tmp_path / "bundle/manifest.json").read_text())
     assert manifest["status"] == "interrupted"

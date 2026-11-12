@@ -27,6 +27,10 @@ custom axioms, debug bypasses and placeholder propositions fail. These checks
 complement source-fidelity review; they cannot decide whether arbitrary English
 prose matches a theorem or whether hypotheses are scientifically appropriate.
 
+Cache setup requests the Mathlib imports discovered in the first-party libraries,
+any explicitly supplied modules, and their transitive dependencies. A failed or
+empty import scan stops setup.
+
 `programme-check` returns nonzero while required all-method obligations remain
 open. This is distinct from the routine integrity gate. A finite specialization
 or proof step never closes a broader method guarantee automatically. Exact

@@ -30,6 +30,28 @@ OUTPUT = ROOT / "build/release"
 BUILD_SOURCE_DATE_EPOCH = "315532800"
 
 
+def run_logged(command, *, cwd, env, log_path):
+    """Stream a lane to the console and retain its exact combined output bytes."""
+    with (
+        log_path.open("wb") as log,
+        subprocess.Popen(
+            command, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ) as process,
+    ):
+        assert process.stdout is not None
+        while chunk := process.stdout.read1(65536):
+            log.write(chunk)
+            log.flush()
+            console = getattr(sys.stdout, "buffer", None)
+            if console is None:
+                sys.stdout.write(chunk.decode(errors="replace"))
+                sys.stdout.flush()
+            else:
+                console.write(chunk)
+                console.flush()
+        return subprocess.CompletedProcess(command, process.wait())
+
+
 def digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -359,6 +381,7 @@ def main() -> int:
         NUMEXPR_NUM_THREADS="1",
         JAX_PLATFORMS="cpu",
         PYTHONNOUSERSITE="1",
+        STATADIC_TEST_MODE="fresh",
         SOURCE_DATE_EPOCH=BUILD_SOURCE_DATE_EPOCH,
     )
     manifest = {
@@ -421,15 +444,12 @@ def main() -> int:
         }
         manifest["lanes"].append(lane)
         write_json(output / "manifest.json", manifest)
-        with (output / f"{name}.log").open("w") as log:
-            completed = subprocess.run(
-                command,
-                cwd=cwd,
-                env=environment | {"JAX_ENABLE_X64": x64},
-                stdout=log,
-                stderr=subprocess.STDOUT,
-                check=False,
-            )
+        completed = run_logged(
+            command,
+            cwd=cwd,
+            env=environment | {"JAX_ENABLE_X64": x64},
+            log_path=output / f"{name}.log",
+        )
         lane.update(
             returncode=completed.returncode,
             seconds=time.monotonic() - start,

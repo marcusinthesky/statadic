@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import gc
 import json
 import os
 import sys
@@ -28,6 +29,7 @@ if any(name == "statadic" or name.startswith("statadic.") for name in sys.module
 
 install_import_hook("statadic", "beartype.beartype")
 
+import jax  # noqa: E402
 import pytest  # noqa: E402
 from hypothesis import settings as hypothesis_settings  # noqa: E402
 from jax import config as jax_config  # noqa: E402
@@ -50,6 +52,15 @@ if "JAX_COMPILATION_CACHE_DIR" not in os.environ:
 # JAX compilation makes Hypothesis wall-clock deadlines measure cache state.
 register_profiles()
 hypothesis_settings.load_profile("statadic")
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _release_compiled_memory() -> Generator[None]:
+    """Bound per-worker JAX caches between modules when explicitly requested."""
+    yield
+    if os.environ.get("STATADIC_CI_MEMORY_BOUNDED") == "1":
+        jax.clear_caches()
+        gc.collect()
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:

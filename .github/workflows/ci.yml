@@ -15,6 +15,11 @@ jobs:
       matrix:
         runner: [ubuntu-24.04, ubuntu-24.04-arm]
     runs-on: ${{ matrix.runner }}
+    env:
+      JAX_PLATFORMS: cpu
+      JAX_ENABLE_X64: '1'
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_TEST_MODE: ${{ github.event_name == 'pull_request' && 'affected' || 'record' }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -22,18 +27,23 @@ jobs:
       - name: Prepare runner capacity
         run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a
+      - name: Restore Nix store
+        id: nix-cache
+        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
+          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+      - name: Restore tool downloads
+        id: tools-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: |
             ~/.cache/uv
             ~/.cache/tectonic
             ~/.cache/mathlib
-            ~/.bun/install/cache
-          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/bun.lock', '**/lake-manifest.json') }}
+          key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-check
+          restore-keys: |
+            tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
       - name: Install matching devenv
         run: bash infra/nix/install-devenv.sh
       - name: Prepare dependencies
@@ -41,10 +51,40 @@ jobs:
           set -o pipefail
           devenv shell -- just setup 2>&1 | tee build/ci/setup.log
           bash infra/nix/ci-capacity.sh diagnose provisioned
+      # Save before validation: a failed test or lost runner must not discard setup.
+      - name: Save prepared Nix store
+        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
+        with:
+          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+          gc-max-store-size-linux: 3G
+      - name: Save prepared tool downloads
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/tectonic
+            ~/.cache/mathlib
+          key: ${{ steps.tools-cache.outputs.cache-primary-key }}
+      - name: Restore test dependencies
+        id: test-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: src/python/packages/statadic/.testmondata*
+          # Testmon cannot trace source-inspection or child-interpreter dependencies.
+          # Python changes invalidate the database too; unchanged runs and prose
+          # edits reuse passing results. Never cross these input fingerprints.
+          key: testmon-v1-${{ runner.os }}-${{ runner.arch }}-x64-cpu-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**', 'justfile', 'src/python/uv.lock', 'src/python/pyproject.toml', 'src/python/packages/*/pyproject.toml', 'src/python/apps/*/pyproject.toml', 'src/python/justfile', 'src/python/packages/*/justfile', '.github/workflows/ci.yml') }}-${{ hashFiles('src/python/packages/statadic/src/**/*.py', 'src/python/packages/statadic/tests/**/*.py', 'src/python/packages/statadic/scripts/**/*.py') }}-${{ hashFiles('src/python/packages/statadic/tests/**', 'src/python/packages/statadic/src/**', 'src/python/packages/statadic/scripts/**', '!src/python/**/*.py', '!**/__pycache__/**', '!**/.pytest_cache/**', '!**/.hypothesis/**') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            testmon-v1-${{ runner.os }}-${{ runner.arch }}-x64-cpu-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**', 'justfile', 'src/python/uv.lock', 'src/python/pyproject.toml', 'src/python/packages/*/pyproject.toml', 'src/python/apps/*/pyproject.toml', 'src/python/justfile', 'src/python/packages/*/justfile', '.github/workflows/ci.yml') }}-${{ hashFiles('src/python/packages/statadic/src/**/*.py', 'src/python/packages/statadic/tests/**/*.py', 'src/python/packages/statadic/scripts/**/*.py') }}-${{ hashFiles('src/python/packages/statadic/tests/**', 'src/python/packages/statadic/src/**', 'src/python/packages/statadic/scripts/**', '!src/python/**/*.py', '!**/__pycache__/**', '!**/.pytest_cache/**', '!**/.hypothesis/**') }}-
       - name: Validate
-        run: |
-          set -o pipefail
-          devenv shell -- just check 2>&1 | tee build/ci/check.log
+        id: validate
+        run: bash infra/nix/ci-capacity.sh run check devenv shell -- just check
+      - name: Save passing test dependencies
+        if: ${{ !cancelled() && steps.validate.outputs.fast-tests-passed == 'true' }}
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: src/python/packages/statadic/.testmondata*
+          key: ${{ steps.test-cache.outputs.cache-primary-key }}
       - name: Final capacity
         if: always()
         run: bash infra/nix/ci-capacity.sh diagnose final
@@ -67,6 +107,8 @@ jobs:
         runner: [ubuntu-24.04, ubuntu-24.04-arm]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 120
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -74,11 +116,15 @@ jobs:
       - name: Prepare runner capacity
         run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a
+      - name: Restore Nix store
+        id: nix-cache
+        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-reference-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-reference-${{ runner.arch }}-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
+          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+      - name: Restore reference downloads
+        id: tools-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: ~/.cache/uv
           key: reference-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock') }}
@@ -88,11 +134,19 @@ jobs:
         run: |
           set -o pipefail
           devenv shell -- just setup-references 2>&1 | tee build/ci/reference-setup.log
+      - name: Save prepared Nix store
+        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
+        with:
+          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+          gc-max-store-size-linux: 3G
+      - name: Save prepared reference downloads
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: ~/.cache/uv
+          key: ${{ steps.tools-cache.outputs.cache-primary-key }}
       - name: Validate live references and precision
         id: validate_references
-        run: |
-          set -o pipefail
-          devenv shell -- just validate-references 2>&1 | tee build/ci/reference-validation.log
+        run: bash infra/nix/ci-capacity.sh run reference-validation devenv shell -- just validate-references
       - name: Retain reference evidence
         if: always() && (steps.validate_references.outcome == 'success' || steps.validate_references.outcome == 'failure')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

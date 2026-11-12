@@ -23,6 +23,7 @@ setup:
 # Check source, views and selected languages without repairing files.
 check:
     bash infra/nix/check.sh
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/nix -p 'test_*.py'
     {{ workflow }} check
     # Documentation tests consume the generated Lean certification.
     just lean::check

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 @pytest.mark.integration
 @pytest.mark.reference
 @pytest.mark.external_reference
-@pytest.mark.requires_optional("ot")
+@pytest.mark.requires_optional("POT")
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_product_mass_kl_cost_and_debiased_geometry_match_pot(  # noqa: PLR0914 -- independent objectives and matched host/native controls
     optional_reference: Callable[[str], ModuleType], dtype: type

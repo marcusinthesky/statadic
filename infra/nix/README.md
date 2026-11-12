@@ -25,5 +25,19 @@ for `prepare-runtime.sh`, which also selects its matching loader.
 
 `ci-capacity.sh prepare` removes explicitly listed unused SDKs only on disposable
 GitHub-hosted runners. Diagnostic mode is read-only and records disk/inode usage
-and major cache sizes under ignored `build/ci/`. CI retains these diagnostics on
+and major cache sizes under ignored `build/ci/`. `run LABEL COMMAND ...` retains
+the command's combined output and exit status, and streams memory, process and
+cgroup usage every 30 seconds. These measurements remain in the Actions console
+if a lost runner cannot upload its final artifacts. CI retains diagnostics on
 failure; x86-64 and ARM64 validation do not cancel one another.
+
+Workflows restore a shared Nix store per architecture and locked environment,
+then save the prepared store before running validation. Tool downloads are saved
+at the same boundary. A later test failure therefore leaves setup reusable.
+The store save collects unreferenced paths toward a 3 GiB target; live environment
+roots remain protected. No publishing credentials are needed for these caches.
+
+Hosted scientific tests set `STATADIC_CI_MEMORY_BOUNDED=1` to release in-memory
+JAX compilation caches between test modules. The persistent compilation cache is
+preserved. This bounds cache accumulation in long suites; resource logs still
+determine whether a particular runner shutdown involved memory pressure.

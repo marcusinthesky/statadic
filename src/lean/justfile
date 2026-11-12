@@ -17,7 +17,9 @@ setup: cache
 
 cache *modules:
     {{ runner }} python check_setup.py --toolchain-only
-    mapfile -t imports < <(rg --no-filename --no-line-number "^(public )?import Mathlib\." Example packages/StatadicFormal --glob "*.lean" | sed -E "s/^(public )?import //" | sort -u)
+    imports_text=$(rg --no-filename --no-line-number "^(public )?import Mathlib\." Example packages/StatadicFormal --glob "*.lean" | sed -E "s/^(public )?import //" | sort -u); \
+    [[ -n "$imports_text" ]] || { echo 'No Mathlib imports found' >&2; exit 1; }; \
+    mapfile -t imports <<< "$imports_text"; \
     lake exe cache get "${imports[@]}" "$@"
 
 build:

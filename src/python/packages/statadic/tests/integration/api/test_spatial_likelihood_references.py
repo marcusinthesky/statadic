@@ -26,15 +26,15 @@ Peers and the conventions they fix (spreg source under ``spreg/``):
     carries the parameter-independent ``nt/2 log(nt)`` offset also seen in
     ``Panel_FE_Lag``. spreg's ``k`` is the design columns only; statadic adds
     lambda, the scale and the variance ratio, an offset of three. The stored
-    ``vm`` inversion is singular on many draws (a spreg limitation), so the
-    draw used here is one where it succeeds. The error model is compared
+    ``vm`` inversion can be singular (a spreg limitation), so the same objective
+    is minimized with spreg's starting point and bounds. The error model is compared
     through spreg's own objective ``err_c_loglik_ord`` (with ``phi^2`` equal to
     statadic's variance ratio) at statadic's estimate, and statadic's profile likelihood
-    at spreg's estimate; the two functions agree to rounding at both points.
+    at the independent optimum; the two functions agree to rounding at both points.
     The optima are also compared: statadic reports convergence only when the
     per-observation score of the search coordinates (lambda and the log
     variance ratio) meets the search tolerance, so it reaches the maximum of
-    the shared likelihood that spreg's stopped point also attains.
+    the shared likelihood that the independent optimizer also attains.
 
 Fits with no independent peer, recorded here and not compared: learned
 graph-parameter counts and censored spatial survival with an estimated ``rho``.
@@ -258,9 +258,6 @@ def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914
     fitted = _fit_panel("error", "random", data, layout)
     total = periods * units
     graph = libpysal.weights.full2W(weights)
-    peer = spreg.Panel_RE_Error(
-        outcome.reshape(-1, 1), features.reshape(total, 2), graph, epsilon=1e-9
-    )
     names = fitted.parameter_names
     assert names is not None
     lam = float(np.asarray(fitted.parameters)[names.index("lambda[neighbors]")])
@@ -298,42 +295,47 @@ def test_random_effects_error_panel_matches_spreg_objective(  # noqa: PLR0914
             + total / 2 * np.log(total)
         )
 
-    # spreg's stored logll equals its objective at its own stopped point up to
-    # the stated nt/2 log(nt) offset.
-    np.testing.assert_allclose(
-        spreg_loglik((peer.lam, peer.phi)) - total / 2 * np.log(total),
-        peer.logll,
-        atol=1e-9,
+    # Match spreg's optimizer without its unrelated, sometimes singular vm inversion.
+    def objective(parameters: np.typing.NDArray[np.float64]) -> float:
+        return -spreg_loglik((float(parameters[0]), float(parameters[1])))
+
+    peer = optimize.minimize(
+        objective,
+        (0.0, 0.1),
+        bounds=((-1.0, 1.0), (0.0, 10000.0)),
+        method="L-BFGS-B",
     )
+    assert peer.success
+    peer_lam, peer_phi = peer.x
     np.testing.assert_allclose(
         fitted.core.log_likelihood, spreg_loglik((lam, phi)), atol=2e-6
     )
     assert fitted.core.solver.converged
-    np.testing.assert_allclose(lam, peer.lam, atol=2e-6)
-    np.testing.assert_allclose(phi**2, peer.phi**2, rtol=1e-5)
+    np.testing.assert_allclose(lam, peer_lam, atol=2e-6)
+    np.testing.assert_allclose(phi**2, peer_phi**2, rtol=1e-5)
     np.testing.assert_allclose(
-        fitted.core.log_likelihood, spreg_loglik((peer.lam, peer.phi)), atol=2e-9
+        fitted.core.log_likelihood, spreg_loglik((peer_lam, peer_phi)), atol=2e-9
     )
-    # The profile likelihood is the same function in statadic: evaluated at spreg's
-    # stopped point it reproduces spreg's objective there.
-    spreg_point = spreg_loglik((peer.lam, peer.phi))
+    # Evaluate statadic's profile at the independent optimum as well.
+    spreg_point = spreg_loglik((peer_lam, peer_phi))
     profile = spatial_panel_profile(
-        jnp.array([float(peer.lam)]),
+        jnp.array([float(peer_lam)]),
         fitted.core.design,
         fitted.core.outcome,
         fitted.core.weights,
         lag=False,
         error=True,
         effects="random",
-        variance_ratio=jnp.asarray(float(peer.phi) ** 2),
+        variance_ratio=jnp.asarray(float(peer_phi) ** 2),
     )
     np.testing.assert_allclose(float(profile[3]), spreg_point, atol=2e-6)
     # peer.k: constant + 2 slopes only; statadic adds lambda, scale, variance ratio.
     statadic_k = 2 + 1 + 1 + 1 + 1
-    offset = statadic_k - peer.k
+    peer_k = design.shape[1]
+    offset = statadic_k - peer_k
     assert offset == ERROR_RE_OFFSET
     ll = spreg_loglik((lam, phi))
-    reference = SimpleNamespace(k=peer.k, logll=ll, n=total)
+    reference = SimpleNamespace(k=peer_k, logll=ll, n=total)
     metrics = _metrics(fitted)
     assert metrics["n_parameters"] == statadic_k
     np.testing.assert_allclose(

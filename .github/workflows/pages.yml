@@ -34,17 +34,23 @@ jobs:
       - name: Prepare runner capacity
         run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - uses: nix-community/cache-nix-action@135667ec418502fa5a3598af6fb9eb733888ce6a
+      - name: Restore Nix store
+        id: nix-cache
+        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
         with:
-          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'infra/nix/**') }}
-          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
-      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+          primary-key: nix-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**') }}
+          restore-prefixes-first-match: nix-v2-${{ runner.os }}-${{ runner.arch }}-
+      - name: Restore tool downloads
+        id: tools-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: |
             ~/.cache/uv
             ~/.cache/tectonic
             ~/.cache/mathlib
-          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/bun.lock', '**/lake-manifest.json') }}
+          key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-pages
+          restore-keys: |
+            tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
       - name: Install matching devenv
         run: bash infra/nix/install-devenv.sh
       - name: Prepare locked Python and Lean dependencies
@@ -52,6 +58,19 @@ jobs:
           set -o pipefail
           devenv shell -- just python::setup 2>&1 | tee build/ci/pages-python-setup.log
           devenv shell -- just lean::setup 2>&1 | tee build/ci/pages-lean-setup.log
+      - name: Save prepared Nix store
+        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
+        with:
+          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+          gc-max-store-size-linux: 3G
+      - name: Save prepared tool downloads
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/tectonic
+            ~/.cache/mathlib
+          key: ${{ steps.tools-cache.outputs.cache-primary-key }}
       - name: Build strict documentation, proofs and lab snapshots
         env:
           STATADIC_DOCS_BASE_URL: ${{ steps.pages.outputs.base_url }}

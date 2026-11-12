@@ -22,7 +22,17 @@ The workspace shares one `uv.lock`. STATADIC's own development dependencies and
 checker versions govern its lint and type checks. Tests run in the package's own
 process and configuration. Locally, `just python::check` runs only the fast
 tests Testmon selects as affected; with `CI` set it runs the complete fast suite,
-as does `just python::test-fresh`. STATADIC tests cache compiled JAX programs in
+as does `just python::test-fresh`. CI may explicitly set `STATADIC_TEST_MODE` to
+`record` to run all fast tests while recording dependencies, or `affected` to
+select tests from a compatible Testmon database. `fresh` disables selection and
+recording; release checks force it. A missing database makes `affected` run the
+full fast suite. Hosted PR checks use `affected`; pushes to `main` use `record`.
+Only a successful fast-test phase saves its database, even if a later gate fails.
+Cache keys isolate architecture, precision, dependencies, configuration and test
+assets. Library, test and package-script changes also invalidate the database:
+source-inspection tests and child interpreters have dependencies Testmon cannot
+trace. Repeated runs and documentation edits can reuse passing results; reference
+and release lanes still execute in full. STATADIC tests cache compiled JAX programs in
 `$XDG_CACHE_HOME/statadic/jax-tests` (default `~/.cache`); delete it to reclaim
 space. Optional reference and qualification suites remain explicit package
 commands. `just python::build` writes a wheel and sdist to ignored
