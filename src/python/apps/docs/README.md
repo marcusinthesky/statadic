@@ -67,7 +67,7 @@ The short first regression leads to a four-part OLS chapter, whose executable
 recipe also powers the native regression marimo lab. Site snapshots retain
 fixed settings; local notebooks provide reactive controls. `word-budget.json`
 retains the 6,166-word historical baseline and counts authored text/code
-transclusions. The expanded product README has its own 850-word limit; the rest
+transclusions. The expanded product README has its own 1,000-word limit; the rest
 of the first-use path keeps 1,402 words, its previous allowance after subtracting
 the former 139-word README from the original 1,541-word cap. Neither section can
 borrow the other's unused allowance. Detailed references are outside these caps,

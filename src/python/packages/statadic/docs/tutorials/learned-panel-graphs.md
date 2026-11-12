@@ -188,6 +188,39 @@ the weights. Use distinct artifact directories. A new firm changes row
 normalization and the simultaneous system. Rebuild an explicitly aligned
 universe before comparing predictions.
 
+## Train a neural projection through SAR
+
+The executable example below trains a Flax NNX **6 → 8 → 2** MLP on eight
+units, each with three vectors, and 24 independent simulated periods. Each
+unit's projected vectors remain an empirical distribution. Euclidean V-energy
+compares those distributions; zero-diagonal RBF weights enter the Gaussian SAR
+profile likelihood, including its log determinant. The MLP and a bounded rho
+are updated together, while beta and innovation variance are profiled out.
+Bandwidth is fixed at one. The teacher uses a separate NumPy implementation
+with rho = 0.35, intercept = 0.4, slope = 0.7 and innovation SD = 0.15.
+
+Run from a prepared repository checkout:
+
+```bash
+devenv shell -- uv run --locked --project src/python/apps/docs --package statadic-docs python src/python/packages/statadic/examples/neural_sar.py
+```
+
+Flax is a dependency of the documentation environment, rather than the STATADIC
+wheel. For an installed STATADIC environment, install `flax>=0.12,<0.13` as well
+before running the example.
+
+```{literalinclude} ../../examples/neural_sar.py
+:language: python
+```
+
+{download}`Download the complete script <../../examples/neural_sar.py>`
+
+The example checks a composition and improves a training objective. Rotations
+and other neural parameter symmetries prevent interpreting it as recovery of a
+unique neural network. The final `Regression` refits SAR with the learned graph
+frozen; that report conditions on the graph and excludes training uncertainty.
+There is no new built-in neural estimator or automatic joint Wald covariance.
+
 For return-supervised encoder experiments, a JAX encoder can supply
 `clouds.with_coordinates(encoder(tokens, prefix))` to a pure cost and
 `rbf_weights` evaluation inside a scalar `graph_profile` objective. Cache

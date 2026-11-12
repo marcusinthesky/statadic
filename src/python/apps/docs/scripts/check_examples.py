@@ -30,6 +30,7 @@ def main() -> None:
             "principal_component_regression.py",
             "energy_and_scale.py",
             "distribution_workflow.py",
+            "neural_sar.py",
         ):
             subprocess.run([sys.executable, str(EXAMPLES / name)], env=env, check=True)
 

@@ -133,6 +133,56 @@ The same design vocabulary also supports
 [count models](src/python/packages/statadic/examples/poisson_exposure.py) and
 [distribution-valued observations](src/python/packages/statadic/examples/distribution_workflow.py).
 
+<!-- rumdl-disable MD026 -->
+
+## Now let's get fancy...
+
+<!-- rumdl-enable MD026 -->
+
+**Train a representation through SAR.** The [complete example](src/python/packages/statadic/examples/neural_sar.py)
+prepares vector distributions `clouds`, period designs `design`, outcomes `y`,
+empty error graphs `no_errors`, and `NeuralSAR`: a Flax NNX 6 → 8 → 2 MLP
+with trainable rho.
+
+<!-- statadic:readme-neural-sar:start -->
+
+```python
+import jax.numpy as jnp
+import optax
+from flax import nnx
+from statadic.api.representation import Energy
+from statadic.estimation.spatial.graph_likelihood import graph_profile
+from statadic.operators.spatial.distance import rbf_weights
+
+model = NeuralSAR()
+optimizer = nnx.Optimizer(model, optax.adam(0.01), wrt=nnx.Param)
+
+def objective(model):
+    projected = clouds.with_coordinates(model(clouds.coordinates))
+    cost = Energy(ground="euclidean").squared_cross(projected, projected)
+    upper = jnp.triu(cost, k=1)
+    weights = rbf_weights(upper + upper.T, jnp.asarray(1.0))
+    _, _, log_likelihood = graph_profile(
+        (weights[None],) * len(y), no_errors, design, tuple(y), model.rho[None]
+    )
+    return -log_likelihood / y.size
+
+@nnx.jit
+def step(model, optimizer):
+    value, gradients = nnx.value_and_grad(objective)(model)
+    optimizer.update(model, gradients)
+    return value
+
+for _ in range(120):
+    step(model, optimizer)
+```
+
+<!-- statadic:readme-neural-sar:end -->
+
+Gradients traverse energy costs, graph weights and SAR likelihood. Bandwidth is
+fixed; rho is bounded. The example's final `Regression` report conditions on the
+learned graph, excluding training uncertainty. Install Flax to run it.
+
 ## Trust you can inspect
 
 Follow a method from its tests to its mathematics, matched reference configuration
