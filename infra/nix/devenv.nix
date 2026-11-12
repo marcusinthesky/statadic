@@ -55,9 +55,10 @@
       pkgs.glibc
       pkgs.zlib
     ];
+    # Host-loaded wheel executables must use the host libc. Keep the full Nix
+    # runtime above only for executables prepared with its matching loader.
     LD_LIBRARY_PATH = lib.makeLibraryPath [
       pkgs.stdenv.cc.cc.lib
-      pkgs.glibc
       pkgs.zlib
     ];
   };

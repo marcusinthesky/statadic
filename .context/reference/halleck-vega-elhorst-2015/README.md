@@ -31,6 +31,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Primary-source citation audit](../../evidence/source-correspondence/citation-audit.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

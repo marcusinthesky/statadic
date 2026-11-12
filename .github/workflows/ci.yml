@@ -85,14 +85,29 @@ jobs:
       - name: Install matching devenv
         run: bash infra/nix/install-devenv.sh
       - name: Prepare locked reference environment
-        run: devenv shell -- just setup-references
+        run: |
+          set -o pipefail
+          devenv shell -- just setup-references 2>&1 | tee build/ci/reference-setup.log
       - name: Validate live references and precision
-        run: devenv shell -- just validate-references
+        id: validate_references
+        run: |
+          set -o pipefail
+          devenv shell -- just validate-references 2>&1 | tee build/ci/reference-validation.log
       - name: Retain reference evidence
-        if: always()
+        if: always() && (steps.validate_references.outcome == 'success' || steps.validate_references.outcome == 'failure')
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: reference-validation-${{ runner.arch }}
           path: build/reference-validation/
           if-no-files-found: error
+          retention-days: 30
+      - name: Final capacity
+        if: always()
+        run: bash infra/nix/ci-capacity.sh diagnose reference-final
+      - name: Retain reference diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: reference-diagnostics-${{ runner.arch }}
+          path: build/ci/
           retention-days: 30

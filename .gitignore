@@ -43,3 +43,7 @@ lean_decls
 /src/python/packages/statadic/notebooks/__marimo__/
 .testmondata*
 .tox/
+
+# Local review notes and the input transcript are held out of the public tree.
+/.context/evidence/
+/2026-11-12-132311-local-command-caveatthe-command-below-was-run-d.txt

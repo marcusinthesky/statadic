@@ -10,6 +10,8 @@ repos:
         args: [--assume-in-merge]
       - id: detect-private-key
       - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=5120, --enforce-all]
   - repo: local
     hooks:
       - id: lean-quality

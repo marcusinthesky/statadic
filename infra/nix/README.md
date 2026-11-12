@@ -18,6 +18,11 @@ The package retains the upstream compiler integration, executable wrappers and
 automatic ELF patching. The shell exposes its pinned native libraries for uv's
 binary Python wheels. Lua 5.4 regenerates static documentation artwork only.
 
+The global library path supplies GCC runtime libraries and zlib, leaving libc to
+each executable's loader. Exporting Nix glibc there can crash host-loaded wheel
+executables on Ubuntu. `PROJECT_RUNTIME_LIBRARIES` retains the full Nix runtime
+for `prepare-runtime.sh`, which also selects its matching loader.
+
 `ci-capacity.sh prepare` removes explicitly listed unused SDKs only on disposable
 GitHub-hosted runners. Diagnostic mode is read-only and records disk/inode usage
 and major cache sizes under ignored `build/ci/`. CI retains these diagnostics on

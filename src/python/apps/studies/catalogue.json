@@ -10358,7 +10358,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/mackinnon-white-1985/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Author working paper537, Section2, equations1\u20133, printed p2.",
             "review": "Full primary working-paper text compared with the native formula by independent reviewer; coordinator approved this representative scope only.",
             "scope": "Full-rank unweighted OLS mathematical target (X'X)^-1 X'y, with mean-zero errors for the statistical interpretation. No QR, floating-point or general fitting implementation equivalence is asserted.",
@@ -10582,7 +10581,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/mackinnon-white-1985/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Author working paper537, Section2, equation4, printed p2.",
             "review": "Full primary working-paper text compared with the native formula by independent reviewer; coordinator approved this representative scope only.",
             "scope": "Unweighted OLS only (all weights1), default multiplier1, residual variance RSS/(n-k), covariance sigmahat^2 (X'X)^-1 under homoskedastic errors. Excludes weighted extensions, extra finite-sample multipliers and exact normal/t/F reference-law claims.",
@@ -10654,7 +10652,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/white-1980/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Original paper HC sandwich construction; retained record primary first-page/source comparison",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "HC0 independent-row heteroskedastic sandwich foundation. Fit-specific arithmetic is separately tested. No exact finite-sample t/F law or coverage claim."
@@ -10723,7 +10720,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/mackinnon-white-1985/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Author working-paper Section2, HC1/HC2/jackknife-derived HC3 definitions",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "STATADIC HC1 uses n/(n-p); HC2 uses (1-h_i)^-1 and HC3 uses (1-h_i)^-2 on squared residual contributions. STATADIC HC3 defaults to multiplier1 and does not silently include an additional historical jackknife prefactor; optional finite_sample_correction is separate. Normal/t and chi-square/F references remain independent choices, not exact guarantees."
@@ -10792,7 +10788,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/mackinnon-white-1985/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Author working-paper Section2, HC1/HC2/jackknife-derived HC3 definitions",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "STATADIC HC1 uses n/(n-p); HC2 uses (1-h_i)^-1 and HC3 uses (1-h_i)^-2 on squared residual contributions. STATADIC HC3 defaults to multiplier1 and does not silently include an additional historical jackknife prefactor; optional finite_sample_correction is separate. Normal/t and chi-square/F references remain independent choices, not exact guarantees."
@@ -10874,7 +10869,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/long-ervin-2000/README.md",
-            "audit_record": ".context/evidence/source-correspondence/hc3-followup.md",
             "locator": "Long\u2013Ervin author-linked manuscript Section2, pp6\u20137; conventional HC3 displayed on p7. MacKinnon\u2013White Section2 equations12\u201313 distinguish the original centered jackknife.",
             "review": "Coordinator and independent reviewer visually inspected the conventional uncentered HC3 formula and compared native influence/leverage scaling. Fixed-positive-precision WLS is the same formula on explicitly whitened design and response; this is a checked algebraic substitution, not a paper claim about arbitrary weight roles.",
             "scope": "Full-column-rank OLS or fixed finite positive analytic-precision WLS via X*=sqrt(W)X,y*=sqrt(W)y; leverage strictly below1 and default multiplier1. Conventional uncentered leverage-squared sandwich only. Excludes adaptive/survey weights, optional multipliers, rank loss, leverage-boundary/floor/exact-fit availability policy, floating-point equivalence and exact normal/t/F calibration.",
@@ -11446,7 +11440,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/nelder-wedderburn-1972/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Original paper pp.370-374, exponential-family GLMs, Binomial/Poisson and canonical links",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Binomial-logit and Poisson-log likelihood/model fitting foundations. No claim about finite-optimum certificates, numerical solver, robust covariance or exact normal-Wald coverage."
@@ -11514,7 +11507,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/nelder-wedderburn-1972/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Original paper pp.370-374, exponential-family GLMs, Binomial/Poisson and canonical links",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Binomial-logit and Poisson-log likelihood/model fitting foundations. No claim about finite-optimum certificates, numerical solver, robust covariance or exact normal-Wald coverage."
@@ -11846,7 +11838,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "GMM criterion and large-sample moment/weight regularity results, Econometrica50(4),pp.1029-1054",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Fixed/iterated GMM estimator foundation under correctly specified identified moment conditions and suitable limiting weight. Numerical stopping and solver flags remain tested evidence. A centered/plain finite-sample variability convention or misspecified Hall-centering theory is not proved by this attribution."
@@ -11883,7 +11874,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "GMM criterion and large-sample moment/weight regularity results, Econometrica50(4),pp.1029-1054",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Fixed/iterated GMM estimator foundation under correctly specified identified moment conditions and suitable limiting weight. Numerical stopping and solver flags remain tested evidence. A centered/plain finite-sample variability convention or misspecified Hall-centering theory is not proved by this attribution."
@@ -11967,7 +11957,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "GMM criterion and large-sample moment/weight regularity results, Econometrica50(4),pp.1029-1054",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Fixed/iterated GMM estimator foundation under correctly specified identified moment conditions and suitable limiting weight. Numerical stopping and solver flags remain tested evidence. A centered/plain finite-sample variability convention or misspecified Hall-centering theory is not proved by this attribution."
@@ -12032,7 +12021,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "GMM criterion and large-sample moment/weight regularity results, Econometrica50(4),pp.1029-1054",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Fixed/iterated GMM estimator foundation under correctly specified identified moment conditions and suitable limiting weight. Numerical stopping and solver flags remain tested evidence. A centered/plain finite-sample variability convention or misspecified Hall-centering theory is not proved by this attribution."
@@ -12136,7 +12124,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Large-sample GMM covariance under identified correctly specified moments and limiting weight",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Actual-weight GMM sandwich/asymptotic covariance foundation. Correct-specification and weight/variability regularity remain explicit assumptions. Not a proof of finite-sample coverage or arbitrary misspecification centering."
@@ -12207,7 +12194,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Large-sample GMM covariance under identified correctly specified moments and limiting weight",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Actual-weight GMM sandwich/asymptotic covariance foundation. Correct-specification and weight/variability regularity remain explicit assumptions. Not a proof of finite-sample coverage or arbitrary misspecification centering."
@@ -12416,7 +12402,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hansen-1982/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Overidentifying-restrictions reference under correctly specified efficiently weighted GMM",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Conventional overidentified J reference only for an actual efficiently converged interior fit with explicit correct-specification acknowledgement. No blanket reference for fixed arbitrary weights, boundary parameters or unresolved raw-HAC/centering variants."
@@ -13448,7 +13433,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/fama-macbeth-1973/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Fama\u2013MacBeth1973 pp616\u2013619",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Point estimate only: arithmetic average of fully identified periodwise cross-sectional coefficient vectors. Excludes inference/HAC choices and selective failed-period handling.",
@@ -13681,7 +13665,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           },
@@ -13746,7 +13729,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           },
@@ -13811,7 +13793,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           },
@@ -13882,7 +13863,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Balanced-period Bartlett core compared to1995 primary precursor; final1998 formula and complete native scope pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           },
@@ -14018,7 +13998,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Only bandwidth-zero debiased sample-time covariance baseline reviewed; positive-bandwidth kernels and missing-period conventions pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           },
@@ -19104,7 +19083,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/ledoit-wolf-2004-constant-correlation/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Honey,I Shrunk the Sample Covariance Matrix; constant-correlation target and shrinkage construction",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Constant-correlation shrinkage target and estimator family only. Not the scaled-identity large-dimensional estimator; no universal risk dominance or solver correctness claim."
@@ -19443,7 +19421,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/sharpe-1966/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Mutual Fund Performance, reward-to-variability ratio, pp.119-138",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Point return mean/standard-deviation ratio foundation. ddof, annualization, skewness, serial dependence, PSR/DSR and interval/reference calibration are separate conventions/evidence."
@@ -19592,7 +19569,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/bailey-lopez-de-prado-2012/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "2012 author manuscript \u00a73 printedp9 Eq11; \u00a72.5 printedp8",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Supplied-score PSR formula only: n>1, positive variance denominator, non-excess kurtosis, original-frequency Sharpe. No posterior/exact size or degenerate fallback claim.",
@@ -19634,7 +19610,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/bailey-lopez-de-prado-2014/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "2014 author manuscript pp7\u20138 Eqs1\u20132;2012 PSR Eq11",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "DSR=PSR(expected maximum), N>1 positive supplied cross-trial dispersion, independent/effective independent trial count supplied, PSR nondegenerate domain. No N=1/variance fallback or automatic effective-count estimator claim.",
@@ -19747,7 +19722,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Paired block-resampling context only; native procedure differs from LW recomputed-studentizer plus-one construction.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           }
@@ -19815,7 +19789,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Fixed-original-studentizer stepdown architecture supported by2005 footnote22; automatic block selection and complete native calibration pending.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           }
@@ -19852,7 +19825,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Centered bootstrap maximum context reviewed; native studentized circular-block variant not exactly original raw-max stationary construction.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           }
@@ -19977,7 +19949,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/gretton-etal-2012/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Lemma6 equation(3), pp.728-729; empirical V expression equation(5), p.729",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Unrooted U/V finite-pair-moment expectation reductions. Linear/RBF kernel convention only; supplied moments and kernel symmetry are assumptions. No formal IID construction, RKHS interpretation or Python/floating-point refinement is inferred."
@@ -20044,7 +20015,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/gretton-etal-2012/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Lemma6 equation(3), pp.728-729; empirical V expression equation(5), p.729",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Unrooted U/V finite-pair-moment expectation reductions. Linear/RBF kernel convention only; supplied moments and kernel symmetry are assumptions. No formal IID construction, RKHS interpretation or Python/floating-point refinement is inferred."
@@ -20180,7 +20150,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/gretton-etal-2012/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Lemma6 equation(3), pp.728-729; empirical V expression equation(5), p.729",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Unrooted U/V finite-pair-moment expectation reductions. Linear/RBF kernel convention only; supplied moments and kernel symmetry are assumptions. No formal IID construction, RKHS interpretation or Python/floating-point refinement is inferred."
@@ -20234,7 +20203,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/gretton-etal-2012/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Lemma6 equation(3), pp.728-729; empirical V expression equation(5), p.729",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Unrooted U/V finite-pair-moment expectation reductions. Linear/RBF kernel convention only; supplied moments and kernel symmetry are assumptions. No formal IID construction, RKHS interpretation or Python/floating-point refinement is inferred."
@@ -21891,7 +21859,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/rizzo-szekely-2010-disco/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Rizzo\u2013Sz\u00e9kely2010 Eqs2.5\u20132.6, Section3.1 and Section3.2 pp1041\u20131042; Anderson2001 Eqs1\u20134.",
             "review": "Coordinator compared published one-way decompositions, native V-statistic denominators and Monte Carlo upper-tail construction. Supplied Euclidean distances and their squares correspond to DISCO alpha1 and the one-way PERMANOVA representative respectively.",
             "scope": "One-way Euclidean raw DISCO or squared-Euclidean PERMANOVA, self-pair V denominators, exchangeable pooled-label null, plus-one randomized upper-tail p-value. Excludes PERMDISP residual permutations, arbitrary multifactor designs, learned geometry and unconditional validity outside exchangeability.",
@@ -22474,7 +22441,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/efron-1979/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Original nonparametric bootstrap sampling-distribution construction, Annals of Statistics7(1),pp.1-26",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "IID empirical resampling-law foundation. Percentile-interval coverage is evaluated separately; no universal finite-sample confidence guarantee."
@@ -22515,7 +22481,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/politis-romano-1994/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Stationary Bootstrap, geometrically distributed blocks and stationary resampling construction",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Base stationary-bootstrap law with an explicitly fixed supplied expected block length. This does not approve automatic Politis-White/Patton selection, heuristic selection, or finite-sample interval coverage."
@@ -22556,7 +22521,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/politis-romano-1994/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Stationary Bootstrap, geometrically distributed blocks and stationary resampling construction",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Base stationary-bootstrap law with an explicitly fixed supplied expected block length. This does not approve automatic Politis-White/Patton selection, heuristic selection, or finite-sample interval coverage."
@@ -22597,7 +22561,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/politis-romano-1994/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Stationary Bootstrap, geometrically distributed blocks and stationary resampling construction",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Base stationary-bootstrap law with an explicitly fixed supplied expected block length. This does not approve automatic Politis-White/Patton selection, heuristic selection, or finite-sample interval coverage."
@@ -22638,7 +22601,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/politis-romano-1994/README.md",
-            "audit_record": ".context/evidence/source-correspondence/citation-audit.md",
             "locator": "Stationary Bootstrap, geometrically distributed blocks and stationary resampling construction",
             "review": "Coordinator-retained primary-source review, bounded to the scope stated here; not implementation verification.",
             "scope": "Base stationary-bootstrap law with an explicitly fixed supplied expected block length. This does not approve automatic Politis-White/Patton selection, heuristic selection, or finite-sample interval coverage."
@@ -23293,7 +23255,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/newey-west-1987/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Newey\u2013West1987 pp703\u2013704 Eqs4\u20135",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Raw finite moment rows; explicit nonnegative Bartlett bandwidth; denominator T; symmetric lag sum; no centering or finite-sample multiplier.",
@@ -23361,7 +23322,6 @@
           ],
           "source_evidence": {
             "record": ".context/reference/hall-2000-covariance-power/README.md",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "Hall2000 p1521 Eq9; Newey\u2013West1987 pp703\u2013704 Eqs4\u20135",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Same explicit Bartlett operator after subtracting the sample moment mean; no automatic selector or full GMM calibration claim.",
@@ -23432,7 +23392,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Fixed Bartlett/centering algebra reviewed; native n-only selector is not an approved data-driven plug-in selector.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           }
@@ -23475,7 +23434,6 @@
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
             "review": "Fixed Bartlett/centering algebra reviewed; native n-only selector is not an approved data-driven plug-in selector.",
-            "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
           }
@@ -26356,8 +26314,7 @@
   "scientific_inventory_review": {
     "date": "2026-11-04",
     "basis": "Per-owner public source/AST review, explicit configuration variants and 72 registered study designs with exact method/scenario mappings; retained evaluation and primary-source approval remain independent.",
-    "source_approval": "No source-to-method correspondence approved by this mechanical rewrite.",
-    "audit_record": ".context/evidence/catalogue-audit.md"
+    "source_approval": "No source-to-method correspondence approved by this mechanical rewrite."
   },
   "tutorials": {
     "ground-geometry": "guides/change-geometry.py",
