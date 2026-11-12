@@ -8,6 +8,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.integrate import quad
+from scipy.stats import norm
 from statadic.api.data import Observations, PanelLayout
 from statadic.api.design import Intercept, Linear
 from statadic.api.regression import Regression
@@ -23,8 +25,6 @@ from statadic.model.survival import (
     survival_probability,
     survival_quantile,
 )
-from scipy.integrate import quad
-from scipy.stats import norm
 
 if TYPE_CHECKING:
     from collections.abc import Callable

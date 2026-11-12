@@ -51,8 +51,8 @@ def test_links_cannot_escape_the_built_site(tmp_path):
 
 def test_generated_research_disclosures_have_rendered_reference_targets(tmp_path):
     """Exercise MyST's label attachment and the actual HTML fragment checker."""
-    from statadic_docs_labs.formal_extension import source
     from sphinx.application import Sphinx
+    from statadic_docs_labs.formal_extension import source
 
     methods = (
         ("geometry.ground.metrics", "research-method-geometry-ground-metrics"),

@@ -499,7 +499,9 @@ def run(
                     name = f"{case}-{side}-{session}.json"
                     command = [
                         str(
-                            (python if side == "statadic" else reference_python).absolute()
+                            (
+                                python if side == "statadic" else reference_python
+                            ).absolute()
                         ),
                         "-I",
                         str(worker),

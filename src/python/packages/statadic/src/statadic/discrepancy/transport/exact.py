@@ -37,7 +37,8 @@ Axioms — measured, and weaker than the name suggests
 -----------------------------------------------------
 ``W_p`` for finite ``p >= 1`` over a metric ground cost is a metric on
 ``P_p``. The cloud convenience API imports Euclidean sphere-chord distance
-from :mod:`statadic.geometry.ground.metrics` and requires **already unit-normalized rows**.
+from :mod:`statadic.geometry.ground.metrics` and requires
+**already unit-normalized rows**.
 Normalization is a pipeline transformation that changes the estimand, so the
 eager doors reject off-sphere rows instead of silently projecting them. The
 exported array-level declaration remains a pseudometric because independent row

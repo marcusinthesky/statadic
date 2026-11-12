@@ -12,7 +12,12 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.sharpe import sample_skew_kurtosis, sharpe_ratio, sharpe_ratio_axis
+from scipy import stats
+from statadic.estimation.sharpe import (
+    sample_skew_kurtosis,
+    sharpe_ratio,
+    sharpe_ratio_axis,
+)
 from statadic.inference.sharpe.deflated import (
     _probabilistic_sharpe_ratio_kernel,
     expected_maximum_sharpe_ratio,
@@ -20,7 +25,6 @@ from statadic.inference.sharpe.deflated import (
 )
 from statadic.inference.sharpe.difference import _sharpe_difference_kernel
 from statadic.inference.sharpe.multiple import _multiple_sharpe_kernel
-from scipy import stats
 
 _TIGHT_RTOL = 5e-13
 _TIGHT_ATOL = 5e-15

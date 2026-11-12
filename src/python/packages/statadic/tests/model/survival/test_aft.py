@@ -6,6 +6,9 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import stats
+from scipy.integrate import quad
+from scipy.special import gammainc, gammaln, log_ndtr
 from statadic.model.survival import (
     LogLogisticAFT,
     LogNormalAFT,
@@ -19,9 +22,6 @@ from statadic.model.survival import (
     survival_probability,
     survival_quantile,
 )
-from scipy import stats
-from scipy.integrate import quad
-from scipy.special import gammainc, gammaln, log_ndtr
 
 
 @pytest.mark.unit

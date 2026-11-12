@@ -11,14 +11,17 @@ import pytest
 from hypothesis import given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy.optimize import linprog
 from statadic.discrepancy.transport.exact import balanced_wasserstein_from_cost_jax
 from statadic.discrepancy.transport.sliced import (
     ProjectionDesign,
     sliced_wasserstein_under_design,
 )
-from statadic.discrepancy.transport.univariate import wasserstein_1d, wasserstein_1d_power
+from statadic.discrepancy.transport.univariate import (
+    wasserstein_1d,
+    wasserstein_1d_power,
+)
 from statadic.sample.packed import PackedClouds
-from scipy.optimize import linprog
 
 from .._budgets import examples
 

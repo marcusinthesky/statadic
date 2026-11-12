@@ -11,11 +11,18 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy.linalg import block_diag
 from statadic.core.results import SolverResult, SolverStatus
-from statadic.estimation.spatial import SAC, SAR, SEM, PanelML, SpatialPanelProblem, panel
+from statadic.estimation.spatial import (
+    SAC,
+    SAR,
+    SEM,
+    PanelML,
+    SpatialPanelProblem,
+    panel,
+)
 from statadic.estimation.spatial.panel import spatial_panel_profile
 from statadic.operators.spatial import prepare_spatial_panel_weights
-from scipy.linalg import block_diag
 
 from ..._budgets import examples
 

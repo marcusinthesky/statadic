@@ -135,7 +135,9 @@ def prepare_measure(
                     }
 
             else:
-                from statadic.discrepancy.transport.univariate import wasserstein_1d_power
+                from statadic.discrepancy.transport.univariate import (
+                    wasserstein_1d_power,
+                )
 
                 def execute(left, right):
                     return {
@@ -154,7 +156,9 @@ def prepare_measure(
         left = PackedClouds.from_array(jax.device_put(inputs[0]))
         candidates = PackedClouds.from_array(jax.device_put(inputs[1]))
         if case == "simplex-energy-projection":
-            from statadic.geometry.barycentre.mmd.energy import energy_barycentre_weights
+            from statadic.geometry.barycentre.mmd.energy import (
+                energy_barycentre_weights,
+            )
 
             def execute(target, candidates):
                 weights, diagnostics = energy_barycentre_weights(

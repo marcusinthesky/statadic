@@ -5,9 +5,26 @@ from pathlib import Path
 
 import pytest
 
-WORDS = runpy.run_path(
+CHECKS = runpy.run_path(
     str(Path(__file__).resolve().parents[1] / "scripts/check_size.py")
-)["words"]
+)
+WORDS = CHECKS["words"]
+SUMMARY = CHECKS["budget_summary"]
+
+
+def test_readme_and_onboarding_have_independent_allowances():
+    budget = {
+        "baseline_words": 6166,
+        "maximum_words": 1541,
+        "readme_budget": {"previous_words": 139, "maximum_words": 850},
+    }
+    summary = SUMMARY({"README.md": 800, "start.md": 1400}, budget)
+    assert summary["onboarding_maximum"] == 1402
+    assert summary["first_use_words"] == 2200
+    with pytest.raises(ValueError, match="README exceeds"):
+        SUMMARY({"README.md": 851, "start.md": 100}, budget)
+    with pytest.raises(ValueError, match="excluding README exceeds"):
+        SUMMARY({"README.md": 100, "start.md": 1403}, budget)
 
 
 def test_recursive_text_and_selected_code_are_counted(tmp_path):

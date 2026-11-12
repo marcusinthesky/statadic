@@ -49,7 +49,9 @@ def test_explicit_aliases_members_and_unregistered_symbols():
         "title": "Exact identity",
         "proof_status": "kernel-checked-and-axiom-audited",
         "scope": {"relationship": "Exact arithmetic only"},
-        "python": {"symbols": ["statadic.owner.f", "statadic.alias.f", "statadic.C.fit"]},
+        "python": {
+            "symbols": ["statadic.owner.f", "statadic.alias.f", "statadic.C.fit"]
+        },
     }
     app = SimpleNamespace(_statadic_claims_by_symbol=claims_by_symbol([claim]))
     original = "A docstring."
@@ -126,7 +128,9 @@ def test_catalogue_links_render_in_both_directions():
         "studies": [],
     }
     app = SimpleNamespace(
-        _statadic_research=[method], _statadic_procedures=[], _statadic_formal={"claims": []}
+        _statadic_research=[method],
+        _statadic_procedures=[],
+        _statadic_formal={"claims": []},
     )
     catalogue = ["<!-- statadic:research-catalogue -->"]
     source(app, "validation/research", catalogue)
@@ -171,8 +175,8 @@ def test_index_distinguishes_closed_and_open_obligations_in_one_family():
         "[STATADIC-IV-001](claims/STATADIC-IV-001.md) |" in page
     )
     assert (
-        "| Spatial | Jacobian | [STATADIC-SPATIAL-001](claims/STATADIC-SPATIAL-001.md) |"
-        in page
+        "| Spatial | Jacobian | "
+        "[STATADIC-SPATIAL-001](claims/STATADIC-SPATIAL-001.md) |" in page
     )
 
 
@@ -298,12 +302,18 @@ def test_constructor_links_require_the_exercised_construction_path():
         ],
     }
     app = SimpleNamespace(
-        _statadic_research=[owner], _statadic_procedures=[], _statadic_claims_by_symbol={}
+        _statadic_research=[owner],
+        _statadic_procedures=[],
+        _statadic_claims_by_symbol={},
     )
     lines = []
-    api_evidence(app, "method", "statadic.api.regression.Regression.ols", None, None, lines)
+    api_evidence(
+        app, "method", "statadic.api.regression.Regression.ols", None, None, lines
+    )
     assert "reference-linear-point.ols" in "\n".join(lines)
     assert "declared comparison" in "\n".join(lines)
     lines = []
-    api_evidence(app, "method", "statadic.api.regression.Regression.wls", None, None, lines)
+    api_evidence(
+        app, "method", "statadic.api.regression.Regression.wls", None, None, lines
+    )
     assert lines == []

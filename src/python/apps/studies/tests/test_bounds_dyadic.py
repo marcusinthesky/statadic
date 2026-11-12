@@ -3,6 +3,7 @@
 import jax
 import numpy as np
 import pytest
+from scipy.stats import norm
 from statadic.estimation.dyadic import DyadicEstimator
 from statadic.inference.dyadic import (
     DyadicInference,
@@ -18,7 +19,6 @@ from statadic_studies.definitions.bounds import (
     BOUNDS_DYADIC_NULL_SCENARIOS,
     BOUNDS_DYADIC_STUDIES,
 )
-from scipy.stats import norm
 
 
 def test_boundary_helper_agrees_with_exact_gaussian_positive_part_tail():

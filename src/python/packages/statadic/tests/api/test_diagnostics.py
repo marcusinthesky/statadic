@@ -8,7 +8,9 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.api.artifacts import load_analysis, save_analysis
-from statadic.api.base import PreparedRegression  # noqa: TC002 -- result fixture annotation
+from statadic.api.base import (
+    PreparedRegression,  # noqa: TC002 -- result fixture annotation
+)
 from statadic.api.data import Observations, RelativePrecision
 from statadic.api.design import Intercept, Linear
 from statadic.api.diagnostics import (

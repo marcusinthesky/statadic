@@ -2,7 +2,7 @@
 """Serialized ground-distance selection and eager compatibility parsing.
 
 Strings and ``TypedDict`` records stop here. Numerical kernels receive only a
-:class:`~statadic.geometry.ground.metrics.GroundDistance`, so dynamic configuration loses
+:class:`~statadic.geometry.ground.metrics.GroundDistance`, so configuration loses
 precision once, at an explicit boundary, instead of at every ``cdist`` call.
 """
 

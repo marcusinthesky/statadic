@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+\begin{axis}[width=12cm,height=7cm,xtick={0,1},xticklabels={{intercept},{x}}]
+% Interval meaning: 95% intervals; normal reference; covariance HC3
+\addplot+[no marks,forget plot] coordinates {(0,0.6856827546719748) (0,1.3524124834232636)};
+\addplot+[no marks,forget plot] coordinates {(1,0.8470092242956895) (1,1.1244193471328827)};
+\addplot+[only marks,forget plot] coordinates {(0,1.0190476190476192) (1,0.9857142857142861)};
+\addplot[black,dashed,no marks] coordinates {(-0.5,0) (1.5,0)};
+\addlegendentry{reference}
+\end{axis}
+\end{tikzpicture}

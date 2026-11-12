@@ -96,7 +96,12 @@ def manifest_data() -> dict[str, Any]:
         "source": {"revision": "unavailable", "dirty": None, "hashes": []},
         "lockfiles": [],
         "inputs": [],
-        "versions": {"python": "3.13", "statadic": "x", "jax": "x", "statadic_publishing": "x"},
+        "versions": {
+            "python": "3.13",
+            "statadic": "x",
+            "jax": "x",
+            "statadic_publishing": "x",
+        },
         "runtime": {"platform": "test", "backend": "cpu", "x64": True, "seed": 7},
         "analyses": [
             {

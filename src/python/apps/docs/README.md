@@ -22,6 +22,23 @@ resources explicitly and may use the network; checks compile with cached inputs.
 Report compilation uses the repository Tectonic tool and shared template.
 External link checks remain separate from the offline build.
 
+The [GitHub Pages workflow](../../../../.github/workflows/pages.yml) builds this
+same site on pull requests and pushes to `main`. Pull requests retain the
+`github-pages` artifact without deploying. Successful `main` builds deploy to
+the `github-pages` environment; manual runs deploy only when run from `main`.
+The build prepares the locked Python and Lean environments, certifies proofs,
+builds the blueprint and exports the lab snapshots before uploading HTML.
+Pages configuration supplies `STATADIC_DOCS_BASE_URL` for Sphinx's canonical URLs;
+the site's relative asset links support the `/statadic/` project path.
+
+In the repository's **Settings → Pages → Build and deployment**, select
+**GitHub Actions** as the source. Configure the `github-pages` environment to
+allow deployments from `main`. The expected default address is
+`https://marcusinthesky.github.io/statadic/`; an existing custom domain is read
+from Pages configuration. Authentication with repository administration access
+is needed for these account settings. Build logs and proof certification are
+retained in `pages-diagnostics` for seven days.
+
 Study reports enter the site only through explicit selection, for example
 `just python::docs::build --study-export /absolute/path/to/publication`.
 Ordinary selections are labelled historical. The release orchestrator first
@@ -45,14 +62,30 @@ completion. See the [Lean guide](../../../lean/README.md).
 The Shibuya site uses local serif fonts, black text, Delft-blue links and the
 supplied animated curve-fit logo/favicon; asset provenance is documented in
 [the branding notes](static/brand/README.md).
-Navigation separates Start, Tutorials, How-to, Concepts, Reference and Evidence.
+Navigation separates Start, Tutorials, How-to, Concepts, Reference, Evidence and Blog.
 The short first regression leads to a four-part OLS chapter, whose executable
 recipe also powers the native regression marimo lab. Site snapshots retain
 fixed settings; local notebooks provide reactive controls. `word-budget.json`
-freezes the approved first-use scope
-and 6,166-word baseline; the checker includes authored text/code transclusions
-and caps the replacement path at 1,541 words. Detailed references are outside
-this cap, and their total is reported separately.
+retains the 6,166-word historical baseline and counts authored text/code
+transclusions. The expanded product README has its own 850-word limit; the rest
+of the first-use path keeps 1,402 words, its previous allowance after subtracting
+the former 139-word README from the original 1,541-word cap. Neither section can
+borrow the other's unused allowance. Detailed references are outside these caps,
+and their total is reported separately.
+
+`scripts/render_readme.py` executes the root README's marked OLS example and
+regenerates its report, TeX exports and coefficient preview under `static/readme/`.
+Run it with the same locked app runner used for other docs scripts.
+
+Blog posts and essays live in `../../packages/statadic/docs/blog/`, following
+Exordio's plain Markdown blog structure. The section covers STATADIC, its Exordio
+foundations and the development process. To publish a post, add a Markdown file
+with a stable descriptive filename, description frontmatter, a title and an
+author/date line. Add its title, link, date and short summary to `blog/index.md`,
+newest first, replacing the empty-state text for the first post. Also add its
+filename without `.md` to a MyST `toctree` in that index so Sphinx includes it in
+the sidebar and avoids orphan-page warnings. Run `just python::docs::build` to
+validate it; the Pages workflow publishes it with the rest of the site.
 
 Browser inspection is an explicit command after building: install Chrome or
 Chromium, or pass `--browser /path/to/executable`. Its Python dependencies are

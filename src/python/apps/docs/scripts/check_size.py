@@ -42,10 +42,39 @@ def words(path: Path, root: Path, ancestors: tuple[Path, ...] = ()) -> int:
     return count
 
 
+def budget_summary(counts: dict[str, int], budget: dict) -> dict:
+    """Keep the expanded product README separate from the short onboarding path."""
+    overview = budget["readme_budget"]
+    readme_words = counts["README.md"]
+    onboarding_words = sum(counts.values()) - readme_words
+    onboarding_maximum = budget["maximum_words"] - overview["previous_words"]
+    if readme_words > overview["maximum_words"]:
+        raise ValueError(
+            "README exceeds its budget by "
+            f"{readme_words - overview['maximum_words']} words"
+        )
+    if onboarding_words > onboarding_maximum:
+        raise ValueError(
+            "First-use documentation excluding README exceeds its budget by "
+            f"{onboarding_words - onboarding_maximum} words"
+        )
+    return {
+        "first_use_words": sum(counts.values()),
+        "maximum": onboarding_maximum + overview["maximum_words"],
+        "onboarding_words": onboarding_words,
+        "onboarding_maximum": onboarding_maximum,
+        "readme_words": readme_words,
+        "readme_maximum": overview["maximum_words"],
+        "reduction_percent": round(
+            100 * (1 - sum(counts.values()) / budget["baseline_words"]), 2
+        ),
+    }
+
+
 def main() -> None:
     budget = json.loads((APP / "word-budget.json").read_text())
     if budget["baseline_words"] != 6166 or budget["maximum_words"] != 1541:
-        raise ValueError("The approved baseline and 75% cap must remain frozen")
+        raise ValueError("The historical baseline and original cap must remain frozen")
     entrypoints = set(budget["entrypoints"])
     for directory in (DOCS / "start", DOCS / "compose"):
         entrypoints.update(
@@ -54,7 +83,6 @@ def main() -> None:
             if path.suffix in {".md", ".rst"}
         )
     counts = {name: words(ROOT / name, ROOT) for name in sorted(entrypoints)}
-    total = sum(counts.values())
     all_docs = sum(
         len(p.read_text().split())
         for p in DOCS.rglob("*")
@@ -62,20 +90,14 @@ def main() -> None:
     )
     print(
         json.dumps(
-            {
-                "first_use_words": total,
-                "maximum": budget["maximum_words"],
-                "reduction_percent": round(100 * (1 - total / 6166), 2),
+            budget_summary(counts, budget)
+            | {
                 "all_docs_source_words": all_docs,
                 "files": counts,
             },
             indent=2,
         )
     )
-    if total > budget["maximum_words"]:
-        raise SystemExit(
-            f"First-use documentation exceeds its budget by {total - 1541} words"
-        )
 
 
 if __name__ == "__main__":

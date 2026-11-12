@@ -234,7 +234,7 @@ class TestPack:
     @pytest.mark.integration
     @pytest.mark.contract
     def test_structural_checks_do_not_depend_on_the_import_hook(self) -> None:
-        """A fresh non-statadic module copy still rejects malformed carrier structure."""
+        """A module copy outside STATADIC rejects malformed carrier structure."""
         module_name = "_statadic_packed_without_import_hook"
         module_path = packed_module.__file__
         assert module_path is not None

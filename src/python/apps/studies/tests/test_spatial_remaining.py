@@ -7,6 +7,7 @@ import sys
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.stats import chi2, norm
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.inference.spatial import spatial_diagnostics
 from statadic.operators.spatial import prepare_spatial_weights
@@ -15,7 +16,6 @@ from statadic_studies.adapters.dependence.spatial_durbin import durbin_data
 from statadic_studies.adapters.dependence.spatial_impacts import exact_impacts
 from statadic_studies.adapters.dependence.spatial_panel import varying_panel_data
 from statadic_studies.contracts import STUDIES
-from scipy.stats import chi2, norm
 
 SPATIAL_REMAINING_STUDIES = {
     key: value

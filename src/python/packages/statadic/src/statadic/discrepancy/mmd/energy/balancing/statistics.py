@@ -11,7 +11,9 @@ import jax.numpy as jnp
 
 from statadic.discrepancy.mmd.components import candidate_energy_components
 from statadic.discrepancy.mmd.energy.balancing._common import _MAX_DISTANCE_EXPONENT
-from statadic.discrepancy.mmd.energy.balancing.effective_size import inverse_variance_m_eff
+from statadic.discrepancy.mmd.energy.balancing.effective_size import (
+    inverse_variance_m_eff,
+)
 from statadic.geometry.ground.config import (  # runtime annotations  # noqa: TC001
     GroundDistanceSelection,
     resolve_ground_distance,

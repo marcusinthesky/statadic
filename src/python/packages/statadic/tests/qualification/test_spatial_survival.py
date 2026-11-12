@@ -18,6 +18,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.integrate import quad
+from scipy.optimize import minimize_scalar
+from scipy.special import log_ndtr
+from scipy.stats import multivariate_normal, norm, qmc
 from statadic.estimation.survival import (
     SpatialSurvivalML,
     SpatialSurvivalProblem,
@@ -32,10 +36,6 @@ from statadic.optimize.integration import (
     IntegrationDesign,
     gaussian_log_survival,
 )
-from scipy.integrate import quad
-from scipy.optimize import minimize_scalar
-from scipy.special import log_ndtr
-from scipy.stats import multivariate_normal, norm, qmc
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -17,7 +17,12 @@ from statadic.api.base import (
     _RegressionPreparation,
 )
 from statadic.api.fit_statistics import LikelihoodSummary
-from statadic.api.inference import HC, InferenceResult, ModelBased, _independent_covariance
+from statadic.api.inference import (
+    HC,
+    InferenceResult,
+    ModelBased,
+    _independent_covariance,
+)
 from statadic.api.inputs import RegressionInput
 from statadic.api.prediction import (
     PredictionOptions,

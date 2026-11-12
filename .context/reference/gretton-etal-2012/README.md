@@ -34,7 +34,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Integrate finite-moment MMD reference proofs](../../plan/formal-literature/tasks/literature-proofs/tasks/mmd-finite-moments/README.md)
-- [Prove weighted V-MMD nonnegativity and the U contrast](../../plan/release-guarantees/tasks/proofs/tasks/weighted-mmd/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

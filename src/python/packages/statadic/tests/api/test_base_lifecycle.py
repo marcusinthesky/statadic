@@ -7,8 +7,8 @@ from dataclasses import dataclass, field, replace
 from typing import override
 
 import jax.numpy as jnp
-import statadic
 import pytest
+import statadic
 from statadic.api.base import InvalidFitError, Model, Result
 from statadic.api.data import Observations
 from statadic.api.design import Intercept, Linear

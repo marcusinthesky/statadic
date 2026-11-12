@@ -12,7 +12,12 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.api.base import Model, RegressionResult, Result
-from statadic.api.data import MeasureColumn, Observations, PanelLayout, RelativePrecision
+from statadic.api.data import (
+    MeasureColumn,
+    Observations,
+    PanelLayout,
+    RelativePrecision,
+)
 from statadic.api.design import Categorical, DistanceToLandmarks, Intercept, Linear
 from statadic.api.inputs import as_observations
 from statadic.api.ordination import Ordination
@@ -38,7 +43,10 @@ from statadic.estimation.panel import (
     RandomEffects,
     Within,
 )
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.operators.panel import prepare_panel_index
 from statadic.operators.spatial import prepare_spatial_weights
 from statadic.sample.packed import PackedClouds

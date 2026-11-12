@@ -44,8 +44,8 @@ def main() -> None:
         JAX_DEFAULT_MATMUL_PRECISION="highest",
     )
     import jax
-    import statadic
     import numpy as np
+    import statadic
 
     from statadic_performance.numerical import witness
     from statadic_performance.workloads import prepare, synchronize, validate

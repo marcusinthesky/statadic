@@ -23,12 +23,12 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy.optimize import nnls
 from statadic.optimize.simplex import (
     batched_nonnegative_quadratic_program,
     pgd_maximize_quadratic_form,
     pgd_minimize_quadratic_form,
 )
-from scipy.optimize import nnls
 
 from .._budgets import examples
 from .._strategies import prng_keys

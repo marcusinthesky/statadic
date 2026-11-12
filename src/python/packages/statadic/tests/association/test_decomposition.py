@@ -9,7 +9,8 @@ rejections rather than as documented conventions:
 * **Arbitrary scalars** — every field demands a typed carrier at its own
   ``@final`` estimand or statistic kind, so a bare ``float``, a swapped
   component, and a swapped statistic kind are all static errors.
-* **An incompatible matrix** — :func:`~statadic.association.decomposition.disco_components`
+* **An incompatible matrix** —
+  :func:`~statadic.association.decomposition.disco_components`
   consumes a ``DMat`` with ``DispersionDecomposableLaw`` provenance. A signed
   pairwise estimate, a ``MetricLaw`` matrix short of negative type, and the
   output of the checked numeric door are each rejected.

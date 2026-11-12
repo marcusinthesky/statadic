@@ -69,7 +69,9 @@ def test_nonfinite_interval_cannot_declare_equivalence(
         num_permutations=1,
         bootstrap_distribution=jnp.array([0.0]),
     )
-    with patch("statadic.inference.equivalence.corrected_mixture_test", return_value=base):
+    with patch(
+        "statadic.inference.equivalence.corrected_mixture_test", return_value=base
+    ):
         result = equivalence_test(
             jnp.zeros((1, 1)),
             [jnp.zeros((1, 1))],
@@ -103,7 +105,9 @@ def test_nonfinite_replicate_precludes_verdict_with_finite_interval() -> None:
         num_permutations=1,
         bootstrap_distribution=bootstrap,
     )
-    with patch("statadic.inference.equivalence.corrected_mixture_test", return_value=base):
+    with patch(
+        "statadic.inference.equivalence.corrected_mixture_test", return_value=base
+    ):
         result = equivalence_test(
             jnp.zeros((1, 1)), [jnp.zeros((1, 1))], 1.0, delta_grid=jnp.array([1.0])
         )

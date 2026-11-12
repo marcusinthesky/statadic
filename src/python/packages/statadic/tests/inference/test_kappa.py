@@ -16,6 +16,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy import stats
 from statadic.inference.kappa import (
     boundary_robust_pvalue,
     boundary_robust_pvalue_kernel,
@@ -24,7 +25,6 @@ from statadic.inference.kappa import (
     moment_jacobian_concentration,
     moment_jacobian_concentration_kernel,
 )
-from scipy import stats
 
 from .._budgets import examples
 from .._strategies import float_arrays

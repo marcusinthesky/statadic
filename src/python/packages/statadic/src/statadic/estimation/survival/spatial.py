@@ -28,7 +28,10 @@ from statadic.optimize.integration import (
     IntegrationDesign,
     gaussian_log_survival,
 )
-from statadic.optimize.integration.gaussian import GaussianProposal, gaussian_tilt_proposal
+from statadic.optimize.integration.gaussian import (
+    GaussianProposal,
+    gaussian_tilt_proposal,
+)
 
 _MATRIX_DIMENSIONS = 2
 _DEFAULT_INTEGRATION = GaussianIntegration()

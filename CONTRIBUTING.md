@@ -61,6 +61,9 @@ Edit source, run `just sync`, then `just check`.
 Formatting and synchronization are explicit writes. External links run separately
 through `just links`.
 
+For version tags, PyPI publishing and GitHub releases, see the
+[release guide](infra/release/README.md).
+
 ## Update
 
 Commit local work, then run:

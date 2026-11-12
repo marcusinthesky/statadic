@@ -93,9 +93,15 @@ def test_build_provenance_binds_exact_mapped_test_sources(tmp_path, monkeypatch)
         "devenv.lock": "",
         "src/lean/build/certification.json": "{}",
         "src/latex/refs.bib": "",
-        "src/python/packages/statadic/tests/test_numerical.py": "def test_value(): pass\n",
-        "src/python/packages/statadic/tests/test_scientific.py": "def test_fit(): pass\n",
-        "src/python/packages/statadic/tests/test_unmapped.py": "def test_other(): pass\n",
+        "src/python/packages/statadic/tests/test_numerical.py": (
+            "def test_value(): pass\n"
+        ),
+        "src/python/packages/statadic/tests/test_scientific.py": (
+            "def test_fit(): pass\n"
+        ),
+        "src/python/packages/statadic/tests/test_unmapped.py": (
+            "def test_other(): pass\n"
+        ),
     }
     for relative, content in paths.items():
         path = tmp_path / relative

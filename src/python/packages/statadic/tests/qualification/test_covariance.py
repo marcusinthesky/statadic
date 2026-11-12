@@ -10,11 +10,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import stats
 from statadic.estimation.covariance import (
     ledoit_wolf_sample_kernel,
     sample_covariance_kernel,
 )
-from scipy import stats
 
 from .._validation.calibration import (
     DEFAULT_TRIALS,

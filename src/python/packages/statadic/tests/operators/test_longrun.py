@@ -52,11 +52,11 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from types import ModuleType
 
+    from numpy.typing import NDArray
     from statadic.core.typing import (
         Array,
         PRNGKey,
     )
-    from numpy.typing import NDArray
 
 
 class HacEstimator(Protocol):

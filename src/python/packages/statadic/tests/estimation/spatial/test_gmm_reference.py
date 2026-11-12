@@ -110,9 +110,10 @@ def test_spatial_error_gmm_matches_spreg(
 @pytest.mark.reference
 @examples(8)
 @example(seed=71)
+@example(seed=492111)
 @given(seed=st.integers(0, 2**32 - 1))
 def test_spatial_gmm_jit_preserves_actual_iteration_state(seed: int) -> None:
-    """A numerical update retains the lambda actually used for its beta solve."""
+    """Retain the coefficient-solve state, including unavailable boundary fits."""
     rng = np.random.default_rng(seed)
     n = 30
     w = 0.7 * np.roll(np.eye(n), 1, axis=1) + 0.3 * np.roll(np.eye(n), -1, axis=1)
@@ -127,9 +128,23 @@ def test_spatial_gmm_jit_preserves_actual_iteration_state(seed: int) -> None:
             SpatialProblem(jnp.asarray(x), z, weights, process=SEM(), slx_columns=())
         )
 
-    evaluate_fit = jax.jit(evaluate_fit)(jnp.asarray(y))
-    assert evaluate_fit.valid
-    filtered_x = x - float(evaluate_fit.coefficient_lambda) * (w @ x)
-    filtered_y = y - float(evaluate_fit.coefficient_lambda) * (w @ y)
+    fit = jax.jit(evaluate_fit)(jnp.asarray(y))
+    assert fit.identified
+    assert fit.solver.converged
+    assert fit.iterations == 1
+    if fit.boundary:
+        # A finite sample can put the moment optimum on the support boundary.
+        # The estimator must expose that diagnostic and mask unavailable results.
+        assert not fit.valid
+        assert np.isnan(fit.parameters).all()
+        assert np.isnan(fit.residuals).all()
+        assert np.isnan(fit.innovations).all()
+        assert abs(float(fit.solver.value[0])) == pytest.approx(
+            0.99 * float(weights.limit), abs=2e-7
+        )
+        return
+    assert fit.valid
+    filtered_x = x - float(fit.coefficient_lambda) * (w @ x)
+    filtered_y = y - float(fit.coefficient_lambda) * (w @ y)
     expected = np.linalg.lstsq(filtered_x, filtered_y, rcond=None)[0]
-    np.testing.assert_allclose(evaluate_fit.parameters[:-1], expected, atol=1e-9)
+    np.testing.assert_allclose(fit.parameters[:-1], expected, atol=1e-9)

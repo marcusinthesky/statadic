@@ -34,7 +34,11 @@ if TYPE_CHECKING:
 
     from statadic.api.capabilities import SummarizesLikelihood
     from statadic.api.fit_statistics import FitStatistics
-    from statadic.estimation.likelihood import Dispersion, LikelihoodFit, LikelihoodProblem
+    from statadic.estimation.likelihood import (
+        Dispersion,
+        LikelihoodFit,
+        LikelihoodProblem,
+    )
 
 
 @dataclass(frozen=True)
@@ -512,7 +516,7 @@ def test_fixed_nb2_statistics_match_statsmodels_glm(
     """Fixed-alpha NB2 against ``GLM(NegativeBinomial(alpha))``: k = 2, offset 0.
 
     The peer's ``aic`` counts ``df_model + 1`` coefficients and no alpha, which is
-    statadic's k because the caller fixed alpha. statadic's NB2 row likelihood is below the
+    STATADIC's k because the caller fixed alpha. Its NB2 row likelihood is below the
     exact ``gammaln`` form by about 3e-6 in total (1e-8 relative) at identical
     parameters, a recorded discrepancy of the native row formula, so the
     comparison tolerance is relative 5e-8 rather than tighter. HQIC is

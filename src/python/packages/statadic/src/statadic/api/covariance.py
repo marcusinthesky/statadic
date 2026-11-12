@@ -14,7 +14,11 @@ import jax.numpy as jnp
 from statadic.api.base import Result
 from statadic.api.data import Observations
 from statadic.api.reporting import Metric, Report
-from statadic.estimation.covariance import CovarianceProblem, LedoitWolf, SampleCovariance
+from statadic.estimation.covariance import (
+    CovarianceProblem,
+    LedoitWolf,
+    SampleCovariance,
+)
 from statadic.estimation.covariance.estimators import LedoitWolfKernelResult
 
 if TYPE_CHECKING:

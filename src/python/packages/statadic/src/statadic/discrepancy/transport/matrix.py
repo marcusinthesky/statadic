@@ -10,7 +10,12 @@ from __future__ import annotations
 import jax.numpy as jnp
 
 from statadic.core.domains import EmpiricalDistribution, TransportOrigin
-from statadic.core.matrices import DMat, HilbertianPseudometricLaw, MatrixProvenance, _dmat
+from statadic.core.matrices import (
+    DMat,
+    HilbertianPseudometricLaw,
+    MatrixProvenance,
+    _dmat,
+)
 from statadic.core.typing import Array  # runtime contract
 from statadic.discrepancy.transport.sliced import (
     ProjectionDesign,

@@ -214,7 +214,9 @@ def check_catalogue(repository: Path) -> dict:
                 repository / "src/python/apps/docs/notebooks" / lab["notebook"]
             ).is_file()
             or not (
-                repository / "src/python/packages/statadic/docs/labs" / f"{lab['slug']}.md"
+                repository
+                / "src/python/packages/statadic/docs/labs"
+                / f"{lab['slug']}.md"
             ).is_file()
         ):
             raise ValueError(f"Missing lab notebook or page: {lab['slug']}")
@@ -241,7 +243,8 @@ def check_catalogue(repository: Path) -> dict:
                 raise ValueError(f"Duplicate benchmark identity: {workload}")
             benchmarks.update(f"{workload}/{variant}" for variant in variants)
     benchmark_page = (
-        repository / "src/python/packages/statadic/docs/reference/performance-workloads.md"
+        repository
+        / "src/python/packages/statadic/docs/reference/performance-workloads.md"
     )
     if not benchmark_page.is_file():
         raise ValueError("Missing benchmark page")

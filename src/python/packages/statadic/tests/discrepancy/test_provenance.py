@@ -52,7 +52,10 @@ from statadic.core.matrices import (
     metrize_energy,
 )
 from statadic.core.statistics import DiscrepancyEstimand
-from statadic.discrepancy.mmd.branded import mmd_squared_estimate_matrix, rooted_mmd_matrix
+from statadic.discrepancy.mmd.branded import (
+    mmd_squared_estimate_matrix,
+    rooted_mmd_matrix,
+)
 from statadic.discrepancy.mmd.energy.matrix import (
     energy_distance_matrix,
     energy_functional_matrix,

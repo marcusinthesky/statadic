@@ -4,6 +4,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.linalg import block_diag
 from statadic.estimation.spatial import (
     SAC,
     SAR,
@@ -28,7 +29,6 @@ from statadic_studies.adapters.dependence.spatial_panel_variants import (
 from statadic_studies.definitions.dependence.spatial_panel_variants import (
     PANEL_VARIANT_STUDIES,
 )
-from scipy.linalg import block_diag
 
 
 @pytest.mark.parametrize(

@@ -105,7 +105,9 @@ def run_trial(
 
         return run_sharpe_inference(study, scenario, replicate, seed, draws=draws)
     if study in DISCREPANCY_VARIANT_STUDIES:
-        from statadic_studies.adapters.discrepancy.variants import run_discrepancy_variants
+        from statadic_studies.adapters.discrepancy.variants import (
+            run_discrepancy_variants,
+        )
 
         return run_discrepancy_variants(study, scenario, replicate, seed)
     from statadic_studies.definitions.population import POPULATION_NUMERIC_STUDIES
@@ -159,7 +161,9 @@ def run_trial(
 
         return _panel_impacts(scenario, replicate, seed)
     if study == "spatial.ols-diagnostics":
-        from statadic_studies.adapters.dependence.spatial_diagnostics import _diagnostics
+        from statadic_studies.adapters.dependence.spatial_diagnostics import (
+            _diagnostics,
+        )
 
         return _diagnostics(scenario, replicate, seed)
     if study == "spatial.ak-diagnostic":
@@ -167,11 +171,15 @@ def run_trial(
 
         return _ak(scenario, replicate, seed)
     if study == "spatial.common-factor":
-        from statadic_studies.adapters.dependence.spatial_diagnostics import _restrictions
+        from statadic_studies.adapters.dependence.spatial_diagnostics import (
+            _restrictions,
+        )
 
         return _restrictions(study, scenario, replicate, seed)
     if study == "spatial.nested-likelihood-ratio":
-        from statadic_studies.adapters.dependence.spatial_diagnostics import _restrictions
+        from statadic_studies.adapters.dependence.spatial_diagnostics import (
+            _restrictions,
+        )
 
         return _restrictions(study, scenario, replicate, seed)
     if study == "kappa.supplied-delta":
@@ -223,7 +231,9 @@ def run_trial(
 
         return slx_trial(scenario, replicate, seed)
     if study == "survival.spatial-seasonal-contrast":
-        from statadic_studies.adapters.dependence.seasonal_survival import seasonal_trial
+        from statadic_studies.adapters.dependence.seasonal_survival import (
+            seasonal_trial,
+        )
 
         return seasonal_trial(scenario, replicate, seed, draws)
     raise ValueError(f"No adapter for study {study}")

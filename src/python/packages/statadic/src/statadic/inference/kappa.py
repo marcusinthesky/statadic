@@ -18,7 +18,12 @@ import jax.numpy as jnp
 from jax.scipy.stats import norm
 from jaxtyping import Bool, Float  # noqa: TC002
 
-from statadic.core.typing import Array, ArrayLike, Static, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    Static,
+    static_jaxtyping,
+)
 from statadic.estimation.moments import _validate_moment_panel
 from statadic.inference._common import (
     _MATRIX_NDIM,

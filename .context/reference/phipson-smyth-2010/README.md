@@ -24,6 +24,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Prove sampled-permutation add-one validity](../../plan/release-guarantees/tasks/proofs/tasks/sampled-permutation/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

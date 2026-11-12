@@ -1,5 +1,5 @@
 # jaxtyping shape strings are runtime contracts.
-"""Public-surface guard for the dissolved ``statadic.kernels`` package (t33, t46.6, t46.10).
+"""Public-surface guard for the dissolved ``statadic.kernels`` package.
 
 ``statadic.kernels`` was a single module, then a package, then a t46.6 deprecation
 shim. **t46.10 deleted it.** Nothing named "kernel" in it was ever a Mercer/RBF

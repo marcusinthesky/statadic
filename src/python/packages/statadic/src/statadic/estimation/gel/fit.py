@@ -17,7 +17,12 @@ import jax.numpy as jnp
 import optimistix as ox
 from jaxtyping import Float  # noqa: TC002
 
-from statadic.core.typing import Array, ArrayLike, as_index, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    as_index,
+    static_jaxtyping,
+)
 from statadic.estimation.gel._dual import (
     _GEL_RCOND,
     GelCriterion,

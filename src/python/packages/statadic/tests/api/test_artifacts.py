@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from hypothesis import given
+from matplotlib.texmanager import TexManager
+from matplotlib.text import Text
 from statadic.api.artifacts import (
     ArtifactError,
     load_analysis,
@@ -47,8 +49,6 @@ from statadic.estimation.linear import (
 )
 from statadic.geometry.ground.similarities import LINEAR_KERNEL, RBFKernel
 from statadic.sample.packed import PackedClouds
-from matplotlib.texmanager import TexManager
-from matplotlib.text import Text
 
 from .._budgets import examples
 from .._strategies import float_arrays

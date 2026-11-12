@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
+from scipy import stats
 from statadic.estimation.linear import (
     LeastSquares,
     LinearProblem,
@@ -19,7 +20,6 @@ from statadic.inference.spatial import (
 )
 from statadic.inference.spatial.diagnostics import spatial_diagnostics
 from statadic.operators.spatial import prepare_spatial_weights
-from scipy import stats
 
 if TYPE_CHECKING:
     from collections.abc import Callable

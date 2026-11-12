@@ -14,6 +14,7 @@ from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
 from jax import random
+from scipy import stats
 from statadic.core.results import TestResult
 from statadic.discrepancy.mmd.energy import (
     UNIT_EXPONENT,
@@ -33,7 +34,6 @@ from statadic.inference.resampling.results import (
     HostAdapterError,
     to_host_test_result,
 )
-from scipy import stats
 
 from ..._budgets import examples
 from ..._permutation import host_permutation_test

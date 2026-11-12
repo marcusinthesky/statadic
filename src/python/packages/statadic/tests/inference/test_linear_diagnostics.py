@@ -8,6 +8,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import stats
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.inference.linear_diagnostics import (
     breusch_godfrey,
@@ -19,7 +20,6 @@ from statadic.inference.linear_diagnostics import (
     residual_moments,
     white_test,
 )
-from scipy import stats
 
 if TYPE_CHECKING:
     from statadic.estimation.linear import LinearFit

@@ -21,7 +21,9 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 if any(name == "statadic" or name.startswith("statadic.") for name in sys.modules):
-    message = "STATADIC was imported before its annotation hook; run its suite separately."
+    message = (
+        "STATADIC was imported before its annotation hook; run its suite separately."
+    )
     raise RuntimeError(message)
 
 install_import_hook("statadic", "beartype.beartype")
@@ -41,7 +43,9 @@ if "JAX_ENABLE_X64" not in os.environ:
 # Reuse compiled XLA executables across runs and worktrees; tracing still runs.
 if "JAX_COMPILATION_CACHE_DIR" not in os.environ:
     _cache_home = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache")
-    jax_config.update("jax_compilation_cache_dir", str(_cache_home / "statadic/jax-tests"))
+    jax_config.update(
+        "jax_compilation_cache_dir", str(_cache_home / "statadic/jax-tests")
+    )
     jax_config.update("jax_persistent_cache_min_compile_time_secs", 0.0)
 # JAX compilation makes Hypothesis wall-clock deadlines measure cache state.
 register_profiles()

@@ -33,7 +33,9 @@ import statadic.api
 assert not {"jax", "numpy", "scipy", "polars"} & sys.modules.keys()
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy import energy_distance, empirical_mean_ground_distances
+from statadic.discrepancy.mmd.energy import (
+    energy_distance, empirical_mean_ground_distances,
+)
 from statadic.geometry.ground.metrics import EUCLIDEAN
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.inference.linear_covariance import classical_covariance
@@ -173,11 +175,12 @@ with tempfile.TemporaryDirectory() as folder:
     assert restored.capabilities == ("predict",)
     manifest = Path(folder) / "manifest.json"
     original = manifest.read_text()
-    assert json.loads(original)["schema_version"] == 6
+    assert json.loads(original)["schema_version"] == 7
     for invalid in (
         "{",
         json.dumps({**json.loads(original), "schema_version": 2}),
         json.dumps({**json.loads(original), "schema_version": 5}),
+        json.dumps({**json.loads(original), "schema_version": 6}),
     ):
         manifest.write_text(invalid)
         try:

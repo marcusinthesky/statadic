@@ -223,7 +223,8 @@ def run(output: Path, *, smoke: bool, profile: bool = False) -> dict:
                     )
                     if Path(imported_source).resolve() != expected_source.resolve():
                         raise ValueError(
-                            "Measured STATADIC import does not match recorded source tree"
+                            "Measured STATADIC import does not match "
+                            "recorded source tree"
                         )
                     manifest["memory_records" if memory else "records"].append(filename)
                     write_json(output / "manifest.json", manifest)
@@ -265,7 +266,9 @@ def run(output: Path, *, smoke: bool, profile: bool = False) -> dict:
                                         stderr=subprocess.STDOUT,
                                         check=True,
                                     )
-                            cold_source = load(output / cold_filename)["statadic_source"]
+                            cold_source = load(output / cold_filename)[
+                                "statadic_source"
+                            ]
                             if Path(cold_source).resolve() != expected_source.resolve():
                                 raise ValueError(
                                     "Cold worker imported a different STATADIC source"

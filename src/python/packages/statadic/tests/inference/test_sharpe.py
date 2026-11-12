@@ -13,7 +13,12 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
-from statadic.estimation.sharpe import sample_skew_kurtosis, sharpe_ratio, sharpe_ratio_axis
+from scipy.stats import norm
+from statadic.estimation.sharpe import (
+    sample_skew_kurtosis,
+    sharpe_ratio,
+    sharpe_ratio_axis,
+)
 from statadic.inference.resampling.block_length import stationary_bootstrap_ci
 from statadic.inference.sharpe import (
     DeflatedSharpeResult,
@@ -33,7 +38,6 @@ from statadic.inference.sharpe.multiple import (
     _multiple_sharpe_kernel,
     _paired_sharpe_diffs,
 )
-from scipy.stats import norm
 
 from .._budgets import examples
 

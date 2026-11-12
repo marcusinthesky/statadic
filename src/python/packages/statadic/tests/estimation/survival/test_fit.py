@@ -10,20 +10,25 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy.optimize import minimize
+from scipy.stats import fisk, lognorm, weibull_min
 from statadic.estimation.survival import (
     ExistenceStatus,
     SurvivalML,
     SurvivalProblem,
 )
-from statadic.model.survival import LogLogisticAFT, LogNormalAFT, WeibullAFT, survival_mean
-from scipy.optimize import minimize
-from scipy.stats import fisk, lognorm, weibull_min
+from statadic.model.survival import (
+    LogLogisticAFT,
+    LogNormalAFT,
+    WeibullAFT,
+    survival_mean,
+)
 
 from ..._budgets import examples
 
 if TYPE_CHECKING:
-    from statadic.estimation.survival import SurvivalFit
     from scipy.stats._distn_infrastructure import rv_continuous_frozen
+    from statadic.estimation.survival import SurvivalFit
 
 
 @pytest.mark.component

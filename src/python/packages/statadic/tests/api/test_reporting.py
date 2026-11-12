@@ -17,6 +17,7 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from matplotlib.collections import LineCollection
 from statadic.api.reporting import (
     _METRIC_LABELS,
     FIT_STATISTIC_NAMES,
@@ -33,7 +34,6 @@ from statadic.api.reporting import (
     freeze_metadata,
     metadata_to_json,
 )
-from matplotlib.collections import LineCollection
 
 from .._budgets import examples
 from .._typing import ill_typed

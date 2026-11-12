@@ -1,8 +1,7 @@
 name: Release preflight
 on:
   workflow_dispatch:
-  push:
-    tags: ['v*']
+  workflow_call:
 permissions:
   contents: read
 concurrency:
@@ -49,6 +48,18 @@ jobs:
           uv run --project src/python --offline --frozen --package statadic-docs
           python src/python/apps/docs/scripts/release.py
           --verify-archive build/release-preflight.tar --allow-preflight
+      # Publish the exact files exercised by the installed-distribution lanes.
+      # STATADIC ships a platform-independent wheel; retain one canonical build.
+      - name: Retain validated distributions
+        if: runner.arch == 'X64'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: statadic-distributions
+          path: |
+            build/release-preflight/artifacts/*.whl
+            build/release-preflight/artifacts/*.tar.gz
+          if-no-files-found: error
+          retention-days: 30
       - name: Final capacity
         if: always()
         run: bash infra/nix/ci-capacity.sh diagnose final

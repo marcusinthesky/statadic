@@ -38,7 +38,10 @@ from statadic.estimation.spatial.likelihood import (  # noqa: TC001 -- runtime m
 from statadic.operators.spatial import (
     SpatialWeights,  # noqa: TC001
 )
-from statadic.operators.spatial.moments import iv_response_map, spatial_moment_variability
+from statadic.operators.spatial.moments import (
+    iv_response_map,
+    spatial_moment_variability,
+)
 from statadic.optimize.backends import bounded_scalar_minimise
 
 __all__ = ["SpatialGMM", "SpatialGMMFit"]

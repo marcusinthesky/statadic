@@ -6,10 +6,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.stats import wasserstein_distance
 from statadic.discrepancy.mmd.scalar import mmd_squared
 from statadic.discrepancy.transport.univariate import wasserstein_1d
 from statadic.sample.packed import PackedClouds
-from scipy.stats import wasserstein_distance
 
 
 @pytest.mark.integration

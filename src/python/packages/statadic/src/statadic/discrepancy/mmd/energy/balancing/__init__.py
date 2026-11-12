@@ -13,8 +13,12 @@ objective differs from the exact barycentre objective in
 
 from __future__ import annotations
 
-from statadic.discrepancy.mmd.energy.balancing.effective_size import inverse_variance_m_eff
-from statadic.discrepancy.mmd.energy.balancing.mixture import energy_distance_kernel_mixture
+from statadic.discrepancy.mmd.energy.balancing.effective_size import (
+    inverse_variance_m_eff,
+)
+from statadic.discrepancy.mmd.energy.balancing.mixture import (
+    energy_distance_kernel_mixture,
+)
 from statadic.discrepancy.mmd.energy.balancing.statistics import (
     energy_test_kernel,
     energy_test_kernel_pairwise_max,

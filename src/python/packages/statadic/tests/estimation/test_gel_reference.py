@@ -24,7 +24,7 @@ def test_gel_multiplier_implied_probabilities_match_independent_primal_optimum(
     criterion: Literal["cue", "el", "et"],
     optional_reference: Callable[[str], ModuleType],
 ) -> None:
-    """Solve over probabilities with independent constraints instead of STATADIC duals."""
+    """Solve over probabilities with independent constraints instead of duals."""
     optimize = optional_reference("scipy.optimize")
     moments = np.asarray(
         [

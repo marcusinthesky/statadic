@@ -9,7 +9,10 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.estimation.panel import FamaMacBethFit, PanelProblem, Within
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.operators.panel import prepare_panel_index
 
 _PARZEN_BREAKPOINT = 0.5

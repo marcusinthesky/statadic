@@ -4,8 +4,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.testing.qualification import TrialOutcome, summarize_trials, trial_key
 from scipy.stats import beta
+from statadic.testing.qualification import TrialOutcome, summarize_trials, trial_key
 
 
 @pytest.mark.unit

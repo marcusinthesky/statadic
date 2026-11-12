@@ -152,7 +152,8 @@ def adapt_spatial_covariance_source(source: str) -> tuple[str, list[int]]:
         "from __future__ import annotations\nfrom dataclasses import dataclass\n"
         "from typing import cast\nimport jax\nimport numpy as np\n"
         "from statadic.api.estimand import Covariance, Estimand\n"
-        "from statadic.estimation.covariance import LedoitWolf\n_MATRIX_DIMENSIONS = 2\n"
+        "from statadic.estimation.covariance import LedoitWolf\n"
+        "_MATRIX_DIMENSIONS = 2\n"
     )
     module.body.extend(selected)
     migration = _EstimateMigration(covariance=True)
@@ -234,7 +235,8 @@ def run_acceptance(
         retained.extractall(output / "consumer-source", filter="data")
     worker = Path(__file__).with_name("consumer_fixtures.py")
     verifier = (
-        Path(__file__).resolve().parents[3] / "studies/src/statadic_studies/installation.py"
+        Path(__file__).resolve().parents[3]
+        / "studies/src/statadic_studies/installation.py"
     )
     shutil.copyfile(worker, output / "consumer_fixtures.py")
     shutil.copyfile(verifier, output / "wheel_installation.py")

@@ -14,10 +14,10 @@ from __future__ import annotations
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.optimize import minimize
 from statadic.association.dispersion import dispersion_f_ratio
 from statadic.geometry.embedding import pcoa_kernel
 from statadic.geometry.median import spatial_medians, weiszfeld_medians
-from scipy.optimize import minimize
 
 from .._clouds import clustered
 

@@ -26,6 +26,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Report fit statistics in fit and inference reports](../../plan/api-cohesion/tasks/report-review/tasks/table-content/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

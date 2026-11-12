@@ -171,7 +171,8 @@ def permutation_result(
 def _ols_example() -> dict:
     """Load the single teaching recipe, retaining its function identities only."""
     path = (
-        Path(__file__).resolve().parents[4] / "packages/statadic/examples/ols_analysis.py"
+        Path(__file__).resolve().parents[4]
+        / "packages/statadic/examples/ols_analysis.py"
     )
     return run_path(str(path))
 

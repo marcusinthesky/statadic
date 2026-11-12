@@ -13,11 +13,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import optimize, stats
 from statadic.estimation.spatial import ML, SAR, SpatialProblem
 from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
 from statadic.inference.spatial import spatial_covariance
 from statadic.operators.spatial import prepare_spatial_weights
-from scipy import optimize, stats
 
 from .._validation.calibration import trial_rng
 

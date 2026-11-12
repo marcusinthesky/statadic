@@ -6,7 +6,8 @@ replicate — ``distances[perm][:, perm]`` in
 :func:`statadic.inference.resampling.permutation.energy_permutation_test_result` and
 :func:`statadic.inference.mixture._split_runner`'s null driver, and
 ``distances[idx][:, idx]`` in
-:func:`statadic.inference.resampling.bootstrap.bootstrap_mixture_energy_estimate`. Each then
+:func:`statadic.inference.resampling.bootstrap.bootstrap_mixture_energy_estimate`.
+Each then
 reduces
 that gathered ``(N, N)`` view to group blocks ``B = Mᵀ D M``.
 

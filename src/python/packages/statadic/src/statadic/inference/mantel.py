@@ -23,7 +23,12 @@ from statadic.association.mantel import (
     mantel_correlation_kernel,
 )
 from statadic.core.random import cell_key
-from statadic.core.typing import Array, ArrayLike, Static, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    Static,
+    static_jaxtyping,
+)
 from statadic.inference.resampling.results import ConfidenceInterval
 
 #: Host-facing aliases retained as *names* so the ~10 signatures below read the
@@ -58,7 +63,7 @@ class PairedMantelBootstrapResult(NamedTuple):
 
 
 def mantel_permutation_key(seed: int) -> Array:
-    """Key of the native relabeling stream of :class:`statadic.api.association.Mantel`."""
+    """Key of the relabeling stream of :class:`statadic.api.association.Mantel`."""
     # The stream name predates the retired eager door; kept so draws are unchanged.
     return cell_key(seed, "association", "mantel_test")
 

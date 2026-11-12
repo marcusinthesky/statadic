@@ -5,6 +5,7 @@ from itertools import permutations
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.stats import pearsonr, spearmanr
 from statadic.api.association import Mantel, MantelInput, MatrixExchangeability
 from statadic.api.comparison import PermutationPlan
 from statadic.api.data import Observations
@@ -25,7 +26,6 @@ from statadic_studies.adapters.groups import (
     run_group_procedures,
 )
 from statadic_studies.definitions.groups import GROUP_PROCEDURE_STUDIES
-from scipy.stats import pearsonr, spearmanr
 
 
 def _disco_ratio(distances, groups):

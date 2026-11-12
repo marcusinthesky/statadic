@@ -18,7 +18,12 @@ from statadic.api.hypotheses import (
     OveridentifyingRestrictions,
     TestOutcome,
 )
-from statadic.api.moments import GELCalibration, GELInferenceResult, GMMSandwich, MomentData
+from statadic.api.moments import (
+    GELCalibration,
+    GELInferenceResult,
+    GMMSandwich,
+    MomentData,
+)
 from statadic.core.equations import MeanCenteredLongRun, PlainLongRun
 from statadic.estimation.gel import FixedGEL
 from statadic.estimation.gmm import IteratedGMM

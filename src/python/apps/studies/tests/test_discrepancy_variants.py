@@ -88,7 +88,9 @@ from statadic_studies.adapters.discrepancy.variants import (
     measures_for,
     _kernels,
 )
-from statadic_studies.definitions.discrepancy.variants import DISCREPANCY_VARIANT_STUDIES
+from statadic_studies.definitions.discrepancy.variants import (
+    DISCREPANCY_VARIANT_STUDIES,
+)
 from statadic.discrepancy.mmd.scalar import mmd
 from statadic.sample.packed import PackedClouds
 from statadic.discrepancy.mmd.contracts import UnbiasedMmdDistanceError

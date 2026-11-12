@@ -6,6 +6,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import stats
 from statadic.core.equations import (
     EquationDescriptor,  # noqa: TC002  # evaluated return annotation
     ParameterCovariance,  # noqa: TC002  # evaluated return annotation
@@ -17,7 +18,6 @@ from statadic.core.equations import (
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.inference.linear_diagnostics import breusch_godfrey, ols_influence
 from statadic.inference.parameters import normal_critical_value
-from scipy import stats
 
 if TYPE_CHECKING:
     from statadic.core.equations import MeanEquationJacobian, VariabilityMatrix

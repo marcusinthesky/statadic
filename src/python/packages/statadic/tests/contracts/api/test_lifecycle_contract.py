@@ -7,8 +7,8 @@ import inspect
 import pkgutil
 from typing import TYPE_CHECKING, Final
 
-import statadic.api
 import pytest
+import statadic.api
 from statadic.api import capabilities
 from statadic.api.base import Model
 

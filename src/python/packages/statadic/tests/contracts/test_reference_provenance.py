@@ -3,8 +3,8 @@
 import runpy
 from pathlib import Path
 
-import statadic
 import pytest
+import statadic
 
 pytestmark = [pytest.mark.component, pytest.mark.contract, pytest.mark.regression]
 

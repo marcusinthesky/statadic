@@ -8,6 +8,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.spatial.distance import cdist
+from scipy.special import softmax
 from statadic.estimation.spatial.graph_likelihood import (
     _graph_mean,
     estimate_graph_ml,
@@ -15,8 +17,6 @@ from statadic.estimation.spatial.graph_likelihood import (
     graph_profile,
 )
 from statadic.operators.spatial.distance import rbf_weights
-from scipy.spatial.distance import cdist
-from scipy.special import softmax
 
 if TYPE_CHECKING:
     from collections.abc import Callable

@@ -48,6 +48,7 @@ from typing import TYPE_CHECKING, Literal
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy import optimize
 from statadic.api.data import Observations, PanelLayout
 from statadic.api.design import Intercept, Linear
 from statadic.api.regression import Regression
@@ -63,7 +64,6 @@ from statadic.api.spatial.panel import SpatialPanelResult
 from statadic.estimation.spatial import ML, PanelML, SpatialFit
 from statadic.estimation.spatial.panel import spatial_panel_profile
 from statadic.operators.spatial import prepare_spatial_weights
-from scipy import optimize
 
 if TYPE_CHECKING:
     from collections.abc import Callable

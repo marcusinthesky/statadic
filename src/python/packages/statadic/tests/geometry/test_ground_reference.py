@@ -10,6 +10,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy.spatial import distance
 from statadic.geometry.ground.config import resolve_ground_distance
 from statadic.geometry.ground.metrics import (
     EUCLIDEAN,
@@ -24,7 +25,6 @@ from statadic.geometry.ground.similarities import (
     linear_gram,
     rbf_gram,
 )
-from scipy.spatial import distance
 
 from .._budgets import examples
 from .._strategies import float_arrays, nonzero_rows

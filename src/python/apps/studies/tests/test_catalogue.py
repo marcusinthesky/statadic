@@ -201,7 +201,10 @@ def test_missing_lab_and_benchmark_anchor_are_rejected(tmp_path):
     with pytest.raises(ValueError, match="Missing lab notebook or page"):
         check_catalogue(tmp_path)
     labs.write_text(json.dumps({"labs": []}))
-    page = tmp_path / "src/python/packages/statadic/docs/reference/performance-workloads.md"
+    page = (
+        tmp_path
+        / "src/python/packages/statadic/docs/reference/performance-workloads.md"
+    )
     page.write_text("# Missing anchor")
     with pytest.raises(ValueError, match="Missing benchmark anchor"):
         check_catalogue(tmp_path)

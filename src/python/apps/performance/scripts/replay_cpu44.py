@@ -69,7 +69,9 @@ def run() -> None:
     ).strip()
     with (output / "source.tar").open("wb") as file:
         subprocess.run(
-            [*git, "archive", sha, "src/python/packages/statadic"], stdout=file, check=True
+            [*git, "archive", sha, "src/python/packages/statadic"],
+            stdout=file,
+            check=True,
         )
     with tarfile.open(output / "source.tar") as tar:
         tar.extractall(output / "source", filter="data")

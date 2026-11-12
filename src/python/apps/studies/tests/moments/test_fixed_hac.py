@@ -3,11 +3,11 @@
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.stats import chi2
 from statadic.inference.gmm import gmm_wald
 from statadic_studies.adapters import run_trial
 from statadic_studies.adapters.moments import stationary_moments
 from statadic_studies.definitions import STUDIES
-from scipy.stats import chi2
 
 
 def test_native_hac_wald_matches_independent_uncentered_bartlett_sums():

@@ -12,6 +12,7 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
+from scipy.stats import norm
 from statadic.core.equations import MeanCenteredLongRun
 from statadic.estimation.gel import FixedGEL
 from statadic.estimation.glm import (
@@ -29,7 +30,6 @@ from statadic.inference.gmm import hansen_j_from_fit
 from statadic.inference.gmm.covariance import gmm_covariance
 from statadic.inference.survival import observed_information
 from statadic.model.survival import LogNormalAFT, WeibullAFT
-from scipy.stats import norm
 
 from statadic_studies.adapters._random import rng
 

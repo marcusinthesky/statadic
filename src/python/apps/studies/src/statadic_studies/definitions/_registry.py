@@ -14,16 +14,22 @@ from statadic_studies.definitions.core import STUDIES
 from statadic_studies.definitions.covariance_tuning import COVARIANCE_TUNING_STUDIES
 from statadic_studies.definitions.dependence.composition import SEASONAL, SLX
 from statadic_studies.definitions.dependence.core import DEPENDENCE_STUDIES
-from statadic_studies.definitions.dependence.covariance import COVARIANCE_DEPENDENCE_STUDIES
+from statadic_studies.definitions.dependence.covariance import (
+    COVARIANCE_DEPENDENCE_STUDIES,
+)
 from statadic_studies.definitions.dependence.graph_selection import GRAPH_SELECTION
 from statadic_studies.definitions.dependence.spatial_diagnostics import (
     SPATIAL_DIAGNOSTICS_STUDIES,
 )
-from statadic_studies.definitions.dependence.spatial_durbin import SPATIAL_DURBIN_STUDIES
+from statadic_studies.definitions.dependence.spatial_durbin import (
+    SPATIAL_DURBIN_STUDIES,
+)
 from statadic_studies.definitions.dependence.spatial_extensions import (
     SPATIAL_EXTENSION_STUDIES,
 )
-from statadic_studies.definitions.dependence.spatial_impacts import SPATIAL_IMPACTS_STUDIES
+from statadic_studies.definitions.dependence.spatial_impacts import (
+    SPATIAL_IMPACTS_STUDIES,
+)
 from statadic_studies.definitions.dependence.spatial_panel import SPATIAL_PANEL_STUDIES
 from statadic_studies.definitions.dependence.spatial_panel_variants import (
     PANEL_VARIANT_STUDIES,
@@ -40,7 +46,9 @@ from statadic_studies.definitions.discrepancy.fixed_mixture import FIXED_MIXTURE
 from statadic_studies.definitions.discrepancy.mixture_bootstrap import (
     MIXTURE_BOOTSTRAP_STUDIES,
 )
-from statadic_studies.definitions.discrepancy.variants import DISCREPANCY_VARIANT_STUDIES
+from statadic_studies.definitions.discrepancy.variants import (
+    DISCREPANCY_VARIANT_STUDIES,
+)
 from statadic_studies.definitions.estimators import ESTIMATOR_STUDIES
 from statadic_studies.definitions.extended import EXTENDED_STUDIES
 from statadic_studies.definitions.groups import (

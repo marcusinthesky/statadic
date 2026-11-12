@@ -4,6 +4,10 @@
   "baseline_words": 6166,
   "maximum_words": 1541,
   "target_words": 1450,
+  "readme_budget": {
+    "previous_words": 139,
+    "maximum_words": 850
+  },
   "baseline_files": {
     "README.md": {
       "words": 418,

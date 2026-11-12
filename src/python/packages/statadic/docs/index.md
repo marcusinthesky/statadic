@@ -40,4 +40,5 @@ How-to <guides/index>
 Concepts <concepts/index>
 Reference <reference/index>
 Evidence <validation/index>
+Blog <blog/index>
 :::

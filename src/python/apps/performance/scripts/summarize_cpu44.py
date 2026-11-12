@@ -245,11 +245,14 @@ def compare_case(
     ):
         for metric, key in zip(METRICS, ("first", "warm", "peak"), strict=True):
             summary[f"candidate_over_{target}_{key}"] = (
-                summary[f"candidate_statadic_{metric}"] / summary[f"{role}_{side}_{metric}"]
+                summary[f"candidate_statadic_{metric}"]
+                / summary[f"{role}_{side}_{metric}"]
             )
         ratios = [
             a / b
-            for a, b in zip(warm["candidate"]["statadic"], warm[role][side], strict=True)
+            for a, b in zip(
+                warm["candidate"]["statadic"], warm[role][side], strict=True
+            )
         ]
         summary[f"warm_vs_{target}"] = order(ratios)
     for key in ("statadic_peer_max_abs_error", "candidate_parent_max_abs_error"):

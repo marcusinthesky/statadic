@@ -463,7 +463,8 @@ ProcedureOriginT = TypeVar(  # noqa: PLC0105
 # below can carry one token each. A carrier holds at most two phantom
 # parameters — its value type and a descriptor — and a new axis is added inside
 # a descriptor rather than onto the carrier. Same rule as
-# `statadic.core.matrices.MatrixContract` and `statadic.core.transforms.TransformContract`;
+# `statadic.core.matrices.MatrixContract` and
+# `statadic.core.transforms.TransformContract`;
 # recorded in `AGENTS.md` and exercised by the public typing and contract tests.
 # Each descriptor
 # gets a non-generic root so the carrier parameter has something to bind to.

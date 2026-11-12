@@ -4,7 +4,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.likelihood import EstimatedDispersion, GammaMLE, LikelihoodProblem
+from statadic.estimation.likelihood import (
+    EstimatedDispersion,
+    GammaMLE,
+    LikelihoodProblem,
+)
 from statadic.inference.likelihood import likelihood_covariance
 
 

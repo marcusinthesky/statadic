@@ -3,6 +3,7 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
+from scipy.stats import multivariate_normal
 from statadic.estimation.survival import (
     SpatialSurvivalProblem,
     prepare_spatial_survival_period,
@@ -14,7 +15,6 @@ from statadic_studies.adapters.dependence.spatial_survival import (
     run_spatial_survival_pilot,
     spatial_design,
 )
-from scipy.stats import multivariate_normal
 
 
 def test_uncensored_joint_loglikelihood_matches_independent_normal_density():

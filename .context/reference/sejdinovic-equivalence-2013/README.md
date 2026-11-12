@@ -45,6 +45,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Port Euclidean negative type and energy nonnegativity](../../plan/release-guarantees/tasks/proofs/tasks/negative-type/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

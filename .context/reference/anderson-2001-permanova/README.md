@@ -30,6 +30,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Declare assignment units and exchangeability blocks](../../plan/api-ergonomics/tasks/composition-waves/tasks/exchangeability/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

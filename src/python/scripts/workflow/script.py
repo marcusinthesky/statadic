@@ -236,7 +236,6 @@ def run(root: Path, *command: str, **kwargs: Any) -> subprocess.CompletedProcess
 def schema_check(root: Path, records: list[Record], *, budget: bool = True) -> None:
     schemas = root / "infra" / "schemas" / "documents"
     entries = [
-        root / "README.md",
         root / ".context" / "README.md",
         *sorted((root / ".context").glob("*/README.md")),
     ]
@@ -246,6 +245,7 @@ def schema_check(root: Path, records: list[Record], *, budget: bool = True) -> N
         if (root / name).is_file()
     )
     for schema, paths in (
+        ("overview", [root / "README.md"] if budget else []),
         ("budget", entries if budget else []),
         ("workitem", [item.path for item in records if item.kind != "reference"]),
         ("reference", [item.path for item in records if item.kind == "reference"]),

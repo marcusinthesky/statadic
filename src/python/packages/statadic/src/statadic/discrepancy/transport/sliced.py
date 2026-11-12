@@ -48,7 +48,10 @@ from statadic.core.axioms import (  # runtime annotations  # noqa: TC001
 )
 from statadic.core.transforms import typed_vmap
 from statadic.core.typing import Array, static_jaxtyping  # noqa: TC001
-from statadic.discrepancy.transport.univariate import wasserstein_1d, wasserstein_1d_power
+from statadic.discrepancy.transport.univariate import (
+    wasserstein_1d,
+    wasserstein_1d_power,
+)
 from statadic.sample.packed import PackedClouds
 
 if TYPE_CHECKING:

@@ -11,7 +11,10 @@ from jax import jit
 from jaxtyping import Float  # noqa: TC002
 
 from statadic.core.typing import Array, static_jaxtyping  # noqa: TC001
-from statadic.discrepancy.mmd.contracts import _require_u_sample_size, _require_v_distance
+from statadic.discrepancy.mmd.contracts import (
+    _require_u_sample_size,
+    _require_v_distance,
+)
 from statadic.geometry.ground.similarities import (
     LINEAR_KERNEL,
     SimilarityStrategy,

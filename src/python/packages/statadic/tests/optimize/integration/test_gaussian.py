@@ -8,6 +8,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.integrate import quad
+from scipy.optimize import minimize_scalar
+from scipy.special import log_ndtr, ndtri_exp
+from scipy.stats import norm
 from statadic.optimize.integration import (
     GaussianIntegration,
     IntegrationDesign,
@@ -18,10 +22,6 @@ from statadic.optimize.integration.gaussian import (
     _keyed_points,
     gaussian_tilt_proposal,
 )
-from scipy.integrate import quad
-from scipy.optimize import minimize_scalar
-from scipy.special import log_ndtr, ndtri_exp
-from scipy.stats import norm
 
 
 def _boolean_leaf(_: object) -> bool:

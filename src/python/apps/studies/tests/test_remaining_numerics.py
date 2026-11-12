@@ -6,7 +6,9 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.discrepancy.mmd.energy.balancing.mixture import energy_distance_kernel_mixture
+from statadic.discrepancy.mmd.energy.balancing.mixture import (
+    energy_distance_kernel_mixture,
+)
 from statadic.estimation.sharpe import sample_skew_kurtosis
 from statadic.inference.wolak import chi_bar_squared_weights_mc_kernel
 from statadic.operators.longrun import hall_centered_hac, newey_west

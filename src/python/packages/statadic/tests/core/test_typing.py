@@ -182,7 +182,9 @@ from statadic.discrepancy.mmd import (
     rbf_kernel,
 )
 from statadic.core.domains import ConstructionOrigin, ObjectDomain
-from statadic.core.matrices import MatrixProvenance, DMat, SquaredDistanceNegativeTypeLaw
+from statadic.core.matrices import (
+    MatrixProvenance, DMat, SquaredDistanceNegativeTypeLaw,
+)
 from statadic.geometry.ground.metrics import ANGULAR
 from statadic.geometry.ground.similarities import RBFKernel
 from statadic.sample.packed import pack

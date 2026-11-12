@@ -21,7 +21,10 @@ from statadic.estimation.panel import (
     RandomEffects,
     Within,
 )
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
 from statadic.operators.panel import prepare_panel_index
 

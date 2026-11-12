@@ -10,16 +10,19 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy import stats
 from statadic.api.panel import _predict_panel
 from statadic.estimation.panel import (
     FamaMacBeth,
     PanelProblem,
     RandomEffects,
 )
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
 from statadic.operators.panel import prepare_panel_index
-from scipy import stats
 
 from .._budgets import examples
 

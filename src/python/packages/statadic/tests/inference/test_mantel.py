@@ -21,6 +21,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy import stats
 from statadic.api.association import (
     Mantel,
     MantelInput,
@@ -38,7 +39,6 @@ from statadic.inference.mantel import (
     paired_mantel_bootstrap,
 )
 from statadic.inference.resampling.permutation import permutation_test_kernel
-from scipy import stats
 
 from .._budgets import examples
 from .._strategies import float_arrays

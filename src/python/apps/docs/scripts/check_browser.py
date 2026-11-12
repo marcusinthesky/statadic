@@ -26,6 +26,7 @@ NAVIGATION = (
     ("Concepts", "concepts/index.html"),
     ("Reference", "reference/index.html"),
     ("Evidence", "validation/index.html"),
+    ("Blog", "blog/index.html"),
 )
 PAGES = (
     *(path for _, path in NAVIGATION),
@@ -196,7 +197,9 @@ async def inspect_page(page, width, target):
     assert await logo.count() == 1 and await logo.is_visible(), target
     assert not await page.locator(".sy-head-brand img.dark-logo").is_visible(), target
     assert await page.locator(".sy-head-brand strong").is_visible(), target
-    assert await page.locator(".sy-head-brand strong").inner_text() == "STATADIC", target
+    assert await page.locator(".sy-head-brand strong").inner_text() == "STATADIC", (
+        target
+    )
     brand = await logo.evaluate(
         """async image => {
           await image.decode();

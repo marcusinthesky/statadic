@@ -195,7 +195,10 @@ def _prepare_geometric(side, inputs):
         raise ValueError(f"Unknown benchmark side: {side}")
     import jax
     import jax.numpy as jnp
-    from statadic.association.geometric import centered_response_gram, geometric_projection
+    from statadic.association.geometric import (
+        centered_response_gram,
+        geometric_projection,
+    )
     from statadic.inference.calibration import add_one_p_kernel
     from statadic.inference.geometric import freedman_lane_null
 

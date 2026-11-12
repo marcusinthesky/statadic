@@ -48,11 +48,14 @@ class EvidenceCrosswalkTests(unittest.TestCase):
         self.assertEqual(len(by_name), expected)
         qp = by_name["statadic.optimize.simplex.simplex_qp_result"]
         self.assertIs(
-            by_name["statadic.core.SolverResult"], by_name["statadic.core.results.SolverResult"]
+            by_name["statadic.core.SolverResult"],
+            by_name["statadic.core.results.SolverResult"],
         )
         self.assertEqual(qp["claims"], ["example"])
         self.assertEqual(qp["comparisons"], ["capped-simplex"])
-        self.assertEqual(by_name["statadic.estimation.glm.PoissonMLE"]["comparisons"], [])
+        self.assertEqual(
+            by_name["statadic.estimation.glm.PoissonMLE"]["comparisons"], []
+        )
         self.assertEqual(
             by_name["statadic.estimation.glm.PoissonMLE.estimate"]["comparisons"],
             ["poisson-exposure"],

@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+from scipy.stats import gamma, lognorm, nbinom, weibull_min
 from statadic_performance.reference_aft import aft_objective
 from statadic_performance.reference_estimators import (
     affine_gmm_peer,
@@ -14,7 +15,6 @@ from statadic_performance.reference_measures import (
     projection_peer,
 )
 from statadic_performance.reference_panels import gaussian_expected_information
-from scipy.stats import gamma, lognorm, nbinom, weibull_min
 
 
 def differences(objective, parameters):

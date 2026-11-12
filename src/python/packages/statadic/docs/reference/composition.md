@@ -142,7 +142,7 @@ Ordination uses the same method and
 `load_ordination_predictor(path)` restores a transform-only artifact.
 Nested ordination terms persist their training maps inside regression designs.
 
-Schema 6 uses closed JSON records and checked little-endian numeric payloads.
+Schema 7 uses closed JSON records and checked little-endian numeric payloads.
 Earlier prerelease schemas are rejected. Arbitrary executable classes, closures
 and pickle are unsupported. Restored predictors provide no fabricated fitted
 inference. See [artifact contracts](artifacts.md).

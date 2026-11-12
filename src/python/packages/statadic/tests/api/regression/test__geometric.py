@@ -74,7 +74,9 @@ def test_binding_resampling_does_not_execute_hypothesis_work(
         message = "hypothesis work executed"
         raise AssertionError(message)
 
-    monkeypatch.setattr("statadic.api.regression._geometric._infer_geometric", forbidden)
+    monkeypatch.setattr(
+        "statadic.api.regression._geometric._infer_geometric", forbidden
+    )
     bound = result.infer(resampling=ResponsePermutation(PermutationPlan(n=3)))
     assert bound.observed is result
     assert bound.report().metadata["test_status"] == "not requested"

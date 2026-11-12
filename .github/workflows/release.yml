@@ -1,0 +1,76 @@
+# Tags publish the validated distributions; pull requests exercise every build
+# gate with no publishing credentials. Versions are authored before tagging.
+name: Release
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - .github/workflows/release-validation.yml
+      - infra/release/**
+      - src/python/packages/statadic/pyproject.toml
+      - src/python/uv.lock
+      - src/lean/registry/public-api.json
+permissions:
+  contents: read
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  version:
+    runs-on: ubuntu-24.04
+    outputs:
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Test release version checks
+        run: python3 -m unittest discover -s infra/release -p 'test_*.py' -v
+      - name: Check package, lock, registry and tag versions
+        id: version
+        run: python3 infra/release/check_version.py
+  validation:
+    needs: version
+    uses: ./.github/workflows/release-validation.yml
+  pypi:
+    needs: [version, validation]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    environment:
+      name: release
+      url: https://pypi.org/p/statadic
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: statadic-distributions
+          path: dist
+      - name: Publish validated wheel and sdist to PyPI
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086
+        with:
+          packages-dir: dist
+  github:
+    needs: [version, validation, pypi]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: statadic-distributions
+          path: dist
+      - name: Record artifact checksums
+        working-directory: dist
+        run: sha256sum -- *.whl *.tar.gz > SHA256SUMS
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRERELEASE: ${{ needs.version.outputs.prerelease }}
+        run: |
+          args=(--verify-tag --generate-notes)
+          if [[ "$PRERELEASE" == true ]]; then
+            args+=(--prerelease --latest=false)
+          fi
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --repo "$GITHUB_REPOSITORY" "${args[@]}"

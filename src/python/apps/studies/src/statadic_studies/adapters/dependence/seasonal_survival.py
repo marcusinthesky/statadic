@@ -6,6 +6,7 @@ from statistics import NormalDist
 
 import jax.numpy as jnp
 import numpy as np
+from scipy.interpolate import CubicSpline
 from statadic.api.data import Observations, PanelLayout, SpatialPanelData
 from statadic.api.design import Linear
 from statadic.api.inference import ModelBased
@@ -13,7 +14,6 @@ from statadic.api.survival import RightCensored, SpatialSurvivalData
 from statadic.estimation.survival import SpatialSurvivalML
 from statadic.operators.spatial import prepare_spatial_weights
 from statadic.optimize.integration import IntegrationDesign
-from scipy.interpolate import CubicSpline
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence.spatial_survival import _key

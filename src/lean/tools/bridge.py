@@ -102,7 +102,9 @@ def validate_registry(root: Path = ROOT) -> tuple[list[dict], dict]:
                     f"{claim['id']}: missing precise source/proof location"
                 )
         page = (
-            root / "src/python/packages/statadic/docs/formal/claims" / f"{claim['id']}.md"
+            root
+            / "src/python/packages/statadic/docs/formal/claims"
+            / f"{claim['id']}.md"
         )
         if (
             not page.is_file()
@@ -115,7 +117,8 @@ def validate_registry(root: Path = ROOT) -> tuple[list[dict], dict]:
             resolve_symbol(symbol)
     snapshot = read(registry / "public-api.json")
     if snapshot != inventory(
-        root / "src/python/packages/statadic/src/statadic", root / "src/python/packages/statadic"
+        root / "src/python/packages/statadic/src/statadic",
+        root / "src/python/packages/statadic",
     ):
         raise ValueError(
             "public API snapshot is stale; explicitly run lean::inventory-refresh"
@@ -422,7 +425,8 @@ def fresh_output(root: Path = ROOT) -> dict:
         raise ValueError("compiled proof evidence is stale; run just lean::certify")
     api = read(lean / "registry/public-api.json")
     if api != inventory(
-        root / "src/python/packages/statadic/src/statadic", root / "src/python/packages/statadic"
+        root / "src/python/packages/statadic/src/statadic",
+        root / "src/python/packages/statadic",
     ):
         raise ValueError("Python source changed after formal certification")
     for claim in output["claims"]:

@@ -28,7 +28,10 @@ from statadic.api.regression import (
     Regression,
 )
 from statadic.api.roles import InputRoleProvider  # noqa: TC002
-from statadic.api.spatial.cross_section import SpatialInformation, SpatialRegressionResult
+from statadic.api.spatial.cross_section import (
+    SpatialInformation,
+    SpatialRegressionResult,
+)
 from statadic.api.spatial.graphs import PanelData, SpatialData, SpatialLag, SpatialX
 from statadic.api.spatial.learning import GraphML
 from statadic.api.survival import RightCensored

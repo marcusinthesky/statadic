@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
+import numpy as np
+import pytest
 import statadic.inference._projection as projection_module
 import statadic.inference.gms as gms_module
 import statadic.inference.wolak as wolak_module
-import numpy as np
-import pytest
 from statadic.core.random import cell_key
 from statadic.inference.gms import (
     indicator_gms,

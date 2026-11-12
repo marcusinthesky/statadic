@@ -5,8 +5,11 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.spatial.graph_likelihood import estimate_graph_ml, graph_profile
 from scipy.special import chdtrc, softmax
+from statadic.estimation.spatial.graph_likelihood import (
+    estimate_graph_ml,
+    graph_profile,
+)
 
 from statadic_studies.adapters._random import rng
 

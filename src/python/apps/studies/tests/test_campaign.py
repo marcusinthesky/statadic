@@ -254,7 +254,9 @@ def test_nested_engine_change_invalidates_resume(tmp_path, monkeypatch):
 
     def changed():
         files = original()
-        files["statadic_studies/adapters/discrepancy/finite_bias.py"] += b"\n# changed\n"
+        files["statadic_studies/adapters/discrepancy/finite_bias.py"] += (
+            b"\n# changed\n"
+        )
         return files
 
     monkeypatch.setattr(source, "capture", changed)

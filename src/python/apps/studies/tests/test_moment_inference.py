@@ -3,6 +3,7 @@
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.stats import chi2
 from statadic.core.equations import MeanCenteredLongRun, PlainLongRun
 from statadic.estimation.gel import AffineGEL, FixedGEL
 from statadic.estimation.gmm import FixedWeightGMM
@@ -15,7 +16,6 @@ from statadic_studies.definitions.moments import (
     MOMENT_METHOD_METRICS,
     MOMENT_NULL_SCENARIOS,
 )
-from scipy.stats import chi2
 
 
 @pytest.mark.parametrize("criterion", ["cue", "el", "et"])

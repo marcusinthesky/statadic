@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import jax.numpy as jnp
-import statadic.testing
 import pytest
+import statadic.testing
 from statadic.testing import fixtures
 
 if TYPE_CHECKING:

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
+from scipy import stats
 from statadic.core.equations import (
     PlainLongRun,
 )
@@ -20,7 +21,6 @@ from statadic.estimation.moments import AffineMomentProblem
 from statadic.inference.glm_covariance import glm_covariance
 from statadic.inference.gmm.covariance import gmm_covariance
 from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
-from scipy import stats
 
 if TYPE_CHECKING:
     from statadic.inference.contracts import FittedUncertainty

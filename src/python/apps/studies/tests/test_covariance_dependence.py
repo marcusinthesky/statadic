@@ -5,7 +5,10 @@ import pytest
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.estimation.panel import FamaMacBeth, PanelProblem, Within
 from statadic.inference.linear_covariance import cluster_covariance, hac_covariance
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.operators.panel import prepare_panel_index
 from statadic_studies.adapters.dependence.covariance import (
     fama_data,
@@ -13,7 +16,9 @@ from statadic_studies.adapters.dependence.covariance import (
     panel_covariance_data,
     run_covariance_dependence,
 )
-from statadic_studies.definitions.dependence.covariance import COVARIANCE_DEPENDENCE_STUDIES
+from statadic_studies.definitions.dependence.covariance import (
+    COVARIANCE_DEPENDENCE_STUDIES,
+)
 
 
 def _window(times, bandwidth, kernel):

@@ -133,7 +133,8 @@ def sharpe_difference_test(
 
     Tests ``H0: SR(returns_a) == SR(returns_b)`` for two paired strategy
     return series. Circular blocks resample paired rows; block length is chosen by
-    :func:`statadic.inference.resampling.block_length.heuristic_block_length` applied to the
+    :func:`statadic.inference.resampling.block_length.heuristic_block_length`
+    applied to the
     return differential ``d_t = a_t - b_t`` unless overridden. Bootstrap
     differences are centered at their bootstrap mean. The returned statistic
     uses one bootstrap standard deviation; each resample is not separately

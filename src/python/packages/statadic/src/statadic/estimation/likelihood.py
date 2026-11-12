@@ -17,7 +17,10 @@ from statadic.model.likelihood import (
     positive_poisson_log_mean,
 )
 from statadic.optimize.backends import minimise_bfgs_result_args
-from statadic.optimize.glm import ExistenceCertificate, recession_certificate  # noqa: TC001
+from statadic.optimize.glm import (  # noqa: TC001
+    ExistenceCertificate,
+    recession_certificate,
+)
 
 __all__ = [
     "Dispersion",

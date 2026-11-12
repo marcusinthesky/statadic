@@ -9,7 +9,12 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.artifacts import ArtifactError, load_graph_predictor, save_graph_predictor
+from scipy.stats import multivariate_normal
+from statadic.api.artifacts import (
+    ArtifactError,
+    load_graph_predictor,
+    save_graph_predictor,
+)
 from statadic.api.data import Observations, PanelLayout
 from statadic.api.design import Intercept, Linear
 from statadic.api.regression import Regression
@@ -28,7 +33,6 @@ from statadic.api.spatial.graphs import (
 from statadic.api.spatial.prediction import SpatialPanelPrediction
 from statadic.core.typing import Array
 from statadic.operators.spatial import prepare_spatial_weights
-from scipy.stats import multivariate_normal
 
 if TYPE_CHECKING:
     from statadic.api.capabilities import SummarizesLikelihood

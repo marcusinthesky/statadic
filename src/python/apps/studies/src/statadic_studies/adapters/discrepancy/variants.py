@@ -13,7 +13,11 @@ from statadic.discrepancy.mmd.energy.scalar import energy_distance
 from statadic.discrepancy.mmd.energy.weighted import weighted_energy_cross
 from statadic.discrepancy.mmd.scalar import cosine_mean_mmd, mmd, mmd_squared
 from statadic.discrepancy.mmd.weighted import weighted_mmd_cross
-from statadic.geometry.ground.similarities import COSINE_KERNEL, LINEAR_KERNEL, RBFKernel
+from statadic.geometry.ground.similarities import (
+    COSINE_KERNEL,
+    LINEAR_KERNEL,
+    RBFKernel,
+)
 from statadic.sample.packed import PackedClouds
 
 from statadic_studies.definitions.discrepancy.variants import (

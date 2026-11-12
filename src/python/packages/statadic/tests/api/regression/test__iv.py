@@ -189,7 +189,10 @@ def test_iv_hansen_diagnostic_and_ordered_hac_preserve_actual_fit() -> None:
 @pytest.mark.contract
 def test_iv_hansen_unavailable_reasons_name_the_failed_condition() -> None:
     """Each ineligible fit reports its own cause, matching native availability."""
-    from statadic.estimation.iv import IteratedIVGMM, TwoStageLeastSquares  # noqa: PLC0415
+    from statadic.estimation.iv import (  # noqa: PLC0415
+        IteratedIVGMM,
+        TwoStageLeastSquares,
+    )
 
     rng = np.random.default_rng(82)
     z = rng.normal(size=(60, 2))

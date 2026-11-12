@@ -149,7 +149,9 @@ class Policy:
         self.python = root / "src/python"
         self.tach = tomllib.loads((self.python / "tach.toml").read_text())
         project = tomllib.loads((self.python / "pyproject.toml").read_text())
-        self.allowed = project["tool"]["statadic_architecture"]["workspace_dependencies"]
+        self.allowed = project["tool"]["statadic_architecture"][
+            "workspace_dependencies"
+        ]
         self.sources: dict[str, Path] = {}
         self.module_paths: set[str] = set()
         for relative in self.tach["source_roots"]:
@@ -359,7 +361,11 @@ class Visitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Name(self, node: ast.Name) -> None:
-        if self.package == "statadic" and not self.test and isinstance(node.ctx, ast.Load):
+        if (
+            self.package == "statadic"
+            and not self.test
+            and isinstance(node.ctx, ast.Load)
+        ):
             name = self.resolved(node)
             if name in DYNAMIC_APIS or name in REFLECTIVE_FIELDS:
                 self.add(

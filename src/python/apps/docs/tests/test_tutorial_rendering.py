@@ -74,6 +74,8 @@ def test_chapter_displays_one_retained_analysis_across_sections(monkeypatch):
     assert len(calls) == 1
     assert all("ols_analysis.py" in path for path in dependencies)
     assert app._statadic_ols_analysis["fit_report"].to_text() in pages["fit"]
-    assert app._statadic_ols_analysis["diagnostics_report"].to_text() in pages["diagnose"]
+    assert (
+        app._statadic_ols_analysis["diagnostics_report"].to_text() in pages["diagnose"]
+    )
     assert app._statadic_ols_analysis["reports"]["hc3"].to_text() in pages["report"]
     assert "model_based" in pages["infer"] and "hc3" in pages["infer"]

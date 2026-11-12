@@ -11,6 +11,8 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy.integrate import quad
+from scipy.stats import multivariate_normal, norm
 from statadic.estimation.survival import (
     SpatialSurvivalML,
     SpatialSurvivalProblem,
@@ -29,8 +31,6 @@ from statadic.estimation.survival.spatial import prepare_spatial_survival_propos
 from statadic.model.survival import LaggedLogTime, LogNormalAFT
 from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
 from statadic.optimize.integration import GaussianIntegration, IntegrationDesign
-from scipy.integrate import quad
-from scipy.stats import multivariate_normal, norm
 
 from ..._budgets import examples
 

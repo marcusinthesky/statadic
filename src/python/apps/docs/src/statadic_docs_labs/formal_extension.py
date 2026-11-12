@@ -281,7 +281,11 @@ def load(app) -> None:
             for mapping in owner.get("reference_mappings", []):
                 for node in mapping["nodeids"]:
                     app.env.note_dependency(
-                        str(ROOT / "src/python/packages/statadic" / node.split("::", 1)[0])
+                        str(
+                            ROOT
+                            / "src/python/packages/statadic"
+                            / node.split("::", 1)[0]
+                        )
                     )
 
 
@@ -556,7 +560,9 @@ def _ols_output(analysis: dict, section: str) -> str:
 
 def source(app, docname: str, text: list[str]) -> None:
     if "<!-- statadic:reference-index -->" in text[0]:
-        text[0] = text[0].replace("<!-- statadic:reference-index -->", reference_index(app))
+        text[0] = text[0].replace(
+            "<!-- statadic:reference-index -->", reference_index(app)
+        )
     if "<!-- statadic:research-catalogue -->" in text[0]:
         sections = []
         if getattr(app, "_statadic_evaluations", []):
@@ -867,7 +873,9 @@ def outputs(app, exception) -> None:
         )
     shutil.copy2(ROOT / "src/latex/refs.bib", downloads / "refs.bib")
     shutil.copytree(
-        ROOT / "src/lean/packages/StatadicFormal", downloads / "lean", dirs_exist_ok=True
+        ROOT / "src/lean/packages/StatadicFormal",
+        downloads / "lean",
+        dirs_exist_ok=True,
     )
     shutil.copytree(
         ROOT / "src/lean/blueprint/web", output / "blueprint", dirs_exist_ok=True
@@ -908,7 +916,8 @@ def outputs(app, exception) -> None:
         for claim in app._statadic_formal["claims"]
     )
     expected.extend(
-        latex_downloads / f"{claim['id']}.tex" for claim in app._statadic_formal["claims"]
+        latex_downloads / f"{claim['id']}.tex"
+        for claim in app._statadic_formal["claims"]
     )
     missing = [str(path) for path in expected if not path.is_file()]
     if missing:

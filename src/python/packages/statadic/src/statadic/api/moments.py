@@ -13,7 +13,11 @@ import jax.numpy as jnp
 
 from statadic.api.base import Result
 from statadic.api.data import Observations
-from statadic.api.diagnostics import Diagnostics, MomentsDiagnostic, _diagnostic_requests
+from statadic.api.diagnostics import (
+    Diagnostics,
+    MomentsDiagnostic,
+    _diagnostic_requests,
+)
 from statadic.api.hypotheses import (
     ChiSquare,
     Hypothesis,

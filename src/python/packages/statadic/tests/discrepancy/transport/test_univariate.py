@@ -10,16 +10,19 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy.optimize import linprog
+from scipy.stats import wasserstein_distance
 from statadic.discrepancy.transport.sliced import (
     ProjectionDesign,
     sliced_wasserstein_under_design,
     w1_1d,
     w2_1d,
 )
-from statadic.discrepancy.transport.univariate import wasserstein_1d, wasserstein_1d_power
+from statadic.discrepancy.transport.univariate import (
+    wasserstein_1d,
+    wasserstein_1d_power,
+)
 from statadic.sample.packed import PackedClouds
-from scipy.optimize import linprog
-from scipy.stats import wasserstein_distance
 
 from ..._budgets import examples
 from ..._strategies import float_arrays

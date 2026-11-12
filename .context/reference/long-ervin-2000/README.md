@@ -26,7 +26,7 @@ This formula approximates a more complicated jackknife estimator. It is not
 identical to the original centered finite-sample MacKinnon–White expression.
 Boundary leverage, optional multipliers, adaptive/survey weights, numerical
 availability and reference-law calibration remain separate obligations. The
-[correspondence review](../../plan/research-experience/tasks/studies/tasks/sources/hc3-followup.md)
+[correspondence review](../../evidence/source-correspondence/hc3-followup.md)
 records the checked whitening algebra and limitations.
 
 ## Backlinks
@@ -37,6 +37,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Prove WLS whitening and the HC covariance algebra](../../plan/release-guarantees/tasks/proofs/tasks/linear-covariance/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

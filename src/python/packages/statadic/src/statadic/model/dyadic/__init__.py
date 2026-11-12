@@ -7,6 +7,10 @@ statadic.inference.dyadic. Validation contains eager specification checks shared
 those consumers.
 """
 
-from statadic.model.dyadic.specification import DyadicInputError, DyadicModel, DyadicSample
+from statadic.model.dyadic.specification import (
+    DyadicInputError,
+    DyadicModel,
+    DyadicSample,
+)
 
 __all__ = ["DyadicInputError", "DyadicModel", "DyadicSample"]

@@ -23,6 +23,10 @@ root_doc = "index"
 exclude_patterns = ["_build"]
 html_theme = "shibuya"
 html_title = f"STATADIC {release} documentation"
+# configure-pages supplies the project path or custom-domain URL on deployment.
+html_baseurl = os.environ.get("STATADIC_DOCS_BASE_URL", "").rstrip("/")
+if html_baseurl:
+    html_baseurl += "/"
 templates_path = ["templates"]
 html_sidebars = {"**": ["sidebars/localtoc.html"]}
 html_static_path = ["static"]
@@ -44,6 +48,7 @@ html_theme_options = {
             ("Concepts", "concepts/index"),
             ("Reference", "reference/index"),
             ("Evidence", "validation/index"),
+            ("Blog", "blog/index"),
         )
     ],
 }

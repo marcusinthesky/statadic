@@ -38,7 +38,12 @@ import jax.numpy as jnp
 from jax.scipy.stats import chi2
 from jaxtyping import Float  # noqa: TC002
 
-from statadic.core.typing import Array, ArrayLike, as_index, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    as_index,
+    static_jaxtyping,
+)
 
 if TYPE_CHECKING:
     from statadic.optimize.simplex import NonnegativeQPSolution

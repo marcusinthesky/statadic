@@ -21,6 +21,11 @@ setup:
     git lfs pull --include "src/latex/{{ vendored_bundle }}"
     test "$(head -c 2 '{{ vendored_bundle }}')" = PK
 
+# Explain missing or unhydrated LFS inputs before invoking Tectonic.
+_check-bundle:
+    @test -f "{{ vendored_bundle }}" || { echo "Missing TeX bundle: src/latex/{{ vendored_bundle }}. Run just latex::setup." >&2; exit 1; }
+    @test "$(head -c 2 '{{ vendored_bundle }}')" = PK || { echo "TeX bundle is not a ZIP archive (possibly an LFS pointer). Run just latex::setup." >&2; exit 1; }
+
 # Install the shared style and generated bibliography into a project workspace.
 _prepare project:
     test -f "projects/{{ project }}/Tectonic.toml"
@@ -52,13 +57,13 @@ generate project="01_statadic":
     {{ analysis }} "projects/{{ project }}/analysis/generate.py"
 
 # Compile one target to projects/<project>/build/<target>/ from the vendored bundle.
-build project="01_statadic" target="arxiv":
+build project="01_statadic" target="arxiv": _check-bundle
     just _prepare "{{ project }}"
     cd "projects/{{ project }}" && tectonic -X build --untrusted --only-cached --keep-logs --keep-intermediates --target "{{ target }}"
     bash tools/check-log "projects/{{ project }}/build/{{ target }}/{{ target }}.log"
 
 # Rebuild a target whenever an input changes.
-watch project="01_statadic" target="draft":
+watch project="01_statadic" target="draft": _check-bundle
     just _prepare "{{ project }}"
     cd "projects/{{ project }}" && tectonic -X watch --exec "build --untrusted --only-cached --keep-logs --target {{ target }}"
 
@@ -168,7 +173,7 @@ bundle-refresh:
     echo "wrote {{ vendored_bundle }} ($(du -h '{{ vendored_bundle }}' | cut -f1))"
 
 # Compile a PlotSpec.to_pgfplots fragment to a viewable PDF beside it (or to OUT).
-preview fragment out="":
+preview fragment out="": _check-bundle
     #!/usr/bin/env bash
     set -euo pipefail
     source_file="$(realpath "{{ fragment }}")"

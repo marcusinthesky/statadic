@@ -8,6 +8,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.optimize import minimize, minimize_scalar
+from scipy.special import gammaln, log_ndtr
 from statadic.core.results import InferenceStatus, SolverResult, SolverStatus
 from statadic.estimation import likelihood
 from statadic.estimation.likelihood import (
@@ -20,9 +22,10 @@ from statadic.estimation.likelihood import (
     ProbitMLE,
 )
 from statadic.inference.likelihood import likelihood_covariance
-from statadic.model.likelihood import LikelihoodFamily, log_likelihood_rows  # noqa: TC002
-from scipy.optimize import minimize, minimize_scalar
-from scipy.special import gammaln, log_ndtr
+from statadic.model.likelihood import (  # noqa: TC002
+    LikelihoodFamily,
+    log_likelihood_rows,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Callable

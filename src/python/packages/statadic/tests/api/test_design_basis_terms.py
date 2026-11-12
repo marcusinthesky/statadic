@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.interpolate import BSpline
 from statadic.api.artifacts import load_predictor
 from statadic.api.data import Observations
 from statadic.api.design import CyclicSpline, Fourier, Intercept, Spline
 from statadic.api.regression import Regression
-from scipy.interpolate import BSpline
 
 if TYPE_CHECKING:
     from pathlib import Path

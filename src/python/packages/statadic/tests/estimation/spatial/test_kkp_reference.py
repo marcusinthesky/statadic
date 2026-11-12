@@ -12,11 +12,11 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy import optimize
 from statadic.estimation.spatial import KKP, SEM, SpatialPanelProblem
 from statadic.estimation.spatial.kkp import _full_weight_tau
 from statadic.inference.linear_covariance import classical_covariance
 from statadic.operators.spatial import prepare_spatial_panel_weights
-from scipy import optimize
 
 from ..._budgets import examples
 

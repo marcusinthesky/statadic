@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy import stats
 from statadic.api.data import Observations
 from statadic.api.design import Intercept, Linear, RowDifference
 from statadic.api.hypotheses import (
@@ -26,7 +27,6 @@ from statadic.api.inference import HC, ModelBased
 from statadic.api.regression import Regression
 from statadic.core.results import InferenceStatus
 from statadic.inference.parameters import linear_restriction_test
-from scipy import stats
 
 from .._budgets import examples
 from .._typing import ill_typed

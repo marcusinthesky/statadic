@@ -1,8 +1,8 @@
 """Check the analytic AFT peer against an independent SciPy distribution law."""
 
 import numpy as np
-from statadic_performance.reference_models import lognormal_objective
 from scipy.stats import lognorm
+from statadic_performance.reference_models import lognormal_objective
 
 
 def test_lognormal_peer_score_and_information_match_distribution_differences():

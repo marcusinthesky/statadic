@@ -27,7 +27,9 @@ def installed_wheel(wheel: Path) -> dict:
     imported = Path(statadic.__file__).resolve()
     prefix = Path(sys.prefix).resolve()
     if sys.prefix == sys.base_prefix or not imported.is_relative_to(prefix):
-        raise ValueError("Candidate STATADIC must be inside its isolated wheel environment")
+        raise ValueError(
+            "Candidate STATADIC must be inside its isolated wheel environment"
+        )
     if imported != Path(distribution.locate_file("statadic/__init__.py")).resolve():
         raise ValueError("Imported STATADIC shadows its installed distribution")
     with zipfile.ZipFile(wheel) as archive:
@@ -42,7 +44,9 @@ def installed_wheel(wheel: Path) -> dict:
         if len(metadata) != 1 or archive.read(
             metadata[0]
         ).decode() != distribution.read_text("METADATA"):
-            raise ValueError("Installed STATADIC metadata differs from the supplied wheel")
+            raise ValueError(
+                "Installed STATADIC metadata differs from the supplied wheel"
+            )
         for name in archive.namelist():
             if name.endswith("/") or name.endswith(".dist-info/RECORD"):
                 continue

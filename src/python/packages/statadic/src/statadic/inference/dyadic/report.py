@@ -11,7 +11,10 @@ from typing import TYPE_CHECKING
 
 import jax.numpy as jnp
 
-from statadic.inference.dyadic._validation import validate_inference, validate_node_schedule
+from statadic.inference.dyadic._validation import (
+    validate_inference,
+    validate_node_schedule,
+)
 from statadic.inference.dyadic.bootstrap import (
     bootstrap_coefficient_inference,
     bootstrap_dyadic,

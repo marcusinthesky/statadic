@@ -11,13 +11,13 @@ import numpy as np
 import pytest
 from hypothesis import example, given, reject
 from hypothesis import strategies as st
+from scipy.linalg import block_diag
 from statadic.estimation.spatial import (
     SAR,
     ObservedSpatialPanelProblem,
     observed_panel_profile,
 )
 from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
-from scipy.linalg import block_diag
 
 from ..._budgets import examples
 
@@ -236,8 +236,8 @@ def test_observed_information_matches_independent_finite_difference(seed: int) -
 
     A sample whose likelihood has no interior maximum must fail closed instead.
     """
-    from statadic.estimation.spatial import ObservedPanelML  # noqa: PLC0415
     from scipy.optimize._numdiff import approx_derivative  # noqa: PLC0415
+    from statadic.estimation.spatial import ObservedPanelML  # noqa: PLC0415
 
     rng = np.random.default_rng(seed)
     n, t = 5, 3
@@ -317,7 +317,9 @@ def test_complete_mask_reduces_to_balanced_profile(
 ) -> None:
     """A complete selected panel reproduces the retained balanced likelihood."""
     from statadic.estimation.spatial.panel import spatial_panel_profile  # noqa: PLC0415
-    from statadic.operators.spatial import prepare_spatial_panel_weights  # noqa: PLC0415
+    from statadic.operators.spatial import (  # noqa: PLC0415
+        prepare_spatial_panel_weights,
+    )
 
     rng = np.random.default_rng(seed)
     n, t = 5, 3
@@ -536,8 +538,8 @@ def test_random_effect_information_matches_independent_finite_difference(
     seed: int,
 ) -> None:
     """Profile the shared variance and scale in the observed information."""
-    from statadic.estimation.spatial import ObservedPanelML  # noqa: PLC0415
     from scipy.optimize._numdiff import approx_derivative  # noqa: PLC0415
+    from statadic.estimation.spatial import ObservedPanelML  # noqa: PLC0415
 
     rng = np.random.default_rng(seed)
     n, t = 5, 5

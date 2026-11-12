@@ -16,11 +16,11 @@ from __future__ import annotations
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from optax.projections import projection_simplex
 from statadic.optimize.simplex import (
     pgd_maximize_quadratic_form,
     pgd_minimize_quadratic_form,
 )
-from optax.projections import projection_simplex
 
 from ._parity import DEFAULT_ATOL
 
@@ -28,7 +28,7 @@ from ._parity import DEFAULT_ATOL
 def _reference_pgd_simplex_quadratic(
     a: jnp.ndarray, n_steps: int, sign: float
 ) -> jnp.ndarray:
-    """Un-jitted, eager-Python mirror of ``statadic.optimize._pgd_simplex_quadratic``."""
+    """Eager-Python mirror of ``statadic.optimize._pgd_simplex_quadratic``."""
     k = a.shape[0]
     eigvals = jnp.linalg.eigvalsh(a)
     lam_max = jnp.maximum(jnp.max(eigvals), 1e-10)

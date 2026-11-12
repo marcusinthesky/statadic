@@ -52,7 +52,12 @@ depends_on = []
 path = "statadic.api"
 depends_on = ["statadic.core"]
 [[modules]]
-paths = ["statadic_evidence", "statadic_studies", "statadic_performance", "statadic_docs_labs"]
+paths = [
+    "statadic_evidence",
+    "statadic_studies",
+    "statadic_performance",
+    "statadic_docs_labs",
+]
 depends_on = []
 [[interfaces]]
 from = ["statadic.core"]
@@ -77,9 +82,13 @@ visibility = ["statadic_studies.bounds"]
                 f'[project]\nname = "{name}"\nversion = "0.1.0"\n',
             )
         self.write(
-            "packages/statadic/src/statadic/core.py", "Public = 1\n_producer = 2\n_secret = 3\n"
+            "packages/statadic/src/statadic/core.py",
+            "Public = 1\n_producer = 2\n_secret = 3\n",
         )
-        self.write("packages/statadic/src/statadic/api.py", "from statadic.core import Public\n")
+        self.write(
+            "packages/statadic/src/statadic/api.py",
+            "from statadic.core import Public\n",
+        )
 
     def write(self, relative, content):
         path = self.python / relative
@@ -108,7 +117,10 @@ visibility = ["statadic_studies.bounds"]
         result = self.native()
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.write("packages/statadic/src/statadic/core.py", "_secret = 1\n")
-        self.write("packages/statadic/src/statadic/api.py", "from statadic.core import _secret\n")
+        self.write(
+            "packages/statadic/src/statadic/api.py",
+            "from statadic.core import _secret\n",
+        )
         result = self.native()
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
 
@@ -120,11 +132,15 @@ visibility = ["statadic_studies.bounds"]
                 'path = "statadic.core"\ndepends_on = ["statadic.api"]',
             )
         )
-        self.write("packages/statadic/src/statadic/core.py", "from statadic.api import Model\n")
+        self.write(
+            "packages/statadic/src/statadic/core.py", "from statadic.api import Model\n"
+        )
         self.assertNotEqual(self.native().returncode, 0)
 
     def test_workspace_fence_catches_native_gap_even_when_declared(self):
-        self.write("packages/statadic/src/statadic/consumer.py", "import statadic_studies\n")
+        self.write(
+            "packages/statadic/src/statadic/consumer.py", "import statadic_studies\n"
+        )
         self.write(
             "packages/statadic/pyproject.toml",
             '[project]\nname = "statadic"\nversion = "0.1.0"\n'
@@ -134,20 +150,26 @@ visibility = ["statadic_studies.bounds"]
         self.assertIn("WORKSPACE", self.codes())
 
     def test_allowed_workspace_directions_and_private_test_seams(self):
-        self.write("apps/docs/src/statadic_docs_labs/use.py", "import statadic_studies\n")
+        self.write(
+            "apps/docs/src/statadic_docs_labs/use.py", "import statadic_studies\n"
+        )
         self.write(
             "apps/performance/src/statadic_performance/use.py",
             "from statadic.core import Public\n",
         )
         self.write(
-            "packages/statadic/tests/test_private.py", "from statadic.core import _secret\n"
+            "packages/statadic/tests/test_private.py",
+            "from statadic.core import _secret\n",
         )
         self.assertEqual(self.codes(), set())
         self.write(
-            "apps/performance/src/statadic_performance/use.py", "import statadic_studies\n"
+            "apps/performance/src/statadic_performance/use.py",
+            "import statadic_studies\n",
         )
         self.assertEqual(self.codes(), {"WORKSPACE"})
-        self.write("packages/statadic/tests/test_private.py", "import statadic_docs_labs\n")
+        self.write(
+            "packages/statadic/tests/test_private.py", "import statadic_docs_labs\n"
+        )
         self.assertEqual(sum(f.code == "WORKSPACE" for f in script.check(self.root)), 2)
 
     def test_public_interfaces_aliases_and_scoped_exception(self):
@@ -262,7 +284,9 @@ def optional():
             "import os\nos.fdopen(1, 'w')\n",
         )
         self.assertEqual(self.codes(), set())
-        self.write("packages/statadic/tests/test_oracle.py", "import numpy\nimport scipy\n")
+        self.write(
+            "packages/statadic/tests/test_oracle.py", "import numpy\nimport scipy\n"
+        )
         self.assertEqual(self.codes(), set())
 
     def test_custom_derivatives_and_detached_gradients_require_contracts(self):
@@ -287,7 +311,8 @@ def optional():
         )
         self.write(
             "packages/statadic/pyproject.toml",
-            '[project]\nname = "statadic"\nversion = "0.1.0"\ndependencies = ["numpy"]\n',
+            '[project]\nname = "statadic"\nversion = "0.1.0"\n'
+            'dependencies = ["numpy"]\n',
         )
         self.write("packages/statadic/src/statadic/consumer.py", "import numpy\n")
         result = self.native("check-external")

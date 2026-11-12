@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from collections.abc import Callable
     from types import ModuleType
 
-    from statadic.api.reporting import Report
     from numpy.typing import NDArray
+    from statadic.api.reporting import Report
 
 MIN_PVALUE = 1e-3
 

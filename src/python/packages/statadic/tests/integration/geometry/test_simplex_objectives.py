@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.optimize import minimize
 from statadic.discrepancy.mmd.energy.balancing import kernel_balancing_weights
 from statadic.geometry.barycentre.mmd import kernel_barycentre_weights
 from statadic.geometry.barycentre.mmd.energy import energy_barycentre_weights
 from statadic.geometry.ground.similarities import rbf_kernel
 from statadic.sample.packed import PackedClouds, pack
-from scipy.optimize import minimize
 
 from ...discrepancy.mmd._reference import mean_power_distance, rbf_block
 

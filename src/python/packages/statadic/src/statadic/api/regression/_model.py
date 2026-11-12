@@ -30,7 +30,12 @@ from statadic.api.base import (
     Model,
     PreparedRegression,
 )
-from statadic.api.data import Observations, PanelLayout, RelativePrecision, SpatialPanelData
+from statadic.api.data import (
+    Observations,
+    PanelLayout,
+    RelativePrecision,
+    SpatialPanelData,
+)
 from statadic.api.design import SumTerm, Term
 from statadic.api.dyadic import (
     DyadicResult,

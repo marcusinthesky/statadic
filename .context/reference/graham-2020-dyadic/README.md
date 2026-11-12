@@ -26,6 +26,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Primary-source citation audit](../../plan/research-experience/tasks/literature/evidence.md)
+- [Primary-source citation audit](../../evidence/source-correspondence/citation-audit.md)
 
 <!-- insitu:end -->

@@ -11,6 +11,7 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy import stats
 from statadic.core.results import InferenceStatus
 from statadic.estimation.spatial import (
     ML,
@@ -26,7 +27,6 @@ from statadic.inference.parameters import coefficient_intervals, linear_restrict
 from statadic.inference.spatial import spatial_likelihood_ratio
 from statadic.inference.spatial.covariance import spatial_covariance, spatial_impacts
 from statadic.operators.spatial import prepare_spatial_weights
-from scipy import stats
 
 from .._budgets import examples
 

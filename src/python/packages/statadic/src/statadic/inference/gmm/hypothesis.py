@@ -28,7 +28,12 @@ from statadic.core.results import (
     InferenceStatus,
     TestResult,
 )
-from statadic.core.typing import Array, ArrayLike, Static, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    Static,
+    static_jaxtyping,
+)
 from statadic.estimation.gmm import (  # noqa: TC001
     AffineGMMFit,
 )

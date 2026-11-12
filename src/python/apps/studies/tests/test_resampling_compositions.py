@@ -104,7 +104,9 @@ def test_exact_population_mixture_optimum_matches_dense_independent_grid():
 
 
 def test_batched_native_optimizer_refits_each_empirical_distribution():
-    from statadic.geometry.barycentre.mmd.energy import energy_barycentre_weights_batched
+    from statadic.geometry.barycentre.mmd.energy import (
+        energy_barycentre_weights_batched,
+    )
 
     targets = np.array([[0.3, 0.4, 0.3], [0.6, 0.3, 0.1], [0.1, 0.3, 0.6]])
     candidates = np.broadcast_to(CANDIDATE_LAWS, (3, 2, 3))

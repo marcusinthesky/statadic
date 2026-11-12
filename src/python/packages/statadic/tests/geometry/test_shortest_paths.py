@@ -6,7 +6,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.geometry.shortest_paths import geodesic_cross_distances, knn_shortest_paths
+from statadic.geometry.shortest_paths import (
+    geodesic_cross_distances,
+    knn_shortest_paths,
+)
 
 pytestmark = pytest.mark.unit
 

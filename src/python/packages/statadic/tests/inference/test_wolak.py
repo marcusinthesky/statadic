@@ -13,6 +13,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy import stats
 from statadic.inference.wolak import (
     chi_bar_squared_sf,
     chi_bar_squared_weights_mc,
@@ -21,7 +22,6 @@ from statadic.inference.wolak import (
     wolak_test,
     wolak_test_kernel,
 )
-from scipy import stats
 
 from .._budgets import examples
 from .._strategies import prng_keys

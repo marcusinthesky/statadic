@@ -1,7 +1,7 @@
 # jaxtyping shape strings are runtime contracts.
 """Typed ground-distance contracts and fixed callable declarations.
 
-This private implementation sits below :mod:`statadic.geometry.ground.metrics`: it knows the
+This implementation sits below :mod:`statadic.geometry.ground.metrics`: it knows the
 ground-distance call shape, but it knows no built-in names or implementations.
 Built-ins and third-party declarations therefore share one structural protocol,
 while serialized selection remains isolated in :mod:`statadic.geometry.ground.config`.

@@ -12,7 +12,10 @@ from statadic.inference.linear_covariance import (
     cluster_covariance,
     hac_covariance,
 )
-from statadic.inference.panel_covariance import fama_macbeth_covariance, panel_covariance
+from statadic.inference.panel_covariance import (
+    fama_macbeth_covariance,
+    panel_covariance,
+)
 from statadic.operators.panel import prepare_panel_index
 
 from statadic_studies.adapters._random import rng

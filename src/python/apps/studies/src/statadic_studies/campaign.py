@@ -174,7 +174,9 @@ def create(
 def _verify_imported_wheel(wheel: Path) -> None:
     """Require wheel Python payloads to match exactly the imported installation."""
     source = Path(statadic.__file__).parent
-    direct_url = importlib.metadata.distribution("statadic").read_text("direct_url.json")
+    direct_url = importlib.metadata.distribution("statadic").read_text(
+        "direct_url.json"
+    )
     if direct_url and json.loads(direct_url).get("dir_info", {}).get("editable"):
         raise ValueError("Installed-wheel evidence requires a noneditable installation")
     with zipfile.ZipFile(wheel) as archive:

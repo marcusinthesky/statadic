@@ -11,9 +11,9 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from jaxtyping import TypeCheckError
+from scipy.optimize import minimize
 from statadic.core.results import SolverStatus
 from statadic.optimize.simplex import SimplexQPSolution, simplex_qp_result
-from scipy.optimize import minimize
 
 from .._budgets import examples
 

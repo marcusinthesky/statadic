@@ -40,6 +40,6 @@ model = "backlinks"
 template = "backlinks.md.j2"
 -->
 
-- [Prove WLS whitening and the HC covariance algebra](../../plan/release-guarantees/tasks/proofs/tasks/linear-covariance/README.md)
+_No declared backlinks._
 
 <!-- insitu:end -->

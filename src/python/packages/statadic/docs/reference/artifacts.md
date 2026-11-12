@@ -11,7 +11,7 @@ STATADIC separates prediction, rendering and reproduction into three tiers:
 Analysis snapshots containing TeX markup require explicit `trust_tex=True` when
 calling `load_analysis`.
 
-Current artifacts use schema 6. Prediction kinds are derived from the approved
+Current artifacts use schema 7. Prediction kinds are derived from the approved
 family rather than repeated in the saved state. Fixed wire records validate
 required fields, discriminants and values before numerical reconstruction.
 Kernel bandwidths retain their checked scalar payload, dtype and JAX weak-scalar

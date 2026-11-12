@@ -12,6 +12,7 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
+from scipy import stats
 from statadic.core.results import InferenceStatus
 from statadic.estimation.linear import (
     LeastSquares,
@@ -24,7 +25,6 @@ from statadic.inference.parameters import (
     coefficient_intervals,
     linear_restriction_test,
 )
-from scipy import stats
 
 from .._budgets import examples
 

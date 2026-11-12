@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
-import statadic.api.survival as survival_family
 import numpy as np
 import pytest
+import statadic.api.survival as survival_family
 from statadic.api.data import MeasureColumn, Observations, PanelLayout
 from statadic.api.design import (
     Categorical,
@@ -23,7 +23,10 @@ from statadic.api.regression import Regression
 from statadic.api.representation import Energy
 from statadic.api.spatial.graphs import PanelData, SpatialError, SpatialLag, SpatialX
 from statadic.api.survival import PreparedSurvival, RightCensored, SpatialSurvivalData
-from statadic.estimation.survival import SpatialSurvivalML, spatial_survival_log_likelihood
+from statadic.estimation.survival import (
+    SpatialSurvivalML,
+    spatial_survival_log_likelihood,
+)
 from statadic.model.survival import LogNormalAFT, WeibullAFT
 from statadic.operators.spatial import prepare_spatial_weights
 from statadic.optimize.integration import IntegrationDesign

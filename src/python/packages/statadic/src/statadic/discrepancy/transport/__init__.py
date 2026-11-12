@@ -54,8 +54,12 @@ from statadic.discrepancy.transport.exact import (
 from statadic.discrepancy.transport.exact import (
     InvalidWassersteinOrderError as ExactInvalidWassersteinOrderError,
 )
-from statadic.discrepancy.transport.sliced import DECLARED_AXIOMS as SLICED_DECLARED_AXIOMS
-from statadic.discrepancy.transport.sliced import DECLARED_BRANDS as SLICED_DECLARED_BRANDS
+from statadic.discrepancy.transport.sliced import (
+    DECLARED_AXIOMS as SLICED_DECLARED_AXIOMS,
+)
+from statadic.discrepancy.transport.sliced import (
+    DECLARED_BRANDS as SLICED_DECLARED_BRANDS,
+)
 from statadic.discrepancy.transport.sliced import (
     InvalidProjectionCountError,
     ProjectionDesign,
@@ -67,7 +71,10 @@ from statadic.discrepancy.transport.sliced import (
 from statadic.discrepancy.transport.sliced import (
     InvalidWassersteinOrderError as SlicedInvalidWassersteinOrderError,
 )
-from statadic.discrepancy.transport.univariate import wasserstein_1d, wasserstein_1d_power
+from statadic.discrepancy.transport.univariate import (
+    wasserstein_1d,
+    wasserstein_1d_power,
+)
 
 __all__ = [
     "EXACT_BALANCED_W1_AXIOMS",

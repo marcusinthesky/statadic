@@ -28,7 +28,10 @@ from statadic.inference._common import (
     _validate_full_rank_covariance,
     _validate_positive_integer,
 )
-from statadic.inference._projection import PROJECTION_TOLERANCE, refine_projection_solution
+from statadic.inference._projection import (
+    PROJECTION_TOLERANCE,
+    refine_projection_solution,
+)
 from statadic.operators.longrun import hall_centered_hac
 from statadic.optimize.simplex import batched_nonnegative_quadratic_program
 

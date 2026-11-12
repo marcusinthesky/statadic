@@ -32,12 +32,23 @@ def _(mo):
     study_form = (
         mo.md("""{trials}\n\n{seed}""")
         .batch(
-            trials=mo.ui.dropdown(["20", "100", "1000"], value="20", label="Trials per scenario"),
-            seed=mo.ui.number(start=0, stop=10000, step=1, value=123, label="Random seed"),
+            trials=mo.ui.dropdown(
+                ["20", "100", "1000"], value="20", label="Trials per scenario"
+            ),
+            seed=mo.ui.number(
+                start=0, stop=10000, step=1, value=123, label="Random seed"
+            ),
         )
         .form(submit_button_label="Run the study", show_clear_button=True)
     )
-    mo.vstack([study_form, mo.md("Four fixed scenarios: null and alternative, each with equal and unequal sample sizes. Settings apply on submission.")])
+    mo.vstack(
+        [
+            study_form,
+            mo.md(
+                "Four fixed scenarios: null and alternative, each with equal and unequal sample sizes. Settings apply on submission."
+            ),
+        ]
+    )
     return (study_form,)
 
 

@@ -31,8 +31,8 @@ from __future__ import annotations
 import jax
 import numpy as np
 import pytest
-from statadic.inference._common import _chi2_survival
 from scipy import stats
+from statadic.inference._common import _chi2_survival
 
 #: Under x64 the measured worst relative deviation from SciPy across the grid
 #: below is 2.5e-14 — Cephes ``chdtrc`` against ``gammaincc``. This leaves an

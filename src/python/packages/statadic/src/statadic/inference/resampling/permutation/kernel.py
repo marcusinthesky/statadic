@@ -47,7 +47,7 @@ def permutation_test_kernel(
     num_permutations: Static[int],
     alternative: Static[Alternative] = "two-sided",
 ) -> TestResult[Float[Array, ""]]:  # jaxtyping scalar shape
-    """Assemble a :class:`~statadic.core.results.TestResult` from a statistic and its null.
+    """Assemble a :class:`~statadic.core.results.TestResult` with its null draws.
 
     The traceable half of the permutation machinery: every operation is a JAX op
     on ``statistic``/``null_distribution``, and ``num_permutations``/

@@ -5,13 +5,22 @@ from typing import override
 
 import jax.numpy as jnp
 
-from statadic.api.base import Estimator, FitContext, Model, RegressionResult  # noqa: TC001
+from statadic.api.base import (  # noqa: TC001
+    Estimator,
+    FitContext,
+    Model,
+    RegressionResult,
+)
 from statadic.api.data import _resolve_row_order, _row_order_metadata
 from statadic.api.design import FittedDesign, Term, level_codes  # noqa: TC001
 from statadic.api.diagnostics import Diagnostics, IVDiagnostic, _diagnostic_requests
 from statadic.api.inference import HAC, HC, Clustered, InferenceResult, ModelBased
 from statadic.api.inputs import RegressionInput, as_observations
-from statadic.api.prediction import PredictionOption, PredictionOptions, _prediction_inputs
+from statadic.api.prediction import (
+    PredictionOption,
+    PredictionOptions,
+    _prediction_inputs,
+)
 from statadic.api.reporting import MetadataValue, Report, _finite_metric  # noqa: TC001
 from statadic.api.roles import InputRole, merge_input_roles  # noqa: TC001
 from statadic.core.typing import Array  # noqa: TC001

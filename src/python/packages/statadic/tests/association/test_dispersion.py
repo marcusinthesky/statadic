@@ -20,12 +20,12 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
+from scipy.stats import f_oneway
 from statadic.association.decomposition import disco_components, group_design
 from statadic.association.dispersion import disco_decomposition, dispersion_f_ratio
 from statadic.core.matrices import unsafe_assume_dmat
 from statadic.inference.calibration import add_one_p_kernel
 from statadic.inference.disco import disco_permutation_null
-from scipy.stats import f_oneway
 
 from .._budgets import examples
 from .._clouds import clustered

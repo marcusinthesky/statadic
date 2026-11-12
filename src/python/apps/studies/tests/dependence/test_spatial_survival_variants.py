@@ -6,6 +6,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.integrate import quad
+from scipy.stats import multivariate_normal, norm
 from statadic.api.survival import SpatialSurvivalData
 from statadic.estimation.survival import (
     SpatialSurvivalProblem,
@@ -21,8 +23,6 @@ from statadic_studies.definitions.dependence.spatial_survival_variants import (
     JOINT_CONFIGURATIONS,
     JOINT_VARIANT_STUDIES,
 )
-from scipy.integrate import quad
-from scipy.stats import multivariate_normal, norm
 
 
 @pytest.mark.parametrize("configuration", JOINT_CONFIGURATIONS)

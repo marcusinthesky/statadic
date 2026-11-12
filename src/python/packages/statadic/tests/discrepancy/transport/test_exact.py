@@ -22,6 +22,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from scipy.optimize import linprog
 from statadic.core.axioms import (
     MARKER_AXIOMS,
     SEMIMETRIC,
@@ -54,7 +55,6 @@ from statadic.discrepancy.transport.exact import (
 from statadic.geometry.ground.metrics import sphere_chord_distance
 from statadic.sample.packed import PackedClouds
 from statadic.testing.axioms import assert_axioms, measure_axioms
-from scipy.optimize import linprog
 
 
 @pytest.mark.component

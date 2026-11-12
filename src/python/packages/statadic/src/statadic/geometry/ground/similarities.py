@@ -286,7 +286,8 @@ def distance_induced_gram(
         exponent: Distance exponent alpha applied before the kernel algebra
             (static). Its negative-type domain depends on ``metric``; this raw
             helper does not check the pairing because the precondition belongs
-            to the statistic — see :func:`statadic.discrepancy.mmd.energy.energy_distance`.
+            to the statistic — see
+            :func:`statadic.discrepancy.mmd.energy.energy_distance`.
         reference: The point ``z0``, shape (d,). Defaults to the origin, which
             is correct for ``metric="euclidean"`` (it is then exactly the Lean
             kernel) and **invalid** for ``metric="angular"``, whose

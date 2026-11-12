@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy.balancing.mixture import energy_distance_kernel_mixture
+from statadic.discrepancy.mmd.energy.balancing.mixture import (
+    energy_distance_kernel_mixture,
+)
 from statadic.discrepancy.mmd.energy.mixture import mixture_energy_distance
 from statadic.sample.packed import PackedClouds, pack
 

@@ -16,7 +16,11 @@ import jax.numpy as jnp
 from jaxtyping import Float  # noqa: TC002
 
 from statadic.core.typing import Array  # noqa: TC001
-from statadic.estimation.gel import AffineGelFit, FixedGelFit, GelCriterion  # noqa: TC001
+from statadic.estimation.gel import (  # noqa: TC001
+    AffineGelFit,
+    FixedGelFit,
+    GelCriterion,
+)
 from statadic.inference._common import _chi2_survival
 
 __all__ = ["AffineGelResult", "GelResult", "gel_test"]

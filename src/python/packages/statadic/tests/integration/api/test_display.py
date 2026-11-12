@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
-import statadic.api
 import pytest
+import statadic.api
 from statadic.api.association import Mantel, MantelInput
 from statadic.api.base import Result
 from statadic.api.data import Observations, PanelLayout

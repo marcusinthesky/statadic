@@ -16,7 +16,12 @@ from __future__ import annotations
 import jax.numpy as jnp
 from jaxtyping import Float  # noqa: TC002
 
-from statadic.core.typing import Array, ArrayLike, as_index, static_jaxtyping  # noqa: TC001
+from statadic.core.typing import (  # noqa: TC001
+    Array,
+    ArrayLike,
+    as_index,
+    static_jaxtyping,
+)
 
 MATRIX_NDIM = 2
 MIN_COVARIANCE_OBSERVATIONS = 2

@@ -77,7 +77,8 @@ def verify(root: Path, capsule: dict, environment: dict) -> None:
         if (
             path.is_absolute()
             or ".." in path.parts
-            or path.parts[0] not in {"statadic", "statadic_studies", "statadic_evidence"}
+            or path.parts[0]
+            not in {"statadic", "statadic_studies", "statadic_evidence"}
         ):
             raise ValueError("Unsafe source capsule path")
     paths = [path for path in root.rglob("*") if path.is_file() or path.is_symlink()]

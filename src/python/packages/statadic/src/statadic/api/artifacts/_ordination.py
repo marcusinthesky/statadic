@@ -9,7 +9,9 @@ from typing import Literal
 
 import jax.numpy as jnp
 
-from statadic.api.data import Observations  # noqa: TC001 -- runtime artifact annotations
+from statadic.api.data import (
+    Observations,  # noqa: TC001 -- runtime artifact annotations
+)
 from statadic.api.ordination_terms import (
     CoordinateMap,  # noqa: TC001 -- runtime artifact annotations
     DistanceCoordinateMap,
