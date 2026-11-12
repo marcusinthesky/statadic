@@ -22,6 +22,7 @@ statadic_publishing = ["statadic", "statadic_evidence"]
 statadic_studies = ["statadic", "statadic_evidence"]
 statadic_performance = ["statadic", "statadic_evidence"]
 statadic_docs_labs = ["statadic", "statadic_evidence", "statadic_studies", "statadic_performance"]
+statadic_docs_pages = ["statadic"]
 
 [tool.ruff]
 target-version = "py313"

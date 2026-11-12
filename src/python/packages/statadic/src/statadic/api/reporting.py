@@ -1415,7 +1415,27 @@ def _pgf_series(lines: list[str], spec: PlotSpec, label: Callable[[str], str]) -
 
 @dataclass(frozen=True, init=False)
 class Report:
-    """Immutable cross-family report; renderers only format retained quantities."""
+    """Immutable cross-family report whose renderers format retained quantities.
+
+    Args:
+        title: Heading for the rendered report.
+        parameters: Ordered parameter estimates and optional uncertainty.
+        metrics: Named fit or diagnostic metrics.
+        metadata: Descriptive metadata copied into immutable retained state.
+        warnings: Warnings about interpretation or availability.
+        plots: Plot specifications attached to the report.
+        notes: Explanatory notes shown with the report.
+        tests: Named hypothesis-test rows.
+
+    Raises:
+        TypeError: If metadata or a report record has an unsupported type.
+        ValueError: If parameter identities or test names are repeated.
+
+    Examples:
+        >>> Report("Example").to_text()
+        'Example'
+
+    """
 
     title: str
     parameters: tuple[ParameterRow, ...]
@@ -1595,7 +1615,19 @@ class Report:
         *,
         parameters: Sequence[str] | None = None,
     ) -> Report:
-        """Require a retained quantity for every selected parameter."""
+        """Require a retained quantity for every selected parameter.
+
+        Args:
+            quantity: Estimate, standard error, interval, statistic or p-value.
+            parameters: Selected parameter names, or ``None`` for all rows.
+
+        Returns:
+            This report, so the check can precede an export.
+
+        Raises:
+            ValueError: If the quantity or names are invalid or a value is unavailable.
+
+        """
         if quantity not in ("estimate", "std_error", "interval", "statistic", "pvalue"):
             message = f"Unknown report quantity {quantity!r}."
             raise ValueError(message)
@@ -1757,6 +1789,21 @@ class Report:
         metric-only table), in that order; ``None`` shows all and ``()`` none.
         Unknown or duplicated names raise ``ValueError``. Notes are unaffected;
         pass ``notes=False`` to omit them.
+
+        Args:
+            digits: Significant digits used for numbers.
+            decimals: Optional fixed number of decimal places.
+            labels: Optional display labels for parameters and metrics.
+            label_markup: Interpret labels as plain text or trusted TeX.
+            notes: Include retained report notes.
+            metrics: Ordered metric names to render, or ``None`` for all.
+
+        Returns:
+            A LaTeX string containing the report tables.
+
+        Raises:
+            ValueError: If formatting options or metric names are invalid.
+
         """
         _check_table_options(digits, decimals)
         selected = _select_metrics(self, metrics)

@@ -15,7 +15,7 @@ include_string_imports = true
 
 # Tach checks within packages. The architecture script owns cross-package rules.
 [[modules]]
-paths = ["statadic_evidence", "statadic_publishing", "statadic_studies", "statadic_performance", "statadic_docs_labs"]
+paths = ["statadic_evidence", "statadic_publishing", "statadic_studies", "statadic_performance", "statadic_docs_labs", "statadic_docs_pages"]
 depends_on = []
 
 [[modules]]

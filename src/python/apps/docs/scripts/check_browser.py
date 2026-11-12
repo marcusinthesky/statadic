@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[5]
 SITE = ROOT / "src/python/apps/docs/build/html"
 OUT = ROOT / "build/ci/browser"
 LOGO = ROOT / "src/python/apps/docs/static/brand/statadic-curve-fit-animated.svg"
-LOGO_SHA256 = "6655ae244a8c060a7ff6d6f2686b66174e6ac98852b9b8999547c09d5a8191dd"
+LOGO_SHA256 = "e89b2d81fdeafad25d5fed777dd0a265a2545ada4a38e895be68ed708cdac332"
 NAVIGATION = (
     ("Start", "start/index.html"),
     ("Tutorials", "tutorials/index.html"),
@@ -30,7 +30,7 @@ NAVIGATION = (
 )
 PAGES = (
     *(path for _, path in NAVIGATION),
-    "tutorials/first-regression.html",
+    "start/first-regression.html",
     "tutorials/ols/index.html",
     "tutorials/ols/fit.html",
     "tutorials/ols/diagnose.html",
@@ -44,11 +44,11 @@ PAGES = (
     "reference/regression.html",
     "reference/hypotheses.html",
     "validation/references.html",
-    "linear-models.html",
+    "reference/regression.html",
     "formal/claims/STATADIC-LINEAR-004.html",
     "reference/api.html",
-    "mathematical-contracts.html",
-    "labs/regression.html",
+    "concepts/geometry.html",
+    "tutorials/permutation-tests.html",
     "validation/research.html",
     "search.html",
 )
@@ -232,12 +232,9 @@ async def inspect_page(page, width, target):
             )
         brand["sha256"] = LOGO_SHA256
     appearance["brand"] = brand | {"favicon": favicon_url}
-    chapter_images = {
-        "tutorials/ols/diagnose.html": "figures/residuals.svg",
-        "tutorials/ols/report.html": "figures/coefficients.svg",
-    }
-    if target in chapter_images:
-        figure = page.locator(f'img[src="{chapter_images[target]}"]')
+    chapter_pages = {"tutorials/ols/diagnose.html", "tutorials/ols/report.html"}
+    if target in chapter_pages:
+        figure = page.locator("img.marimo-figure").first
         assert await figure.count() == 1, target
         loaded = await figure.evaluate(
             """async image => {
@@ -442,20 +439,13 @@ async def main():
                         )
                         assert response.status == 200, target
                         await inspect_page(page, width, target)
-                        if target == "linear-models.html":
-                            evidence = page.locator("#assumptions-and-evidence")
-                            assert await evidence.count() == 1
-                            disclosure = evidence.locator("details").first
-                            assert not await disclosure.evaluate("e => e.open")
-                            await disclosure.locator("summary").focus()
-                            await page.keyboard.press("Enter")
-                            assert await disclosure.evaluate("e => e.open")
-                            assert (
-                                await disclosure.locator(
-                                    'a[href*="STATADIC-LINEAR-010"]'
-                                ).count()
-                                == 1
-                            )
+                        if target == "start/first-regression.html":
+                            launch = page.locator(".marimo-launch")
+                            assert await launch.count() == 1
+                            badge = launch.locator('a[href*="molab.marimo.io/github/"]')
+                            assert await badge.count() == 1
+                            assert await page.locator("#introduction").count() == 1
+                            assert await page.locator("#appendix").count() == 0
                         if width in (1440, 390):
                             name = target.removesuffix(".html").replace("/", "-")
                             await page.screenshot(
@@ -493,7 +483,7 @@ async def main():
                 context = await browser.new_context(color_scheme="dark")
                 await context.add_init_script(f"localStorage._theme = {saved!r}")
                 page = await context.new_page()
-                for target in ["index.html", "tutorials/first-regression.html"]:
+                for target in ["index.html", "start/first-regression.html"]:
                     await page.goto(url + "/" + target, wait_until="load")
                     await inspect_page(page, 1280, target)
                 await context.close()

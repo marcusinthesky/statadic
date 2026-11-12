@@ -14,6 +14,8 @@ import sys
 import zipfile
 from pathlib import Path
 
+from statadic_studies.catalogue import tutorial_paths
+
 BUILD_EPOCH = "315532800"  # ZIP epoch used by uv's normalized sdist-to-wheel route.
 
 PACKAGES = {
@@ -200,22 +202,12 @@ def prepare(root: Path, repository: Path, uv: Path, *, x64: str = "1") -> dict:
     files += [project / "apps/studies/catalogue.json"]
     # The isolated suite validates discoverability against its frozen repository.
     # Retain these as data, without importing either documentation or performance.
-    labs_path = project / "apps/docs/labs.json"
-    labs = json.loads(labs_path.read_text())["labs"]
+    catalogue = json.loads((project / "apps/studies/catalogue.json").read_text())
     files += [
-        labs_path,
         project / "apps/performance/src/statadic_performance/identities.json",
         project / "packages/statadic/docs/reference/performance-workloads.md",
+        *tutorial_paths(repository, catalogue).values(),
     ]
-    for lab in labs:
-        notebook = Path(lab["notebook"])
-        slug = lab["slug"]
-        if notebook.name != str(notebook) or not slug or Path(slug).name != slug:
-            raise ValueError("Invalid lab snapshot identity")
-        files += [
-            project / "apps/docs/notebooks" / notebook,
-            project / "packages/statadic/docs/labs" / f"{slug}.md",
-        ]
     files += sorted((repository / ".context/reference").glob("*/README.md"))
     before = {str(path): _hash(path) for path in files}
     build_inputs = _build_inputs(project)

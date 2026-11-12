@@ -9,6 +9,10 @@ test-layout *args:
 test *args:
     env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --testmon-forceselect "$@"
 
+# Execute package docstring examples independently of Testmon selection.
+doctest:
+    env -u VIRTUAL_ENV JAX_ENABLE_X64=0 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -p no:testmon --doctest-modules src/statadic
+
 # Run the complete fast suite without Testmon selection.
 test-fresh *args:
     env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 uv run --locked pytest -q -p no:monitor -p no:tach -n auto --maxprocesses=2 -m "not slow" --no-testmon "$@"

@@ -75,6 +75,7 @@ def cell_key(base_seed: int, *labels: object) -> UInt32[Array, "2"]:  # noqa: UP
         Legacy ``uint32`` key of shape ``(2,)`` for this cell.
 
     Examples:
+        >>> import jax.numpy as jnp
         >>> k1 = cell_key(42, 10, 8)  # n_assets=10, d=8
         >>> k2 = cell_key(42, 20, 8)  # different cell → different key
         >>> k3 = cell_key(42, 10, 8)  # same cell → identical key

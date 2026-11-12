@@ -16,7 +16,7 @@ from statadic.sample.packed import PackedClouds
 pytestmark = pytest.mark.native
 EXAMPLE = (
     Path(__file__).resolve().parents[3]
-    / "packages/statadic/examples/external_extensions.py"
+    / "packages/statadic/docs/guides/extend-a-term.py"
 )
 extensions = runpy.run_path(str(EXAMPLE))
 

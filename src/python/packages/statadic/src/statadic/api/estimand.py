@@ -44,7 +44,16 @@ __all__ = ["Covariance", "Estimand", "MomentConditions", "QuantitySpec"]
 
 @dataclass(frozen=True)
 class Covariance:
-    """Covariance of declared random-vector columns; no inference is implied."""
+    """Specify the columns whose covariance will be estimated.
+
+    Args:
+        columns: Ordered unique names for an ``Observations`` input. Leave
+            unset when the input is a rectangular array.
+
+    Raises:
+        ValueError: Supplied names are empty, repeated or invalid.
+
+    """
 
     columns: tuple[str, ...] | None = None
 
@@ -83,11 +92,27 @@ type _MomentEstimator = Estimator[_MomentProblem, _MomentFit]
 
 @dataclass(frozen=True, init=False)
 class Estimand[DataT, ResultT](Model[DataT, _Prepared, ResultT]):
-    """One quantity specification and its explicit numerical estimator.
+    """Estimate a covariance or a quantity defined by supplied moments.
 
-    Preparation snapshots input arrays and remains bound to this instance.
-    Fitting returns the existing family's result without adding predictions or
-    manufacturing an inferential reference distribution.
+    Preparation snapshots the aligned inputs and belongs to this instance.
+    The result uses its scientific family's inference and reporting operations.
+
+    Args:
+        quantity: ``Covariance`` or ``MomentConditions`` specification.
+        estimator: Compatible numerical estimator implementing ``estimate``.
+
+    Raises:
+        TypeError: The quantity, estimator or supplied data are unsupported.
+        ValueError: The result has an incompatible matrix shape.
+
+    Examples:
+        >>> from statadic.api.estimand import Covariance, Estimand
+        >>> from statadic.estimation.covariance import SampleCovariance
+        >>> model = Estimand(Covariance(), estimator=SampleCovariance(ddof=1))
+        >>> result = model.estimate([[1.0, 0.0], [2.0, 3.0], [4.0, 2.0]])
+        >>> result.sigma.shape
+        (2, 2)
+
     """
 
     quantity: QuantitySpec
@@ -146,7 +171,19 @@ class Estimand[DataT, ResultT](Model[DataT, _Prepared, ResultT]):
 
     @override
     def prepare(self, data: DataT, /) -> _Prepared:
-        """Snapshot the declared quantity's aligned inputs without fitting."""
+        """Snapshot the inputs required by the declared quantity.
+
+        Args:
+            data: Observations or a rectangular array for covariance, or
+                aligned ``MomentData`` for fixed or affine conditions.
+
+        Returns:
+            Prepared inputs bound to this instance for ``estimate_prepared``.
+
+        Raises:
+            TypeError: The data or moment problem do not match the quantity.
+
+        """
         if isinstance(self.quantity, Covariance):
             if isinstance(data, MomentData):
                 message = "Covariance requires observations or a rectangular array."

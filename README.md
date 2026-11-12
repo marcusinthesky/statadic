@@ -83,7 +83,7 @@ The figure is PGFplots source; add `pgfplots` to your preamble and
 `\input{coefficients.tex}`. HC3/normal intervals use an asymptotic reference.
 Browse the actual [text report](src/python/apps/docs/static/readme/report.txt) and
 [exported table](src/python/apps/docs/static/readme/regression.tex).
-The [complete example](src/python/packages/statadic/examples/first_regression.py)
+The [complete example](src/python/packages/statadic/docs/start/first-regression.py)
 adds residual diagnostics, prediction, and saved analysis artifacts.
 
 ## But there is more: compose the analysis
@@ -125,13 +125,13 @@ print(result.report().to_text())
 This [integration example](src/python/packages/statadic/tests/api/test_survival_composition.py)
 also exercises a censored spell and a missing node. It fixes the spatial
 coefficient at 0.2; spline terms are unpenalized. The
-[survival guide](src/python/packages/statadic/docs/survival-models.md) explains
+[survival guide](src/python/packages/statadic/docs/reference/survival.md) explains
 data preparation, estimation and integration refinement.
 
 The same design vocabulary also supports
-[principal-component regression](src/python/packages/statadic/examples/principal_component_regression.py),
-[count models](src/python/packages/statadic/examples/poisson_exposure.py) and
-[distribution-valued observations](src/python/packages/statadic/examples/distribution_workflow.py).
+[principal-component regression](src/python/packages/statadic/docs/guides/principal-component-regression.py),
+[count models](src/python/packages/statadic/docs/guides/count-models-with-exposure.py) and
+[distribution-valued observations](src/python/packages/statadic/docs/tutorials/distributions.py).
 
 <!-- rumdl-disable MD026 -->
 
@@ -139,7 +139,7 @@ The same design vocabulary also supports
 
 <!-- rumdl-enable MD026 -->
 
-**Train a representation through SAR.** The [complete example](src/python/packages/statadic/examples/neural_sar.py)
+**Train a representation through SAR.** The [complete example](src/python/packages/statadic/docs/guides/train-a-representation-through-sar.py)
 prepares vector distributions `clouds`, period designs `design`, outcomes `y`,
 empty error graphs `no_errors`, and `NeuralSAR`: a Flax NNX 6 → 8 → 2 MLP
 with trainable rho.
@@ -212,7 +212,7 @@ Supported numerical kernels compose with `jit` and `vmap`. Named preparation and
 reporting stay eager; fitted state carries through to inference and prediction.
 JAX supplies CPU, GPU and TPU backends. Current STATADIC reference and performance
 evidence covers CPU; inspect the
-[method-specific transformation and performance scope](src/python/packages/statadic/docs/capabilities.md)
+[method-specific transformation and performance scope](src/python/packages/statadic/docs/reference/transformation-support.md)
 when choosing a workload or device.
 
 ## Try it

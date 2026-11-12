@@ -1,161 +1,96 @@
 # STATADIC documentation application
 
-The canonical site source is `../../packages/statadic/docs/`; this app owns the
-Sphinx configuration and seven native marimo labs. The STATADIC wheel does not depend
-on documentation tools. From the repository root:
+The canonical site source is `../../packages/statadic/docs/`. This app owns
+Sphinx, notebook rendering and the checks that guard the site. The STATADIC
+wheel has no dependency on documentation tools.
+
+## Build, serve and check
+
+Run these commands from the repository root in the pinned devenv environment:
 
 ```bash
 just python::docs::build
+just python::docs::build-fast
 just python::docs::serve
-just python::docs::lab ground-geometry
+just python::docs::notebook tutorials/energy-and-scale.py
 just python::docs::check
 just python::docs::check-size
 just python::docs::check-browser
 ```
 
-The build writes HTML, lab snapshots and notebook downloads under the ignored
-`build/` directory. The snapshots run locally with default inputs; use the lab
-command for interactive controls. They do not require an online notebook host.
-Dependencies are prepared by `just python::setup`, including the pinned TeX
-resources used by report tests. `just python::docs::setup` prepares those TeX
-resources explicitly and may use the network; checks compile with cached inputs.
-Report compilation uses the repository Tectonic tool and shared template.
-External link checks remain separate from the offline build.
+`build` certifies the Lean sources, builds the blueprint and writes native HTML
+and notebook downloads under ignored `build/`. `build-fast` reuses the existing
+Lean certification and blueprint. Both execute canonical notebooks on cache
+misses. `serve` previews the result at `http://127.0.0.1:8000`.
 
-The [GitHub Pages workflow](../../../../.github/workflows/pages.yml) builds this
-same site on pull requests and pushes to `main`. Pull requests retain the
-`github-pages` artifact without deploying. Successful `main` builds deploy to
-the `github-pages` environment; manual runs deploy only when run from `main`.
-The build prepares the locked Python and Lean environments, certifies proofs,
-builds the blueprint and exports the lab snapshots before uploading HTML.
-Pages configuration supplies `STATADIC_DOCS_BASE_URL` for Sphinx's canonical URLs;
-the site's relative asset links support the `/statadic/` project path.
+`check` validates word budgets, page schemas and prose, then checks app sources,
+notebook integrity, app tests and the complete build. Checks never repair source.
+Use `just python::docs::fmt` to apply formatting explicitly. Root `just check`
+also runs the package's doctest command.
 
-In the repository's **Settings → Pages → Build and deployment**, select
-**GitHub Actions** as the source. Configure the `github-pages` environment to
-allow deployments from `main`. The expected default address is
-`https://marcusinthesky.github.io/statadic/`; an existing custom domain is read
-from Pages configuration. Authentication with repository administration access
-is needed for these account settings. Build logs and proof certification are
-retained in `pages-diagnostics` for seven days.
+`just python::setup` prepares the locked dependencies and pinned TeX resources.
+`just python::docs::setup` prepares the TeX resources explicitly and may use the
+network. Report tests compile with the repository Tectonic tool and cached
+bundle. External links remain a separate `just links` check.
 
-Study reports enter the site only through explicit selection, for example
-`just python::docs::build --study-export /absolute/path/to/publication`.
-Ordinary selections are labelled historical. The release orchestrator first
-verifies exact wheel/scope correspondence, then passes `--release-evidence` and
-the matching repeated `--study-export` paths. There is no ambient campaign scan.
-An empty release selection explicitly supplies no current-release Monte Carlo
-evidence. Build provenance records selected paths and export-manifest hashes;
-rendering does not independently grant scientific qualification.
-When selected reports contain operating-characteristic bounds, the site plots
-their retained failure-inclusive rates, uncertainty and frozen thresholds.
-Missing bounds produce an explicit absence note. Resource qualification still
-requires the separate matched-reference campaign; no chart implies a memory win.
+`check-browser` inspects built HTML using installed Chrome/Chromium, or the
+executable supplied with `--browser /path/to/executable`. It checks responsive
+layouts, light and dark system preferences, local fonts, navigation, search,
+local targets, figures and mathematics. Screenshots and hashes are saved under
+`build/ci/browser/`.
 
-The formal mathematics pages require the prepared Lean workspace. The build
-runs `just lean::certify` and the blueprint build before Sphinx, then publishes
-source-linked statements, the shared bibliography, Lean sources and proof
-evidence. `just lean::programme-check` reports remaining literature and proof
-obligations with a nonzero exit; ordinary checks do not claim all-method proof
-completion. See the [Lean guide](../../../lean/README.md).
+## Authoring
 
-The Shibuya site uses local serif fonts, black text, Delft-blue links and the
-supplied animated curve-fit logo/favicon; asset provenance is documented in
-[the branding notes](static/brand/README.md).
-Navigation separates Start, Tutorials, How-to, Concepts, Reference, Evidence and Blog.
-The short first regression leads to a four-part OLS chapter, whose executable
-recipe also powers the native regression marimo lab. Site snapshots retain
-fixed settings; local notebooks provide reactive controls. `word-budget.json`
-retains the 6,166-word historical baseline and counts authored text/code
-transclusions. The expanded product README has its own 1,000-word limit; the rest
-of the first-use path keeps 1,402 words, its previous allowance after subtracting
-the former 139-word README from the original 1,541-word cap. Neither section can
-borrow the other's unused allowance. Detailed references are outside these caps,
-and their total is reported separately.
+[STYLE.md](STYLE.md) defines page types, schemas and voice. Navigation separates
+Start, Tutorials, How-to, Concepts, Reference, Evidence and Blog. Contributor
+procedures belong in repository Markdown, and each method's assumptions and
+evidence have one home in its reference page.
 
-`scripts/render_readme.py` executes the root README's marked OLS example and
-regenerates its report, TeX exports and coefficient preview under `static/readme/`.
-Run it with the same locked app runner used for other docs scripts.
-
-Blog posts and essays live in `../../packages/statadic/docs/blog/`, following
-Exordio's plain Markdown blog structure. The section covers STATADIC, its Exordio
-foundations and the development process. To publish a post, add a Markdown file
-with a stable descriptive filename, description frontmatter, a title and an
-author/date line. Add its title, link, date and short summary to `blog/index.md`,
-newest first, replacing the empty-state text for the first post. Also add its
-filename without `.md` to a MyST `toctree` in that index so Sphinx includes it in
-the sidebar and avoids orphan-page warnings. Run `just python::docs::build` to
-validate it; the Pages workflow publishes it with the rest of the site.
-
-Browser inspection is an explicit command after building: install Chrome or
-Chromium, or pass `--browser /path/to/executable`. Its Python dependencies are
-locked in the docs development group. It checks responsive white layouts under
-light/dark system preferences and saved theme choices, local serif fonts,
-readable articles, nested navigation, search, local targets and rendered mathematics. Screenshots
-and their hashes are retained under `build/ci/browser/`.
-
-`build/html/build-provenance.json` identifies the current source revision,
-dependency versions, notebook/document hashes and requested runtime settings.
-Each lab snapshot has a companion provenance JSON. `labs.json` records the
-notebooks' origin revision separately; it is not current verification evidence.
-
-From the repository root, `just release-check` qualifies retained distributions
-and writes `build/release/manifest.json`, logs, JUnit reports, documentation and
-hashes. Keep that directory empty before a new run by retaining/moving the
-previous bundle. Long scientific campaigns belong on persistent local machines.
-Qualification requires a complete reviewed method catalogue and one retained
-installed-wheel evaluation export per required study, supplied through repeated
-`--campaign PATH` options. Each must include all scenarios, at least 10,000
-replicates and the evaluation resampling budget. Source/ownership gaps stop the
-command before expensive execution. Evaluations must match the release wheel;
-adverse scientific results remain visible in their per-cell summaries.
-Release and installed-campaign preparation use the same sdist-to-wheel build
-route and a fixed archive epoch (`315532800`). Qualification compares exact wheel
-archives; equal implementation payloads with different ZIP timestamps are not
-silently treated as the same release artifact.
-The manual/tag workflow runs `just release-preflight` on both supported CPU
-architectures, retains a complete tar archive and verifies its transport. This
-bounded preflight deliberately does not claim scientific qualification. Verify
-a full bundle with the locked app runner:
+Tutorials and how-to guides are self-contained Marimo notebooks in `start/`,
+`tutorials/` and `guides/`. Copy
+`../../packages/statadic/docs/_templates/notebook.py`, then check an edited file:
 
 ```bash
-uv run --project src/python --offline --frozen --package statadic-docs python src/python/apps/docs/scripts/release.py --verify build/release
+just python::docs::check-notebooks /absolute/path/to/notebook.py
 ```
 
-Successful test execution does not turn an inconclusive study into qualified
-evidence. Review the recorded per-cell scientific dispositions and formal scope.
-Use `--verify-archive PATH --allow-preflight` to check a preflight archive's
-integrity without promoting its scope to qualification.
+The runner checks strict Marimo rules, unparsable cells, script execution in
+both JAX precisions, collected output tests and any doctests. Schema and prose
+checks run separately. Notebook tests live in a hidden Appendix. Independent
+comparison tests belong in `tests/` and import the notebook's top-level helpers.
 
-The pre-release downstream application adapter is
-`statadic_docs_labs.consumer_acceptance.run_acceptance`. Supply the read-only consumer
-repository, a new output directory, the candidate wheel and its already prepared
-isolated interpreter. It reads the exact locked application revision, retains
-original/adapted sources and runs the actual deterministic
-`numerical_qualification(64)` witnesses with the canonical `estimate` verb.
-Only frozen application sources enter the child import path; STATADIC must match the
-installed wheel byte for byte. Bounded dyadic/frontier fixtures, actual factor-SAR
-fits (spherical and diagonal innovations) and innovation/total-risk
-function complete the consumer matrix, with independent dense-Gaussian and
-least-squares checks. This evidence does not replace statistical or performance
-qualification, a full retained-data DVC replay, or the post-alpha production migration.
+The renderer runs Marimo's public `export ipynb --include-outputs --sort top-down`
+command with real JAX and adapts that standard export to native Sphinx pages.
+Marimo supplies Markdown cells, code visibility, static tables and executed
+outputs. The site hides Appendix cells and adds a source download, an Open in
+molab link and a local sandbox command. Reading a static page needs no hosted
+kernel. Changing notebook, package, renderer or locked dependency contents
+invalidates cached executions.
 
-Use `--scope PATH` for an explicit bounded qualification request. The resolver
-retains the complete catalogue and freezes exact selected variants; missing
-source reviews, adapters or adverse required cells still block release. The
-default command continues to require the complete all-method catalogue.
-Scoped qualification also consumes `--consumer-repo PATH` for the adapted
-installed-wheel fixtures and `--performance PATH` for matched-reference evidence.
-Its raw records must match the same wheel, scope and lock. The current alpha's
-explicit `report` policy accepts completed bounded measurements for every requested
-workload, retaining the actual case list and all adverse ratios. Legacy/default
-`superiority` scopes still require all registered subcases and ratios at most
-0.90 in each of three independent sessions. Numerical JUnit lanes cover
-explicit named witnesses; the large censored-panel accuracy/refit obligation
-remains separate and cannot inherit small Gaussian-control results.
+Marimo also supports `marimo export md notebook.py -o notebook.md` and
+`marimo convert notebook.md > notebook.py`. Use these native commands for
+source conversion. Markdown export omits executed outputs, so the published
+site uses the output-inclusive Jupyter export. The remaining adapter handles
+Sphinx links, launch controls and static presentation of interactive controls.
+Every build checks both source prose and the executed Markdown outputs.
 
-Retained scoped bundles require the same explicit `--scope PATH` on verification.
-The verifier re-derives contract records from their retained producers instead of
-accepting a passing manifest status alone. Source correspondence, human fidelity,
-statistical qualification, downstream acceptance and resource results remain
-independent evidence dimensions.
+## Evidence and release
+
+The formal extension projects the claim registry into canonical source stubs
+at build time. Preserve its markers and use explicit creation/synchronization
+commands for authored repository records. Build success remains separate from
+scientific qualification.
+
+Release selections and GitHub Pages publication are documented in the
+[release guide](../../../../infra/release/README.md). The
+[branding notes](static/brand/README.md) record the local serif fonts, Delft-blue
+stylesheet, logo and asset provenance. `scripts/render_readme.py` regenerates
+the root README's marked OLS outputs using the same locked app runner.
+
+## Blog
+
+Posts live in `../../packages/statadic/docs/blog/`. Preserve the author's
+wording. A post has `type: blog`, description frontmatter, a title, and an author
+and date line. Add its summary and hidden toctree entry to `blog/index.md`, then
+build the site. Blog prose is measured as a voice reference and is exempt from
+the documentation prose gate.

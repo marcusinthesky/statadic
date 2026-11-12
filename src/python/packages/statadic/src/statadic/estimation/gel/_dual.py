@@ -5,11 +5,11 @@ Private numerical machinery owned by :mod:`statadic.estimation.gel`.
 Test calibration consumes retained fit ingredients without importing this module.
 
 Layout follows the house *traceable core + eager door* pattern
-(``docs/numerical-host-boundaries.md``): :func:`_gel_rho_kernel`,
-:func:`_gel_subspace_kernel` and :func:`_gel_inner_sup_kernel` are fixed-shape,
-``jit``/``vmap``-safe and free of NumPy; :func:`_gel_identified_subspace` and
-:func:`_gel_inner_sup` are the eager doors that own the float64 decision and the
-NumPy report contract.
+(``ARCHITECTURE.md``, "Numerical and compatibility boundaries"):
+:func:`_gel_rho_kernel`, :func:`_gel_subspace_kernel` and
+:func:`_gel_inner_sup_kernel` are fixed-shape, ``jit``/``vmap``-safe and free of
+NumPy; :func:`_gel_identified_subspace` and :func:`_gel_inner_sup` are the eager
+doors that own the float64 decision and the NumPy report contract.
 
 The carrier has no eager door. ``_gel_rho`` was one until the Newton solver
 became traceable and left it with no caller outside the test suite; it was

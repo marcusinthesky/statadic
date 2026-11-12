@@ -155,8 +155,8 @@ def energy_test_kernel(
         >>> cand2 = jnp.array([[10.0, 10.0], [11.0, 11.0]])  # Very different
         >>> candidates = [cand1, cand2]
         >>> weights, stat = energy_test_kernel(x, candidates)
-        >>> weights  # Should put most weight on cand2
-        Array([0.0, 1.0], dtype=float32)
+        >>> bool(jnp.allclose(weights, jnp.array([0.0, 1.0])))
+        True
 
     """
     if not 0.0 < exponent < _MAX_DISTANCE_EXPONENT:

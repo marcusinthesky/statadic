@@ -1,173 +1,175 @@
+---
+type: reference
+description: Definitions and measurement scope of the CPU performance workloads.
+---
+
 # Performance workload definitions
 
-These links describe executable CPU workloads, not measured speedups. Run
-`just python::performance::smoke --output PATH` for a bounded check, or
-`just python::performance::bench PATH` for a retained campaign. Each output
-directory must be new. The runner executes the listed families together, with
-explicit precision and matched measurement conditions.
+## Usage
+
+Inspect a matched operation and its independent reference from a repository checkout:
+
+```python
+from statadic_performance.reference_workloads import CASES
+
+case = CASES["ols-hc3"]
+print(case["operation"])
+print(case["reference"])
+```
+
+## Description
+
+Each workload specifies the calculation being measured, including its inputs,
+returned outputs and scope of execution. Compare timings only after matching
+these choices to the analysis you intend to perform, since a faster result can
+reflect a smaller set of requested outputs.
+
+## Options
 
 (performance-discrepancy)=
 
-## Distribution discrepancies
+### Distribution discrepancies
 
-Unequal-support point clouds use the canonical `PackedClouds` carrier. Timed
-variants construct that carrier from fixed-shape inputs inside the compiled
-call; these measurements include that construction.
+For clouds with unequal support sizes, the workload constructs a `PackedClouds`
+carrier from fixed-shape coordinates within the compiled calculation. Its timing
+therefore includes construction of the carrier, along with the calculation on
+the clouds it represents.
 
 (performance-discrepancy-mmd-value-gradient)=
 
-### RBF MMD value and input gradient
+#### RBF MMD value and input gradient
 
 `discrepancy/mmd-value-gradient` evaluates V-statistic MMD squared and its
-coordinate gradient, with RBF bandwidth one. It does not measure a fitted-model
-derivative or qualify the signed U-statistic.
+coordinate gradient, with RBF bandwidth one. Its derivative concerns the input coordinates rather than a fitted model, and
+the signed U-statistic lies outside this measurement.
 
 (performance-discrepancy-energy-euclidean)=
 
-### Raw Euclidean energy
+#### Raw Euclidean energy
 
 `discrepancy/energy-euclidean` evaluates raw V-energy with explicit Euclidean
 ground. It does not measure the rooted host `Energy` workflow.
 
 (performance-ols)=
 
-## Least squares
+### Least squares
 
-All variants fit the same complete-data least-squares problem.
+Each variant fits the same complete-data least-squares problem, while retaining
+a different selection of results from the numerical calculation.
 
 (performance-ols-full-fit)=
 
-### Full fit
+#### Full fit
 
 `ols/full-fit` retains the complete native fitted state and diagnostics.
 
 (performance-ols-parameters-projection)=
 
-### Parameters only
+#### Parameters only
 
-`ols/parameters-projection` returns only coefficients. Compiler elimination of
-unused outputs can change its cost; this is not a separate least-squares solver.
+`ols/parameters-projection` returns only coefficients, allowing the compiler to
+eliminate calculations for outputs that the caller does not use. Its cost can
+therefore differ from a full fit even though the same least-squares solver is used.
 
 (performance-ols-fit-and-inference)=
 
-### Fit and classical covariance
+#### Fit and classical covariance
 
 `ols/fit-and-inference` returns coefficients and their classical covariance.
 Other covariance estimators and reference laws are outside this workload.
 
 (performance-row-refits)=
 
-## Supplied-row refits
+### Supplied-row refits
 
-Every variant uses the same frozen row-resampling schedule. Chunk size changes
-execution grouping, not draw identities or the statistical procedure.
+Every variant refits the outcome against selected rows from the same design,
+following one frozen resampling schedule. Varying the size of each chunk changes
+the grouping of the calculations without changing the identities of the draws.
 
 (performance-row-refits-chunk-1)=
 
-### One draw per chunk
+#### One draw per chunk
 
-`row-refits/chunk-1` is present in smoke and retained benchmark campaigns.
+`row-refits/chunk-1` is present in smoke and saved benchmark runs.
 
 (performance-row-refits-chunk-2)=
 
-### Two draws per chunk
+#### Two draws per chunk
 
 `row-refits/chunk-2` is a smoke-only variant.
 
 (performance-row-refits-chunk-8)=
 
-### Eight draws per chunk
+#### Eight draws per chunk
 
-`row-refits/chunk-8` is present in retained benchmark campaigns.
+`row-refits/chunk-8` is present in saved benchmark runs.
 
 (performance-row-refits-chunk-32)=
 
-### Thirty-two draws per chunk
+#### Thirty-two draws per chunk
 
-`row-refits/chunk-32` is present in retained benchmark campaigns.
+`row-refits/chunk-32` is present in saved benchmark runs.
+
+## Results
+
+Timing the first call includes compilation for that particular shape and
+precision, while synchronized warm execution measures subsequent calls. Host
+transfer measures movement between host and device memory. Process peak RSS
+includes memory for imports and compilation, whereas estimates of compiler
+buffers concern the allocation for the compiled calculation.
+
+Independent numerical comparisons run outside timing. Compare measurements
+with matching hardware, shapes, precision and statistical configurations, using
+the commands in the repository performance application.
+
+A complete fit and a projection of its coefficients have different outputs.
+A compiler may remove work whose results are unused, so compare consumers that
+return the same quantities before interpreting a difference in execution time.
+
+## Methods and formulas
 
 (performance-graph-profile)=
 
-## Projected Wasserstein graph likelihood
+### Projected Wasserstein graph likelihood
 
-The full workload has 100 firms, 128 equal-mass articles per firm and four
-outcome periods. Each two-dimensional article vector is projected onto a line.
+The full workload contains observations from 100 firms, with 128 equal-mass
+articles for each firm over four outcome periods. Each article is represented
+by a two-dimensional vector, which is projected onto a line before comparison.
 Both variants sort the projected samples, form squared Wasserstein distances,
 apply off-diagonal RBF weights and profile the Gaussian SAR mean and variance
 at a fixed spatial coefficient.
 
 (performance-graph-profile-profile-value)=
 
-### Profile log likelihood
+#### Profile log likelihood
 
 `graph-profile/profile-value` returns the Gaussian profile value.
 
 (performance-graph-profile-profile-value-angle-gradient)=
 
-### Profile value and projection derivative
+#### Profile value and projection derivative
 
 `graph-profile/profile-value-angle-gradient` differentiates the full calculation
 with respect to the projection angle. An independent NumPy calculation checks
 the value and derivative away from sorting ties.
 
-## Methods exercised
+## Assumptions and limits
+
+Measurements describe a particular implementation, device, precision and shape.
+Numerical agreement, statistical behavior and resource use require their own
+evidence. A bounded example supports conclusions about that example, while the
+full joint censored SAR/AFT workload still lacks a matched independent reference.
+
+## Evidence
 
 <!-- statadic:performance-catalogue -->
 
-## Current-wheel matched references
+The [performance application](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/README.md)
+records the exact matched consumers, independent references and measurement
+policies. Read those definitions alongside the results of the particular run.
 
-The separate `just python::performance::reference` lane compares an installed
-candidate wheel with independent peer processes. It prepares identical inputs
-before timing, then measures the complete numerical consumer outputs below.
-Prepared empirical carriers keep coordinates and masses dynamic. The public
-target-projection and ordered dyadic-rank consumers remain eager; the runner
-does not introduce a different traced procedure to improve their timing.
+## See also
 
-The executable definitions are
-[`reference_workloads.CASES`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference_workloads.py),
-[`reference_fixtures`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference_fixtures.py)
-and [`reference.QUALIFICATION_CASES`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference.py).
-They freeze exact inputs, sizes, conventions, output vectors and required
-subcases. These workload contracts do not cover every statistical variant in
-their named families.
-
-| Required workload | Enumerated consumers and independent references |
-| --- | --- |
-| `linear-fit-and-inference` | OLS and relative-precision WLS coefficients plus HC3 covariance; statsmodels |
-| `canonical-glm` | Grouped-binomial logit with offset and Poisson with exposure/offset: fit, model covariance, likelihood and means; statsmodels |
-| `dispersion-likelihood` | Gamma and NB2 joint estimated dispersion: coefficients, physical dispersion, likelihood and physical-coordinate observed information; independent SciPy likelihood/analytic score and information differences |
-| `covariance-shrinkage` | Sample covariance and constant-correlation Ledoit–Wolf target, weight and estimate; independent NumPy moments. This is not sklearn's identity target. |
-| `dyadic-node-refits` | Supplied multinomial node counts with and without node effects: ordered rank selection, focal coefficient, SSE, overall/within R² and active counts; independent weighted SVD refits |
-| `affine-gmm` | Fixed non-efficient actual W and three centered Bartlett-HAC updates: fit, retained actual W, final HAC covariance and criterion; independent SciPy SVD/Bartlett calculations |
-| `weighted-mmd-energy` | Unequal weighted RBF V-MMD and Euclidean exponent-one V-energy values plus coordinate gradients; sklearn kernels and independent analytic gradients |
-| `empirical-transport` | Unequal weighted real-line W1 and squared W2; SciPy W1 and independent monotone coupling. Assignment, sliced and Sinkhorn performance are outside this contract. |
-| `measure-projections` | Energy and RBF target-simplex mixtures: weights and original objective; independent SciPy SLSQP over separately calculated distance/kernel means |
-| `qp-gmv` | Capped-simplex quadratic weights and objective; SciPy SLSQP |
-| `supplied-row-refits` | Initial OLS and all supplied aligned row-pairs coefficient refits; independent NumPy SVD solves |
-| `spatial-operators` | Fixed-graph SLX fit/classical covariance/fitted values and Gaussian SAR fit/expected covariance/fitted/reduced means; statsmodels and spreg |
-| `spatial-panel` | Time-varying-W unit-effect SAR fit and expected information, plus changing-roster/full-graph-missing pooled SAR fit and observed information; independent period-block Gaussian calculations |
-| `ordinary-aft` | Right-censored Weibull/lognormal, ordinary and delayed entry: fit, likelihood and observed information; independent SciPy likelihoods/analytic derivatives |
-| `joint-censored-sar-aft` | **Unsupported matched reference:** full 500-unit ×20-period fit and identified observed information. Small integration or objective-only pilots do not replace it. |
-| `ordination-fit-transform` | Kernel PCA and Isomap training and held-out coordinates; scikit-learn with matched centering, bandwidth or union-neighbor paths and frozen queries |
-| `geometric-regression-permutations` | Observed and supplied Freedman–Lane partial statistics and p-value; independent NumPy projections |
-
-Registration enables measurement; it establishes no parity, scientific or
-resource outcome. The current alpha selects `report`: completed matched sessions
-for every requested workload, numerical agreement and the actual executed case
-list, with all adverse ratios visible. A bounded case does not establish
-full-family coverage. The legacy/default `superiority` policy additionally
-requires every registered subcase, three independent sessions, five warmups,
-thirty samples and warm-time and total-process RSS ratios at most `0.90` in each
-session. Process RSS includes imports, compilation and retained buffers; it is
-not import-subtracted workload memory. Cold/first-call costs remain separate.
-The unsupported joint workload still leaves the full roster incomplete under
-either policy.
-
-## Interpret retained measurements
-
-Compilation, first-call latency, synchronized warm execution and host transfer
-are separate measurements. Process peak RSS includes imports and compilation;
-compiler buffer estimates are not an allocator peak. Independent numerical
-witnesses run outside timing. Compare only matched campaigns with
-`just python::performance::compare BASELINE CANDIDATE`; results do not transfer
-to other hardware, shapes, precisions or statistical configurations.
+- [Transformation support](transformation-support.md)
+- [Independent references](../validation/references.md)
+- [Known limitations](../validation/known-limitations.md)

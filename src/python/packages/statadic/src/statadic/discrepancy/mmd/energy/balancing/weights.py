@@ -73,8 +73,8 @@ def kernel_balancing_weights(
         >>> cand2 = jnp.array([[10.0, 10.0], [10.1, 10.1], [10.2, 10.2]])  # 3 samples
         >>> candidates = [cand1, cand2]  # List of arrays
         >>> weights = kernel_balancing_weights(target, candidates)
-        >>> weights
-        Array([1.0, 0.0], dtype=float32)  # All weight on candidate 1
+        >>> bool(jnp.allclose(weights, jnp.array([1.0, 0.0])))
+        True
 
         >>> # Uniform sizes (backward compatible)
         >>> cand1 = jnp.array([[0.0, 0.0], [0.1, 0.1]])

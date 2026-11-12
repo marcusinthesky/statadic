@@ -108,11 +108,10 @@ def test_prepare_builds_offline_hash_locked_noneditable_closure(
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("{}")
     inputs = {
-        "apps/docs/labs.json": json.dumps(
-            {"labs": [{"slug": "example", "notebook": "example.py"}]}
+        "apps/studies/catalogue.json": json.dumps(
+            {"tutorials": {"example": "tutorials/example.py"}}
         ),
-        "apps/docs/notebooks/example.py": "# frozen notebook\n",
-        "packages/statadic/docs/labs/example.md": "# frozen lab\n",
+        "packages/statadic/docs/tutorials/example.py": "# frozen notebook\n",
         "packages/statadic/docs/reference/performance-workloads.md": "# benchmarks\n",
         "apps/performance/src/statadic_performance/identities.json": "{}",
     }

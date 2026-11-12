@@ -1,0 +1,25 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# Generated regions sit between invisible `<!-- statadic:... -->` markers.
+# The cap applies to the entire authored page.
+maxTokens: 800
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: evidence
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      const: How to read this
+  additionalSections: false

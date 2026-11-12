@@ -1,9 +1,9 @@
 # Documentation ownership
 
 STATADIC's package documentation is the canonical source; Sphinx reads it directly
-with this application's configuration. The app owns the lab notebooks, their
-helpers, and the tooling needed to build and test the site. Static snapshots and
-source downloads are generated in ignored build output, never in authored source.
+with this application's configuration. Teaching notebooks live beside the pages
+under the package docs tree. The app owns rendering and validation, while static
+snapshots and source downloads are generated in ignored build output.
 The app is an internal workspace consumer and does not add documentation
 dependencies to STATADIC's distribution. A successful site build does not qualify
 scientific results or prove mathematical claims.
@@ -26,11 +26,15 @@ The website uses Shibuya's article layout with licensed local serif fonts and a
 small black/Delft-blue stylesheet. The supplied curve-fit SVG is the header logo
 and favicon; the rest of the presentation remains free of decorative artwork.
 Documentation separates learning, tasks, concepts, reference and evidence.
-The short onboarding sources retain a frozen word budget; the complete OLS
-chapter and comprehensive references sit outside
-that entry path. The canonical OLS example owns the numerical teaching recipe;
-the native marimo lab owns reactive controls and display. Tutorials render the
-actual example outputs. No browser-WASM or hosted-kernel runtime is introduced.
+The root README retains its word budget. Page-type schemas set section budgets
+for the user documentation. Each self-contained marimo notebook owns its prose,
+numerical recipe, figures, controls and output tests. Native Sphinx pages render
+executed outputs and offer source downloads and optional server-mode molab links.
+The site itself requires neither browser-WASM nor a hosted kernel.
+
+`statadic_docs_pages` owns notebook execution, content-based caches and conversion
+to native document nodes. `statadic_docs_labs` retains formal, release and
+scientific evidence tooling. These packages remain internal workspace consumers.
 
 The release runner owns retained build artifacts and an isolated installed-wheel
 test environment. It exports reference dependencies from the workspace lock,

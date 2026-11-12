@@ -1,0 +1,16 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# Blog posts are author-owned, so there are no caps.
+frontmatter:
+  type: object
+  required: [type, description]
+  properties:
+    type:
+      const: blog
+    description:
+      type: string
+      pattern: \S
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1

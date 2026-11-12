@@ -669,9 +669,8 @@ def sandwich_covariance[EquationA: EquationDescriptor, VariabilityA: Variability
         >>> panel = jnp.tile(jnp.eye(2)[None], (5, 1, 1))
         >>> bread = unsafe_assume_equation_jacobian(panel)
         >>> meat = unsafe_assume_variability_matrix(jnp.eye(2) * 4.0)
-        >>> sandwich_covariance(bread, meat).values
-        Array([[4., 0.],
-               [0., 4.]], dtype=float64)
+        >>> bool(jnp.allclose(sandwich_covariance(bread, meat).values, 4 * jnp.eye(2)))
+        True
 
     """
     jacobian = (

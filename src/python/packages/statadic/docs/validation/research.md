@@ -1,8 +1,19 @@
-# Method evaluation catalogue
+---
+type: evidence
+description: Statistical studies and their evaluated configurations.
+---
 
-The catalogue maps scientific procedures and their substantive variants to source
-citations, Python entry points and registered studies. Missing evaluations and
-unresolved source correspondence remain visible. Completed studies must report
-Monte Carlo uncertainty and failures; a registered design is not a qualification.
+# Study catalogue
+
+The catalogue connects each statistical procedure with its study design,
+evaluated configurations and recorded results from repeated experiments.
 
 <!-- statadic:research-catalogue -->
+
+## How to read this
+
+Use the catalogue to find a procedure, its source and the study designed to
+evaluate it. Read the requested trial count, failures and Monte Carlo uncertainty
+alongside the result, since each affects its interpretation. A study design that
+has yet to run is distinct from a completed study, and an inconclusive result
+remains inconclusive.

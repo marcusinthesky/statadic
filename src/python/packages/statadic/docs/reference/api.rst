@@ -67,7 +67,7 @@ Regression and uncertainty
    :canonical: statadic.optimize.integration.gaussian.IntegrationDesign
 
    A replayable key or supplied integration points with fixed draw and replicate
-   counts. See the :doc:`spatial survival guide <../survival-models>` for scope.
+   counts. See the :doc:`spatial survival guide <survival>` for scope.
 
 .. autoclass:: statadic.api.regression.LinearResult
    :members: diagnose, predict, infer
@@ -212,6 +212,16 @@ These objects retain already-computed values. Analysis snapshots restore
 rendering, while predictor artifacts restore only their declared prediction
 capabilities. See :doc:`reporting <reporting>` and :doc:`artifacts <artifacts>`.
 
+.. py:class:: statadic.api.artifacts.PredictionArtifact
+
+   A prediction-only artifact restored by ``load_predictor(path)``. It keeps the
+   fitted design and coefficients needed for compatible new observations.
+
+   .. py:method:: predict(data, *, kind=None)
+
+      Apply the saved design and prediction convention to new observations.
+      The artifact does not restore live fitted inference.
+
 Quantities and supplied moments
 -------------------------------
 
@@ -313,5 +323,5 @@ frozen query map. Geometric Regression requests inference separately through
 ``ResponsePermutation`` or ``FreedmanLane`` with an explicit ``PermutationPlan``.
 Inspect validity, calibration status and failed draws before interpreting a
 report. See :doc:`ordination <ordination>`, :doc:`energy <energy>`,
-:doc:`resampling <../guides/resampling>` and the
+:doc:`resampling <resampling>` and the
 :doc:`composition guide <composition>`.

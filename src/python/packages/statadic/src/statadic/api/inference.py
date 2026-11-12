@@ -85,14 +85,33 @@ class CovarianceSpec:
 
 @dataclass(frozen=True)
 class ModelBased(CovarianceSpec):
-    """Request the supported family-specific model covariance."""
+    """Request the supported family-specific model covariance.
+
+    Args:
+        finite_sample_correction: Multiplier applied to the covariance.
+
+    Examples:
+        >>> ModelBased().finite_sample_correction
+        1.0
+
+    """
 
     finite_sample_correction: float = 1.0
 
 
 @dataclass(frozen=True)
 class HC(CovarianceSpec):
-    """Request an explicit supported independent-row HC variant."""
+    """Request an explicit supported independent-row HC variant.
+
+    Args:
+        kind: HC0, HC1, HC2 or HC3, subject to the model family's support.
+        finite_sample_correction: Additional covariance multiplier.
+
+    Examples:
+        >>> HC("HC3").kind
+        'HC3'
+
+    """
 
     kind: Literal["HC0", "HC1", "HC2", "HC3"] = "HC0"
     finite_sample_correction: float = 1.0
@@ -100,7 +119,18 @@ class HC(CovarianceSpec):
 
 @dataclass(frozen=True)
 class HAC(CovarianceSpec):
-    """Bartlett HAC with an explicit numeric ordering column or retained order."""
+    """Request Bartlett HAC covariance for an ordered sequence.
+
+    Args:
+        bandwidth: Maximum lag used by the Bartlett weighting scheme.
+        finite_sample_correction: Additional covariance multiplier.
+        order_by: Numeric ordering column, or ``None`` to use retained order.
+
+    Examples:
+        >>> HAC(2, order_by="time").bandwidth
+        2
+
+    """
 
     bandwidth: int
     finite_sample_correction: float = 1.0
@@ -109,7 +139,17 @@ class HAC(CovarianceSpec):
 
 @dataclass(frozen=True)
 class Clustered(CovarianceSpec):
-    """One-way cluster labels aligned to retained training observations."""
+    """Request covariance from one-way clusters of retained observations.
+
+    Args:
+        column: Name of the aligned cluster-label column.
+        finite_sample_correction: Additional covariance multiplier.
+
+    Examples:
+        >>> Clustered("firm").column
+        'firm'
+
+    """
 
     column: str
     finite_sample_correction: float = 1.0
@@ -327,7 +367,17 @@ class InferenceResult[U: FittedUncertainty = FittedUncertainty]:
         degrees_of_freedom: ArrayLike | None = None,
         confidence: float = 0.95,
     ) -> CoefficientIntervals:
-        """Compute intervals under the explicitly selected reference law."""
+        """Compute intervals under the explicitly selected reference law.
+
+        Args:
+            reference: Normal or Student reference distribution.
+            degrees_of_freedom: Degrees of freedom for a Student reference.
+            confidence: Requested marginal confidence level.
+
+        Returns:
+            Coefficient intervals with numerical availability information.
+
+        """
         return coefficient_intervals(
             self.uncertainty,
             confidence=confidence,
@@ -381,6 +431,15 @@ class InferenceResult[U: FittedUncertainty = FittedUncertainty]:
 
         Positional or batched numerical callers use the native restriction
         kernel. Reference selection remains the caller's explicit assumption.
+
+        Args:
+            hypothesis: Named linear restriction to test.
+            reference: Chi-square or F reference distribution.
+            degrees_of_freedom: Denominator degrees of freedom for an F reference.
+
+        Returns:
+            A test outcome carrying the claim, calibration and availability.
+
         """
         matrix, target = self._compile_hypothesis(hypothesis)
         fit = self.uncertainty.fit
@@ -530,6 +589,19 @@ class InferenceResult[U: FittedUncertainty = FittedUncertainty]:
         single-restriction Wald test that :meth:`test` performs. The null is
         converted once to the fit's dtype; when that changes it, metadata
         ``effective_null`` and a warning record the value actually tested.
+
+        Args:
+            reference: Optional normal or Student reference for intervals and tests.
+            degrees_of_freedom: Degrees of freedom for a Student reference.
+            confidence: Requested marginal confidence level.
+            null: Optional scalar or named coefficient targets to test.
+
+        Returns:
+            A report containing the retained fit and requested inference.
+
+        Raises:
+            ValueError: If a null or degrees of freedom lacks a reference.
+
         """
         if reference is None and degrees_of_freedom is not None:
             message = "Degrees of freedom require an explicitly selected reference."

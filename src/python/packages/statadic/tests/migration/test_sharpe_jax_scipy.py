@@ -223,8 +223,8 @@ def _x64_door_sum_of_squares(x: np.ndarray | jax.Array) -> jax.Array:
 def test_door_scoped_x64_does_not_survive_jit() -> None:
     """Pin the precision boundary: a door owns eager values, the caller owns x64.
 
-    The contract is ``docs/numerical-host-boundaries.md`` §"Precision boundary:
-    who owns x64" (t56.6.1). Asserted in the *un*-preserved direction on purpose:
+    The contract is ``ARCHITECTURE.md`` §"Numerical and compatibility boundaries"
+    (why a door cannot own x64). Asserted in the *un*-preserved direction on purpose:
     if a future JAX release reordered input canonicalization so that a door's
     context reached its own arguments, ``traced_value`` would become
     ``1.0000000827e-10`` and this test would fail — instead of a manuscript

@@ -3,7 +3,7 @@
 `statadic-curve-fit-animated.svg` is the supplied STATADIC logo and favicon, copied
 from `.tmp/statadic-curve-fit-animated.svg` with only the repository-required final
 newline added. Its repository SHA-256 is
-`6655ae244a8c060a7ff6d6f2686b66174e6ac98852b9b8999547c09d5a8191dd`.
+`e89b2d81fdeafad25d5fed777dd0a265a2545ada4a38e895be68ed708cdac332`.
 The asset retains its original palette, animation, title, description and
 reduced-motion stylesheet; site styling does not rewrite the SVG.
 The supplied SMIL animation continues in Chrome despite that internal rule.

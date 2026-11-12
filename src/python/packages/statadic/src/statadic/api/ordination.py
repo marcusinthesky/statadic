@@ -307,7 +307,32 @@ def _distance_source(
 
 @dataclass(frozen=True)
 class Ordination(Model[_Input, PreparedOrdination, "OrdinationResult"], Term):
-    """One coordinate-model specification, also usable directly as a design term."""
+    """Learn coordinates and keep the map that places new observations.
+
+    Choose feature, kernel or distance geometry and select axes with
+    ``PrincipalCoordinates``. The result keeps the full signed spectrum as
+    well as the selected coordinates. As a regression term, this model learns
+    its coordinate map from the training predictors.
+
+    Args:
+        geometry: Construction of a feature, kernel or distance Gram matrix.
+        coordinates: Axis count and policy for materially negative inertia.
+        name: Prefix for coordinate columns when composing a design.
+
+    Raises:
+        TypeError: The geometry or coordinate specification is unsupported.
+        ValueError: The name is empty or the requested geometry is unavailable.
+
+    Examples:
+        >>> from statadic.api.ordination import Ordination
+        >>> model = Ordination.pca(dim=1)
+        >>> fitted = model.estimate([[0.0, 0.0], [1.0, 2.0], [2.0, 4.0], [3.0, 6.0]])
+        >>> fitted.coordinates.shape
+        (4, 1)
+        >>> fitted.transform([[4.0, 8.0]]).shape
+        (1, 1)
+
+    """
 
     geometry: _Geometry
     coordinates: PrincipalCoordinates = field(default_factory=PrincipalCoordinates)
@@ -372,7 +397,21 @@ class Ordination(Model[_Input, PreparedOrdination, "OrdinationResult"], Term):
 
     @override
     def prepare(self, data: _Input) -> PreparedOrdination:
-        """Own the training source without solving or learning from new rows."""
+        """Snapshot the training source before estimating coordinates.
+
+        Args:
+            data: Aligned features, a rectangular feature array, or the
+                distance input required by the chosen geometry.
+
+        Returns:
+            Prepared inputs bound to this instance, with training identities
+            and any geometry needed to transform future observations.
+
+        Raises:
+            TypeError: The input does not match the declared geometry.
+            ValueError: Identities, domains or geometry requirements fail.
+
+        """
         geometry = self.geometry
         if isinstance(geometry, (LinearGram, KernelGram)):
             values, names, ids = _feature_source(data, geometry.features)
@@ -679,7 +718,19 @@ class OrdinationResult(Result[OrdinationFit, OrdinationContext]):
         return coordinate_capabilities(self.mapping)
 
     def transform(self, data: Observations | ArrayLike | PackedClouds) -> Array:
-        """Apply the retained training transformation without any new fitting."""
+        """Apply the fitted coordinate map to new observations.
+
+        Args:
+            data: Query observations compatible with the fitted feature
+                schema or empirical-measure geometry.
+
+        Returns:
+            A query-by-component array in the training coordinate system.
+
+        Raises:
+            ValueError: The map cannot extend to the supplied observations.
+
+        """
         return transform_coordinates(self.mapping, data)
 
     def transform_distances(

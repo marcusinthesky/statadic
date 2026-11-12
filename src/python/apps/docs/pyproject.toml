@@ -19,8 +19,11 @@ dependencies = [
   "docutils>=0.20,<0.22",
   "sphinxcontrib-bibtex>=2.6,<3",
   "jsonschema>=4,<5",
+  "pyyaml>=6,<7",
   "myst-parser>=4,<5",
   "shibuya>=2026.1.9,<2027",
+  "wigglystuff>=0.2,<1",
+  "nbformat>=5.10,<6",
 ]
 
 [dependency-groups]
@@ -33,15 +36,19 @@ statadic-studies = { workspace = true }
 statadic-performance = { workspace = true }
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/statadic_docs_labs"]
+packages = ["src/statadic_docs_labs", "src/statadic_docs_pages"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests", "../../packages/statadic/docs/start", "../../packages/statadic/docs/tutorials", "../../packages/statadic/docs/guides"]
+python_files = ["test_*.py", "*.py"]
+norecursedirs = [".*", "build", "dist", "__marimo__", "__pycache__"]
+addopts = ["--strict-markers", "-p", "statadic_docs_pages.pytest_notebooks"]
 markers = [
   "native: checks against the native STATADIC package",
+  "e2e: exercises a published documentation notebook",
   "notebook: executes a marimo notebook",
 ]

@@ -1,24 +1,50 @@
-# What does “valid” actually mean?
+---
+type: explanation
+description: Why a successful fit, an available interval and a justified analysis answer different questions.
+---
 
-STATADIC returns evidence at more than one layer. Read the flag or status associated with the output you plan to use, and do not promote it into a stronger scientific statement.
+# Understanding result validity
 
-| Question | Relevant evidence | Not established by that evidence |
-|---|---|---|
-| Were inputs and shapes supported? | Input/domain/schema checks | The observations are correctly sampled or scientifically comparable |
-| Did the numerical solver meet its criterion? | Solver status, residuals, feasibility or optimality diagnostics | Identification, a unique global solution, or accurate inference |
-| Are these parameters identified in the retained design? | Rank and identification diagnostics | Exogeneity or causal identification |
-| Is a requested numerical result available? | Fit, covariance, interval or test validity/status | Statistical coverage or Type-I error control |
-| Does it agree with an independent implementation? | Matched reference test with aligned conventions | Every configuration or the full family is qualified |
-| Has the complete inferential procedure met a study criterion? | Prespecified, failure-inclusive qualification result | Universal or simultaneous validity beyond the studied cells |
+A model can produce finite coefficients even when the relationship between
+the observations and its assumptions makes those coefficients difficult to
+interpret. STATADIC keeps numerical availability separate from the scientific
+judgment needed to connect an estimate to the question behind an analysis.
 
-## Fitting and uncertainty can diverge
+## Read the status for the output you need
 
-A saturated linear fit can have identifiable coefficients but no residual degrees of freedom for a common variance estimate. An interval can be unavailable even when the point fit succeeded. A tiny exact-fit residual can make a covariance construction numerically inappropriate. A finite computed tail can lie outside the validated reference range.
+| Question | What to inspect |
+| --- | --- |
+| Were the inputs supported? | Domain, shape and identity checks |
+| Did the solver meet its criterion? | Convergence status and numerical residuals |
+| Were the parameters identified? | Rank and identification diagnostics |
+| Is uncertainty available? | Covariance and reference-distribution status |
+| What supports the procedure? | Matched comparisons and statistical studies |
 
-## Failure is an output, not an inconvenience
+These checks concern different parts of an analysis, so success at one stage
+leaves the assumptions for later stages to be assessed separately. A solver's
+convergence criterion describes its numerical calculation for the fitted model, while exogeneity
+concerns the relationship between predictors and errors in the population.
 
-Unavailable results should remain visible in examples and reports. A tutorial should show what to inspect and which scientific choice needs reconsideration. It should not suggest pseudoinverse rescue for unidentified parameters, silently delete failed resamples, or replace an unqualified model with a green badge.
+## A fit can succeed before inference fails
 
-## Write down the assumptions separately
+A saturated linear model can identify its coefficients while leaving zero
+residual degrees of freedom for a common variance estimate. Likewise, a finite
+tail probability can fall outside the range checked for its reference
+calculation. Inspect the inference result separately from the fitted result, because the
+requested covariance and reference calculation each have their own conditions.
 
-Numerical evidence cannot establish exchangeability, exogeneity, independent censoring, a valid dependence model or the quality of a research design. State these assumptions in the method page and in the analysis. Link to the relevant [validation evidence](../validation/index.md) rather than claiming that a shared API supplies them.
+Reports keep unavailable values visible alongside the estimates that were
+computed for the analysis. When a value is unavailable, reconsider the design or requested
+inference and keep failed resamples in the accounting for the method.
+
+## Connect a result to its assumptions
+
+Exchangeability, independent censoring and a valid dependence model are
+assumptions about the observations and their collection. Numerical checks help you examine an analysis, but those assumptions require
+substantive reasoning about how the observations were collected and how the
+model relates to the question.
+
+Before interpreting an output, read the method's reference page alongside the
+assumptions that apply to your observations. The [evidence guide](what-evidence-means.md)
+explains how tests, comparisons, mathematical statements and studies contribute
+different kinds of support.

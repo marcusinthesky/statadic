@@ -1,4 +1,5 @@
 ---
+type: blog
 description: "Introducing STATADIC: a composable statistical workflow on JAX, with inspectable mathematics and evidence from estimation to publication."
 ---
 
@@ -113,7 +114,7 @@ print(result.report().to_text())
 This SAR-style composition estimates the spatial coefficient and uses an
 unpenalized spline basis. The small fixture used to exercise it does not qualify
 integration accuracy. Graphs, censoring roles and numerical integration inputs
-are explicit; the [survival guide](../survival-models.md) explains their
+are explicit; the [survival guide](../reference/survival.md) explains their
 preparation and limitations.
 
 <!-- rumdl-disable MD026 -->
@@ -127,7 +128,7 @@ allow it, estimator components can be compiled with `jit` and evaluated across
 repeated inputs with `vmap`, making simulation studies practical without
 maintaining a separate estimator implementation. Named data preparation and
 report rendering remain eager operations. JAX offers CPU, GPU and TPU backends;
-Statadic's current [performance evidence](../capabilities.md) covers CPU workloads.
+Statadic's current [performance evidence](../reference/transformation-support.md) covers CPU workloads.
 
 ## What would justify trusting the answer?
 

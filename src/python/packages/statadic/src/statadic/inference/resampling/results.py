@@ -91,11 +91,12 @@ class HypothesisTest:
             null_distribution does not match num_permutations.
 
     Examples:
+        >>> import jax.numpy as jnp
         >>> result = HypothesisTest(
         ...     statistic=2.5,
         ...     pvalue=0.03,
         ...     num_permutations=999,
-        ...     null_distribution=jnp.array([...]),  # 999 values
+        ...     null_distribution=jnp.zeros(999),
         ... )
         >>> print(f"Reject null hypothesis: {result.pvalue < 0.05}")
         Reject null hypothesis: True
@@ -135,11 +136,12 @@ class PermutationTestResult(HypothesisTest):
     for permutation test results.
 
     Examples:
+        >>> import jax.numpy as jnp
         >>> result = PermutationTestResult(
         ...     statistic=3.2,
         ...     pvalue=0.001,
         ...     num_permutations=999,
-        ...     null_distribution=jnp.array([...]),
+        ...     null_distribution=jnp.zeros(999),
         ... )
         >>> print(
         ...     f"Minimum achievable p-value: {1 / (result.num_permutations + 1):.4f}"

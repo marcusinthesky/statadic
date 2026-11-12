@@ -71,6 +71,8 @@ class TestResult[S]:
             traced leaf, and it stays constant across a ``vmap``-ed grid.
 
     Examples:
+        >>> import jax
+        >>> import jax.numpy as jnp
         >>> r = TestResult(
         ...     statistic=jnp.asarray(2.5),
         ...     pvalue=jnp.asarray(0.03),

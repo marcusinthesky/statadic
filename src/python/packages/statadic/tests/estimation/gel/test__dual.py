@@ -361,11 +361,11 @@ def test_probability_carriers_reject_infinite_hull_optima_in_compiled_batches(
 def test_gel_inner_sup_kernel_survives_jit_and_vmap(seed: int) -> None:
     """The new numerical core carries the transform obligations of its door.
 
-    ``numerical-host-boundaries.md`` requires a core to be covered under direct
-    execution, nested ``jit`` and leading-axis ``vmap``, with the eager door
-    still rejecting tracers. The leading axis here is the replication axis a
-    Monte-Carlo size/power study runs on, which is the reason the inner
-    supremum was made traceable at all.
+    ``ARCHITECTURE.md`` (numerical and compatibility boundaries) requires a
+    core to be covered under direct execution, nested ``jit`` and leading-axis
+    ``vmap``, with the eager door still rejecting tracers. The leading axis
+    here is the replication axis a Monte-Carlo size/power study runs on, which
+    is the reason the inner supremum was made traceable at all.
     """
     rng = np.random.default_rng(seed)
     replications = 4

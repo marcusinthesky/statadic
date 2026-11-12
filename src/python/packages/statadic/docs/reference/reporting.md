@@ -1,169 +1,158 @@
-# Report: retain and render an analysis
+---
+type: reference
+description: Render, export and check the Report object that carries computed parameters, tests, metrics and plots.
+---
 
-{py:class}`~statadic.api.reporting.Report` contains already-computed parameter rows,
-metrics, warnings, notes, plots and immutable JSON-compatible metadata. It does
-not choose a model, covariance or reference law. Host report generation is eager.
+# Report
+
+## Usage
+
+```python
+from pathlib import Path
+
+from statadic.api.design import Intercept, Linear
+from statadic.api.inference import HC
+from statadic.api.regression import Regression
+
+data = {"x": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0], "y": [1.1, 1.8, 3.2, 3.7, 5.3, 5.8]}
+fit = Regression.ols("y", Intercept() + Linear("x")).estimate(data).require_valid()
+report = fit.infer(covariance=HC("HC3")).report(reference="normal", null=0)
+report.require_available("interval")
+
+output = Path("results")
+output.mkdir(exist_ok=True)
+report.save_latex(output / "table.tex", decimals=3, labels={"x": "Slope"})
+report.save_values(output / "values.tex", prefix="ols")
+report.coefficient_plot().save_pgfplots(output / "figure.tex", width_cm=12, height_cm=7)
+print(report.to_text())
+```
+
+## Description
+
+{py:class}`~statadic.api.reporting.Report` holds quantities that are already
+computed: parameter rows, test rows, metrics, warnings, notes, plots and
+immutable JSON-compatible metadata. It never chooses a model, a covariance or a
+reference law, so every renderer formats the same stored values without
+rerunning estimation. The result that produces a report builds it eagerly, in one step.
 
 | Producer | Report contents |
 | --- | --- |
-| `fit.report()` | Point-fit information and numerical availability |
-| `fit.infer(...).report(reference=...)` | Supported uncertainty under the explicitly selected covariance and reference |
-| `fit.diagnose(...).report()` | Requested diagnostics, hypotheses, assumptions and availability reasons |
-| `outcome.report()` | One hypothesis-test statistic and its calibrated reference, when available |
+| `fit.report()` | The point fit, its fit statistics and numerical availability |
+| `fit.infer(...).report(reference=...)` | Uncertainty under the covariance and reference you selected |
 | `inference.report(reference=..., null=...)` | The above plus a statistic and two-sided p-value per tested coefficient |
+| `fit.diagnose(...).report()` and `outcome.report()` | One test row per diagnostic or hypothesis test, with its reference law |
 
-The [OLS chapter](../tutorials/ols/report.md) demonstrates the complete reporting
-workflow. Use [save and share results](../guides/reporting.md) for a short recipe.
+{py:class}`~statadic.api.reporting.ParameterRow` stores the estimate and its
+uncertainty for one parameter, and {py:class}`~statadic.api.reporting.Metric`
+stores a named quantity with its definition. Both carry an availability status.
+A missing value comes with a reason, so a valid point estimate never implies
+that an interval or a test exists for it. For a parameter row,
+`ParameterRow.interval_available` is true when both endpoints are present and
+the status is absent or `"available"`.
+{py:class}`~statadic.api.reporting.TestRow` holds a test name, statistic,
+reference law, p-value and status. For a report, `Report.metadata` records the
+procedure, covariance, reference and confidence level used in its calculation.
 
-## Rows and availability
-
-{py:class}`~statadic.api.reporting.ParameterRow` retains estimates and supported
-uncertainty by parameter. {py:class}`~statadic.api.reporting.Metric` retains a named
-quantity with its definition and availability. An absent value has an explicit
-reason; a valid point estimate does not imply available intervals or tests.
-`ParameterRow.interval_available` is true when both endpoints are present and the
-interval status is absent or `"available"`. An explicitly available interval
-requires both endpoints and no unavailable reason. An unavailable interval carries no
-endpoints and a reason, and an unavailable metric carries no value. A row may keep
-an estimate with `valid=False` and no standard error.
-
-`report.require_available("interval")` explicitly requires intervals for the
-selected parameter rows. It does not repair missing uncertainty or establish
-coverage. Metadata records the procedure and assumptions, not their approval.
-
-## Tests
-
-{py:class}`~statadic.api.reporting.TestRow` retains a test name, statistic, reference
-law, p-value and availability. `Report.tests` holds one row per test and renders
-as a Test, Statistic, Reference and $p$ table. `TestOutcome.report()` and
-`Diagnostics.report()` fill it, as do the GEL, PERMANOVA/PERMDISP, Mantel and
-geometric permutation reports. `TestOutcome.test_row()` returns the row and
-`TestOutcome.components()` returns the other values, such as ranks, as metrics.
-
-`InferenceResult.report(..., null=)` is opt-in: a float applies to every
-coefficient and a mapping tests the named ones. It needs a `reference`. A tested
-row keeps `(estimate - null) / std_error` and the two-sided p-value of the
-single-restriction Wald test of `InferenceResult.test`: chi-square(1) for the
-normal reference, F(1, df) for the t reference. Without `null` no statistic or
-p-value is reported. A p-value is the stated null under the stated reference law.
-It does not establish that law, the model or coverage.
-
-The null is converted to the fit's dtype before testing. In reduced precision
-(for example float32) the effective null can differ from the requested one; the
-test uses the effective value, the report metadata records it as `effective_null`,
-and a warning names each affected row. The statistic is the signed square root of
-the Wald quadratic, so its square matches the Wald statistic of
-`InferenceResult.test`.
-
-## Fit statistics
-
-Each likelihood fit computes its statistics once. `fit.fit_statistics()` returns
-a {py:class}`~statadic.api.fit_statistics.FitStatistics` holding the metrics and two
-fixed notes that state the conventions and citations. `fit.report()` shows them,
-and `fit.infer(...)` passes them to the inference report.
-
-`statadic.api.fit_statistics` owns the names. A family supplies a frozen
-{py:class}`~statadic.api.fit_statistics.LikelihoodSummary` (log likelihood, $k$, $n$
-and the reason used when the log likelihood is not finite) through
-`likelihood_summary()`, and `FitStatistics.from_likelihood` builds the metrics
-once. The Protocols {py:class}`~statadic.api.capabilities.SummarizesLikelihood`
-(`likelihood_summary()`) and {py:class}`~statadic.api.capabilities.ReportsFitStatistics`
-(`fit_statistics()`) state these capabilities. A spatial fit exposes its maximised
-value as `log_likelihood`.
-
-| Metric name | Label | Meaning |
-| --- | --- | --- |
-| `n_observations` | Observations | Rows used |
-| `n_parameters` | Parameters | $k$, every estimated parameter |
-| `log_likelihood` | Log likelihood | $\log L$ at the estimate |
-| `aic` | AIC | $-2\log L + 2k$ |
-| `bic` | BIC | $-2\log L + k\log n$ |
-| `hqic` | HQIC | $-2\log L + 2k\log\log n$; unavailable below three rows |
-| `r_squared` | $R^2$ | OLS/WLS with a constant in the design column space; 1 at an exact fit |
-| `adjusted_r_squared` | Adjusted $R^2$ | As `r_squared` |
-| `uncentred_r_squared` | Uncentred $R^2$ | OLS/WLS without a constant; no adjusted value |
-
-A nonfinite log likelihood makes it and the criteria unavailable, with a reason.
-{py:func}`~statadic.api.fit_statistics.information_metrics` builds the four
-likelihood metrics.
-
-At exactly zero residual sum of squares, a least-squares fit's Gaussian log
-likelihood and criteria are unavailable, while $R^2$ is 1. A tiny positive
-residual sum of squares retains a finite likelihood; no near-zero cutoff is
-applied. $R^2$ is unavailable
-when the response has no variation about its weighted mean, Uncentred $R^2$ when
-the response is zero in every row, and Adjusted $R^2$ when $n \le$ rank.
-See [save and share results](../guides/reporting.md) for how $k$ is counted, the
-statsmodels offset and the citations. Criteria compare only models of the same
-response on the same rows. Known limit: the NB2 log likelihood differs from
-statsmodels by about 3e-6, and its criteria inherit that.
-
-| Family | Statistics |
-| --- | --- |
-| OLS, WLS, SLX least squares | Criteria and $R^2$ |
-| GLM, gamma, NB2, probit, hurdle (gate plus count) | Criteria |
-| Survival AFT, spatial survival | Criteria |
-| Spatial ML cross-section, observed and graph regression | Criteria |
-| Spatial panels | Criteria only |
-| IV/GMM, GEL, non-spatial panel within, permutation reports | None |
-
-## Value export
+## Options
 
 | Operation | Output |
 | --- | --- |
-| `report.to_values(prefix=...)` | TeX text of `\jcDeclareValue{key}{value}` lines |
-| `report.save_values(path, prefix=...)` | Writes exactly `to_values(...)` as UTF-8 |
+| `report.to_text()` | Plain-text snapshot of every section |
+| `report.to_html()` | HTML with escaped labels, and a bounded preview in notebooks |
+| `report.to_latex(...)` | A booktabs table with siunitx `S` columns |
+| `report.save_latex(path, ...)` | Writes exactly `to_latex(...)` as UTF-8 |
+| `report.coefficient_plot()` | A {py:class}`~statadic.api.reporting.PlotSpec` of intervals, when every row has an estimate and both bounds |
+| `plot.to_pgfplots()`, `plot.save_pgfplots(path)` | PGFplots source, sized by `width_cm` and `height_cm` |
+| `report.to_values(prefix=...)`, `report.save_values(path, prefix=...)` | TeX lines of the form `\jcDeclareValue{key}{value}` |
+| `report.require_available(quantity, parameters=None)` | Returns the report, or raises `ValueError` naming the first missing value |
 
-`prefix` matches `^[a-z][a-z0-9-]*$`; `digits` and `decimals` follow `to_latex`.
-Keys use retained names, lowercased with runs of other characters turned into
-`-`. A parameter gives `{prefix}-{name}-{q}` for `estimate`, `se`, `statistic`,
-`p`, `lower` and `upper`; a metric gives `{prefix}-{name}`; a test row gives
-`{prefix}-{name}-statistic` and `-p`, plus `-df` (chi-square) or `-df1` and
-`-df2` (F). A duplicate key raises `ValueError`. P-values carry their relation
-(`= 0.497`, `< 0.001`). The file defines `\jcDeclareValue`, `\jcvalue` and
-`\jcnum` with `\providecommand`; input it after `siunitx`. An unavailable value
-is not declared and is listed as a comment, so citing it fails the compile with
-the key named. Quantities never requested, such as a p-value without a null, are
-omitted silently.
+`to_latex` and `save_latex` accept `digits` (significant digits, default 6),
+`decimals` (fixed places), `labels` (display names for parameters and metrics),
+`label_markup` (`"plain"` or `"tex"`), `notes` (`False` drops the trailing
+notes) and `metrics` (footer rows, in the order given). Counts print exactly.
+A table needs `booktabs` and `siunitx` in the preamble of your manuscript, and a
+figure needs `pgfplots` with `\pgfplotsset{compat=1.18}`. For a manuscript, include a saved table
+with `\input` inside a `table` float, where your manuscript owns the caption and label.
 
-## Rendering and plots
+`quantity` is one of `"estimate"`, `"std_error"`, `"interval"`, `"statistic"` or
+`"pvalue"`. Value keys are lowercased names joined by `-`. A parameter gives
+`{prefix}-{name}-{q}` for `estimate`, `se`, `statistic`, `p`, `lower` and
+`upper`, and a metric gives `{prefix}-{name}`. A test row gives `-statistic` and
+`-p`, plus `-df` or `-df1` and `-df2`. The `prefix` must match
+`^[a-z][a-z0-9-]*$`, and a duplicate key raises `ValueError`.
 
-| Operation | Output |
+## Results
+
+With `null`, each tested row holds `(estimate - null) / std_error` and the
+two-sided p-value of the single-restriction Wald test in
+`InferenceResult.test`. The `"normal"` reference gives chi-square(1) and the
+`"t"` reference gives F(1, df). A float `null` applies to every coefficient and a
+mapping tests the named ones. Without `null`, a report shows no statistic or p-value.
+In reduced precision the effective null can differ from the requested one, so
+the metadata records it as `effective_null` and a warning names each affected row.
+
+Likelihood fits add fit statistics to the report, and `fit.fit_statistics()`
+returns them as {py:class}`~statadic.api.fit_statistics.FitStatistics`.
+
+| Metric name | Meaning |
 | --- | --- |
-| `report.to_text()` | Complete plain-text snapshot |
-| `report.to_html()` | Complete HTML representation |
-| `report.to_latex()` | booktabs table with siunitx `S` columns |
-| `report.save_latex(path)` | Writes exactly `to_latex(...)` as UTF-8 |
-| `report.coefficient_plot()` | A retained interval plot when all selected rows have estimates and bounds |
-| `plot.to_pgfplots()` | PGFplots source for a retained {py:class}`~statadic.api.reporting.PlotSpec` |
-| `plot.save_pgfplots(path)` | Writes the PGFplots source to a file; `width_cm` and `height_cm` set the size |
+| `n_observations`, `n_parameters` | Rows used and $k$ |
+| `log_likelihood` | $\log L$ at the estimate |
+| `aic`, `bic`, `hqic` | $-2\log L + 2k$, $-2\log L + k\log n$ and $-2\log L + 2k\log\log n$ |
+| `r_squared`, `adjusted_r_squared` | OLS and WLS with a constant in the design |
+| `uncentred_r_squared` | OLS and WLS without a constant |
 
-A table needs `booktabs` and `siunitx` in the manuscript preamble. A figure needs
-`pgfplots` with `\pgfplotsset{compat=1.18}`. `to_latex` and `save_latex` take
-`digits` (significant digits, default 6), `decimals` (fixed decimal places),
-`labels` (display labels for parameter and metric names), `label_markup`
-(`"plain"` or `"tex"`), `notes` (`False` omits the trailing notes) and `metrics`
-(the metric names shown in the footer, in the order given; the default shows
-every retained metric). A Normal reference with parameters renders as
-$N(\mu, \sigma^2)$ with each parameter rounded to `digits` significant digits,
-for example `$N(\num{-0.0001}, \num{0.001}^2)$`; `(0, 1)` renders as `$N(0, 1)$`. Counts are
-kept as integers and print exactly; an inference report carries an
-`n_observations` metric as a footer row. Formatting never changes retained
-values. Include a saved table with `\input` inside a `table` float whose caption
-and label the manuscript owns.
+Criteria appear for OLS, WLS, GLM, gamma, NB2, probit, hurdle, survival, spatial
+likelihood and spatial panel fits, and $R^2$ appears only for least squares. IV/GMM,
+GEL, non-spatial panel within fits and permutation reports have no likelihood
+and report none. `report.save_values` exports these as keys such as `ols-aic`.
 
-Notebook display uses a bounded preview. Rendering formats retained values; it
-does not rerun estimation or infer missing quantities. Coefficient intervals are
-not prediction intervals for future observations.
+## Methods and formulas
 
-## Persistence and evidence
+$R^2$ is centred when the design spans a constant, either an intercept or
+fixed-effect indicators. Without a constant, only the uncentred value is
+reported, and the two are not comparable. At exactly zero residual sum of
+squares $R^2$ is 1, but the Gaussian likelihood and criteria are unavailable.
 
-`save_analysis(path, report)` and `load_analysis(path).report` preserve a report
-for rendering. They restore neither a fit nor executable inference. Predictor
-artifacts have separate, family-specific capabilities; see [saved artifacts](artifacts.md).
+$k$ counts every estimated parameter: the identified coefficients (the design
+rank), each estimated scale, dispersion, shape or spatial parameter, learned
+graph coordinates, and fixed effects whether explicit or removed by a within
+transformation. A random effect counts its variance parameters. Fixed
+parameters are not counted, so one model has one AIC on every route.
 
-A source key or assumption in report metadata is not a source-fidelity review,
-proof of implementation or statistical qualification. Consult the exact
-[independent reference mappings](../validation/references.md),
-[study dispositions](../validation/research.md) and
-[formal claim assumptions](../formal/index.md) for the method being reported.
+statsmodels OLS and WLS count the rank and no scale. Relative to statsmodels,
+STATADIC AIC is larger by 2, BIC by $\log n$ and HQIC by $2\log\log n$.
+statsmodels GLM, discrete NB2 and Probit, and lifelines `AIC_` agree with
+STATADIC. AIC {cite:p}`akaike-1974`, BIC {cite:p}`schwarz-1978` and HQIC
+{cite:p}`hannan-quinn-1979` compare only models of one response on the same rows.
+
+## Assumptions and limits
+
+- A p-value measures the data against the stated null under the stated
+  reference law. It does not establish that law, the model or the coverage of intervals.
+- Coefficient intervals are not prediction intervals for future observations.
+- `require_available` checks that values exist. It does not repair missing
+  uncertainty or establish coverage.
+- Metadata names the procedure and its assumptions without approving them.
+- `HQIC` needs at least three rows. A nonfinite log likelihood makes it and the
+  criteria unavailable. $R^2$ needs variation in the response about its weighted
+  mean, and adjusted $R^2$ needs $n$ above the rank.
+- The NB2 log likelihood differs from statsmodels by about 3e-6, and its
+  criteria inherit that difference.
+- `save_values` omits quantities never requested, such as a p-value without a
+  null. It lists unavailable values as comments, so citing one fails the TeX
+  compile with its key named.
+
+## Evidence
+
+- Criteria and $R^2$ are matched against statsmodels and lifelines in the
+  {ref}`reference index <reference-api.regression>`.
+- Evidence for the method behind each report lives on its reference page, such as
+  [regression](regression.md).
+
+## See also
+
+- [Saved artifacts](artifacts.md) for `save_analysis` and `load_analysis`
+- [OLS reporting chapter](../tutorials/ols/report.py) and
+  [save and share results](../guides/save-and-share-results.py)
+- [Regression](regression.md) and [hypotheses](hypotheses.md)

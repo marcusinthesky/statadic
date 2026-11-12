@@ -1,4 +1,4 @@
-"""Build the site and static native-marimo snapshots into ignored output."""
+"""Build the documentation site into ignored output."""
 
 import argparse
 import hashlib
@@ -9,7 +9,6 @@ import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
-from html.parser import HTMLParser
 from importlib.metadata import version
 from pathlib import Path
 
@@ -32,6 +31,14 @@ def study_selection(arguments: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Render exports selected and verified by the release orchestrator",
     )
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        help=(
+            "Authoring build: reuse the existing Lean certification and skip the "
+            "blueprint"
+        ),
+    )
     selected = parser.parse_args(arguments)
     selected.study_export = [path.resolve() for path in selected.study_export]
     if len(set(selected.study_export)) != len(selected.study_export):
@@ -44,9 +51,7 @@ def study_selection(arguments: list[str] | None = None) -> argparse.Namespace:
 
 def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
     """Describe this build separately from the notebooks' source origin."""
-    labs = json.loads((APP / "labs.json").read_text())
     inputs = [
-        APP / "labs.json",
         PYTHON / "apps/studies/catalogue.json",
         PYTHON / "apps/performance/src/statadic_performance/identities.json",
         APP / "conf.py",
@@ -55,7 +60,6 @@ def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
         ROOT / "devenv.lock",
         ROOT / "src/lean/build/certification.json",
     ]
-    inputs.extend(APP / "notebooks" / lab["notebook"] for lab in labs["labs"])
     catalogue = json.loads((PYTHON / "apps/studies/catalogue.json").read_text())
     owners = catalogue["methods"] + [
         variant
@@ -74,7 +78,11 @@ def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
         if not source.is_relative_to(package) or not source.is_file():
             raise ValueError(f"Invalid reference-test source: {module}")
         inputs.append(source)
-    inputs.extend(p for p in DOCS.rglob("*") if p.is_file())
+    inputs.extend(
+        p
+        for p in DOCS.rglob("*")
+        if p.is_file() and not {"__pycache__", "__marimo__"}.intersection(p.parts)
+    )
     for directory in (
         APP / "scripts",
         APP / "src",
@@ -82,18 +90,24 @@ def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
         PYTHON / "packages/statadic/examples",
     ):
         inputs.extend(directory.rglob("*.py"))
-    for directory in (APP / "static", APP / "templates"):
+    for directory in (
+        APP / "static",
+        APP / "templates",
+        APP / "data",
+        APP / "evidence",
+    ):
         inputs.extend(p for p in directory.rglob("*") if p.is_file())
     inputs.append(ROOT / "src/latex/refs.bib")
     inputs.extend((ROOT / "src/lean/registry").glob("*.json"))
     for directory in (ROOT / "src/lean/packages", ROOT / "src/lean/Example"):
         inputs.extend(directory.rglob("*.lean"))
+    revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
     return {
         "schema_version": 1,
-        "origin_revision": labs["origin_revision"],
-        "build_revision": subprocess.check_output(
-            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
-        ).strip(),
+        "origin_revision": revision,
+        "build_revision": revision,
         "dirty": bool(
             subprocess.check_output(
                 ["git", "status", "--porcelain"], cwd=ROOT, text=True
@@ -140,33 +154,45 @@ def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
     }
 
 
-class Links(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__()
-        self.hrefs: set[str] = set()
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        if tag == "a":
-            self.hrefs.update(value for key, value in attrs if key == "href" and value)
-
-
 def main() -> None:
     selected = study_selection()
-    subprocess.run(
-        ["just", "--justfile", str(PYTHON.parent.parent / "justfile"), "lean::certify"],
-        check=True,
-    )
-    subprocess.run(
-        [
-            "just",
-            "--justfile",
-            str(PYTHON.parent.parent / "justfile"),
-            "lean::blueprint-pdf",
-        ],
-        check=True,
-    )
+    for checker in ("check_schema.py", "check_prose.py"):
+        subprocess.run([sys.executable, str(APP / "scripts" / checker)], check=True)
+    if selected.fast:
+        reused = (
+            ROOT / "src/lean/build/certification.json",
+            ROOT / "src/lean/blueprint/web",
+            ROOT / "src/lean/blueprint/print/print.pdf",
+        )
+        missing = [str(path) for path in reused if not path.exists()]
+        if missing:
+            sys.exit(
+                "--fast reuses the existing Lean certification and blueprint, but "
+                f"these are missing: {', '.join(missing)}. Run the build once "
+                "without --fast, or `just lean::certify` and "
+                "`just lean::blueprint-pdf`."
+            )
+    else:
+        subprocess.run(
+            [
+                "just",
+                "--justfile",
+                str(PYTHON.parent.parent / "justfile"),
+                "lean::certify",
+            ],
+            check=True,
+        )
+        subprocess.run(
+            [
+                "just",
+                "--justfile",
+                str(PYTHON.parent.parent / "justfile"),
+                "lean::blueprint-pdf",
+            ],
+            check=True,
+        )
     OUTPUT.mkdir(exist_ok=True)
-    # Start from fresh generated HTML, rather than retaining a previous theme's assets.
+    # Replace generated HTML and theme assets with the current build.
     if HTML.exists():
         shutil.rmtree(HTML)
     HTML.mkdir(exist_ok=True)
@@ -199,41 +225,26 @@ def main() -> None:
         check=True,
         env=sphinx_environment,
     )
-    snapshots = HTML / "labs/snapshots"
-    downloads = HTML / "labs/downloads"
-    snapshots.mkdir(parents=True, exist_ok=True)
-    downloads.mkdir(parents=True, exist_ok=True)
+    # The public export already contains executed prose, including text built
+    # indirectly from variables that source-only Markdown cannot reveal.
+    import check_prose
+    from statadic_docs_pages.marimo_pages import execute
+
+    prose_failures = []
+    for notebook in check_prose.check_schema.discover(DOCS):
+        if notebook.suffix == ".py":
+            problems = check_prose.check_executed_prose(
+                notebook, execute(notebook, OUTPUT / "notebook-cache")
+            )
+            prose_failures.extend((notebook, problem) for problem in problems)
+    if prose_failures:
+        for notebook, problem in prose_failures:
+            print(
+                f"{notebook}: cell {problem['cell']}: "
+                f"{problem['rule']}: {problem['sentence']}"
+            )
+        raise ValueError("Executed notebook prose violates the documentation style")
     (HTML / "build-provenance.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    env = os.environ | {"STATADIC_LABS_SNAPSHOT": "1", "MPLBACKEND": "Agg"}
-    for lab in json.loads((APP / "labs.json").read_text())["labs"]:
-        source = APP / "notebooks" / lab["notebook"]
-        slug = lab["slug"]
-        subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "marimo",
-                "export",
-                "html",
-                str(source),
-                "-o",
-                str(snapshots / f"{slug}.html"),
-                "--no-include-code",
-                "--force",
-            ],
-            env=env,
-            check=True,
-        )
-        shutil.copy2(source, downloads / f"{slug}.py")
-        (snapshots / f"{slug}.provenance.json").write_text(
-            json.dumps(metadata | {"lab": slug}, indent=2) + "\n"
-        )
-        page = HTML / "labs" / f"{slug}.html"
-        parser = Links()
-        parser.feed(page.read_text())
-        for relative in (f"snapshots/{slug}.html", f"downloads/{slug}.py"):
-            if relative not in parser.hrefs or not (page.parent / relative).is_file():
-                raise ValueError(f"Missing lab link or output: {page}: {relative}")
     current = provenance(**selection)
     if any(metadata[key] != current[key] for key in ("input_sha256", "study_exports")):
         raise ValueError("Documentation inputs changed during this build")

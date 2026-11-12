@@ -5,16 +5,12 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import runpy
 import shutil
 import subprocess
 import sys
 import textwrap
-from contextlib import redirect_stdout
 from html import escape
-from io import StringIO
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
 from docutils.nodes import make_id
 
@@ -226,6 +222,7 @@ def load(app) -> None:
         (ROOT / "src/lean/build/certification.json").read_text()
     )
     app._statadic_claims_by_symbol = claims_by_symbol(app._statadic_formal["claims"])
+    app._statadic_tutorials = {}
     app._statadic_research = []
     app._statadic_procedures = []
     app._statadic_evaluations = []
@@ -248,6 +245,7 @@ def load(app) -> None:
         if not catalogue.is_absolute():
             catalogue = Path(app.confdir) / catalogue
         data = json.loads(catalogue.read_text())
+        app._statadic_tutorials = data.get("tutorials", {})
         if data.get("schema_version") != 1:
             raise ValueError("Unsupported STATADIC research catalogue version")
         public = json.loads((ROOT / "src/lean/registry/public-api.json").read_text())
@@ -331,7 +329,7 @@ def reference_index(app) -> str:
         "",
         '<a href="../downloads/reference-tests/catalogue.json">'
         "Download the authored catalogue</a> "
-        "· [Run and interpret comparisons](../validation.md)",
+        "· [Known limitations](known-limitations.md)",
         "",
     ]
     for owner in reference_owners(app):
@@ -480,85 +478,30 @@ def api_evidence(app, what, name, obj, options, lines: list[str]) -> None:
     )
 
 
-def _parameter_table(reports) -> str:
-    """Format retained parameter evidence without recomputing inference."""
-
-    def number(value):
-        return "unavailable" if value is None else f"{value:.4f}"
-
-    table = [
-        "| Procedure | Parameter | Estimate | Standard error | "
-        "95% interval | Availability |",
-        "| --- | --- | ---: | ---: | --- | --- |",
-    ]
-    warnings = []
-    for name, report in reports:
-        for row in report.parameters:
-            interval = (
-                f"[{number(row.ci_lower)}, {number(row.ci_upper)}]"
-                if row.ci_lower is not None
-                else "not requested"
-                if row.interval_status is None
-                else "unavailable"
-            )
-            reason = row.unavailable_reason or row.interval_unavailable_reason
-            table.append(
-                f"| {name} | {row.name} | {number(row.estimate)} | "
-                f"{number(row.std_error)} | {interval} | {reason or row.status} |"
-            )
-        warnings.extend(
-            f"**Warning ({name}):** {warning}" for warning in report.warnings
-        )
-    return "\n".join(table) + ("\n\n" + "\n\n".join(warnings) if warnings else "")
-
-
-def _quick_regression_report():
-    """Read the quick start's own saved report, not another example's fit."""
-    from statadic.api.artifacts import load_analysis
-
-    example = ROOT / "src/python/packages/statadic/examples/first_regression.py"
-    with TemporaryDirectory() as directory, redirect_stdout(StringIO()):
-        output = Path(directory)
-        runpy.run_path(str(example))["analyze"](output)
-        return load_analysis(output / "analysis").report
-
-
-def _ols_output(analysis: dict, section: str) -> str:
-    """Expose only outputs retained by the canonical chapter example."""
-    if section == "fit":
-        summary = "\n".join(
-            f"| {name} | {value:.6g} |" for name, value in analysis["summary"].items()
-        )
-        return (
-            f"```text\n{analysis['fit_report'].to_text()}\n```\n\n"
-            f"| Quantity | Value |\n| --- | ---: |\n{summary}"
-        )
-    if section == "diagnose":
-        return (
-            '```{raw} html\n<img src="figures/residuals.svg" '
-            'class="statadic-study-plot" alt="Residuals against fitted values '
-            'for this OLS sample">\n```\n\n'
-            f"```text\n{analysis['diagnostics_report'].to_text()}\n```"
-        )
-    if section == "infer":
-        table = _parameter_table(analysis["reports"].items())
-        tests = "\n\n".join(
-            f"**{name}**\n\n```text\n{outcome.report().to_text()}\n```"
-            for name, outcome in analysis["tests"].items()
-        )
-        return f"{table}\n\n{tests}"
-    return (
-        '```{raw} html\n<img src="figures/coefficients.svg" '
-        'class="statadic-study-plot" alt="HC3 normal-reference coefficient '
-        'intervals for this OLS sample">\n```\n\n'
-        f"```text\n{analysis['reports']['hc3'].to_text()}\n```\n\n"
-        "New-row point predictions (without prediction intervals):\n\n```text\n"
-        + str(analysis["predictions"])
-        + "\n```"
-    )
-
-
 def source(app, docname: str, text: list[str]) -> None:
+    if docname == "validation/known-limitations":
+        path = ROOT / "src/python/apps/docs/evidence/known-limitations.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        tables = []
+        for table in data["tables"]:
+            columns = table["columns"]
+            rows = ["| " + " | ".join(columns) + " |"]
+            rows.append("| " + " | ".join("---" for _ in columns) + " |")
+            rows.extend("| " + " | ".join(row) + " |" for row in table["rows"])
+            title = table.get("title")
+            tables.append((f"## {title}\n\n" if title else "") + "\n".join(rows))
+        text[0] = text[0].replace(
+            "<!-- statadic:known-limitations -->", "\n\n".join(tables)
+        )
+        app.env.note_dependency(str(path))
+    if docname == "formal/family-sources":
+        path = ROOT / "src/python/apps/docs/data/family-sources.json"
+        catalogue = json.loads(path.read_text(encoding="utf-8"))
+        table = "\n".join(
+            (catalogue["header"], catalogue["separator"], *catalogue["rows"])
+        )
+        text[0] = text[0].replace("<!-- statadic:family-sources -->", table)
+        app.env.note_dependency(str(path))
     if "<!-- statadic:reference-index -->" in text[0]:
         text[0] = text[0].replace(
             "<!-- statadic:reference-index -->", reference_index(app)
@@ -690,7 +633,7 @@ def source(app, docname: str, text: list[str]) -> None:
                 + "Tutorials: "
                 + (
                     ", ".join(
-                        f"[{slug}](../labs/{slug}.md)"
+                        f"[{slug}](../{app._statadic_tutorials[slug]})"
                         for slug in method.get("tutorials", [])
                     )
                     or "none registered"
@@ -714,18 +657,6 @@ def source(app, docname: str, text: list[str]) -> None:
             or "No research catalogue was configured for this build.",
         )
     methods = getattr(app, "_statadic_research", [])
-    if docname.startswith("labs/"):
-        slug = docname.split("/", 1)[1]
-        related = [m for m in methods if slug in m.get("tutorials", [])]
-        if related:
-            text[0] += (
-                "\n\n## Related catalogue methods\n\n"
-                + "\n".join(
-                    f"- {{ref}}`{m['title']} <research-method-{m['id']}>`"
-                    for m in related
-                )
-                + "\n"
-            )
     marker = "<!-- statadic:performance-catalogue -->"
     if marker in text[0]:
         identities = sorted(
@@ -743,36 +674,6 @@ def source(app, docname: str, text: list[str]) -> None:
                 f"<performance-{identity.replace('/', '-')}>`: {links}"
             )
         text[0] = text[0].replace(marker, "\n".join(sections))
-    regression_marker = "<!-- statadic:regression-result -->"
-    covariance_marker = "<!-- statadic:covariance-comparison -->"
-    if regression_marker in text[0]:
-        example = ROOT / "src/python/packages/statadic/examples/first_regression.py"
-        text[0] = text[0].replace(
-            regression_marker,
-            "Computed from this quick start's saved HC3/normal report:\n\n"
-            + _parameter_table((("HC3", _quick_regression_report()),)),
-        )
-        app.env.note_dependency(str(example))
-    if covariance_marker in text[0]:
-        example = ROOT / "src/python/packages/statadic/examples/change_covariance.py"
-        reports = runpy.run_path(str(example))["compare"]()
-        text[0] = text[0].replace(
-            covariance_marker,
-            "Computed from the covariance example (normal-reference intervals):\n\n"
-            + _parameter_table(zip(("HC0", "HC3"), reports, strict=True)),
-        )
-        app.env.note_dependency(str(example))
-    pattern = r"<!-- statadic:ols-result (fit|diagnose|infer|report) -->"
-    if re.search(pattern, text[0]):
-        example = ROOT / "src/python/packages/statadic/examples/ols_analysis.py"
-        if not hasattr(app, "_statadic_ols_analysis"):
-            app._statadic_ols_analysis = runpy.run_path(str(example))["analyze"]()
-        text[0] = re.sub(
-            pattern,
-            lambda match: _ols_output(app._statadic_ols_analysis, match.group(1)),
-            text[0],
-        )
-        app.env.note_dependency(str(example))
     if docname == "formal/index":
         text[0] = text[0].replace(
             "<!-- statadic:formal-registry -->", index_page(app._statadic_formal)
@@ -799,17 +700,6 @@ def source(app, docname: str, text: list[str]) -> None:
 def outputs(app, exception) -> None:
     if exception is not None or app.builder.format != "html":
         return
-    if hasattr(app, "_statadic_ols_analysis"):
-        from statadic.api.plots import residual_plot
-
-        analysis = app._statadic_ols_analysis
-        figures = Path(app.outdir) / "tutorials/ols/figures"
-        figures.mkdir(parents=True, exist_ok=True)
-        for name, plot in (
-            ("residuals", residual_plot(analysis["fit"])),
-            ("coefficients", analysis["reports"]["hc3"].coefficient_plot()),
-        ):
-            plot.to_matplotlib().savefig(figures / f"{name}.svg", bbox_inches="tight")
     catalogue = getattr(app, "_statadic_reference_catalogue", None)
     if catalogue is not None:
         destination = Path(app.outdir) / "downloads/reference-tests"

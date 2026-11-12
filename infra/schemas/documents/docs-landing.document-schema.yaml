@@ -1,0 +1,24 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# H1, a short introduction and a toctree. No H2 sections.
+maxTokens: 250
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: landing
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  blocks:
+  - type: code
+    minContains: 1
+  additionalSections: false

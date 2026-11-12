@@ -176,6 +176,23 @@ def public_inventory(repository: Path) -> dict:
     return result
 
 
+def tutorial_paths(repository: Path, catalogue: dict) -> dict[str, Path]:
+    """Resolve authored tutorial identities to canonical notebook sources."""
+    docs = (repository / "src/python/packages/statadic/docs").resolve()
+    paths = {}
+    for identity, relative in catalogue.get("tutorials", {}).items():
+        path = (docs / relative).resolve()
+        if (
+            not identity
+            or not path.is_relative_to(docs)
+            or path.suffix != ".py"
+            or not path.is_file()
+        ):
+            raise ValueError(f"Missing or invalid tutorial notebook: {identity}")
+        paths[identity] = path
+    return paths
+
+
 def check_catalogue(repository: Path) -> dict:
     """Reject stale/missing symbols and report gaps in scientific coverage."""
     catalogue = json.loads(
@@ -202,24 +219,8 @@ def check_catalogue(repository: Path) -> dict:
         ):
             raise ValueError(f"Unresolved reverse link {symbol}")
     targets = {item["target"] for item in inventory.values()}
-    labs = json.loads((repository / "src/python/apps/docs/labs.json").read_text())[
-        "labs"
-    ]
-    lab_ids = [lab["slug"] for lab in labs]
-    if len(lab_ids) != len(set(lab_ids)):
-        raise ValueError("Duplicate lab identities")
-    for lab in labs:
-        if (
-            not (
-                repository / "src/python/apps/docs/notebooks" / lab["notebook"]
-            ).is_file()
-            or not (
-                repository
-                / "src/python/packages/statadic/docs/labs"
-                / f"{lab['slug']}.md"
-            ).is_file()
-        ):
-            raise ValueError(f"Missing lab notebook or page: {lab['slug']}")
+    tutorials = tutorial_paths(repository, catalogue)
+    tutorial_ids = set(tutorials)
 
     def unique_keys(pairs):
         result = {}
@@ -253,7 +254,7 @@ def check_catalogue(repository: Path) -> dict:
         if f"(performance-{identity.replace('/', '-')})=" not in page:
             raise ValueError(f"Missing benchmark anchor: {identity}")
     for method in methods.values():
-        for field, valid in (("tutorials", set(lab_ids)), ("benchmarks", benchmarks)):
+        for field, valid in (("tutorials", tutorial_ids), ("benchmarks", benchmarks)):
             links = method.get(field, [])
             if len(links) != len(set(links)) or not set(links) <= valid:
                 raise ValueError(f"Invalid or duplicate {field}: {method['id']}")
@@ -264,7 +265,7 @@ def check_catalogue(repository: Path) -> dict:
         if not set(method["studies"]) <= set(STUDIES):
             raise ValueError(f"Unknown study: {method['id']}")
         _check_reference_mappings(repository, method, set(inventory), numerical=True)
-    for field, registered in (("tutorials", set(lab_ids)), ("benchmarks", benchmarks)):
+    for field, registered in (("tutorials", tutorial_ids), ("benchmarks", benchmarks)):
         linked = {
             identity
             for method in methods.values()

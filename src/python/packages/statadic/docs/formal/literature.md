@@ -1,30 +1,31 @@
+---
+type: explanation
+description: Mathematical statements, hypotheses and comparisons for STATADIC methods.
+---
+
 # Reading the mathematical foundations
 
-A statistical method has several distinct mathematical questions. A definition
-says what quantity is being computed. A theorem gives a conclusion under stated
-assumptions. An algorithm and its implementation still need their own analysis.
-The [claim registry](index.md) records these distinctions.
+## How to read this
+
+Several mathematical questions sit behind a statistical method: a definition says what is computed, while a theorem gives a conclusion under stated assumptions. The algorithm and its implementation need their own analysis, and the [claim registry](index.md) records these distinctions alongside the assumptions for each result.
 
 ## Linear estimation
 
 For a fixed design, the Gauss–Markov theorem compares linear unbiased estimators
-under its stated error and rank conditions. It does not assert that arbitrary
-estimators are unbiased or that a numerical QR solve is exact. The finite-design
-formal statement is linked at {ref}`formal-STATADIC-LINEAR-004`; the
-bias–variance identity is at {ref}`formal-STATADIC-MOMENTS-001`. For the underlying
-result and its hypotheses, see {cite:p}`stepniak-gauss-markov-2010`.
-
-<!-- statadic:math STATADIC-ENERGY-001 -->
+under its stated error and rank conditions. That comparison does not assert that arbitrary estimators are unbiased or that a numerical QR solve is exact. The formal statement for the fixed design is linked at
+{ref}`formal-STATADIC-LINEAR-004`, alongside the bias–variance identity at
+{ref}`formal-STATADIC-MOMENTS-001`. For the underlying result, including its hypotheses and the scope of the comparison, see {cite:p}`stepniak-gauss-markov-2010`.
 
 ## Energy and kernels
 
-An energy functional compares cross-sample distances with distances within each
-sample. Under a compatible generating kernel, its finite-support expression
-equals twice the kernel quadratic form; positive semidefiniteness supplies
-nonnegativity. See {ref}`formal-STATADIC-ENERGY-001` and
-{cite:p}`sejdinovic-equivalence-2013`. This does not give separation without
-further assumptions. The scalar STATADIC function requires a ground; angular geometry
-discards positive radial scale, so the selected ground matters.
+<!-- statadic:math STATADIC-ENERGY-001 -->
+
+An energy functional compares cross-sample distances with distances within each sample, and for a compatible generating kernel the expression on finite support equals
+twice the quadratic form of the kernel, whose positive semidefiniteness
+supplies nonnegativity. See {ref}`formal-STATADIC-ENERGY-001` and
+{cite:p}`sejdinovic-equivalence-2013`. Separation requires further assumptions, and the scalar STATADIC function also requires a ground distance. Angular geometry
+discards positive radial scale, so select the ground using the differences
+that matter for your analysis.
 
 ## MMD estimator reductions
 
@@ -35,18 +36,16 @@ expectation is the corresponding population-moment expression. See
 equation (3), pp. 728–729. IID sampling, the RKHS interpretation and numerical
 implementation refinement remain separate obligations.
 
-The supporting V-bias identity counts the retained diagonal contribution:
-$(\delta_X-\mu_X)/m+(\delta_Y-\mu_Y)/n$. It alone supplies no sign guarantee.
-STATADIC averages both cross-kernel orientations; symmetry relates that exact-real
-formula to the proof's single cross block. The signed U estimate may be negative
-and does not define a rooted distance.
+The supporting V-bias identity counts the contribution from diagonal terms as $(\delta_X-\mu_X)/m+(\delta_Y-\mu_Y)/n$, without supplying a sign guarantee on its own.
+STATADIC averages both orientations of the cross-kernel calculation, and
+symmetry relates that formula to the single cross block in the proof.
+
+A U estimate can be negative, so its value cannot be interpreted directly as a rooted distance between the samples, even when the population discrepancy is nonnegative.
 
 ## Randomization
 
-A permutation test compares an observed statistic with statistics under a
-specified randomization scheme. Validity requires the relevant exchangeability
-assumptions and an appropriate schedule; add-one arithmetic alone cannot prove
-calibration. See {ref}`formal-STATADIC-RANDOMIZATION-001` for the exact claim and
+A permutation test compares an observed statistic with statistics under a specified randomization scheme, whose validity depends on exchangeability and the schedule used to randomize observations. The add-one arithmetic addresses the
+Monte Carlo calculation rather than establishing those assumptions. See {ref}`formal-STATADIC-RANDOMIZATION-001` for the exact claim and
 its boundaries.
 
 ## Cross-checks in other Lean libraries

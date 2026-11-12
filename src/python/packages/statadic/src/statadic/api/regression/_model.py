@@ -318,6 +318,30 @@ class Regression[
     panel data use the observed likelihood, which supports SAR and SEM. A
     single-table balanced graph uses balanced ML for pooled, unit and random
     effects. A declared estimator can configure the matching spatial likelihood.
+
+    Args:
+        response: Outcome column or a response descriptor.
+        terms: Explicit predictor terms, or named blocks for a hurdle model.
+        law: Conditional response distribution. The default is least squares.
+        structure: Panel or dyad identities when observations have structure.
+        effects: Fixed or random effects supported by the selected model.
+        dependence: Named spatial dependence specification.
+        estimator: Estimator compatible with the chosen model.
+        precision: Relative precision for weighted least squares.
+        offset: Named additive offset, or offsets for named blocks.
+        exposure: Named positive exposure for a count rate.
+        endogenous: Endogenous predictor names for instrumental variables.
+        instruments: Excluded instrument column names.
+        clusters: Cluster identity column when required by the estimator.
+        panel_likelihood: Select the complete or observed panel likelihood.
+
+    Examples:
+        >>> from statadic.api.design import Intercept, Linear
+        >>> model = Regression.ols("y", Intercept() + Linear("x"))
+        >>> fit = model.estimate({"x": [0.0, 1.0, 2.0], "y": [1.0, 3.0, 5.0]})
+        >>> bool(fit.valid)
+        True
+
     """
 
     response: str | Observed | RightCensored | GeometricResponse
@@ -343,6 +367,14 @@ class Regression[
 
         This supplies no Gaussian law, covariance, diagnostic or intercept.
         Use the explicit constructor for panel or spatial structures.
+
+        Args:
+            response: Outcome column or observed-response descriptor.
+            terms: Predictor terms, including an intercept when needed.
+
+        Returns:
+            A regression specification using ordinary least squares.
+
         """
         return Regression(response, terms, estimator=LeastSquares())
 
@@ -357,6 +389,18 @@ class Regression[
 
         Precision is neither a frequency weight nor a survey weight.
         Inference and intercept terms remain explicit choices.
+
+        Args:
+            response: Outcome column or observed-response descriptor.
+            terms: Explicit predictor terms.
+            precision: Column role for inverse relative variances.
+
+        Returns:
+            A weighted least-squares specification.
+
+        Raises:
+            TypeError: If precision is not a ``RelativePrecision`` role.
+
         """
         if not isinstance(precision, RelativePrecision):
             message = "WLS requires a RelativePrecision input role."
@@ -377,6 +421,19 @@ class Regression[
 
         A supplied native brick configures the existing likelihood solver.
         Estimation does not attach covariance or run diagnostics.
+
+        Args:
+            response: Outcome column or grouped binomial response.
+            terms: Explicit predictor terms.
+            offset: Optional column added to the linear predictor.
+            estimator: Optional binomial logit solver configuration.
+
+        Returns:
+            A binomial logit regression specification.
+
+        Raises:
+            TypeError: If the estimator is incompatible.
+
         """
         if estimator is not None and not isinstance(estimator, BinomialLogitMLE):
             message = "Logit requires a BinomialLogitMLE estimator."
@@ -397,7 +454,21 @@ class Regression[
         offset: str | None = None,
         estimator: ProbitMLE | None = None,
     ) -> Regression[LikelihoodResult, PreparedRegression]:
-        """Construct binomial probit with explicit trials and offset roles."""
+        """Construct binomial probit with explicit trials and offset roles.
+
+        Args:
+            response: Outcome column or grouped binomial response.
+            terms: Explicit predictor terms.
+            offset: Optional column added to the linear predictor.
+            estimator: Optional probit solver configuration.
+
+        Returns:
+            A binomial probit regression specification.
+
+        Raises:
+            TypeError: If the estimator is incompatible.
+
+        """
         if estimator is not None and not isinstance(estimator, ProbitMLE):
             message = "Probit requires a ProbitMLE estimator."
             raise TypeError(message)
@@ -418,7 +489,22 @@ class Regression[
         exposure: str | None = None,
         estimator: PoissonMLE | None = None,
     ) -> Regression[PoissonResult, PreparedRegression]:
-        """Construct Poisson log-rate regression with named offset and exposure."""
+        """Construct Poisson log-rate regression with named offset and exposure.
+
+        Args:
+            response: Count outcome column or observed-response descriptor.
+            terms: Explicit predictor terms.
+            offset: Optional column added to the linear predictor.
+            exposure: Optional positive exposure column.
+            estimator: Optional Poisson solver configuration.
+
+        Returns:
+            A Poisson regression specification.
+
+        Raises:
+            TypeError: If the estimator is incompatible.
+
+        """
         if estimator is not None and not isinstance(estimator, PoissonMLE):
             message = "Poisson requires a PoissonMLE estimator."
             raise TypeError(message)
@@ -1153,7 +1239,15 @@ class Regression[
     @final
     @override
     def estimate(self, data: _Data, /) -> RegressionFit:
-        """Prepare and estimate through the sole regression specification."""
+        """Prepare the supplied observations and estimate the specification.
+
+        Args:
+            data: Observations and any structure required by the model.
+
+        Returns:
+            A family-specific result holding the fit and training preparation.
+
+        """
         return super().estimate(data)
 
     def __post_init__(self) -> None:

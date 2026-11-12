@@ -211,7 +211,7 @@ class CheckedClouds(
         >>> from statadic.sample.packed import pack
         >>> checked = checked_finite_clouds(pack([jnp.ones((2, 3))]))
         >>> [leaf.shape for leaf in jax.tree_util.tree_leaves(checked)]
-        [(1, 2, 3), (1,)]
+        [(1, 2, 3), (1,), (1, 2)]
 
     """
 

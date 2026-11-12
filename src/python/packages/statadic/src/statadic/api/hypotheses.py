@@ -95,6 +95,20 @@ class Hypothesis[NullT: Proposition = Proposition]:
 
     ``None`` denotes the complement. First-slice procedures require that
     default; accepting another alternative needs its own supported procedure.
+
+    Args:
+        null: Proposition stating the null claim.
+        alternative: Explicit alternative, or ``None`` for the complement.
+
+    Raises:
+        TypeError: If either supplied claim does not implement the proposition protocol.
+        ValueError: If a proposition has an empty description.
+
+    Examples:
+        >>> question = Hypothesis(LinearRestriction.zero("slope"))
+        >>> "slope" in question.describe()
+        True
+
     """
 
     null: NullT
@@ -156,7 +170,23 @@ class Hypothesis[NullT: Proposition = Proposition]:
 @final
 @dataclass(frozen=True)
 class LinearRestriction:
-    """Named rows of ``R theta = r``, optionally bound to one learned design."""
+    """Named rows of ``R theta = r``, optionally bound to one learned design.
+
+    Args:
+        rows: Coefficient names and weights for each restriction.
+        values: Target for every row, or a tuple with one target per row.
+        design: Optional fitted design to which the restriction is bound.
+
+    Raises:
+        ValueError: If rows are empty, coefficients are nonfinite, or targets
+            do not match the rows.
+
+    Examples:
+        >>> restriction = LinearRestriction.zero("slope")
+        >>> restriction.values
+        (0.0,)
+
+    """
 
     rows: tuple[Mapping[str, ReportNumber], ...]
     values: tuple[ReportNumber, ...] | ReportNumber = 0.0
@@ -191,7 +221,18 @@ class LinearRestriction:
 
     @classmethod
     def zero(cls, *names: str) -> LinearRestriction:
-        """State one zero-coefficient restriction for each supplied name."""
+        """State one zero-coefficient restriction for each supplied name.
+
+        Args:
+            *names: Unique coefficient names to constrain to zero.
+
+        Returns:
+            A restriction with one row for each name.
+
+        Raises:
+            ValueError: If names are empty or repeated.
+
+        """
         names = _names(names, "Zero restrictions")
         if len(set(names)) != len(names):
             message = "Zero restrictions require unique coefficient names."

@@ -100,6 +100,7 @@ def energy_distance_matrix(
             not support the exponent regime.
 
     Examples:
+        >>> from statadic.sample.packed import PackedClouds
         >>> a = jnp.array([[0.0, 0.0], [1.0, 1.0]])
         >>> b = jnp.array([[10.0, 10.0], [11.0, 11.0]])
         >>> clouds = PackedClouds.from_clouds([a, b])
@@ -279,6 +280,7 @@ def energy_functional_matrix(
         ValueError: Whatever :func:`energy_distance_matrix` raises.
 
     Examples:
+        >>> from statadic.sample.packed import PackedClouds
         >>> a = jnp.array([[0.0, 0.0], [1.0, 1.0]])
         >>> b = jnp.array([[10.0, 10.0], [11.0, 11.0]])
         >>> energy_functional_matrix(

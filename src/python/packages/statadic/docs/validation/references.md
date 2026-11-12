@@ -1,13 +1,18 @@
+---
+type: evidence
+description: Matched configurations and independent numerical comparisons.
+---
+
 # Reference comparisons
 
-Start with a familiar [Regression constructor](../reference/regression.md), then
-inspect its explicit components and the exact comparison below. Spatial, panel,
-IV and Ordination constructions use the same index.
-
-**Specification → matched configuration → independent witness → retained result.**
-
-Reference agreement checks specified numerical outputs. Source fidelity, Lean
-assumptions, statistical calibration and performance remain separate evidence.
-A constructor does not grant guarantees to every combination of its components.
+The index maps statistical configurations to independently implemented
+calculations, so you can inspect the scope of agreement for a particular method.
 
 <!-- statadic:reference-index -->
+
+## How to read this
+
+Find the constructor and configuration closest to your analysis, then inspect
+the outputs, conventions and gaps recorded for the comparison. Agreement concerns
+those particular outputs and configurations, while statistical coverage and
+source fidelity require their own evidence.

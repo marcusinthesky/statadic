@@ -278,7 +278,7 @@ def angular_distance(
         >>> x = jnp.array([[1.0, 0.0]])
         >>> y = jnp.array([[0.0, 1.0]])  # Orthogonal
         >>> angular_distance(x, y)
-        Array([[1.5707964]], dtype=float32)  # π/2 radians
+        Array([[1.5707964]], dtype=float32)
 
     """
     # Compute norms
@@ -388,8 +388,8 @@ def normalized_euclidean_distance(
     Examples:
         >>> x = jnp.array([[3.0, 4.0]])  # magnitude 5
         >>> y = jnp.array([[0.6, 0.8]])  # same direction, magnitude 1
-        >>> normalized_euclidean_distance(x, y)
-        Array([[0.]], dtype=float32)  # Zero distance after normalization
+        >>> bool(jnp.allclose(normalized_euclidean_distance(x, y), 0, atol=1e-3))
+        True
 
     """
     # Compute norms
@@ -867,15 +867,18 @@ def cdist(
     Examples:
         >>> x = jnp.array([[1.0, 0.0], [0.0, 1.0]])
         >>> y = jnp.array([[1.0, 1.0]])
-        >>> cdist(x, y, metric=EUCLIDEAN)
-        Array([[1.       ],
-               [1.       ]], dtype=float32)
+        >>> bool(jnp.allclose(cdist(x, y, metric=EUCLIDEAN), jnp.ones((2, 1))))
+        True
 
         >>> # Custom metrics require a law declaration.
+        >>> from statadic.sample.evidence import FiniteValues
         >>> def scaled_euclidean(x, y):
         ...     return 2.0 * euclidean_distance(x, y)
         >>> custom = declare_ground_distance(
-        ...     scaled_euclidean, law=EuclideanLaw(), name="scaled_euclidean"
+        ...     scaled_euclidean,
+        ...     law=EuclideanLaw(),
+        ...     name="scaled_euclidean",
+        ...     required_evidence=FiniteValues,
         ... )
         >>> cdist(x, y, metric=custom)
         Array([[2.],
@@ -915,10 +918,15 @@ def pdist(
 
     Examples:
         >>> x = jnp.array([[0.0, 0.0], [1.0, 0.0], [0.0, 1.0]])
-        >>> pdist(x, metric=EUCLIDEAN)
-        Array([[0., 1., 1.],
-               [1., 0., 1.4142135],
-               [1., 1.4142135, 0.]], dtype=float32)
+        >>> bool(
+        ...     jnp.allclose(
+        ...         pdist(x, metric=EUCLIDEAN),
+        ...         jnp.array(
+        ...             [[0.0, 1.0, 1.0], [1.0, 0.0, 2**0.5], [1.0, 2**0.5, 0.0]]
+        ...         ),
+        ...     )
+        ... )
+        True
 
     """
     return cdist(x, x, metric=metric)

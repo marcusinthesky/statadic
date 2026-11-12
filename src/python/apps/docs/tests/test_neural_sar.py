@@ -13,7 +13,10 @@ from flax import nnx
 
 pytestmark = pytest.mark.native
 ROOT = Path(__file__).resolve().parents[5]
-EXAMPLE = ROOT / "src/python/packages/statadic/examples/neural_sar.py"
+EXAMPLE = (
+    ROOT
+    / "src/python/packages/statadic/docs/guides/train-a-representation-through-sar.py"
+)
 NEURAL = runpy.run_path(str(EXAMPLE))
 
 

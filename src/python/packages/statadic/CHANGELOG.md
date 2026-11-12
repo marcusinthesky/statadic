@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Replace standalone teaching scripts and separate labs with self-contained
+  marimo tutorials and how-to guides, rendered natively with figures, source
+  downloads and optional server-mode molab links.
+- Separate concepts, reference and evidence pages, enforce page-type schemas
+  and prose rules, and move contributor procedures into repository documentation.
+- Execute public API doctests and reference Usage examples during checks.
 - Respect working precision when screening spatial-panel profile scores, and
   retain a better positive-variance candidate when the zero-variance fit is worse.
 - Reject available metrics with unavailable reasons and enumerate finite reporting
@@ -142,7 +148,7 @@ package tests do not close those gates.
   separate PCA/PCoA constructors, `api.composition`, and
   `fit`/`fit_prepared`. No prerelease compatibility aliases remain. Numerical
   estimators and scientific operations retain their canonical owners; see the
-  [migration guide](docs/module-organization.md).
+  [migration guide](docs/reference/upgrading.md).
 
 ### Added — retained workflows and artifacts
 
@@ -162,7 +168,7 @@ package tests do not close those gates.
 - `RowDifference` and term contrasts use the fitted basis and exact parameter
   schema. OLS diagnostics include residual tests and quantity-specific influence
   availability; an unavailable deletion does not erase other valid quantities.
-  See [diagnostics](docs/linear-diagnostics.md).
+  See [diagnostics](docs/reference/linear-diagnostics.md).
 - Schema 6 uses validated JSON records and binary arrays, with one Ordination
   codec shared by standalone maps and nested designs. Duplicate PCA/PCoA artifact
   APIs are removed. Predictor artifacts restore declared prediction capabilities,
@@ -269,9 +275,9 @@ package tests do not close those gates.
 - Required source/study gaps and artifact-specific acceptance remain open.
   Ordinary-AFT inconclusive cells, SAR/bootstrap/Sharpe calibration limits,
   manual-only dyadic campaigns and high-censoring/full-joint integration gaps
-  remain visible. Consult [validation](docs/validation.md),
+  remain visible. Consult [validation](docs/validation/known-limitations.md),
   [known limits](docs/validation/known-limitations.md) and
-  [transformation scope](docs/capabilities.md) before interpreting results.
+  [transformation scope](docs/reference/transformation-support.md) before interpreting results.
 
 ## [0.1.0] - 2025-10-07
 

@@ -1,20 +1,26 @@
-# State a hypothesis, then choose its procedure
+---
+type: reference
+description: State a null hypothesis about a fitted model and read the outcome of the procedure that tests it.
+---
 
-{py:class}`~statadic.api.hypotheses.Hypothesis` accepts `null=...` and
-`alternative=...`. A fitted
-result supplies the sample and parameter schema; an inference or diagnostic
-procedure supplies its statistic, reference and assumptions. The first supported
-procedures require `alternative=None`, meaning the complement of the null.
-The generic `core.statistics.Null` axis remains separate from this host value.
+# Hypothesis
 
-## Test named coefficients
+## Usage
 
 ```python
+import random
+
+from statadic.api.design import Intercept, Linear
 from statadic.api.hypotheses import Hypothesis, LinearRestriction
 from statadic.api.inference import HC
+from statadic.api.regression import Regression
 
-# Continuation: result retains a fitted design with a column named "exposure".
-uncertainty = result.infer(covariance=HC("HC3"))
+rng = random.Random(3)
+exposure = [i / 10 for i in range(60)]
+data = {"exposure": exposure, "y": [0.5 + 0.4 * v + rng.gauss(0, 1) for v in exposure]}
+
+fit = Regression.ols("y", Intercept() + Linear("exposure")).estimate(data).require_valid()
+uncertainty = fit.infer(covariance=HC("HC3"))
 tested = uncertainty.test(
     Hypothesis(LinearRestriction.zero("exposure")),
     reference="chi2",
@@ -22,84 +28,99 @@ tested = uncertainty.test(
 print(tested.report().to_text())
 ```
 
-`LinearRestriction` represents `R @ theta = r` using parameter names. Names are
-resolved against the actual fit, including named ancillary parameters. Unknown
-names and unnamed positional fits raise. `from_contrasts(...)` also binds the
-restriction to the exact fitted design that created those contrasts. Redundant
-restrictions and singular restriction covariance remain unavailable.
+## Description
 
-`reference="f"` additionally requires explicit positive denominator degrees of
-freedom. Selecting robust covariance and an F law is permitted as a declared
-approximation; covariance construction alone does not establish exact F calibration.
+{py:class}`~statadic.api.hypotheses.Hypothesis` states a question about a model
+as a `null` and an optional `alternative`. A fitted result supplies the sample
+and the parameter names, and the procedure you call supplies the statistic, the
+reference distribution and the assumptions. Every supported procedure currently
+takes `alternative=None`, which means the complement of the null.
 
-## Diagnose a retained fit
+Two kinds of procedure return a `TestOutcome`. Inference procedures such as
+`uncertainty.test(...)` and resampling take a hypothesis from you. Diagnostics
+such as those in [linear diagnostics](linear-diagnostics.md) build their own
+nulls, because each diagnostic is defined by what it tests.
 
-```python
-from statadic.api.diagnostics import BreuschGodfrey, DurbinWatson
-from statadic.api.inference import HAC
+## Options
 
-diagnostics = result.diagnose(
-    BreuschGodfrey(lags=4, order_by="time"),
-    DurbinWatson(order_by="time"),
-)
-uncertainty = result.infer(covariance=HAC(bandwidth=4, order_by="time"))
-```
+The null is a proposition, and the table lists those you can write yourself.
 
-These host requests require an explicit ordering choice. A named finite, unique
-numeric column sorts ascending; `order_by=None` acknowledges retained row order.
-Ties are rejected. Lag units are adjacent ordered observations. Sorting neither
-checks calendar spacing nor establishes dependence assumptions. The fit and its
-row identities remain unchanged.
+| Null | States | Used with |
+| --- | --- | --- |
+| `LinearRestriction.zero("a", "b")` | Each named coefficient equals zero | `uncertainty.test(..., reference=...)` |
+| `LinearRestriction(rows, values)` | $R\theta = r$, with rows given by parameter name | `uncertainty.test(..., reference=...)` |
+| `LinearRestriction.from_contrasts(...)` | A restriction built from contrasts of one fitted design | `uncertainty.test(..., reference=...)` |
+| `Reduced(("intercept", "age"))` | No effect beyond the named columns of the fitted design | `fit.infer(resampling=...).test(...)` |
+| `HansenJ(assume_correct_specification=True)` | The overidentifying restrictions hold | `result.diagnose(...)` on IV and GMM results |
 
-Reports never carry sample-sized row-id tuples. Construction metadata records
-`rows` as `{"count", "sha256"}`, the SHA-256 digest of the compact JSON list of
-retained row ids. Ordered calculations add `calculation_order`, the same digest
-of the ids in calculation order. Re-hashing the ids, sorted by `order_by` where
-named, verifies a report against its data.
+Names resolve against the actual fit, including named ancillary parameters, and
+`from_contrasts` binds the restriction to the exact design that produced the
+contrasts. For linear restrictions, `reference="chi2"` gives a Wald test, and
+`reference="f"` also needs positive `degrees_of_freedom` for the denominator.
+Resampling procedures run at `.test(...)`, once the null is known, and they are
+described in the [composition reference](catalogue-fitting.md).
 
-Diagnostics construct their own nulls and return `TestOutcome` values alongside
-descriptive influence results. Outcomes retain assumptions, citation keys,
-construction details and availability reasons. Durbin–Watson has a statistic but
-no calibrated p-value. `report()` metadata survives `save_analysis`; no new
-predictor artifact or scientific approval is created.
-See the [Report reference](reporting.md) for rendering and persistence.
+## Results
 
-For dedicated IV or affine-GMM results, request
-`result.diagnose(HansenJ(assume_correct_specification=True))` after importing
-`HansenJ` from `statadic.api.diagnostics`. The acknowledgement is substantive:
-numerical checks do not establish instrument validity, strong identification or
-correct specification. [IV](../iv-fitting.md) and [GMM](../gmm-fitting.md) retain
-different efficient-weight availability conditions.
+A `TestOutcome` holds the `hypothesis`, the `statistic`, the `pvalue` and the
+`reference` distribution that calibrates it. It also records `available` with an
+`unavailable_reason`, the `assumptions` of the procedure, citation `sources` and
+the `construction` details. Calling `report()` turns the outcome into a
+[report](reporting.md), and its metadata survives `save_analysis`, as described
+for [saved artifacts](artifacts.md).
 
-## Select a nested geometric null
+Reports never carry a list of row ids as long as the sample. The construction
+metadata records `rows` as a count and the SHA-256 digest of the compact JSON
+list of row ids. Ordered calculations add `calculation_order`, the same digest of the ids in
+calculation order. Hashing the ids of your data, sorted by `order_by` where one
+was named, then verifies a report against its data. The `order_by` rule is
+described for `HAC` in the [regression reference](regression.md).
 
-Bind a resampling procedure with `fit.infer(resampling=...)`, then call
-`.test(Hypothesis(Reduced(("intercept", "age"))))`. `Reduced` selects columns
-of the already-fitted full design; it
-does not learn another representation. [Freedman–Lane](composition.md#adjusting-for-nuisance-predictors)
-remains approximate, including exhaustive enumeration. This wrapper does not
-convert geometric inference into a coefficient Wald test or transfer its proof
-and calibration to another procedure.
+A resampling outcome keeps the native run of its procedure in
+`TestOutcome.evidence`, including the schedule and any failed draws. Reports
+serialize the outcome metadata and leave that live object out.
 
-Resampling executes at `.test(...)`, after the null is known. The returned
-`TestOutcome.evidence` retains the procedure's native run, including its schedule
-and failed draws. Reports serialize the outcome metadata, not that live carrier.
+## Methods and formulas
 
-<details><summary>Evidence belongs to the selected procedure</summary>
+A linear restriction $R\theta = r$ is tested with the Wald statistic
+$(R\hat\theta - r)^\top (R\hat V R^\top)^{-1} (R\hat\theta - r)$, where
+$\hat V$ is the covariance chosen in `infer`. The statistic is compared with
+$\chi^2_q$ for $q = \operatorname{rank}(R)$ or, divided by $q$, with
+$F(q, d)$ for the denominator degrees of freedom $d$ you supply. Hansen's $J$ is
+the minimised efficient-weight GMM criterion, compared with a chi-square law
+whose degrees of freedom equal the instruments minus the parameters.
 
-The [Durbin–Watson range](../formal/claims/STATADIC-DW-001.md) proves a finite bound,
-not a universal p-value. The
-[efficient GMM reference result](../formal/claims/STATADIC-JTEST-003.md) has explicit
-limit, rank and efficient-weight assumptions. Neither is a generic theorem about
-`Hypothesis` or `TestOutcome`; the claim pages retain exact source-review status.
+## Assumptions and limits
 
-[Residual diagnostics](../linear-diagnostics.md) describe their independent
-comparisons and historical study boundaries. Inspect exact
-[reference mappings](../validation/references.md),
-[study dispositions](../validation/research.md) and
-[known limits](../validation/known-limitations.md) for the actual procedure.
-The {download}`native restriction controls <../../tests/inference/test_parameters.py>`
-and {download}`independent diagnostic comparisons <../../tests/inference/test_linear_diagnostics_reference.py>`
-retain their tested configurations; they do not establish universal calibration.
+- A fit that succeeds numerically does not establish the assumptions behind a
+  reference law. You select the reference, and covariance construction alone does
+  not make an F law exact.
+- Combining a robust covariance with an F law is a declared approximation.
+- Unknown names and unnamed positional fits raise, and redundant restrictions or
+  a singular restriction covariance make the test unavailable.
+- Resampling that adjusts for nuisance predictors is approximate, even when
+  every permitted schedule is enumerated. A geometric test does not turn into a coefficient Wald
+  test or inherit the calibration of another procedure.
+- The Hansen J acknowledgement is substantive. Numerical checks do not
+  establish instrument validity, strong identification or correct specification,
+  and [IV and GMM results](moment-estimators.md) differ in when an efficient
+  weight is available.
+- Durbin-Watson has a statistic without a calibrated p-value.
 
-</details>
+## Evidence
+
+- Mathematical results: the {ref}`Durbin-Watson range <formal-STATADIC-DW-001>`
+  proves a finite bound, and the
+  {ref}`efficient GMM reference result <formal-STATADIC-JTEST-003>` states its
+  limit, rank and efficient-weight assumptions. Neither is a theorem about
+  `Hypothesis` itself.
+- Reference comparisons: the diagnostic nulls are matched against statsmodels in
+  the {ref}`reference index <reference-inference.linear_diagnostics>`.
+- Studies: the {ref}`residual diagnostics <research-procedure-linear.residual-diagnostics>`
+  study covers the diagnostic nulls, and each procedure keeps its own evidence.
+
+## See also
+
+- [Linear diagnostics](linear-diagnostics.md) and
+  [regression](regression.md)
+- [Reports](reporting.md) and [composition](composition.md)

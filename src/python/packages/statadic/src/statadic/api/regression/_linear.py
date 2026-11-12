@@ -118,7 +118,16 @@ class LinearResult(RegressionResult[LinearFit]):
     def predict(
         self, data: RegressionInput, *, kind: Literal["mean"] = "mean"
     ) -> Array:
-        """Predict from retained training features and model-specific input roles."""
+        """Predict from retained training features and model-specific input roles.
+
+        Args:
+            data: New rows containing the fitted design's predictor columns.
+            kind: Prediction target, which is ``"mean"`` for least squares.
+
+        Returns:
+            Fitted conditional means in the order of the supplied rows.
+
+        """
         _validate_prediction_kind("linear", kind)
         data = _prediction_inputs(data, self.design, kind)
         return self.core.predict(
@@ -132,6 +141,13 @@ class LinearResult(RegressionResult[LinearFit]):
         Each request names its procedure, options and null hypothesis, for
         example ``JarqueBera()``, ``BreuschPagan()`` or ``Influence()``.
         Nothing is refitted; unavailable diagnostics stay visible with a reason.
+
+        Args:
+            *requests: Diagnostic specifications to evaluate.
+
+        Returns:
+            A collection of outcomes with their availability and references.
+
         """
         return Diagnostics(
             self.context.model_name,
@@ -144,7 +160,18 @@ class LinearResult(RegressionResult[LinearFit]):
     def infer(
         self, *, covariance: ModelBased | HC | HAC | Clustered
     ) -> InferenceResult:
-        """Attach supported covariance to this exact core fit without refitting."""
+        """Attach supported covariance to this exact core fit without refitting.
+
+        Args:
+            covariance: Model-based, HC, HAC or clustered covariance request.
+
+        Returns:
+            An inference result for intervals and hypothesis tests.
+
+        Raises:
+            TypeError: If the covariance request is unsupported.
+
+        """
         if not isinstance(covariance, (ModelBased, HC, HAC, Clustered)):
             message = "Unsupported linear covariance specification."
             raise TypeError(message)

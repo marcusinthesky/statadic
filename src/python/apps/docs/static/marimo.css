@@ -1,0 +1,9 @@
+/* Static renderings of executed marimo notebooks. */
+.marimo-output { margin: 0 0 1.25rem; overflow-x: auto; }
+.marimo-output img.marimo-figure { max-width: 100%; height: auto; }
+.marimo-output pre { white-space: pre; font-family: var(--sy-f-mono); }
+.marimo-output .marimo-control { font-size: 0.9em; opacity: 0.8; }
+.marimo-output .marimo-callout { border: 1px solid var(--sy-c-border, #d6d6d6); padding: 0.5rem 1rem; }
+.marimo-launch { margin: 0 0 1.5rem; }
+.marimo-launch p { margin: 0.25rem 0; }
+.marimo-launch code { overflow-wrap: anywhere; }

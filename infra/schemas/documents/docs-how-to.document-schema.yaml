@@ -1,0 +1,56 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# Validates `marimo export md` output of guides/**/*.py.
+maxTokens: 1800
+frontmatter:
+  type: object
+  required: [title]
+  properties:
+    type:
+      const: how-to
+    title:
+      type: string
+      pattern: \S
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      const: Introduction
+    maxTokens: 120
+  - header:
+      const: Before you start
+    minContains: 0
+    maxTokens: 100
+  - header:
+      const: The data
+    minContains: 0
+    maxTokens: 250
+  - header:
+      pattern: '^Step \d+: \S'
+    minContains: 1
+    maxContains: 8
+    maxTokens: 450
+    blocks:
+    - type: code
+      minContains: 1
+  - header:
+      const: Explore
+    minContains: 0
+    maxContains: 1
+    maxTokens: 300
+  - header:
+      pattern: ^(What you learned|Result)$
+    maxTokens: 120
+  - header:
+      const: Assumptions and evidence
+    maxTokens: 80
+  - header:
+      pattern: ^(Next steps|See also)$
+    maxTokens: 80
+  - header:
+      const: Appendix
+    minContains: 0
+    maxContains: 1
+  additionalSections: false

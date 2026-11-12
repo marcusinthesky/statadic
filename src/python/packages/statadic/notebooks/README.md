@@ -1,6 +1,6 @@
 # STATADIC notebooks
 
-The notebooks in this directory explore STATADIC methods and computational performance. They are exploratory examples, not statistical qualification studies. The [interactive lab catalogue](../docs/labs/index.md) provides a guided learning sequence and its own launch instructions.
+The notebooks in this directory explore STATADIC methods and computational performance. They are exploratory examples, not statistical qualification studies. The [interactive lab catalogue](../docs/tutorials/index.md) provides a guided learning sequence and its own launch instructions.
 
 <!-- insitu:begin gittree
 id = "gittree"
@@ -16,8 +16,8 @@ depth = 1
 <!-- insitu:end -->
 
 - The former homogeneity Monte Carlo notebook is retired. Use the
-  [permutation](../docs/labs/permutation-evidence.md) and
-  [calibration](../docs/labs/calibration.md) labs for bounded teaching examples.
+  [permutation](../docs/tutorials/permutation-tests.py) and
+  [calibration](../docs/tutorials/calibration.py) labs for bounded teaching examples.
   They do not reproduce its full distribution, dimension and effect-size grid.
   Retained research experiments belong to the studies application.
 - The former kernel-mixing notebook is retired. Its mixture optimization and
@@ -29,8 +29,8 @@ depth = 1
 Run the guided replacements from the repository root:
 
 ```bash
-just python::docs::lab permutation-evidence
-just python::docs::lab calibration
+just python::docs::notebook tutorials/permutation-tests.py
+just python::docs::notebook tutorials/calibration.py
 ```
 
-STATADIC's declared runtime uses CPU JAX; a GPU setup requires separate caller configuration. Do not infer GPU timing or inferential calibration from an exploratory notebook. Consult [capabilities](../docs/capabilities.md) and [validation](../docs/validation.md) for the evidence and limits of supported configurations.
+STATADIC's declared runtime uses CPU JAX; a GPU setup requires separate caller configuration. Do not infer GPU timing or inferential calibration from an exploratory notebook. Consult [capabilities](../docs/reference/transformation-support.md) and [validation](../docs/validation/index.md) for the evidence and limits of supported configurations.

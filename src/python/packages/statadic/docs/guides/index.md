@@ -1,17 +1,29 @@
+---
+type: landing
+description: How-to guides for STATADIC analyses.
+---
+
+<!-- rumdl-disable MD040 -->
+
 # How-to guides
 
-Use these recipes when you already know the analysis you need to perform.
-For a guided introduction, start with the [tutorials](../tutorials/index.md).
+Use these notebooks for a particular task when you already understand the
+analysis. The [tutorials](../tutorials/index.md) provide a guided introduction.
 
-:::{toctree}
+```{toctree}
 :maxdepth: 1
 
-Choose covariance and reference <inference>
-Change covariance <../compose/change-component>
-Save and share results <reporting>
-graph-resampling
-Extend a term, geometry or estimator <../reference/downstream-extensions>
-:::
-
-Consult the [API reference](../reference/index.md) for supported operations and
-the [concepts](../concepts/index.md) for their statistical meaning.
+change-covariance
+compare-estimators
+change-geometry
+save-and-share-results
+count-models-with-exposure
+fit-instrumental-variables
+principal-component-regression
+seasonal-survival-effects
+resample-panel-graphs
+learn-panel-graphs
+extend-a-term
+train-a-representation-through-sar
+cite-a-checked-result
+```

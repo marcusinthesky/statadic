@@ -30,6 +30,7 @@ from pathlib import Path
 
 import jax
 import statadic
+import yaml
 
 jax.config.update("jax_enable_x64", True)
 
@@ -103,7 +104,11 @@ def fingerprint(paths: list[Path]) -> str:
 
 
 def provenance(generated: Path) -> None:
-    if not Path(statadic.__file__).resolve().is_relative_to((PACKAGE / "src").resolve()):
+    if (
+        not Path(statadic.__file__)
+        .resolve()
+        .is_relative_to((PACKAGE / "src").resolve())
+    ):
         raise SystemExit("The imported STATADIC package is not this checkout's source.")
     package_hash = fingerprint(list((PACKAGE / "src/statadic").rglob("*.py")))
     analysis_hash = fingerprint([Path(__file__).resolve(), *LISTINGS.glob("*.py")])
@@ -123,7 +128,9 @@ def provenance(generated: Path) -> None:
     put("revision", git("rev-parse", "--short=7", "HEAD"))
     put("analysis-hash", analysis_hash[:12])
     put("package-hash", package_hash[:12])
-    source_changes = git("status", "--porcelain", "--", "src/python/packages/statadic/src")
+    source_changes = git(
+        "status", "--porcelain", "--", "src/python/packages/statadic/src"
+    )
     put("package-source-state", "unmodified" if not source_changes else "modified")
     put("statadic-version", importlib.metadata.version("statadic"))
     put("jax-version", jax.__version__)
@@ -572,48 +579,86 @@ def formal(generated: Path) -> None:
 
 
 # --------------------------------------------------------------------------- retained records
-def retained(generated: Path) -> None:
-    text = (PACKAGE / "docs/validation.md").read_text(encoding="utf-8")
-    pattern = re.compile(
-        r"^\| (Weibull|Lognormal) \| (\d+) \| (Zero|Positive) \| (\d+) / (\d+) \| (\d+) \| ([0-9.]+) \| (\w+) \|$",
-        re.MULTILINE,
-    )
-    cells = pattern.findall(text)
-    if len(cells) != 8:
+VALIDATION_RECORDS = PROJECT / "analysis/validation-records.yaml"
+AFT_FIELDS = {
+    "family": str,
+    "n": int,
+    "entry": str,
+    "valid": int,
+    "requested": int,
+    "rejected": int,
+    "lower_bound": str,
+    "disposition": str,
+}
+SHARPE_FIELDS = ("gaussian", "skewed", "dependent")
+
+
+def load_validation_records() -> tuple[list[dict], dict]:
+    """Read and validate the retained AFT rows and Sharpe coverage counts."""
+    name = VALIDATION_RECORDS.name
+    data = yaml.safe_load(VALIDATION_RECORDS.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise SystemExit(f"{name} must be a mapping")
+    rows = data.get("aft_records")
+    if not isinstance(rows, list) or len(rows) != 8:
+        raise SystemExit(f"{name}: aft_records must list exactly 8 rows")
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict) or set(row) != set(AFT_FIELDS):
+            raise SystemExit(
+                f"{name}: aft_records[{index}] must have exactly the fields "
+                f"{sorted(AFT_FIELDS)}"
+            )
+        for field, kind in AFT_FIELDS.items():
+            value = row[field]
+            if type(value) is not kind:
+                raise SystemExit(
+                    f"{name}: aft_records[{index}].{field} must be {kind.__name__}"
+                )
+        if row["family"] not in ("Weibull", "Lognormal"):
+            raise SystemExit(f"{name}: aft_records[{index}].family is unknown")
+        if row["entry"] not in ("Zero", "Positive"):
+            raise SystemExit(f"{name}: aft_records[{index}].entry is unknown")
+        if row["disposition"] not in ("Qualified", "Inconclusive"):
+            raise SystemExit(f"{name}: aft_records[{index}].disposition is unknown")
+        if not re.fullmatch(r"[0-9.]+", row["lower_bound"]):
+            raise SystemExit(f"{name}: aft_records[{index}].lower_bound is malformed")
+    sharpe = data.get("sharpe_coverage")
+    if not isinstance(sharpe, dict) or set(sharpe) != {"trials", *SHARPE_FIELDS}:
         raise SystemExit(
-            "docs/validation.md AFT table changed; review the retained-record table."
+            f"{name}: sharpe_coverage must have trials, gaussian, skewed, dependent"
         )
+    if any(type(v) is not int for v in sharpe.values()):
+        raise SystemExit(f"{name}: sharpe_coverage values must be integers")
+    if sharpe["trials"] != 10_000:
+        raise SystemExit(f"{name}: sharpe_coverage.trials must be 10000")
+    return rows, sharpe
+
+
+def retained(generated: Path) -> None:
+    rows, sharpe = load_validation_records()
     lines = [
         r"\begin{tabular}{@{}lrlrrl@{}}",
         r"\toprule",
         r"Family & $n$ & Entry & Valid & Coverage lower bound & Disposition \\",
         r"\midrule",
     ]
-    for family, size, entry, valid, requested, _, bound, disposition in cells:
+    for row in rows:
         lines.append(
-            f"{family} & {size} & {entry} & {int(valid):,}/{int(requested):,} & {bound} & {disposition} \\\\".replace(
-                ",", "{,}"
-            )
+            f"{row['family']} & {row['n']} & {row['entry']} & "
+            f"{row['valid']:,}/{row['requested']:,} & {row['lower_bound']} & "
+            f"{row['disposition']} \\\\".replace(",", "{,}")
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     (generated / "retained-aft-table.tex").write_text(
-        "% AUTO-GENERATED from docs/validation.md by analysis/generate.py; do not edit.\n"
+        "% AUTO-GENERATED from analysis/validation-records.yaml by analysis/generate.py; do not edit.\n"
         + "\n".join(lines)
         + "\n",
         encoding="utf-8",
     )
-    put("aft-qualified", sum(c[7] == "Qualified" for c in cells))
-    put("aft-inconclusive", sum(c[7] == "Inconclusive" for c in cells))
-    sharpe = re.search(
-        r"covered ([\d,]+)/10,000 Gaussian,\s+([\d,]+)/10,000 skewed and ([\d,]+)/10,000 dependent",
-        text,
-    )
-    if sharpe is None:
-        raise SystemExit("docs/validation.md Sharpe record changed; review the paper.")
-    for name, count in zip(
-        ("gaussian", "skewed", "dependent"), sharpe.groups(), strict=True
-    ):
-        put(f"sharpe-{name}", count.replace(",", "{,}"))
+    put("aft-qualified", sum(r["disposition"] == "Qualified" for r in rows))
+    put("aft-inconclusive", sum(r["disposition"] == "Inconclusive" for r in rows))
+    for name in SHARPE_FIELDS:
+        put(f"sharpe-{name}", f"{sharpe[name]:,}".replace(",", "{,}"))
 
 
 # --------------------------------------------------------------------------- timing
@@ -689,7 +734,7 @@ def generation_inputs() -> dict[str, str]:
         ROOT / "src/lean/lean-toolchain",
         ROOT / "src/lean/lake-manifest.json",
         ROOT / "src/latex/refs.bib",
-        PACKAGE / "docs/validation.md",
+        VALIDATION_RECORDS,
         *LISTINGS.rglob("*.py"),
         *(PACKAGE / "src/statadic").rglob("*.py"),
         *(ROOT / "src/lean/registry").glob("*.json"),

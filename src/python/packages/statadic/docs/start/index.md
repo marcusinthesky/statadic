@@ -1,23 +1,26 @@
+---
+type: landing
+description: Install STATADIC and complete a first analysis.
+---
+
 <!-- rumdl-disable MD041 -->
+
+<!-- rumdl-disable MD040 -->
 
 (start-with-statadic)=
 
 # Start
 
-<!-- rumdl-enable MD041 -->
+[Install STATADIC](installation.md), then estimate a model and report its
+uncertainty in the [first regression](first-regression.py). The complete OLS
+chapter adds diagnostics, inference choices and publication exports.
 
-[Install](installation.md), learn the [workflow](workflow.md), then run the
-[first regression](../tutorials/first-regression.md).
-Continue with the [complete OLS chapter](../tutorials/ols/index.md) when ready.
-
-:::{toctree}
-:hidden:
+```{toctree}
 :maxdepth: 1
 
 installation
-workflow
-../tutorials/first-regression
-Methods <../methods>
+first-regression
+Choose a method <../methods>
 glossary
 troubleshooting
-:::
+```

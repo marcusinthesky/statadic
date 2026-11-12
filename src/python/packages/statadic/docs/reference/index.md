@@ -1,38 +1,35 @@
+---
+type: landing
+description: Reference for STATADIC analyses.
+---
+
+<!-- rumdl-disable MD040 -->
+
 # Reference
 
-Look up supported inputs, operations, retained state and limits. Start with the
-five workflow entry points; use the numerical families for array-level contracts.
-For worked analyses, use the [tutorials](../tutorials/index.md).
+Look up inputs, options, returned results and assumptions for a method.
+Worked analyses live in the [tutorials](../tutorials/index.md), while the
+[evidence](../validation/index.md) describes the configurations checked.
 
-:::{toctree}
+```{toctree}
 :maxdepth: 1
-:caption: Workflow API
 
-Regression <regression>
-Ordination <ordination>
-Estimand <estimand>
-Hypothesis and test outcomes <hypotheses>
-Report <reporting>
-:::
-
-:::{toctree}
-:maxdepth: 1
-:caption: Detailed contracts
-
+regression
+ordination
+estimand
+hypotheses
+reporting
+artifacts
 composition
-Numerical families <numerical>
-Contracts and capabilities <contracts>
-Saved artifacts <artifacts>
-Selected Python API <api>
-:::
-
-:::{toctree}
-:maxdepth: 1
-:caption: Development
-
-package-development
-../module-organization
-:::
-
-[Evidence](../validation/index.md) separately records independent comparisons,
-statistical studies and the assumptions and limits of formal results.
+conditional-laws
+moment-estimators
+linear-diagnostics
+spatial-panels
+survival
+energy
+resampling
+method-catalogue
+transformation-support
+upgrading
+api
+```

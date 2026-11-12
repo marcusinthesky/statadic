@@ -53,9 +53,6 @@ def test_build_provenance_binds_exact_mapped_test_sources(tmp_path, monkeypatch)
     python = tmp_path / "src/python"
     package = python / "packages/statadic"
     paths = {
-        "src/python/apps/docs/labs.json": json.dumps(
-            {"origin_revision": "fixture", "labs": []}
-        ),
         "src/python/apps/studies/catalogue.json": json.dumps(
             {
                 "methods": [
@@ -89,10 +86,15 @@ def test_build_provenance_binds_exact_mapped_test_sources(tmp_path, monkeypatch)
         "src/python/apps/performance/src/statadic_performance/identities.json": "{}",
         "src/python/apps/docs/conf.py": "",
         "src/python/apps/docs/pyproject.toml": "",
+        "src/python/apps/docs/data/family-sources.json": "{}",
+        "src/python/apps/docs/evidence/known-limitations.json": "{}",
         "src/python/uv.lock": "",
         "devenv.lock": "",
         "src/lean/build/certification.json": "{}",
         "src/latex/refs.bib": "",
+        "src/python/packages/statadic/docs/tutorials/example.py": "# notebook source\n",
+        "src/python/packages/statadic/docs/tutorials/__pycache__/example.pyc": "cache",
+        "src/python/packages/statadic/docs/tutorials/__marimo__/session.json": "{}",
         "src/python/packages/statadic/tests/test_numerical.py": (
             "def test_value(): pass\n"
         ),
@@ -124,7 +126,21 @@ def test_build_provenance_binds_exact_mapped_test_sources(tmp_path, monkeypatch)
             config=SimpleNamespace(x64_enabled=False),
         ),
     )
-    before = module.provenance(study_exports=[], release_evidence=False)["input_sha256"]
+    provenance = module.provenance(study_exports=[], release_evidence=False)
+    assert provenance["origin_revision"] == provenance["build_revision"] == "fixture"
+    before = provenance["input_sha256"]
+    for record in ("data/family-sources.json", "evidence/known-limitations.json"):
+        source = app / record
+        assert (
+            before[str(source.relative_to(tmp_path))]
+            == hashlib.sha256(source.read_bytes()).hexdigest()
+        )
+    assert not any("__pycache__" in path or "__marimo__" in path for path in before)
+    notebook = package / "docs/tutorials/example.py"
+    assert (
+        before[str(notebook.relative_to(tmp_path))]
+        == hashlib.sha256(notebook.read_bytes()).hexdigest()
+    )
     for name in ("test_numerical.py", "test_scientific.py"):
         path = package / "tests" / name
         relative = str(path.relative_to(tmp_path))

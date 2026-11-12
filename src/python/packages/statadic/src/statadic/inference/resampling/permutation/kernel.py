@@ -55,10 +55,14 @@ def permutation_test_kernel(
     and the alternative selects a branch at trace time). Nothing is concretized,
     so this composes under ``jit``/``vmap``:
 
+        >>> import jax
+        >>> import jax.numpy as jnp
+        >>> stats = jnp.array([0.5, 1.0])
+        >>> nulls = jnp.zeros((2, 999))
         >>> grid = jax.vmap(lambda s, nd: permutation_test_kernel(s, nd, 999))
         >>> batched = grid(stats, nulls)  # stats (cells,) nulls (cells, 999)
         >>> [leaf.shape for leaf in jax.tree_util.tree_leaves(batched)]
-        [(cells,), (cells,), (cells, 999)]
+        [(2,), (2,), (2, 999)]
 
     One ``TestResult`` comes back, not ``cells`` of them — that is the payoff of
     pytree-registering the result types, and it is why

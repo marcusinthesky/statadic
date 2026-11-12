@@ -5,6 +5,55 @@ from types import SimpleNamespace
 from statadic_docs_labs.formal_extension import api_evidence, claims_by_symbol
 
 
+def test_family_catalogue_is_projected_from_tracked_data():
+    from statadic_docs_labs import formal_extension
+
+    dependencies = []
+    app = SimpleNamespace(
+        env=SimpleNamespace(note_dependency=dependencies.append),
+        _statadic_formal={"claims": []},
+    )
+    page = ["<!-- statadic:family-sources -->"]
+    formal_extension.source(app, "formal/family-sources", page)
+    assert "| Registry family |" in page[0]
+    assert "STATADIC-ENERGY-005" in page[0]
+    assert "statadic:family-sources" not in page[0]
+    assert any(path.endswith("data/family-sources.json") for path in dependencies)
+
+
+def test_known_limitations_projection_preserves_table_cells(tmp_path, monkeypatch):
+    import json
+
+    from statadic_docs_labs import formal_extension
+
+    path = tmp_path / "src/python/apps/docs/evidence/known-limitations.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        json.dumps(
+            {
+                "tables": [
+                    {
+                        "title": "Observed limits",
+                        "columns": ["Method", "Limit"],
+                        "rows": [["A", r"x\|y"]],
+                    }
+                ]
+            }
+        )
+    )
+    monkeypatch.setattr(formal_extension, "ROOT", tmp_path)
+    dependencies = []
+    app = SimpleNamespace(
+        env=SimpleNamespace(note_dependency=dependencies.append),
+        _statadic_formal={"claims": []},
+    )
+    page = ["<!-- statadic:known-limitations -->"]
+    formal_extension.source(app, "validation/known-limitations", page)
+    assert page[0].startswith("## Observed limits\n\n")
+    assert r"| A | x\|y |" in page[0]
+    assert str(path) in dependencies
+
+
 def test_sourced_claim_preserves_independent_pending_claim_review():
     import json
 
@@ -114,7 +163,7 @@ def test_generated_manuscript_macros_compile_offline(tmp_path, monkeypatch):
     assert sys.modules["bridge"].__file__.startswith(str(root))
 
 
-def test_catalogue_links_render_in_both_directions():
+def test_catalogue_links_target_notebooks_and_performance():
     from statadic_docs_labs.formal_extension import source
 
     method = {
@@ -128,17 +177,15 @@ def test_catalogue_links_render_in_both_directions():
         "studies": [],
     }
     app = SimpleNamespace(
+        _statadic_tutorials={"regression": "tutorials/ols/fit.py"},
         _statadic_research=[method],
         _statadic_procedures=[],
         _statadic_formal={"claims": []},
     )
     catalogue = ["<!-- statadic:research-catalogue -->"]
     source(app, "validation/research", catalogue)
-    assert "../labs/regression.md" in catalogue[0]
+    assert "../tutorials/ols/fit.py" in catalogue[0]
     assert "performance-ols-full-fit" in catalogue[0]
-    lab = ["# Lab"]
-    source(app, "labs/regression", lab)
-    assert "research-method-example" in lab[0]
     performance = ["<!-- statadic:performance-catalogue -->"]
     source(app, "reference/performance-workloads", performance)
     assert "research-method-example" in performance[0]

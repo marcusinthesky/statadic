@@ -1,21 +1,16 @@
-# Estimand: estimate a declared quantity
+---
+type: reference
+description: Declare a covariance or a set of supplied moment conditions and estimate it from aligned observations.
+---
 
-`Estimand` specifies a quantity and its numerical estimator. This initial host
-workflow supports covariance and supplied fixed or affine moments. It does not
-turn every numerical component into a model or attach a sampling law by default.
+# Estimand
 
-`Estimand` is the host workflow that declares a quantity and estimates it. It is
-distinct from `statadic.core.statistics.PopulationEstimand`, the root of the
-population-estimand axis that names what a statistic targets (a discrepancy, a
-dispersion, a transformed estimand or a `LinearPredictorContrast`). Naming a
-target there does not run an estimator.
-
-## Covariance of named observations
+## Usage
 
 ```python
 from statadic.api.data import Observations
 from statadic.api.estimand import Covariance, Estimand
-from statadic.estimation.covariance import LedoitWolf, SampleCovariance
+from statadic.estimation.covariance import SampleCovariance
 
 observations = Observations(
     {"a": [1.0, 4.0, 2.0, 8.0], "b": [0.0, 3.0, 7.0, 2.0]},
@@ -23,30 +18,51 @@ observations = Observations(
 )
 model = Estimand(Covariance(columns=("a", "b")), estimator=SampleCovariance(ddof=1))
 result = model.estimate(observations)
-covariance = result.sigma
+print(result.sigma)
 print(result.report().to_text())
-
-shrunk = Estimand(Covariance(("a", "b")), estimator=LedoitWolf()).estimate(observations)
 ```
 
-Columns are explicit and retain their order. A rectangular array can instead
-use `Covariance()`; generated variable labels do not assert external identities.
-`SampleCovariance` uses the declared `n - ddof` divisor. `LedoitWolf` uses the
-existing constant-correlation target and its `ddof=0` sample convention. These
-estimators are numerical bricks, not competing host model constructors.
+## Description
 
-Preparation owns array snapshots. `prepared = model.prepare(observations)` can
-be reused by `model.estimate_prepared(prepared)` on that same model instance.
-The covariance result retains estimator, variable labels and row identities.
-Singular covariance is allowed; a finite matrix does not promise an inverse,
-parameter standard errors or confidence intervals.
+{py:class}`~statadic.api.estimand.Estimand` pairs a declared quantity with a numerical
+estimator and fits the pair to aligned data. It supports two quantities, the covariance of
+named columns and a set of supplied fixed or affine moment conditions. Preparation takes a
+snapshot of the arrays from your input without sorting rows, dropping rows or inventing a response, and the
+result keeps the estimator, the labels and the row identities.
 
-## Supplied moment conditions
+`Estimand` is a host workflow for fitting, and it is separate from
+`statadic.core.statistics.PopulationEstimand`, the root of the axis that names what a
+statistic targets. Naming a target on that axis does not run an estimator for it.
+
+## Options
+
+| Quantity | Data | Estimators |
+| --- | --- | --- |
+| `Covariance(columns=("a", "b"))` | `Observations` | `SampleCovariance(ddof=1)`, `LedoitWolf()` |
+| `MomentConditions()` | `MomentData` | `IteratedGMM`, `FixedWeightGMM`, `FixedGEL`, `AffineGEL` |
+
+Columns are explicit and keep their order. For a rectangular array you can use
+`Covariance()` instead, and its generated labels assert no identity outside the array.
+`SampleCovariance` divides by `n - ddof`, while `LedoitWolf` shrinks toward a
+constant-correlation target with `ddof=0`.
+
+The rows, derivatives and optional weight of moment conditions live in `MomentData.problem`,
+an `AffineMomentProblem` or `FixedMomentProblem` already aligned to its row identities. The
+affine convention is $g_i(\theta) = g_{0i} + D_i \theta$, and `MomentConditions()` owns no
+sample of its own. Call `prepare` once and reuse the result with `estimate_prepared` on the
+same model instance.
+
+## Results
+
+Covariance results expose the matrix as `result.sigma` together with a report. A singular
+covariance is allowed, since a finite matrix does not promise an inverse or standard errors.
+Moment fits return the GMM or GEL result types of the
+[moment estimators reference](moment-estimators.md), each with its own form of inference:
 
 ```python
 import jax.numpy as jnp
 
-from statadic.api.estimand import MomentConditions
+from statadic.api.estimand import Estimand, MomentConditions
 from statadic.api.moments import GMMSandwich, MomentData
 from statadic.core.equations import PlainLongRun
 from statadic.estimation.gmm import FixedWeightGMM
@@ -58,36 +74,35 @@ problem = AffineMomentProblem(
     weight=jnp.eye(2),
 )
 data = MomentData.from_arrays(problem, row_ids=(10, 20, 30, 40))
-quantity = Estimand(MomentConditions(), estimator=FixedWeightGMM(PlainLongRun))
-fitted = quantity.estimate(data)
-uncertainty = fitted.infer(covariance=GMMSandwich())
-print(uncertainty.report().to_text())
+fitted = Estimand(MomentConditions(), estimator=FixedWeightGMM(PlainLongRun)).estimate(data)
+print(fitted.infer(covariance=GMMSandwich()).report().to_text())
 ```
 
-The affine convention is `g_i(theta) = g0_i + D_i @ theta`. Rows, derivatives
-and an optional supplied weight live only in `MomentData.problem`, already
-aligned to its observation identities. `MomentConditions()` owns no sample.
-Preparation snapshots these arrays without sorting, dropping rows or inventing
-a response. GMM and fixed/affine GEL retain their existing result types and
-method-specific inference capabilities. Unsupported fitting/result combinations
-do not acquire a generic fallback.
+GEL results use `fitted.infer(calibration=GELCalibration(...))` followed by
+`.test(Hypothesis(OveridentifyingRestrictions(...)))`. The calibration chooses the LR, LM
+or Wald construction and acknowledges the iid reference for the test. It builds no sampling
+covariance, which is why its keyword differs from `covariance`.
 
-Inference consumes actual retained weights, moment maps and solver evidence.
-Numerical availability, convergence, identification and reference assumptions
-remain separate. In particular, a covariance request does not establish correct
-moments or justify an overidentification reference.
+## Assumptions and limits
 
-GEL uses `fitted.infer(calibration=GELCalibration(...))` followed by
-`.test(Hypothesis(OveridentifyingRestrictions(...)))`. This explicit request
-chooses LR, LM or Wald construction and acknowledges the iid reference
-assumption. It constructs neither a sampling covariance nor a resampling
-schedule, so its keyword retains that distinct meaning. Affine GEL currently
-supports the profiled LR test only; omitting the iid acknowledgement leaves
-finite test statistics descriptive.
+- A covariance request does not establish correct moments or justify a reference
+  distribution for overidentification.
+- Pairs of estimator and result without a defined workflow have no generic fallback.
+- Affine GEL supports the profiled LR test only. Without the iid acknowledgement, the
+  finite test statistics are descriptive.
+- Alignment, preparation and reporting run eagerly, and only the numerical problems
+  themselves are compatible with `jax.jit`.
 
-Inspect the [reference comparisons](../validation/references.md),
-[statistical studies](../validation/research.md) and
-[known limitations](../validation/known-limitations.md) for their exact scope.
-This host composition grants no additional proof, source approval or Monte Carlo
-qualification. Native numerical problems remain the qualified JAX boundary;
-host alignment, preparation and reporting stay eager.
+## Evidence
+
+- Reference comparisons: the [reference index](../validation/references.md) lists the
+  comparisons made against other software.
+- Studies: the [statistical studies](../validation/research.md) and the
+  {ref}`affine GMM estimation <research-procedure-gmm.affine-estimation>` procedure give
+  their exact scope.
+- Known gaps appear in the [known limitations](../validation/known-limitations.md).
+
+## See also
+
+- [Moment estimators](moment-estimators.md) and [hypotheses](hypotheses.md)
+- [Reports](reporting.md) and [transformation support](transformation-support.md)

@@ -2,6 +2,7 @@
 
 import ast
 import hashlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -9,6 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 ROOT = Path(__file__).resolve().parents[5]
 SCRIPT = ROOT / "src/latex/projects/01_statadic/analysis/generate.py"
@@ -107,12 +109,13 @@ def test_generation_refuses_output_symlink_before_resolving_it(tmp_path):
 def input_fixture(root):
     package = root / "src/python/packages/statadic"
     script = root / "src/latex/projects/01_statadic/analysis/generate.py"
+    records = script.parent / "validation-records.yaml"
     paths = [
         script,
         root / "src/python/uv.lock",
         root / "src/python/pyproject.toml",
         package / "pyproject.toml",
-        package / "docs/validation.md",
+        records,
         package / "src/statadic/existing.py",
         root / "src/latex/refs.bib",
         root / "src/lean/build/certification.json",
@@ -131,6 +134,7 @@ def input_fixture(root):
         "PACKAGE": package,
         "__file__": str(script),
         "LISTINGS": script.parents[1] / "src/listings",
+        "VALIDATION_RECORDS": records,
         "hashlib": hashlib,
     }
     return extracted("generation_inputs", namespace), package
@@ -180,3 +184,43 @@ def test_input_change_aborts_publication_and_preserves_prior_output(tmp_path, ch
         function(target)
     assert (target / "old.tex").read_text() == "last complete generation"
     assert not (target / "new.tex").exists()
+
+
+def records_loader(path):
+    tree = ast.parse(SCRIPT.read_text(), filename=str(SCRIPT))
+    constants = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and node.targets[0].id in {"AFT_FIELDS", "SHARPE_FIELDS"}
+    ]
+    namespace = {"VALIDATION_RECORDS": path, "re": re, "yaml": yaml}
+    exec(
+        compile(ast.Module(body=constants, type_ignores=[]), str(SCRIPT), "exec"),
+        namespace,
+    )
+    return extracted("load_validation_records", namespace)
+
+
+def test_retained_records_come_from_structured_yaml_not_the_docs_page():
+    records = SCRIPT.parent / "validation-records.yaml"
+    rows, sharpe = records_loader(records)()
+    assert len(rows) == 8
+    assert sharpe["trials"] == 10_000
+    assert "validation.md" not in SCRIPT.read_text()
+
+
+def test_retained_records_reject_malformed_structure(tmp_path):
+    source = yaml.safe_load((SCRIPT.parent / "validation-records.yaml").read_text())
+    short = tmp_path / "short.yaml"
+    short.write_text(
+        yaml.safe_dump({**source, "aft_records": source["aft_records"][:7]})
+    )
+    with pytest.raises(SystemExit, match="exactly 8 rows"):
+        records_loader(short)()
+    missing = tmp_path / "missing.yaml"
+    rows = [dict(row) for row in source["aft_records"]]
+    del rows[3]["rejected"]
+    missing.write_text(yaml.safe_dump({**source, "aft_records": rows}))
+    with pytest.raises(SystemExit, match=r"aft_records\[3\]"):
+        records_loader(missing)()

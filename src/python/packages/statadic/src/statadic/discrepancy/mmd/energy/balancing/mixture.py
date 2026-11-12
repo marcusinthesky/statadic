@@ -68,10 +68,12 @@ def energy_distance_kernel_mixture(
         >>> cand2 = jnp.array([[10.0, 10.0], [11.0, 11.0], [12.0, 12.0]])  # 3 samples
         >>> candidates = [cand1, cand2]
         >>> weights = jnp.array([1.0, 0.0])
-        >>> energy_distance_kernel_mixture(
-        ...     PackedClouds.from_points(target),
-        ...     PackedClouds.from_clouds(candidates),
-        ...     weights,
+        >>> float(
+        ...     energy_distance_kernel_mixture(
+        ...         PackedClouds.from_points(target),
+        ...         PackedClouds.from_clouds(candidates),
+        ...         weights,
+        ...     )
         ... )
         0.0
 

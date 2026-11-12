@@ -1,41 +1,54 @@
-# Models, quantities, hypotheses and retained results
+---
+type: explanation
+description: How models, fitted state, inference and reports fit together.
+---
 
-STATADIC separates the scientific question, its numerical solution and the evidence
-needed to interpret it.
+# Models, fitted results, inference and reports
 
-| Object | Responsibility | What it does not establish |
-| --- | --- | --- |
-| **Ordination** | Construct coordinates from declared feature, kernel or distance geometry; retain the training query map | A population geometry law, manifold recovery or a sampling reference |
-| **Regression** | State the response, predictor terms and supported law/structure; estimate with a compatible numerical estimator | Exogeneity, causal identification or valid uncertainty |
-| **Estimand** | Specify covariance or supplied moment conditions; estimate with an explicit numerical method | A response model, predictions or a generic inferential reference |
-| **Hypothesis** | State a null proposition; an inference or diagnostic procedure produces a `TestOutcome` | A testing procedure or proof that the null holds |
-| **Report** | Retain and render computed quantities, assumptions, availability and provenance | A fitted model, new inference or statistical qualification |
+The coefficient printed in a table depends on which observations entered the
+analysis, which model was estimated and how its uncertainty was calculated.
+STATADIC keeps those decisions in separate objects so that a reader can inspect
+each choice and see how it relates to the result.
 
-An **estimator** computes fitted state. The result keeps the actual numerical
-fit and training preparation. Prediction reuses that preparation; inference
-adds covariance and reference assumptions. These are separate choices even
-when a short constructor such as `Regression.ols(...)` selects familiar defaults.
+## The objects in an analysis
 
-Ordination can itself be a regression term: learn coordinates from training
-predictors, then reuse their map for prediction. Refit the complete composition
-inside each training fold. Changing geometry or selecting it using outcomes
-requires its own evaluation and inferential argument.
+| Object | Responsibility |
+| --- | --- |
+| Regression | Specifies a response, predictor terms, structure and response law |
+| Ordination | Learns coordinates and the map used to place new observations |
+| Estimand | Specifies a covariance or a set of moment conditions |
+| Hypothesis | States the proposition evaluated by a test or diagnostic |
+| Report | Presents computed values and the choices behind them |
 
-Use the [composition reference](../reference/composition.md) for concrete family
-contracts. The five API entry points are [Regression](../reference/regression.md),
-[Ordination](../reference/ordination.md), [Estimand](../reference/estimand.md),
-[Hypothesis](../reference/hypotheses.md) and [Report](../reference/reporting.md).
+An ordination can also serve as a regression term. The coordinates are learned
+from the training predictors and the same map is applied to new rows.
+
+## From estimation to interpretation
+
+Calling `estimate` returns a fitted result with its numerical fit and prepared
+design. Prediction uses that fitted state, while `infer` requests uncertainty
+under a named covariance model. A reference distribution then supplies the
+interval or test calculation.
+
+A report presents those results together with the choices behind them,
+preserving unavailable values so that a reader can distinguish a point estimate
+from an interval that could be calculated for it. That distinction stays
+visible when the result is exported for a manuscript.
+
+## Explore the concepts
+
+Read these explanations when you want to understand the choices behind a
+calculation. For complete worked analyses, continue with the
+[tutorials](../tutorials/index.md).
 
 :::{toctree}
 :maxdepth: 1
-:caption: Interpret the ingredients
 
 observations-weights
-geometry-contracts
+geometry
 result-validity
-Resampling and failure policies <../guides/resampling>
-Choosing a survival model <../guides/survival>
+covariance-and-reference
+resampling-and-failures
+choosing-a-survival-model
+what-evidence-means
 :::
-
-[Evidence](../validation/index.md) distinguishes numerical reference agreement,
-scoped mathematical results and complete-procedure statistical studies.

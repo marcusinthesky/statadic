@@ -9,12 +9,42 @@ import pytest
 pytestmark = pytest.mark.native
 EXAMPLE = (
     Path(__file__).resolve().parents[3]
-    / "packages/statadic/examples/spatial_panel_survival.py"
+    / "packages/statadic/docs/tutorials/spatial-panel-survival.py"
 )
 
 
 def test_spatial_composition_keeps_baseline_and_inference_contracts():
-    pooled, panel, spatial = runpy.run_path(str(EXAMPLE))["run"]()
+    from statadic.api.design import Linear
+    from statadic.api.inference import ModelBased
+    from statadic.api.regression import Regression
+    from statadic.api.spatial.graphs import SpatialLag
+    from statadic.api.survival import RightCensored, SpatialSurvivalData
+    from statadic.estimation.survival import SpatialSurvivalML
+    from statadic.model.survival import LogNormalAFT
+
+    _, values = runpy.run_path(str(EXAMPLE))["app"].run()
+    pooled, panel = values["pooled"], values["time_fit"]
+    data, streams = values["panel_data"], values["streams"]
+    baseline_model = Regression(
+        RightCensored("time", "event"),
+        Linear("x"),
+        structure=data.panel,
+        law=LogNormalAFT(),
+        dependence=SpatialLag("neighbors"),
+        estimator=SpatialSurvivalML(rho_fixed=0.0),
+        effects="time",
+    )
+    baseline = baseline_model.estimate(
+        SpatialSurvivalData(data, streams)
+    ).require_valid()
+    spatial = {
+        0.0: (
+            baseline,
+            baseline.infer(covariance=ModelBased()),
+            baseline.predict(data, np.array(1.0), kind="survival"),
+        ),
+        0.2: (values["fit"], values["inference"], values["prediction"]),
+    }
     assert bool(pooled.core.valid)
     assert bool(panel.core.valid)
     spells = panel.context.observations

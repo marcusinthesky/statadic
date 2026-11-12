@@ -1,14 +1,15 @@
-# Ordination: represent geometry with coordinates
+---
+type: reference
+description: Represent observations by coordinates from feature, kernel, distance or graph geometry, and carry the fitted map into regression.
+---
 
-{py:class}`~statadic.api.ordination.Ordination` composes a geometric construction
-with a coordinate criterion. Its result retains the supported training query
-map. See the [core concepts](../concepts/index.md) for its role in a larger analysis.
+# Ordination
 
-## Start with feature geometry
+## Usage
 
 ```python
 from statadic.api.data import Observations
-from statadic.api.ordination import LinearGram, Ordination, PrincipalCoordinates
+from statadic.api.ordination import Ordination
 
 training = Observations(
     {
@@ -22,28 +23,40 @@ components = Ordination.pca(("x", "z"), dim=1, scale=True, name="components")
 result = components.estimate(training)
 query = Observations({"x": [1.5, 3.5], "z": [0.4, 2.5]})
 coordinates = result.transform(query)
+print(coordinates, result.loadings)
 ```
 
-This is centered PCA with training sample-standard-deviation scaling. The native
-SVD operates on the feature factor; it does not allocate an observation Gram
-matrix merely to resemble the other constructions. `result.loadings` contains
-the retained feature directions. Scaling defaults to `False`.
-`Ordination.pca(...)` returns the same `LinearGram`/`PrincipalCoordinates`
-composition; it introduces no separate model type or statistical assumptions.
+## Description
 
-## Change the geometric construction
+{py:class}`~statadic.api.ordination.Ordination` pairs a geometric construction
+with a coordinate criterion. The construction says how similarity between
+observations is defined, and `PrincipalCoordinates` turns the centred geometry
+into a small number of axes. The fitted result keeps everything needed for the placement of
+new observations, so the same map applies to held-out rows and to the
+predictors in a regression.
 
-The same principal-coordinate criterion serves these compositions:
+`Ordination.pca(...)` is shorthand for a linear Gram construction with
+principal coordinates. It centres the features and optionally scales them by
+the training sample standard deviation, with `scale=False` as the default, and
+its SVD works on the feature matrix so that no Gram matrix of observations is
+formed.
 
-| Construction | Mathematical problem | Retained query source |
+## Options
+
+| Construction | Problem solved | What the result keeps for queries |
 | --- | --- | --- |
-| `LinearGram(features=...)` | Centered feature factor, solved by SVD | Feature order, means, scales and loadings |
-| `KernelGram(kernel=..., features=...)` | Centered declared PSD kernel | Frozen kernel, training features and kernel-centering state |
-| `DistanceGram()` | Double-centered squared supplied distances | Ordered training references and cross-distance centering |
-| `DistanceGram(ShortestPathDistances(...))` | Union-neighbor graph paths followed by classical scaling | Training graph paths, neighbor rule and original query-distance source |
+| `LinearGram(features=...)` | Centred feature factor, by SVD | Feature order, means, scales and loadings |
+| `KernelGram(kernel, features=...)` | Centred positive-semidefinite kernel | Kernel, training features and centring state |
+| `DistanceGram()` | Double-centred squared distances you supply | Ordered training references |
+| `DistanceGram(ShortestPathDistances(...))` | Graph paths, then classical scaling | Training paths and neighbour rule |
 
 ```python
-from statadic.api.ordination import DistanceGram, KernelGram, ShortestPathDistances
+from statadic.api.ordination import (
+    DistanceGram,
+    KernelGram,
+    PrincipalCoordinates,
+    ShortestPathDistances,
+)
 from statadic.geometry.ground.similarities import RBFKernel
 
 kernel_components = Ordination(
@@ -54,55 +67,42 @@ graph_components = Ordination(
     DistanceGram(ShortestPathDistances(neighbors=2, features=("x", "z"))),
     PrincipalCoordinates(dim=2, negative_inertia="positive-subspace"),
 )
+kernel_fit = kernel_components.estimate(training)
+graph_fit = graph_components.estimate(training)
 ```
 
-The first is kernel PCA; the second is Isomap. The neighborhood size and kernel
-bandwidth are explicit scientific choices. Isomap rejects disconnected graphs;
-it does not bridge components, drop rows or select a larger neighborhood.
-Edges retain original lengths, including zero-length edges between distinct
-objects. Dense graph paths require quadratic storage and cubic path computation.
+The first composition is kernel PCA and the second is Isomap. For distances
+between empirical distributions, bind a producer such as
+`DistanceGram(Energy(), column="distribution")`, where [Energy](energy.md)
+supplies the rooted distances between the measures. The column is a
+`MeasureColumn` passed to `Observations(..., measures={"distribution": column})`.
+For an observed square matrix of distances, wrap it with
+`ObservedDissimilarity.from_array(distances, row_ids=ids)` from
+`statadic.api.representation` and fit `Ordination.pcoa(dim=...)`.
 
-For empirical-measure distances, bind an existing producer, for example
-`DistanceGram(Energy(ground="euclidean"), column="distribution")`. A named
-measure column can also feed `ShortestPathDistances(distances=Energy(),
-column="distribution", neighbors=...)`. Atom counts and masses remain inside
-each observation.
+By default, material negative inertia raises an error, and setting
+`negative_inertia="positive-subspace"` keeps the full signed spectrum and
+reports that coordinates approximate its positive part. With `dim=None`, every
+positive axis is kept.
 
-## Inspect signed inertia and identities
+## Results
 
-Use `ObservedDissimilarity.from_array(distances, row_ids=ids)` from
-`statadic.api.representation` for an observed square matrix, then estimate
-`Ordination.pcoa(dim=...)`. The explicit
-`Ordination(DistanceGram(), PrincipalCoordinates(...))` construction is equivalent.
-Validation checks
-observable matrix facts; it supplies no population law.
+| Operation | What it does |
+| --- | --- |
+| `result.transform(query)` | Coordinates for new rows from the frozen training map |
+| `result.loadings` | Feature directions, for linear constructions only |
+| `result.spectrum` | Signed eigenvalues, the numerical cutoff and axis counts |
+| `result.capabilities` | Which query sources the result can use |
+| `result.transform_distances(cross, reference_ids=ids)` | Coordinates from query-to-training distances, in the stored order |
 
-The default rejects material negative inertia. Explicit
-`negative_inertia="positive-subspace"` retains the full signed spectrum and
-reports that coordinates approximate its positive subspace. With `dim=None`,
-all supported positive axes are retained, including an empty set for zero
-inertia. Fixed dimensions cannot exceed the supported positive rank.
+Eigenvalues are in centred-Gram units, whereas for linear PCA the
+`explained_variance` divides by the training sample divisor. Variance and ratio
+arrays cover the selected axes, and ratios divide by the full feature variance,
+so a truncated selection sums to less than one. Kernel centring uses training
+statistics, and Isomap attaches each query to the frozen training paths on its
+own, which keeps the coordinates of every other query fixed.
 
-`result.spectrum` records signed eigenvalues, the numerical cutoff and positive
-and negative axis counts. Eigenvalues use **centered-Gram units**. Linear PCA's
-`explained_variance` separately divides by the training sample divisor. Feature
-variance and variance-ratio arrays contain the **selected k axes**, matching
-coordinate columns and loadings. Ratios divide by the complete available feature
-variance, so a truncated selection need not sum to one. Full signed eigenvalues
-remain available separately, including numerical zero axes.
-Feature
-loadings and variance conveniences are unavailable for other constructions.
-Neither an observed PSD spectrum nor graph paths acquire a population
-Hilbertian warrant.
-
-Inspect `result.capabilities`. A matrix-only result requires
-`transform_distances(cross_distances, reference_ids=training_ids)` with columns
-in the exact retained order. A retained feature or measure producer can evaluate
-its own query distances. Kernel centering uses training statistics. Isomap
-attaches each query independently to frozen training paths; other queries never
-change its coordinates. No inverse/preimage map is implied.
-
-## Compose directly into regression
+An ordination term composes directly into a regression:
 
 ```python
 from statadic.api.design import Intercept
@@ -111,48 +111,55 @@ from statadic.api.regression import Regression
 fit = Regression("y", Intercept() + components).estimate(training)
 predictions = fit.predict(query)
 retained = fit.design.ordination("components")
-loadings = retained.loadings
-signed_spectrum = retained.spectrum
-fit.save_predictor("component-regression")
+print(retained.loadings, retained.spectrum)
 ```
 
-There is no separate PCR constructor or scores wrapper. The term learns only
-from training predictors and retains its transformation for prediction and
-persistence. Fit the entire composition within each training fold. Selecting
-dimensions or geometry using outcomes requires its own evaluation and inference
-argument. A predictor requires a fixed dimension and a named transformable
-source. See the {download}`complete PCR example <../../examples/principal_component_regression.py>`.
+The term learns from the training predictors and carries its map into
+prediction and persistence. Give independent terms distinct `name=` values,
+including inside interactions, and inspect them by name to read the training
+decomposition. A frozen predictor saved with `fit.save_predictor(path)` keeps
+the map but drops live spectrum inspection.
+The [principal component regression guide](../guides/principal-component-regression.py)
+shows the full workflow.
 
-Named inspection reads the actual training decomposition; it never estimates
-the ordination again. Give independent terms distinct `name=` values, including
-terms inside interactions. Extension terms remain opaque to this lookup.
-Frozen predictor artifacts retain their transformation maps and do not restore
-live spectrum or inference inspection; retain an analysis report separately.
+## Methods and formulas
 
-<details><summary>Mathematics, assumptions and evidence</summary>
+Classical scaling eigendecomposes the double-centred squared-distance matrix
+$B = -\tfrac12 J D^{(2)} J$ with $J = I - n^{-1}\mathbf 1\mathbf 1^\top$
+{cite:p}`gower-1966`. Kernel PCA decomposes the centred kernel matrix
+{cite:p}`schoelkopf-smola-mueller-1998`, and Isomap replaces $D$ with shortest
+paths on a neighbour graph {cite:p}`tenenbaum-desilva-langford-2000`. Queries
+are placed by the out-of-sample extension {cite:p}`bengio-etal-2003`.
 
-Classical scaling uses the centered distance Gram {cite:p}`gower-1966`;
-kernel PCA uses a centered kernel eigenproblem
-{cite:p}`schoelkopf-smola-mueller-1998`. Isomap adds neighborhood paths
-{cite:p}`tenenbaum-desilva-langford-2000`; frozen query extension follows
-{cite:p}`bengio-etal-2003`. These sources do not establish manifold recovery,
-statistical calibration or source-fidelity approval for this implementation.
+## Assumptions and limits
 
-The exact-real [full-factor reconstruction](../formal/claims/STATADIC-EMBEDDING-001.md)
-and [Euclidean realization](../formal/claims/STATADIC-EMBEDDING-002.md) certificates
-assume symmetric hollow squared distances and consistent double centering.
-The [spectral cutoff bound](../formal/claims/STATADIC-EMBEDDING-003.md) excludes
-eigensolver rounding and additional dimension truncation. Those certificates
-do not prove the neighborhood construction recovers a manifold.
+- The size of the neighbourhood and the kernel bandwidth are scientific
+  choices, and Isomap rejects a disconnected graph instead of bridging its
+  components or dropping rows.
+- Dense graph paths need quadratic storage and cubic computation in the number
+  of observations.
+- A fixed dimension cannot exceed the supported positive rank of the geometry.
+- The construction provides no inverse or preimage map and establishes neither
+  manifold recovery nor any population law.
+- Selecting dimensions or geometry with the help of the outcome needs its own
+  evaluation and inference argument, so fit the whole composition inside each
+  training fold.
+- Host preparation is eager, and repeated eigenvalues, changing neighbourhoods
+  and rank changes carry no guarantee of a smooth derivative.
 
-The {download}`ordination reference controls <../../tests/api/test_ordination.py>`
-compare covariance, centered kernels, independent shortest paths and held-out
-projections. The {download}`artifact controls <../../tests/api/test_ordination_artifacts.py>`
-exercise standalone and nested frozen maps. Inspect current
-[selected studies](../validation/research.md), [limitations](../validation/known-limitations.md)
-and [transformation scope](../capabilities.md); registration is not retained
-Monte Carlo evidence. Native fixed-shape kernels support qualified JIT/batching;
-host preparation is eager. Repeated eigenvalues, changing neighborhoods, rank
-changes and selected axes have no general smooth-coordinate derivative promise.
+## Evidence
 
-</details>
+- Mathematical results: {ref}`full-factor reconstruction <formal-STATADIC-EMBEDDING-001>`,
+  {ref}`Euclidean realisation <formal-STATADIC-EMBEDDING-002>` and the
+  {ref}`spectral cutoff bound <formal-STATADIC-EMBEDDING-003>`.
+- Reference comparisons: the {download}`ordination controls <../../tests/api/test_ordination.py>`
+  compare covariance, centred kernels, independent shortest paths and held-out
+  projections.
+- Artifacts: the {download}`artifact controls <../../tests/api/test_ordination_artifacts.py>`
+  exercise standalone and nested frozen maps.
+
+## See also
+
+- [Core concepts](../concepts/index.md) and [geometry](../concepts/geometry.md)
+- [Regression](regression.md), which accepts ordination terms
+- [Energy](energy.md) for distances between distributions

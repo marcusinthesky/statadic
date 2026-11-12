@@ -67,7 +67,7 @@ rows in the counts.
   SAR projects the outcome and its spatial lag once. For common-graph balanced
   unit effects, filtering commutes with time demeaning. This removes the large
   dummy-variable solve while retaining the likelihood normalization and
-  nuisance-adjusted expected information. [Spatial likelihood details](../../packages/statadic/docs/spatial-models.md)
+  nuisance-adjusted expected information. [Spatial likelihood details](../../packages/statadic/docs/reference/spatial-panels.md)
 - OLS, panel, GLM, spatial IV/GMM and independent AFT fits reuse compiled
   calculations across compatible inputs. Numerical data remain dynamic.
   Panel indexing groups labels outside tracing. Bounded iterations use

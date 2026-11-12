@@ -29,9 +29,6 @@ def fixture_repository(root):
             }
         )
     )
-    labs = root / "src/python/apps/docs"
-    labs.mkdir(parents=True)
-    (labs / "labs.json").write_text(json.dumps({"labs": []}))
     performance = root / "src/python/apps/performance/src/statadic_performance"
     performance.mkdir(parents=True)
     (performance / "identities.json").write_text(
@@ -192,15 +189,15 @@ def test_unknown_and_duplicate_links_are_rejected(tmp_path):
         check_catalogue(tmp_path)
 
 
-def test_missing_lab_and_benchmark_anchor_are_rejected(tmp_path):
-    fixture_repository(tmp_path)
-    labs = tmp_path / "src/python/apps/docs/labs.json"
-    labs.write_text(
-        json.dumps({"labs": [{"slug": "missing", "notebook": "missing.py"}]})
-    )
-    with pytest.raises(ValueError, match="Missing lab notebook or page"):
+def test_missing_tutorial_and_benchmark_anchor_are_rejected(tmp_path):
+    path = fixture_repository(tmp_path)
+    data = json.loads(path.read_text())
+    data["tutorials"] = {"missing": "tutorials/missing.py"}
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="Missing or invalid tutorial notebook"):
         check_catalogue(tmp_path)
-    labs.write_text(json.dumps({"labs": []}))
+    data["tutorials"] = {}
+    path.write_text(json.dumps(data))
     page = (
         tmp_path
         / "src/python/packages/statadic/docs/reference/performance-workloads.md"
@@ -219,26 +216,34 @@ def test_removing_last_benchmark_association_is_rejected(tmp_path):
         check_catalogue(tmp_path)
 
 
-def test_valid_unlinked_lab_is_rejected(tmp_path):
+def test_valid_unlinked_tutorial_is_rejected(tmp_path):
     path = fixture_repository(tmp_path)
-    labs = tmp_path / "src/python/apps/docs"
-    (labs / "labs.json").write_text(
-        json.dumps({"labs": [{"slug": "example", "notebook": "example.py"}]})
-    )
-    (labs / "notebooks").mkdir()
-    (labs / "notebooks/example.py").write_text("# Notebook")
-    pages = tmp_path / "src/python/packages/statadic/docs/labs"
-    pages.mkdir()
-    (pages / "example.md").write_text("# Lab")
+    data = json.loads(path.read_text())
+    data["tutorials"] = {"example": "tutorials/example.py"}
+    path.write_text(json.dumps(data))
+    notebook = tmp_path / "src/python/packages/statadic/docs/tutorials/example.py"
+    notebook.parent.mkdir(parents=True)
+    notebook.write_text("# Notebook")
     with pytest.raises(ValueError, match="Unlinked tutorials: example"):
         check_catalogue(tmp_path)
-    data = json.loads(path.read_text())
     data["methods"][0]["tutorials"] = ["example"]
     path.write_text(json.dumps(data))
     check_catalogue(tmp_path)
     data["methods"][0]["tutorials"] = []
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match="Unlinked tutorials: example"):
+        check_catalogue(tmp_path)
+
+
+@pytest.mark.parametrize(
+    "relative", ["../../outside.py", "/outside.py", "tutorials/example.md"]
+)
+def test_tutorial_paths_reject_escape_and_non_notebook_sources(tmp_path, relative):
+    path = fixture_repository(tmp_path)
+    data = json.loads(path.read_text())
+    data["tutorials"] = {"example": relative}
+    path.write_text(json.dumps(data))
+    with pytest.raises(ValueError, match="Missing or invalid tutorial notebook"):
         check_catalogue(tmp_path)
 
 

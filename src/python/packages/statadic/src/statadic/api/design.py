@@ -149,7 +149,17 @@ class FittedTerm(InputRoleProvider, Protocol):
 
 
 class Term(ABC):
-    """A declared predictor component; addition concatenates explicit terms."""
+    """A declared predictor component; addition concatenates explicit terms.
+
+    Addition combines columns, while multiplication creates an interaction.
+    Include an intercept and any main effects explicitly.
+
+    Examples:
+        >>> terms = Intercept() + Linear("x")
+        >>> terms.input_columns
+        {'x': 'numeric'}
+
+    """
 
     @property
     @abstractmethod
@@ -175,7 +185,13 @@ class Term(ABC):
 
 @dataclass(frozen=True)
 class Intercept(Term):
-    """Declare an explicit unit column."""
+    """Declare an explicit unit column.
+
+    Examples:
+        >>> Intercept().input_columns
+        {}
+
+    """
 
     @property
     def input_columns(self) -> dict[str, InputRole]:
@@ -210,7 +226,16 @@ class FittedIntercept:
 
 @dataclass(frozen=True)
 class Linear(Term):
-    """Select one numeric column without implicit scaling or centering."""
+    """Select one numeric column without implicit scaling or centering.
+
+    Args:
+        column: Name of the numeric predictor.
+
+    Examples:
+        >>> Linear("age").input_columns
+        {'age': 'numeric'}
+
+    """
 
     column: str
 
@@ -266,6 +291,19 @@ class CyclicSpline(Term):
     The grid starts at zero and has ``df + 1`` cells over one period. The
     coefficient of cardinal basis function zero is fixed at zero. Add an
     intercept to span the unrestricted space, including its constant mode.
+
+    Args:
+        column: Numeric phase column.
+        df: Number of nonconstant basis columns, at least three.
+        period: Positive finite period in the units of the phase.
+
+    Raises:
+        ValueError: If the basis dimension or period is invalid.
+
+    Examples:
+        >>> CyclicSpline("phase", df=3, period=1.0).column_names
+        ('phase:cyclic[1]', 'phase:cyclic[2]', 'phase:cyclic[3]')
+
     """
 
     column: str
@@ -319,7 +357,21 @@ class CyclicSpline(Term):
 
 @dataclass(frozen=True)
 class Fourier(Term):
-    """Paired sine and cosine columns with zero phase at the origin."""
+    """Paired sine and cosine columns with zero phase at the origin.
+
+    Args:
+        column: Numeric phase column.
+        harmonics: Number of sine and cosine pairs.
+        period: Positive finite period in the units of the phase.
+
+    Raises:
+        ValueError: If the harmonic count or period is invalid.
+
+    Examples:
+        >>> Fourier("phase", harmonics=1, period=1.0).column_names
+        ('phase:period[1.0]:sin[1]', 'phase:period[1.0]:cos[1]')
+
+    """
 
     column: str
     harmonics: int
@@ -366,6 +418,19 @@ class Spline(Term):
     Training fixes the range once. The truncated-power basis contains
     powers one through ``degree`` and ``df - degree`` hinge functions.
     Prediction continues the end polynomials beyond the training range.
+
+    Args:
+        column: Numeric predictor column.
+        df: Number of nonconstant basis columns.
+        degree: Polynomial degree.
+
+    Raises:
+        ValueError: If the degree or basis dimension is invalid.
+
+    Examples:
+        >>> Spline("age", df=4, degree=3).input_columns
+        {'age': 'numeric'}
+
     """
 
     column: str
@@ -439,6 +504,18 @@ class Categorical(Term):
 
     The smallest observed level is the reference unless explicitly selected.
     This term does not add an intercept or infer whether one is appropriate.
+
+    Args:
+        column: Categorical predictor column.
+        reference: Training level to omit, or ``None`` for the smallest level.
+
+    Raises:
+        TypeError: If the reference is a boolean.
+
+    Examples:
+        >>> Categorical("group", reference="control").input_columns
+        {'group': 'categorical'}
+
     """
 
     column: str
@@ -575,7 +652,17 @@ class FittedSumTerm:
 
 @dataclass(frozen=True)
 class Interaction(Term):
-    """Cartesian products of two explicit terms, without implicit main effects."""
+    """Cartesian products of two explicit terms, without implicit main effects.
+
+    Args:
+        left: First term in the product.
+        right: Second term in the product.
+
+    Examples:
+        >>> (Linear("x") * Linear("z")).input_columns
+        {'x': 'numeric', 'z': 'numeric'}
+
+    """
 
     left: Term
     right: Term

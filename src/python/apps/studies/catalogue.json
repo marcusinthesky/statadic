@@ -10359,7 +10359,7 @@
           "source_evidence": {
             "record": ".context/reference/mackinnon-white-1985/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "Author working paper537, Section2, equations1–3, printed p2.",
+            "locator": "Author working paper537, Section2, equations1\u20133, printed p2.",
             "review": "Full primary working-paper text compared with the native formula by independent reviewer; coordinator approved this representative scope only.",
             "scope": "Full-rank unweighted OLS mathematical target (X'X)^-1 X'y, with mean-zero errors for the statistical interpretation. No QR, floating-point or general fitting implementation equivalence is asserted.",
             "approved_scope": "Full-rank unweighted OLS mathematical target (X'X)^-1 X'y, with mean-zero errors for the statistical interpretation. No QR, floating-point or general fitting implementation equivalence is asserted.",
@@ -10875,7 +10875,7 @@
           "source_evidence": {
             "record": ".context/reference/long-ervin-2000/README.md",
             "audit_record": ".context/evidence/source-correspondence/hc3-followup.md",
-            "locator": "Long–Ervin author-linked manuscript Section2, pp6–7; conventional HC3 displayed on p7. MacKinnon–White Section2 equations12–13 distinguish the original centered jackknife.",
+            "locator": "Long\u2013Ervin author-linked manuscript Section2, pp6\u20137; conventional HC3 displayed on p7. MacKinnon\u2013White Section2 equations12\u201313 distinguish the original centered jackknife.",
             "review": "Coordinator and independent reviewer visually inspected the conventional uncentered HC3 formula and compared native influence/leverage scaling. Fixed-positive-precision WLS is the same formula on explicitly whitened design and response; this is a checked algebraic substitution, not a paper claim about arbitrary weight roles.",
             "scope": "Full-column-rank OLS or fixed finite positive analytic-precision WLS via X*=sqrt(W)X,y*=sqrt(W)y; leverage strictly below1 and default multiplier1. Conventional uncentered leverage-squared sandwich only. Excludes adaptive/survey weights, optional multipliers, rank loss, leverage-boundary/floor/exact-fit availability policy, floating-point equivalence and exact normal/t/F calibration.",
             "correspondence_status": "full-representative-scope-reviewed",
@@ -13449,7 +13449,7 @@
           "source_evidence": {
             "record": ".context/reference/fama-macbeth-1973/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "Fama–MacBeth1973 pp616–619",
+            "locator": "Fama\u2013MacBeth1973 pp616\u2013619",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Point estimate only: arithmetic average of fully identified periodwise cross-sectional coefficient vectors. Excludes inference/HAC choices and selective failed-period handling.",
             "approved_scope": "Point estimate only: arithmetic average of fully identified periodwise cross-sectional coefficient vectors. Excludes inference/HAC choices and selective failed-period handling.",
@@ -13680,7 +13680,7 @@
           ],
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
-            "review": "Independent-cluster sandwich and two-way inclusion–exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
+            "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
@@ -13745,7 +13745,7 @@
           ],
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
-            "review": "Independent-cluster sandwich and two-way inclusion–exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
+            "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
@@ -13810,7 +13810,7 @@
           ],
           "source_evidence": {
             "correspondence_status": "partial-core-reviewed",
-            "review": "Independent-cluster sandwich and two-way inclusion–exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
+            "review": "Independent-cluster sandwich and two-way inclusion\u2013exclusion reviewed; full inherited finite-G/absorbed-effect/reference-law scope remains pending.",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
             "locator": "See primary-source locators and exclusions in the linked decision record.",
             "reviewed_on": "2026-11-04"
@@ -19593,7 +19593,7 @@
           "source_evidence": {
             "record": ".context/reference/bailey-lopez-de-prado-2012/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "2012 author manuscript §3 printedp9 Eq11; §2.5 printedp8",
+            "locator": "2012 author manuscript \u00a73 printedp9 Eq11; \u00a72.5 printedp8",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Supplied-score PSR formula only: n>1, positive variance denominator, non-excess kurtosis, original-frequency Sharpe. No posterior/exact size or degenerate fallback claim.",
             "approved_scope": "Supplied-score PSR formula only: n>1, positive variance denominator, non-excess kurtosis, original-frequency Sharpe. No posterior/exact size or degenerate fallback claim.",
@@ -19635,7 +19635,7 @@
           "source_evidence": {
             "record": ".context/reference/bailey-lopez-de-prado-2014/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "2014 author manuscript pp7–8 Eqs1–2;2012 PSR Eq11",
+            "locator": "2014 author manuscript pp7\u20138 Eqs1\u20132;2012 PSR Eq11",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "DSR=PSR(expected maximum), N>1 positive supplied cross-trial dispersion, independent/effective independent trial count supplied, PSR nondegenerate domain. No N=1/variance fallback or automatic effective-count estimator claim.",
             "approved_scope": "DSR=PSR(expected maximum), N>1 positive supplied cross-trial dispersion, independent/effective independent trial count supplied, PSR nondegenerate domain. No N=1/variance fallback or automatic effective-count estimator claim.",
@@ -20085,8 +20085,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20126,8 +20126,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20276,8 +20276,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20318,8 +20318,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20360,8 +20360,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20400,8 +20400,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20440,8 +20440,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20482,8 +20482,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20528,8 +20528,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20572,8 +20572,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20616,8 +20616,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20661,8 +20661,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Gretton printed pp726–729, Lemmas3–6/proofs and equations3–5; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
-            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n−1),m(m−1); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Gretton printed pp726\u2013729, Lemmas3\u20136/proofs and equations3\u20135; Sejdinovic definitions2,5,10, Theorem22/proof, Proposition29, AppendixB",
+            "review": "Kernel-mean norm/empirical probability substitution with retained U/V normalization. U removes diagonal and uses n(n\u22121),m(m\u22121); signed U is never rooted. Weighted door is V only. Cosine identifies feature means rather than laws; distance kernel is twice the source's halved kernel. Excludes adaptive kernel/geometry inference, unbiasedness of nonlinear roots, general weighted U, numerical refinement proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         }
       ]
@@ -20720,8 +20720,8 @@
             "gretton-etal-2012"
           ],
           "source_evidence": {
-            "locator": "Printed pp726–729, linear-kernel mean norm, equations3–5, specialized to supplied point masses",
-            "review": "The producer computes norm(psi_x−psi_y) on caller-supplied unit prototypes. Formula correspondence is algebraic specialization; no review of pipeline pooling/normalization, sampling-law separation, unbiased plug-in root, model fitting or arbitrary prototype semantics. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Printed pp726\u2013729, linear-kernel mean norm, equations3\u20135, specialized to supplied point masses",
+            "review": "The producer computes norm(psi_x\u2212psi_y) on caller-supplied unit prototypes. Formula correspondence is algebraic specialization; no review of pipeline pooling/normalization, sampling-law separation, unbiased plug-in root, model fitting or arbitrary prototype semantics. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         }
       ]
@@ -20839,8 +20839,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4–5,8–11,15–17,20–21,28–29)",
-            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross−self−self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4\u20135,8\u201311,15\u201317,20\u201321,28\u201329)",
+            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross\u2212self\u2212self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
             {
@@ -20943,8 +20943,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4–5,8–11,15–17,20–21,28–29)",
-            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross−self−self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4\u20135,8\u201311,15\u201317,20\u201321,28\u201329)",
+            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross\u2212self\u2212self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -20984,8 +20984,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4–5,8–11,15–17,20–21,28–29)",
-            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross−self−self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4\u20135,8\u201311,15\u201317,20\u201321,28\u201329)",
+            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross\u2212self\u2212self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
         {
@@ -21024,8 +21024,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4–5,8–11,15–17,20–21,28–29)",
-            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross−self−self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4\u20135,8\u201311,15\u201317,20\u201321,28\u201329)",
+            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross\u2212self\u2212self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
             {
@@ -21087,8 +21087,8 @@
             "sejdinovic-equivalence-2013"
           ],
           "source_evidence": {
-            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4–5,8–11,15–17,20–21,28–29)",
-            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross−self−self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
+            "locator": "Definitions2,5,10; Proposition3; Example15; Theorem22 and proof; Proposition29; AppendixB (reprint pp4\u20135,8\u201311,15\u201317,20\u201321,28\u201329)",
+            "review": "Finite probability substitution in the Euclidean negative-type energy functional, normalization2cross\u2212self\u2212self; root requires separating bound construction. Supplied candidate weights are fixed and simplex-valued. Excludes angular/general grounds, signed-U roots, fitted/random-weight inference, unrestricted signed minimization, population moment claims, implementation proof and calibration. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
             {
@@ -21217,7 +21217,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.2, equations2.2–2.4, uniform assignment (author manuscriptv2)",
+            "locator": "Section2.2, equations2.2\u20132.4, uniform assignment (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
@@ -21257,7 +21257,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.2, equations2.2–2.4, uniform assignment (author manuscriptv2)",
+            "locator": "Section2.2, equations2.2\u20132.4, uniform assignment (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
@@ -21294,7 +21294,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.6, remarks2.28–2.30, equations2.33–2.39 (author manuscriptv2)",
+            "locator": "Section2.6, remarks2.28\u20132.30, equations2.33\u20132.39 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
@@ -21358,7 +21358,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.6, remarks2.28–2.30, equations2.33–2.39 (author manuscriptv2)",
+            "locator": "Section2.6, remarks2.28\u20132.30, equations2.33\u20132.39 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
@@ -21420,7 +21420,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.6, equations2.33–2.39 (author manuscriptv2)",
+            "locator": "Section2.6, equations2.33\u20132.39 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
@@ -21483,7 +21483,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section10.4, equations10.13–10.17, with real-line equation2.36 (author manuscriptv2)",
+            "locator": "Section10.4, equations10.13\u201310.17, with real-line equation2.36 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
@@ -21542,7 +21542,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section10.4, equations10.13–10.17 (author manuscriptv2)",
+            "locator": "Section10.4, equations10.13\u201310.17 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
@@ -21579,7 +21579,7 @@
             "peyre-cuturi-2019"
           ],
           "source_evidence": {
-            "locator": "Section2.6, remarks2.28–2.30, equations2.33–2.39 (author manuscriptv2)",
+            "locator": "Section2.6, remarks2.28\u20132.30, equations2.33\u20132.39 (author manuscriptv2)",
             "review": "Exact assignment or probability-quantile formula under the recorded configuration. Fixed finite sliced directions give a pseudometric, not distribution separation or full-sphere integration. Hilbertian statement restricted to L2/p=2. Excludes arbitrary support mass assignment, selected-projection inference, LP/kernel implementation correctness, solver accuracy and statistical qualification. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           },
           "reference_mappings": [
@@ -21721,7 +21721,7 @@
             "hemerik-goeman-2018"
           ],
           "source_evidence": {
-            "locator": "Printed pp819–822: Definition2, Theorem2 and proof, Proposition3, section3.4",
+            "locator": "Printed pp819\u2013822: Definition2, Theorem2 and proof, Proposition3, section3.4",
             "review": "Native uniform pooled permutations and add-one inclusive rank; less applies to negated statistic and two-sided uses absolute statistic. Requires exchangeability/invariance and fixed or validly recomputed statistic. Excludes label-trained frozen preprocessing, arbitrary supplied schedules, energy-specific wrapper geometry, size/power qualification and implementation proof. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
@@ -21759,7 +21759,7 @@
             "hemerik-goeman-2018"
           ],
           "source_evidence": {
-            "locator": "Printed pp819–822: Definition2, Theorem2 and proof, Proposition3, section3.4",
+            "locator": "Printed pp819\u2013822: Definition2, Theorem2 and proof, Proposition3, section3.4",
             "review": "Native uniform pooled permutations and add-one inclusive rank; less applies to negated statistic and two-sided uses absolute statistic. Requires exchangeability/invariance and fixed or validly recomputed statistic. Excludes label-trained frozen preprocessing, arbitrary supplied schedules, energy-specific wrapper geometry, size/power qualification and implementation proof. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         },
@@ -21797,7 +21797,7 @@
             "hemerik-goeman-2018"
           ],
           "source_evidence": {
-            "locator": "Printed pp819–822: Definition2, Theorem2 and proof, Proposition3, section3.4",
+            "locator": "Printed pp819\u2013822: Definition2, Theorem2 and proof, Proposition3, section3.4",
             "review": "Native uniform pooled permutations and add-one inclusive rank; less applies to negated statistic and two-sided uses absolute statistic. Requires exchangeability/invariance and fixed or validly recomputed statistic. Excludes label-trained frozen preprocessing, arbitrary supplied schedules, energy-specific wrapper geometry, size/power qualification and implementation proof. Coordinator adjudicated the exact bounded formula correspondence on2026-11-09 after independent primary-passage challenge. Human Lean/source fidelity remains pending; no implementation-correctness or scientific-campaign approval."
           }
         }
@@ -21892,7 +21892,7 @@
           "source_evidence": {
             "record": ".context/reference/rizzo-szekely-2010-disco/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "Rizzo–Székely2010 Eqs2.5–2.6, Section3.1 and Section3.2 pp1041–1042; Anderson2001 Eqs1–4.",
+            "locator": "Rizzo\u2013Sz\u00e9kely2010 Eqs2.5\u20132.6, Section3.1 and Section3.2 pp1041\u20131042; Anderson2001 Eqs1\u20134.",
             "review": "Coordinator compared published one-way decompositions, native V-statistic denominators and Monte Carlo upper-tail construction. Supplied Euclidean distances and their squares correspond to DISCO alpha1 and the one-way PERMANOVA representative respectively.",
             "scope": "One-way Euclidean raw DISCO or squared-Euclidean PERMANOVA, self-pair V denominators, exchangeable pooled-label null, plus-one randomized upper-tail p-value. Excludes PERMDISP residual permutations, arbitrary multifactor designs, learned geometry and unconditional validity outside exchangeability.",
             "correspondence_status": "full-representative-scope-reviewed",
@@ -22209,7 +22209,7 @@
         "statadic.inference.equivalence.equivalence_pvalue_from_bootstrap",
         "statadic.inference.equivalence.equivalence_test"
       ],
-      "rationale": "Selected-mixture percentile-bootstrap approximation without a proved size guarantee. Liu–Gandy Theorem 8 concerns a different centered multiplier bootstrap and is related work only.",
+      "rationale": "Selected-mixture percentile-bootstrap approximation without a proved size guarantee. Liu\u2013Gandy Theorem 8 concerns a different centered multiplier bootstrap and is related work only.",
       "source_candidates": [
         {
           "key": "liu-gandy-2026",
@@ -23294,7 +23294,7 @@
           "source_evidence": {
             "record": ".context/reference/newey-west-1987/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "Newey–West1987 pp703–704 Eqs4–5",
+            "locator": "Newey\u2013West1987 pp703\u2013704 Eqs4\u20135",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Raw finite moment rows; explicit nonnegative Bartlett bandwidth; denominator T; symmetric lag sum; no centering or finite-sample multiplier.",
             "approved_scope": "Raw finite moment rows; explicit nonnegative Bartlett bandwidth; denominator T; symmetric lag sum; no centering or finite-sample multiplier.",
@@ -23362,7 +23362,7 @@
           "source_evidence": {
             "record": ".context/reference/hall-2000-covariance-power/README.md",
             "audit_record": ".context/evidence/source-correspondence/decisions.md",
-            "locator": "Hall2000 p1521 Eq9; Newey–West1987 pp703–704 Eqs4–5",
+            "locator": "Hall2000 p1521 Eq9; Newey\u2013West1987 pp703\u2013704 Eqs4\u20135",
             "review": "Primary paper and native formula compared by the coordinator; approval is limited to the representative scope below, not the whole family or statistical calibration.",
             "scope": "Same explicit Bartlett operator after subtracting the sample moment mean; no automatic selector or full GMM calibration claim.",
             "approved_scope": "Same explicit Bartlett operator after subtracting the sample moment mean; no automatic selector or full GMM calibration claim.",
@@ -26358,5 +26358,14 @@
     "basis": "Per-owner public source/AST review, explicit configuration variants and 72 registered study designs with exact method/scenario mappings; retained evaluation and primary-source approval remain independent.",
     "source_approval": "No source-to-method correspondence approved by this mechanical rewrite.",
     "audit_record": ".context/evidence/catalogue-audit.md"
+  },
+  "tutorials": {
+    "ground-geometry": "guides/change-geometry.py",
+    "energy-distance": "tutorials/energy-and-scale.py",
+    "permutation-evidence": "tutorials/permutation-tests.py",
+    "regression": "tutorials/ols/fit.py",
+    "distributional-workflow": "tutorials/distributions.py",
+    "calibration": "tutorials/calibration.py",
+    "study-results": "tutorials/calibration.py"
   }
 }

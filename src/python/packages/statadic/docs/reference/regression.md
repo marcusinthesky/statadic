@@ -1,97 +1,147 @@
-# Regression: familiar constructors and explicit components
+---
+type: reference
+description: Specify, fit and draw inference from regression models, from ordinary least squares to explicit compositions.
+---
 
-Named constructors return the same {py:class}`~statadic.api.regression.Regression`
-specifications you can write
-explicitly. They select a model and its native estimator; estimation, diagnostics
-and inference remain separate decisions.
+# Regression
+
+## Usage
 
 ```python
 from statadic.api.design import Intercept, Linear
+from statadic.api.inference import HC
 from statadic.api.regression import Regression
-from statadic.estimation.linear import LeastSquares
 
-terms = Intercept() + Linear("x")
-model = Regression.ols("y", terms)
-explicit = Regression("y", terms, estimator=LeastSquares())
-# Estimate when data supplies the named x and y columns.
+data = {"x": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0], "y": [1.1, 1.8, 3.2, 3.7, 5.3, 5.8]}
+fit = Regression.ols("y", Intercept() + Linear("x")).estimate(data).require_valid()
+report = fit.infer(covariance=HC("HC3")).report(reference="normal")
+print(report.to_text())
 ```
 
-| Constructor | Explicit choice | Additional inputs |
+## Description
+
+{py:class}`~statadic.api.regression.Regression` describes a model by naming its
+response and its predictor terms, and optionally a response law, a structure for
+the observations and a numerical estimator. Calling `estimate` fits the model to
+data and returns a result that keeps the design built from the training rows.
+That result can predict new rows, run diagnostics and produce inference, and
+each of those is a separate request.
+
+Named constructors such as `Regression.ols` select familiar combinations and
+return the same specification you could write explicitly. For panel, spatial,
+instrumental-variable, dyadic and geometric models, compose `Regression`
+directly, as described in the [composition reference](composition.md).
+
+## Options
+
+| Constructor | Equivalent explicit choice | Additional inputs |
 | --- | --- | --- |
-| {py:meth}`Regression.ols <statadic.api.regression.Regression.ols>` | `LeastSquares()` | Unweighted observations |
-| {py:meth}`Regression.wls <statadic.api.regression.Regression.wls>` | Least squares with relative precision | Required `precision=RelativePrecision("w")` |
-| {py:meth}`Regression.logit <statadic.api.regression.Regression.logit>` | `Binomial(link="logit")` | Optional offset and matching estimator |
-| {py:meth}`Regression.probit <statadic.api.regression.Regression.probit>` | `Binomial(link="probit")` | Optional offset and matching estimator |
-| {py:meth}`Regression.poisson <statadic.api.regression.Regression.poisson>` | `Poisson()` | Optional offset, exposure and matching estimator |
-| {py:meth}`Regression.aft <statadic.api.regression.Regression.aft>` | Censored response and AFT law | Required `RightCensored(...)`, `law=...`; optional matching estimator |
+| {py:meth}`Regression.ols <statadic.api.regression.Regression.ols>` | `LeastSquares()` | None |
+| {py:meth}`Regression.wls <statadic.api.regression.Regression.wls>` | Least squares with relative precision | `precision=RelativePrecision("w")` |
+| {py:meth}`Regression.logit <statadic.api.regression.Regression.logit>` | `Binomial(link="logit")` | Optional offset and estimator |
+| {py:meth}`Regression.probit <statadic.api.regression.Regression.probit>` | `Binomial(link="probit")` | Optional offset and estimator |
+| {py:meth}`Regression.poisson <statadic.api.regression.Regression.poisson>` | `Poisson()` | Optional offset, exposure and estimator |
+| {py:meth}`Regression.aft <statadic.api.regression.Regression.aft>` | Censored response with an AFT law | `RightCensored(...)` and `law=...` |
 
-All constructors require explicit terms, including an intercept when wanted.
-For grouped binomial outcomes use `Observed("successes", trials="trials")` as
-the response. AFT keeps censoring and delayed entry on `RightCensored` and requires
-an explicit Weibull, lognormal or log-logistic law. Numerical options belong to
-the corresponding native estimator brick.
+Every constructor requires explicit terms, including the intercept when one is
+wanted. Grouped binomial outcomes use `Observed("successes", trials="trials")` as
+the response. The [response laws reference](conditional-laws.md) covers the
+binomial, Poisson and other likelihood families.
 
-Use explicit `Regression(...)` composition for panel, spatial, IV, dyadic and
-geometric models. An Ordination may be a predictor term, retaining its training
-transformation. The [composition guide](composition.md) develops those workflows.
+Uncertainty is requested from a fitted result with `infer(covariance=...)`:
 
-The [reference index](../validation/references.md) lists exact matched
-configurations and their evidence. A familiar name alone promises neither a
-Gaussian error law for least squares nor a calibrated inferential procedure.
-Learn the full workflow in the [OLS chapter](../tutorials/ols/index.md).
+| Request | Use when |
+| --- | --- |
+| `ModelBased()` | Rows are independent with constant error variance |
+| `HC("HC0")` to `HC("HC3")` | Rows are independent but the error variance may differ between them |
+| `Clustered("column")` | Rows share shocks within groups named by a column |
+| `HAC(bandwidth=b, order_by="time")` | Nearby observations in a stated order may be correlated |
 
-## OLS and WLS retained state
+Each request accepts a positive `finite_sample_correction`, which multiplies
+the covariance and is recorded in the report. Building a report then selects
+the reference distribution, with `reference="normal"` or `reference="t"` for
+intervals and `"chi2"` or `"f"` for joint tests.
 
-### Host model
+## Results
 
-```python
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
+Fitting least squares returns a `LinearResult`. Its main operations are:
 
-Regression(response="y", terms=Intercept() + Linear("x"))
-```
+| Operation | What it does |
+| --- | --- |
+| `result.parameters`, `result.parameter_names` | The estimated coefficients in the order of the design |
+| `result.predict(data)` | Applies the training design to new rows, which must contain the predictor columns |
+| `result.diagnose(...)` | Runs residual diagnostics on the fitted model. See [linear diagnostics](linear-diagnostics.md) |
+| `result.infer(covariance=...)` | Adds sampling covariance for these coefficients without refitting |
+| `result.report()` | Summarises the point fit as a [report](reporting.md), without standard errors |
+| `result.save_predictor(path)` | Saves what prediction needs. See [saved artifacts](artifacts.md) |
 
-This is the named-observation interface. Its default estimator brick is `LeastSquares`. Fitting returns a `LinearResult` whose `.core` is the actual numerical `LinearFit`, with retained design and observation context.
+`result.valid` reports whether every fitted quantity is finite and the design
+has full column rank, and `require_valid()` raises when it does not. Inference
+results carry their own availability, which you can check with
+`report.require_available("interval")`.
 
-| Operation | Contract |
-|---|---|
-| `model.estimate(data)` | Prepare and fit aligned observations; produce new retained state |
-| `model.prepare(data)` / `estimate_prepared(...)` | Prepared state must belong to the producing model instance |
-| `result.predict(data)` | Apply the retained design and exact parameter schema |
-| `result.infer(covariance=...)` | Attach a supported family-specific covariance to this actual fit, without refitting |
-| `result.report()` | Point-fit information in a [Report](reporting.md); does not select inferential reference laws |
-| `result.save_predictor(path)` | Restricted prediction artifact; do not promise reconstructed inference |
+For array workflows inside `jax.jit` or `jax.vmap`, the numerical layer offers
+`LeastSquares().estimate(LinearProblem(design, response))`, with covariance from
+`statadic.inference.linear_covariance` and intervals and Wald tests from
+`statadic.inference.parameters`. The design must include any intercept column,
+and named fits require the same ordered names for prediction.
 
-### Native numerical door
+## Methods and formulas
 
-`LeastSquares().estimate(LinearProblem(design, response, ...))` takes complete arrays. Supply the intercept column explicitly. Native named prediction requires the same ordered parameter names; unnamed fits use positional columns with width checks.
+For a design $X$ with $n$ rows and $p$ columns, ordinary least squares solves
+$\hat\beta = \arg\min_\beta \lVert y - X\beta \rVert^2$ through a QR
+factorisation. Weighted least squares treats each weight as a relative
+precision, so that $\operatorname{Var}(\varepsilon_i \mid X) = \sigma^2 / w_i$,
+and estimates the common scale as $\sum_i w_i r_i^2 / (n - p)$.
 
-The fit requires supported finite input and full column rank. Shape/schema errors raise; invalid numerical lanes and rank failures expose unavailable results and diagnostics. There is no automatic row deletion, centering, column cleaning or license to interpret an unidentified pseudoinverse solution as ordinary inference.
+The heteroskedasticity-consistent estimators sum the outer products of each
+row's influence on $\hat\beta$. HC1 multiplies HC0 by $n/(n-p)$, HC2 divides each
+term by $1 - h_i$ and HC3 by $(1 - h_i)^2$, where $h_i$ is the leverage of row
+$i$. Clustered covariance sums influences within each group before forming
+outer products, and HAC weights the products of nearby rows with Bartlett
+weights up to the stated bandwidth.
 
-### WLS is relative precision
+A linear restriction $R\beta = r$ is tested with the Wald statistic, compared
+with $\chi^2_{\operatorname{rank}(R)}$ or, after division by the rank, with an
+$F$ distribution whose denominator degrees of freedom you supply.
 
-The WLS contract uses strictly positive relative precisions, with conditional error variance `sigma² / weight_i`. It is not a frequency-weight or survey-weight interface. The estimated common scale uses the actual weighted residuals and residual degrees of freedom. The fit retains the arrays, their effective numerical precision, parameter order, residuals and score/Jacobian information needed for downstream covariance.
+<!-- statadic:math STATADIC-LINEAR-004 -->
 
-### Inference remains another step
+## Assumptions and limits
 
-Covariance providers return sampling covariance for the actual fit. Reference laws and required degrees of freedom are separate. Check interval or test validity/status independently of point-fit validity. See [inference choices](../guides/inference.md) and [the OLS inference lesson](../tutorials/ols/infer.md).
+- Least squares estimates a conditional mean. Causal interpretation requires an
+  identification argument about how the data were generated.
+- The design must have full column rank. STATADIC does not delete rows, centre
+  columns or fall back to a pseudoinverse when it is rank deficient.
+- Weights describe relative precision. Frequency weights and survey weights
+  need different estimators.
+- Normal and chi-square references are large-sample approximations. Student
+  and F references are exact only under the classical model, so combining them
+  with a robust covariance is a deliberate approximation.
+- HC2 and HC3 require every leverage to be below one, and clustered covariance
+  requires at least two groups.
+- HAC orders observations by the column named in `order_by`, which must hold
+  unique numbers, or by the current row order when `order_by=None`. Lags count
+  adjacent observations in that order, so calendar gaps are your responsibility.
+- In 32-bit precision, Student and F references are accurate to 0.05
+  percentage points for up to 10,000 degrees of freedom. Beyond that range,
+  reports flag the reference as outside its validated range.
 
-<details><summary>Assumptions and evidence</summary>
+## Evidence
 
-The [fixed-design unbiasedness result](../formal/claims/STATADIC-LINEAR-009.md)
-assumes the stated first moments; the
-[Gauss–Markov variance comparison](../formal/claims/STATADIC-LINEAR-010.md)
-additionally assumes spherical second moments and full rank. Neither verifies
-the QR/JAX implementation or interval coverage. WLS has its own
-[known-diagonal-precision assumptions](../formal/claims/STATADIC-LINEAR-011.md).
-Claim pages retain exact source and review status.
+- Mathematical results: {ref}`unbiasedness of OLS <formal-STATADIC-LINEAR-009>`,
+  the {ref}`Gauss–Markov theorem <formal-STATADIC-LINEAR-010>`,
+  {ref}`weighted least squares <formal-STATADIC-LINEAR-011>` and
+  {ref}`consistency of HC0 <formal-STATADIC-LINEAR-012>`.
+- Reference comparisons: coefficients, HC3 standard errors and intervals are
+  matched against statsmodels in the {ref}`reference index <reference-api.regression>`.
+- Studies: the {ref}`OLS and WLS <research-procedure-linear.ols-wls>` and
+  {ref}`covariance <research-procedure-linear.covariance>` procedures in the
+  study catalogue.
 
-The {download}`precision reference controls <../../tests/testing/test_precision_references.py>`
-contain matched OLS/WLS witnesses with their explicit tolerances and scope.
+## See also
 
-Inspect [matched reference configurations](../validation/references.md),
-[registered studies and selected reports](../validation/research.md) and
-[known limits](../validation/known-limitations.md) separately. A constructor or
-passing numerical comparison does not qualify every composition.
-
-</details>
+- [Your first regression](../start/first-regression.py) and the
+  [OLS analysis tutorial](../tutorials/ols/index.md)
+- [Change the covariance estimator](../guides/change-covariance.py)
+- [Hypotheses and tests](hypotheses.md) and [reports](reporting.md)

@@ -1,6 +1,9 @@
 ---
+type: landing
 description: Essays and field notes about STATADIC, Exordio and the development of reproducible statistical software.
 ---
+
+<!-- rumdl-disable MD040 -->
 
 # Blog
 
@@ -10,18 +13,13 @@ research software with people and agents. This includes the
 [Exordio](https://marcusinthesky.github.io/exordio/) foundations behind the
 repository and how they shape its development process.
 
-## Posts
+Read [Introducing Statadic](introducing-statadic.md), published by Marcus
+Gawronsky on 12 November 2026, for a first look at the workflow from a statistical
+question to a manuscript result.
 
-### [Introducing Statadic: From Statistical Question to Published Result](introducing-statadic.md)
-
-12 November 2026 · Marcus Gawronsky
-
-A first look at Statadic's composable workflow, from regression to manuscript,
-and the mathematics, reference comparisons and statistical evidence behind it.
-
-:::{toctree}
+```{toctree}
 :hidden:
 :maxdepth: 1
 
 introducing-statadic
-:::
+```

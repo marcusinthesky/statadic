@@ -151,3 +151,111 @@ and release verification therefore fail closed. Adapter registration is not
 passing parity, statistical or performance evidence: those require actual
 execution. Retained native and historical campaigns keep their descriptive
 interpretation, including adverse RSS observations.
+
+## CPU measurement provenance
+
+The measurements below were collected in the original downstream repository
+using its `statadic_qualification` DVC stage and synthetic fixture. That stage and its
+`data/shared/statadic_qualification/` artifacts are not part of this standalone checkout;
+its `dvc repro` commands cannot be run here. These records describe their measured
+configurations and do not establish results for another machine or data set.
+
+For standalone implementation checks, run `just python::statadic::test-fresh` from the
+repository root. The [release guide](../../../../infra/release/README.md) describes additional optional
+reference and qualification lanes. These tests do not reproduce the historical
+benchmark or substitute for the original retained artifacts.
+
+Benchmarks record preparation, host-to-device transfer, cold lowering/compilation
+and synchronized warm repetitions separately, along with shape, dtype, actual
+device, JAX/backend versions and native thread settings. Compiler-reported argument,
+output and temporary allocation bytes are distinct from process resident memory
+or measured device peak memory. A missing allocator report is unavailable evidence,
+never a zero-memory claim. Timing distributions are evidence, not brittle
+unit-test thresholds.
+
+The measured operations include OLS, row-pairs refits, dense/sparse spatial
+products and checked solves, projected MMD objectives, unequal-support transport,
+checked capped QP and compiled Hotelling calculations. Synthetic numerical witnesses separately cover
+SLX, fixed effects and a noncommuting-W spatial-panel profile. These operator
+measurements do not qualify scalable sparse log-determinants, full likelihood
+throughput or unmeasured general transport, packing and shrinkage paths. See the
+[spatial/panel guide](../../packages/statadic/docs/reference/spatial-panels.md) for family-specific limits.
+
+Additional bounded fitting measurements compare full and parameter-only linear
+fits, fixed-schedule refits, fixed/iterated GMM and a full 64-unit SAR likelihood.
+GMM records include failed and mixed valid/failed lanes. Isolated comparison
+processes own their float32/float64 choice; the governed qualification stage
+retains its caller-owned float64 contract. A single small full-likelihood
+fixture does not establish scalable likelihood throughput. Recorded compiler
+allocations remain distinct from allocator peaks and retained statistical state.
+
+Bootstrap schedules and retained outputs occupy memory proportional to requested
+draws. The shared chunk executor bounds concurrent per-refit workspaces; it does
+not make total retained storage independent of the number of draws. The benchmark
+varies chunk size with one fixed schedule, preserving paired draw identity.
+
+Larger fixed-shape CPU measurements also exercise unequal supports and objective
+gradients. Dense packed projected-MMD gradients at 128 versus 511 points in eight
+dimensions required approximately 314 MB of compiler temporaries in float64
+(157 MB in float32). This is a workspace limitation of that measured path;
+unequal-support correctness and transformation support do not establish efficient
+memory use at arbitrary cloud sizes. Compiler estimates are not allocator peaks.
+
+Hotelling is an application consumer, not another STATADIC model family. Its
+economic equations, certificates and equilibrium algorithms stay app-local;
+the benchmark exercises their compiled numerical state and composition with
+STATADIC. Certified application entrypoints own float64. The new Threefry innovation
+schedule is a separate scientific change, not a numerical equivalence claim.
+
+No GPU measurements, general resampling validity, all-family certification or
+release qualification are implied. For nonlinear fitted-solution derivatives,
+an optimizer adjoint additionally needs a valid stationary condition and regularity;
+[Optimistix documents that distinction](https://docs.kidger.site/optimistix/api/adjoints/).
+
+## Current-wheel matched references
+
+The repository performance application compares an installed
+candidate wheel with independent peer processes. It prepares identical inputs
+before timing, then measures the complete numerical consumer outputs below.
+Prepared empirical carriers keep coordinates and masses dynamic. The public target-projection and ordered dyadic-rank calculations use eager
+execution, preserving the procedure being measured.
+
+The executable definitions are
+[`reference_workloads.CASES`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference_workloads.py),
+[`reference_fixtures`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference_fixtures.py)
+and [`reference.QUALIFICATION_CASES`](https://github.com/marcusinthesky/statadic/blob/main/src/python/apps/performance/src/statadic_performance/reference.py).
+They freeze exact inputs, sizes, conventions, output vectors and required
+subcases. These workload contracts do not cover every statistical variant in
+their named families.
+
+| Required workload | Enumerated consumers and independent references |
+| --- | --- |
+| `linear-fit-and-inference` | OLS and relative-precision WLS coefficients plus HC3 covariance; statsmodels |
+| `canonical-glm` | Grouped-binomial logit with offset and Poisson with exposure/offset: fit, model covariance, likelihood and means; statsmodels |
+| `dispersion-likelihood` | Gamma and NB2 joint estimated dispersion: coefficients, physical dispersion, likelihood and physical-coordinate observed information; independent SciPy likelihood/analytic score and information differences |
+| `covariance-shrinkage` | Sample covariance and constant-correlation Ledoit–Wolf target, weight and estimate; independent NumPy moments. This is not sklearn's identity target. |
+| `dyadic-node-refits` | Supplied multinomial node counts with and without node effects: ordered rank selection, focal coefficient, SSE, overall/within R² and active counts; independent weighted SVD refits |
+| `affine-gmm` | Fixed non-efficient actual W and three centered Bartlett-HAC updates: fit, retained actual W, final HAC covariance and criterion; independent SciPy SVD/Bartlett calculations |
+| `weighted-mmd-energy` | Unequal weighted RBF V-MMD and Euclidean exponent-one V-energy values plus coordinate gradients; sklearn kernels and independent analytic gradients |
+| `empirical-transport` | Unequal weighted real-line W1 and squared W2; SciPy W1 and independent monotone coupling. Assignment, sliced and Sinkhorn performance are outside this contract. |
+| `measure-projections` | Energy and RBF target-simplex mixtures: weights and original objective; independent SciPy SLSQP over separately calculated distance/kernel means |
+| `qp-gmv` | Capped-simplex quadratic weights and objective; SciPy SLSQP |
+| `supplied-row-refits` | Initial OLS and all supplied aligned row-pairs coefficient refits; independent NumPy SVD solves |
+| `spatial-operators` | Fixed-graph SLX fit/classical covariance/fitted values and Gaussian SAR fit/expected covariance/fitted/reduced means; statsmodels and spreg |
+| `spatial-panel` | Time-varying-W unit-effect SAR fit and expected information, plus changing-roster/full-graph-missing pooled SAR fit and observed information; independent period-block Gaussian calculations |
+| `ordinary-aft` | Right-censored Weibull/lognormal, ordinary and delayed entry: fit, likelihood and observed information; independent SciPy likelihoods/analytic derivatives |
+| `joint-censored-sar-aft` | **Unsupported matched reference:** full 500-unit ×20-period fit and identified observed information. Small integration or objective-only pilots do not replace it. |
+| `ordination-fit-transform` | Kernel PCA and Isomap training and held-out coordinates; scikit-learn with matched centering, bandwidth or union-neighbor paths and frozen queries |
+| `geometric-regression-permutations` | Observed and supplied Freedman–Lane partial statistics and p-value; independent NumPy projections |
+
+A workload definition specifies what to measure. Numerical agreement,
+statistical behavior and resource use each need their own results. The current alpha selects `report`: completed matched sessions
+for every requested workload, numerical agreement and the actual executed case
+list, with all adverse ratios visible. A bounded case does not establish
+full-family coverage. The legacy/default `superiority` policy additionally
+requires every registered subcase, three independent sessions, five warmups,
+thirty samples and warm-time and total-process RSS ratios at most `0.90` in each
+session. Process RSS includes imports, compilation and buffers that remain allocated.
+It measures the whole process rather than incremental workload memory. Cold/first-call costs remain separate.
+The unsupported joint workload leaves the complete set of measurements
+incomplete under both policies.

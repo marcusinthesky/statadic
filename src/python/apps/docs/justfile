@@ -11,30 +11,39 @@ default:
 setup:
     bash "{{app}}/../../../../infra/nix/retry-tex-setup.sh" {{runner}} python "{{app}}/scripts/compile_report.py"
 
-# Build the documentation and native lab snapshots.
+# Build the documentation and notebook outputs.
 build *args:
     {{runner}} python "{{app}}/scripts/build.py" "$@"
+
+# Fast authoring build: reuse the Lean certification and blueprint.
+build-fast *args:
+    {{runner}} python "{{app}}/scripts/build.py" --fast "$@"
+
+# Run the integrity gates on one or more notebooks.
+check-notebooks *paths:
+    {{runner}} python "{{app}}/scripts/check_notebooks.py" --paths "$@"
 
 # Serve an already built site locally.
 serve:
     {{runner}} python -m http.server --bind 127.0.0.1 --directory "{{app}}/build/html" 8000
 
-# Open a lab in the local marimo editor.
-lab slug:
-    {{runner}} python "{{app}}/scripts/lab.py" "$1"
+# Open a canonical teaching notebook in the local marimo editor.
+notebook path:
+    {{runner}} marimo edit "{{app}}/../../packages/statadic/docs/$1"
 
-# Validate app code, labs, tests, and the complete site.
+# Validate app code, notebooks, tests, and the complete site.
 check:
     just check-size
+    {{runner}} python "{{app}}/scripts/check_schema.py"
+    {{runner}} python "{{app}}/scripts/check_prose.py"
     {{runner}} ruff check "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
     {{runner}} ruff format --check "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
-    {{runner}} marimo check --strict "{{app}}"/notebooks/*.py
-    {{runner}} python "{{app}}/scripts/check_examples.py"
+    {{runner}} python "{{app}}/scripts/check_notebooks.py"
     JAX_ENABLE_X64=0 {{runner}} pytest -q -c "{{app}}/pyproject.toml" "{{app}}/tests"
     JAX_ENABLE_X64=1 {{runner}} pytest -q -c "{{app}}/pyproject.toml" -m native "{{app}}/tests"
     {{runner}} python "{{app}}/scripts/build.py"
 
-# Enforce the frozen onboarding budget, including code and text includes.
+# Enforce the root README word cap, including code and text includes.
 check-size:
     {{runner}} python "{{app}}/scripts/check_size.py"
 
@@ -46,3 +55,4 @@ check-browser *args:
 fmt:
     {{runner}} ruff check --fix "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
     {{runner}} ruff format "{{app}}/conf.py" "{{app}}/scripts" "{{app}}/src" "{{app}}/tests"
+    {{runner}} python "{{app}}/scripts/check_notebooks.py" --fix

@@ -61,8 +61,43 @@ macro registry under `build/manuscript/`. See the [manuscript guide](../python/p
 Review pins conservatively bind the entire audited first-party Lean source graph
 and dependency pins, so definition changes cannot silently retain statement review.
 
+## Coverage by obligation
+
+The [method inventory](registry/methods.json) lists every obligation for each method
+family, and each [claim](registry/claims.json) names the obligations it closes. An
+obligation is open until a claim closes it, and open obligations may list related
+claims that cover only a finite specialization. The count of open obligations comes
+from the same registry. A family row does not mean its guarantees have been fully
+identified or proved, and sources and exact statements need review before each new
+proof batch. The docs build renders the per-family table from these files, so edit
+the registry rather than the generated page.
+
+To inspect the programme, run these from the repository root:
+
+```bash
+just lean::certify
+just lean::programme-check
+```
+
+`programme-check` fails deliberately while required source or proof obligations
+remain open. The regular integrity check accepts honestly documented open work.
+
 ## Conventional quality
 
 Run `just lean::lint` for Batteries, Mathlib style and complete-index checks, or
 `just lean::fmt` for upstream text fixes. The [quality guide](tools/quality/README.md)
 documents diagnostics, import tools and the manual-only prek hook.
+
+## Source correspondence research
+
+The MMD finite-law theorem does not verify Python/JAX execution. The source-bound
+prototype records Python ASTs for `masked_sum`, `pair_chunks` and public/packed
+MMD reductions. Run `src/lean/tools/correspondence.py check` through the locked
+docs project. Only an explicit `pin` accepts reviewed source changes.
+
+The exact rational masking identity and small conformance fixtures remain
+separate from Python semantics. An end-to-end argument still needs enumeration
+and padding exclusion, packed/scalar equivalence, source-operation correspondence,
+IEEE rounding bounds and compiler/runtime assumptions. Keep these obligations
+visible even when the mathematical theorem compiles. The manuscript proof
+fragment is reviewed exposition rather than a translation of a Lean proof term.

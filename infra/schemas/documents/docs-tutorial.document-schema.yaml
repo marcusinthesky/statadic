@@ -1,0 +1,54 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# Validates `marimo export md` output of start/*.py and tutorials/**/*.py.
+# Findings on Schematter 0.2.0: a section's maxTokens includes its subsections
+# and fenced code, so the H1 (which holds every H2) carries no cap of its own.
+maxTokens: 4000
+frontmatter:
+  type: object
+  required: [title]
+  properties:
+    type:
+      const: tutorial
+    title:
+      type: string
+      pattern: \S
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      const: Introduction
+    maxTokens: 220
+  - header:
+      const: Before you start
+    maxTokens: 100
+  - header:
+      const: The data
+    maxTokens: 250
+  - header:
+      pattern: '^Step \d+: \S'
+    minContains: 2
+    maxContains: 8
+    maxTokens: 450
+    blocks:
+    - type: code
+      minContains: 1
+  - header:
+      const: Explore
+    maxTokens: 300
+  - header:
+      pattern: ^(What you learned|Result)$
+    maxTokens: 120
+  - header:
+      const: Assumptions and evidence
+    maxTokens: 80
+  - header:
+      pattern: ^(Next steps|See also)$
+    maxTokens: 80
+  - header:
+      const: Appendix
+    minContains: 0
+    maxContains: 1
+  additionalSections: false

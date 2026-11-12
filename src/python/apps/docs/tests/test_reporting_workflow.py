@@ -2,16 +2,13 @@
 
 import re
 import runpy
-import subprocess
-import sys
 import zlib
 from pathlib import Path
 
-import jax
-import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.artifacts import load_analysis, load_predictor
+from statadic.api.artifacts import load_analysis, load_predictor, save_analysis
+from statadic.api.inference import HC
 from statadic.api.reporting import (
     Metric,
     ParameterRow,
@@ -20,29 +17,26 @@ from statadic.api.reporting import (
     Report,
     TestRow,
 )
-from statadic_docs_labs.native import regression_result
 
 pytestmark = pytest.mark.native
 
 APP = Path(__file__).resolve().parents[1]
-EXAMPLE = APP.parents[1] / "packages/statadic/examples/first_regression.py"
-OLS_EXAMPLE = APP.parents[1] / "packages/statadic/examples/ols_analysis.py"
+NOTEBOOK = APP.parents[1] / "packages/statadic/docs/tutorials/ols/report.py"
 
 
 @pytest.fixture(scope="module")
-def ols_recipe():
-    return runpy.run_path(str(OLS_EXAMPLE))
+def chapter():
+    return runpy.run_path(str(NOTEBOOK))
 
 
-@pytest.fixture(scope="module")
-def ols_analysis(ols_recipe):
-    return ols_recipe["analyze"]()
-
-
-def test_ols_chapter_matches_independent_fit_and_hc3(ols_analysis):
-    """Check the quantities actually taught, using represented input precision."""
-    observations = ols_analysis["observations"]
-    x, y = (np.asarray(observations.numeric(name)) for name in ("x", "y"))
+def test_ols_chapter_matches_independent_fit_and_hc3(chapter):
+    data = chapter["make_data"]()
+    fit = chapter["fit_data"](data)
+    inference = fit.infer(covariance=HC("HC3"))
+    x, y = (
+        np.asarray(data[name], dtype=np.asarray(fit.parameters).dtype)
+        for name in ("x", "y")
+    )
     design = np.column_stack((np.ones_like(x), x))
     beta = np.linalg.lstsq(design, y, rcond=None)[0]
     residual = y - design @ beta
@@ -50,159 +44,49 @@ def test_ols_chapter_matches_independent_fit_and_hc3(ols_analysis):
     leverage = np.einsum("ij,jk,ik->i", design, inverse, design)
     meat = design.T @ (design * (residual / (1 - leverage))[:, None] ** 2)
     hc3 = inverse @ meat @ inverse
+    np.testing.assert_allclose(fit.parameters, beta, atol=2e-5, rtol=2e-5)
+    rank = np.linalg.matrix_rank(design)
+    assert len(y) == 80
+    assert int(fit.core.rank) == rank
+    assert float(fit.df_resid) == len(y) - rank
+    assert float(fit.core.sse) == pytest.approx(float(residual @ residual), rel=2e-5)
+    metrics = {metric.name: metric.value for metric in fit.report().metrics}
+    r_squared = 1 - float(residual @ residual) / float(np.sum((y - y.mean()) ** 2))
+    assert metrics["r_squared"] == pytest.approx(r_squared, rel=2e-5)
     np.testing.assert_allclose(
-        ols_analysis["fit"].parameters, beta, atol=2e-5, rtol=2e-5
+        inference.uncertainty.covariance.values, hc3, atol=2e-5, rtol=2e-5
     )
-    np.testing.assert_allclose(
-        ols_analysis["inferences"]["hc3"].uncertainty.covariance.values,
-        hc3,
-        atol=2e-5,
-        rtol=2e-5,
-    )
-    summary = ols_analysis["summary"]
-    assert summary["n"] == len(y)
-    assert summary["rank"] == np.linalg.matrix_rank(design)
-    assert summary["df_resid"] == len(y) - np.linalg.matrix_rank(design)
-    assert summary["sse"] == pytest.approx(float(residual @ residual), rel=2e-5)
-    assert summary["centered_r_squared"] == pytest.approx(
-        1 - float(residual @ residual) / float(np.sum((y - y.mean()) ** 2)), rel=2e-5
-    )
-    for inference in ols_analysis["inferences"].values():
-        assert inference.uncertainty.fit is ols_analysis["fit"].core
-    for test in ols_analysis["tests"].values():
-        assert test.available
-        assert test.hypothesis.null.rows == ({"x": 1.0},)
-    diagnostics = ols_analysis["diagnostics"]
-    assert diagnostics.names == (
-        "jarque_bera",
-        "breusch_pagan_studentized",
-        "breusch_pagan_gaussian",
-        "white",
-        "breusch_godfrey",
-        "durbin_watson",
-        "reset_chi2",
-        "reset_f",
-        "influence",
-    )
-    assert diagnostics["durbin_watson"].pvalue is None
-    assert diagnostics["breusch_godfrey"].construction["order_by"] == "time"
-    assert ols_analysis["inferences"]["hac"].calculation["order_by"] == "time"
-
-
-def test_regression_lab_calls_canonical_analysis(ols_analysis):
-    """Integration parity: the lab presents objects from the shared recipe."""
-    lab = regression_result()
-    np.testing.assert_array_equal(lab["coefficients"], ols_analysis["fit"].parameters)
-    assert lab["summary"] == ols_analysis["summary"]
-    assert lab["latex"] == ols_analysis["reports"]["hc3"].to_latex()
-    assert lab["diagnostics"] == ols_analysis["diagnostics_report"].to_text()
-    hac = regression_result(covariance="HAC", bandwidth=2)
-    assert hac["analysis"]["inferences"]["hac"].covariance_spec.bandwidth == 2
-    np.testing.assert_array_equal(lab["coefficients"], hac["coefficients"])
-
-
-def test_ols_data_is_reproducible_and_only_contaminates_one_outcome(ols_recipe):
-    before = np.random.get_state()
-    x, y = ols_recipe["regression_data"]()
-    x2, contaminated = ols_recipe["regression_data"](outlier=True)
-    after = np.random.get_state()
-    assert before[0] == after[0]
-    np.testing.assert_array_equal(before[1], after[1])
-    assert before[2:] == after[2:]
-    np.testing.assert_array_equal(x, x2)
-    np.testing.assert_array_equal(y[:-1], contaminated[:-1])
-    assert contaminated[-1] - y[-1] == pytest.approx(12)
-    expected = 1 + 2 * x + 0.6 * np.random.default_rng(17).normal(size=len(x))
-    np.testing.assert_array_equal(y, expected)
-
-
-@pytest.mark.parametrize(
-    "options",
-    [{"noise": 0}, {"heterogeneity": float("nan")}, {"seed": True}, {"seed": 1.5}],
-)
-def test_ols_data_rejects_invalid_controls(ols_recipe, options):
-    with pytest.raises(ValueError):
-        ols_recipe["regression_data"](**options)
-
-
-def test_ols_chapter_retains_explicit_reports_and_predictor(
-    ols_recipe, ols_analysis, tmp_path
-):
-    ols_recipe["write_outputs"](ols_analysis, tmp_path)
-    retained = load_analysis(tmp_path / "analysis")
-    assert retained.report.to_latex() == ols_analysis["reports"]["hc3"].to_latex()
-    assert len(retained.report.plots) == 2
-    assert load_analysis(tmp_path / "diagnostics").report.to_text() == (
-        ols_analysis["diagnostics_report"].to_text()
-    )
-    for key in ("model_based", "hac"):
-        assert load_analysis(tmp_path / f"inference-{key}").report.to_latex() == (
-            ols_analysis["reports"][key].to_latex()
-        )
-    np.testing.assert_allclose(
-        load_predictor(tmp_path / "predictor").predict(ols_analysis["prediction_data"]),
-        ols_analysis["predictions"],
-    )
-    assert (tmp_path / "summary.json").is_file()
-    assert "wald" in (tmp_path / "tests.txt").read_text(encoding="utf-8")
-
-
-def test_first_regression_retains_fit_and_hc3_report(tmp_path):
-    analyze = runpy.run_path(str(EXAMPLE))["analyze"]
-    analyze(tmp_path)
-    report = load_analysis(tmp_path / "analysis").report
-    latex = (tmp_path / "table.tex").read_text(encoding="utf-8")
-    x = np.asarray(jnp.linspace(0.0, 5.0, 40))
-    y = np.asarray(
-        1.0
-        + 0.8 * jnp.asarray(x)
-        + 0.4 * jax.random.normal(jax.random.key(17), x.shape)
-    )
-    design = np.column_stack((np.ones_like(x), x))
-    beta = np.linalg.lstsq(design, y, rcond=None)[0]
-    residual = y - design @ beta
-    inverse = np.linalg.inv(design.T @ design)
-    leverage = np.einsum("ij,jk,ik->i", design, inverse, design)
-    meat = design.T @ (design * (residual / (1 - leverage))[:, None] ** 2)
-    se = np.sqrt(np.diag(inverse @ meat @ inverse))
-    # These small, well-conditioned values have unit scale; float32 roundoff at
-    # this tolerance is immaterial to the estimates and reported intervals.
-    prediction = load_predictor(tmp_path / "predictor").predict({"x": [1.5, 2.5]})
-    np.testing.assert_allclose(
-        prediction,
-        np.column_stack((np.ones(2), [1.5, 2.5])) @ beta,
-        rtol=2e-5,
-        atol=2e-5,
-    )
-    for row, expected, expected_se in zip(report.parameters, beta, se, strict=True):
-        np.testing.assert_allclose(row.estimate, expected, rtol=2e-5, atol=2e-5)
-        np.testing.assert_allclose(row.std_error, expected_se, rtol=2e-5, atol=2e-5)
+    report = inference.report(reference="normal")
+    for row, expected, se in zip(
+        report.parameters, beta, np.sqrt(np.diag(hc3)), strict=True
+    ):
         np.testing.assert_allclose(
-            row.ci_lower, expected - 1.95996398454 * expected_se, rtol=2e-5, atol=2e-5
+            [row.estimate, row.std_error], [expected, se], atol=2e-5, rtol=2e-5
         )
         np.testing.assert_allclose(
-            row.ci_upper, expected + 1.95996398454 * expected_se, rtol=2e-5, atol=2e-5
+            [row.ci_lower, row.ci_upper],
+            [expected - 1.95996398454 * se, expected + 1.95996398454 * se],
+            atol=2e-5,
+            rtol=2e-5,
         )
-        assert row.valid and row.pvalue is None
-        for value in (row.estimate, row.std_error, row.ci_lower, row.ci_upper):
-            assert format(value, "#.6g").removesuffix(".") in latex
-    assert report.metadata["reference"] == "normal"
-    assert latex == report.to_latex()
 
 
-def test_lab_exports_the_selected_inference_report():
-    robust = regression_result(covariance="HC3")
-    classical = regression_result(covariance="Model-based")
-    np.testing.assert_array_equal(robust["coefficients"], classical["coefficients"])
-    assert robust["latex"] != classical["latex"]
-    assert r"\begin{tabular}" in robust["latex"]
-    assert "HC3" in robust["latex"]
+def test_ols_predictor_and_report_round_trip(chapter, tmp_path):
+    fit = chapter["fit_data"](chapter["make_data"]())
+    report = fit.infer(covariance=HC("HC3")).report(reference="normal")
+    fit.save_predictor(tmp_path / "predictor")
+    save_analysis(tmp_path / "analysis", report)
+    np.testing.assert_allclose(
+        load_predictor(tmp_path / "predictor").predict({"x": [0.0, 1.0]}),
+        fit.predict({"x": [0.0, 1.0]}),
+    )
+    assert load_analysis(tmp_path / "analysis").report.to_latex() == report.to_latex()
 
 
 def test_latex_compiles_with_escaped_labels_and_unavailability(tmp_path):
-    analyze = runpy.run_path(str(EXAMPLE))["analyze"]
-    analyze(tmp_path / "analysis-output")
-    latex = (tmp_path / "analysis-output/table.tex").read_text(encoding="utf-8")
+    chapter = runpy.run_path(str(NOTEBOOK))
+    fit = chapter["fit_data"](chapter["make_data"]())
+    latex = fit.infer(covariance=HC("HC3")).report(reference="normal").to_latex()
     unavailable = Report(
         "Diagnostic",
         parameters=(
@@ -555,28 +439,3 @@ def test_native_figures_compile_from_cache(tmp_path):
         + rb"h\s+f\b",
         page,
     )
-
-
-def test_cli_writes_requested_analysis_outputs(tmp_path):
-    destination = tmp_path / "results"
-    completed = subprocess.run(
-        [sys.executable, str(EXAMPLE), "--output", str(destination)],
-        cwd=tmp_path,
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    assert completed.returncode == 0, completed.stdout + completed.stderr
-    assert (
-        (destination / "table.tex")
-        .read_text(encoding="utf-8")
-        .startswith("% Regression inference")
-    )
-    assert {path.name for path in destination.iterdir()} == {
-        "table.tex",
-        "residual.tex",
-        "coefficients.tex",
-        "predictor",
-        "analysis",
-    }
-    assert list(tmp_path.iterdir()) == [destination]

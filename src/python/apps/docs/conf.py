@@ -14,13 +14,22 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinxcontrib.bibtex",
     "statadic_docs_labs.formal_extension",
+    "statadic_docs_pages.marimo_pages",
 ]
 bibtex_bibfiles = [str(Path(__file__).resolve().parents[4] / "src/latex/refs.bib")]
 bibtex_default_style = "plain"
 bibtex_reference_style = "author_year"
-source_suffix = {".md": "markdown", ".rst": "restructuredtext"}
+# Marimo notebooks beside the pages render natively; the extension excludes any
+# other Python file, so only notebooks become documents.
+source_suffix = {".md": "markdown", ".rst": "restructuredtext", ".py": "marimo"}
 root_doc = "index"
-exclude_patterns = ["_build"]
+exclude_patterns = ["_build", "_templates"]
+statadic_notebook_branch = "main"
+statadic_repository_root = str(Path(__file__).resolve().parents[4])
+statadic_notebook_cache = str(Path(__file__).resolve().parent / "build/notebook-cache")
+statadic_molab_shield = str(
+    Path(__file__).resolve().parent / "static/marimo/molab-shield.svg"
+)
 html_theme = "shibuya"
 html_title = f"STATADIC {release} documentation"
 # configure-pages supplies the project path or custom-domain URL on deployment.
@@ -30,7 +39,7 @@ if html_baseurl:
 templates_path = ["templates"]
 html_sidebars = {"**": ["sidebars/localtoc.html"]}
 html_static_path = ["static"]
-html_css_files = ["statadic.css"]
+html_css_files = ["statadic.css", "marimo.css"]
 html_logo = "static/brand/statadic-curve-fit-animated.svg"
 html_favicon = html_logo
 pygments_style = "bw"
@@ -154,7 +163,6 @@ nitpick_ignore += [
     ("py:class", "InputRole"),
     ("py:class", "statadic.api.design.FittedDesign"),
     ("py:class", "statadic.api.inference.Clustered"),
-    ("py:class", "statadic.api.inference.HAC"),
     ("py:class", "statadic.api.inference.InferenceResult"),
     ("py:class", "statadic.api.inference.ModelBased"),
     ("py:class", "statadic.api.representation.GeometrySpec"),
@@ -212,7 +220,6 @@ nitpick_ignore += [
         "FittedDesign",
         "LinearFit",
         "statadic.api.reporting.Metric",
-        "statadic.api.reporting.Report",
     )
 ]
 

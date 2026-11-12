@@ -60,6 +60,7 @@ test-check:
     if [ -n "${CI:-}" ]; then just statadic::test-fresh; else just statadic::test; fi
 
 check: architecture test-layout lint typecheck test-check build
+    just statadic::doctest
     just evidence::check
     just publishing::check
     just studies::check

@@ -45,7 +45,9 @@ scope and maintenance.
 Every public module declares a literal `__all__`: only its listed names are
 public, unlisted top-level definitions start with an underscore, public signatures
 and exceptions use public types, and cross-module private helpers require
-visibility-scoped Tach interfaces.
+visibility-scoped Tach interfaces. A public module has no underscored component in
+its import path, and navigation namespaces declare an empty `__all__`. The public
+inventory enforces these declarations; Tach exact mode checks dependencies.
 
 Root and compound namespace initializers contain teaching maps, not broad eager
 reexports. A family initializer curates its own public surface. This avoids
@@ -170,6 +172,75 @@ including shrinkage and tuning. Inference covariance estimates uncertainty of
 retained fitted parameters. PSD feasibility repairs belong to `optimize.psd`.
 Shared long-run arithmetic remains below fitting because GMM needs it too.
 
+## Axes, carriers and estimating equations
+
+A declaration names many mathematical axes, and they do not all sit on the
+container. A **descriptor** holds type parameters only, never an array, and may
+take any number of parameters (`MathematicalSpace`, `MatrixContract`,
+`TransformContract`, `EstimateProvenance`, `EquationContract`). A **carrier**
+holds one array leaf plus static metadata (`SpaceDMat`, `CalibratedTest`,
+`VariabilityMatrix`) and takes one value type and at most two descriptors. A new
+axis goes inside a descriptor and is named once with a `type` alias, so it changes
+no carrier signature. The budget is machine-checked, and an exemption must name
+the task that removes it. It limits growth, not meaning: each descriptor parameter
+keeps the variance it had on the carrier, so a metric contract still satisfies a
+pseudometric requirement.
+
+An estimator is identified by the equation it solves, not by its model family.
+`core.equations` holds the triple and the composition rule over it:
+
+| Carrier | Shape | Meaning |
+| --- | --- | --- |
+| `EstimatingFunction` | `(T, m)` | `psi` evaluated per observation |
+| `EquationJacobian` | `(T, m, k)` | `d psi / d theta'`, the bread `J` |
+| `MeanEquationJacobian` | `(m, k)` | aggregate **mean** derivative `J` |
+| `VariabilityMatrix` | `(m, m)` | variability of `psi`, the meat `Omega` |
+
+- **Scheme.** `Omega` also carries how it was formed. `PlainLongRun` uses raw
+  moment cross-products; `MeanCenteredLongRun` subtracts the sample moment mean
+  first (Hall 2000, Eq. 9). They are unrelated siblings, no brand substitutes for
+  a consumer's required convention, and `sandwich_covariance` propagates the
+  scheme. Centering alone does not certify a profiled Hansen `J` or robust GMM
+  inference. The automatic bandwidth heuristic is not a data-dependent plug-in.
+- **Invariance.** The equation descriptor is invariant on its carriers, so checked
+  composition rejects unrelated descriptors instead of widening them. The separate
+  aggregate carrier keeps a leading batch axis from being read as an observation
+  axis. `mean_equation_jacobian` averages a derivative panel once;
+  `unsafe_assume_mean_equation_jacobian` asserts the same mean, not sum,
+  convention for a producer.
+- **Scaling.** For the HAC providers one contribution is one time row, every lag
+  cross-product has denominator `T`, and `Omega` estimates the variability of
+  `sqrt(T) * mean(psi)` with no finite-sample correction. `sandwich_covariance`
+  returns the limiting covariance of `sqrt(T) * (theta_hat - theta)`, without
+  division by `T`, and keeps its pseudoinverse behaviour; a finite singular result
+  is not evidence of identification.
+- **Parameter covariance.** `parameter_covariance` returns `ParameterCovariance`
+  with `values = limiting_covariance / n_observations * finite_sample_correction`.
+  The retained contribution count and positive correction are array leaves, so
+  batched counts are not compilation keys; complete panels require the count to
+  match the observation axis. A non-efficient GMM solve must pass its actual
+  symmetric PSD fitting weight, because omitting it selects the efficient form and
+  requires nonsingular meat.
+- **Validity.** The result reports weighted normal-matrix rank, `identified` and
+  `numerically_valid`. Rank uses JAX's default pseudoinverse cutoff,
+  `10 * matrix_dimension * dtype_epsilon`. Rank deficiency, nonfinite scales and
+  materially asymmetric or indefinite meat or weight give NaN values and false
+  validity, including under JIT and batching. Numerical validity does not
+  authorize ordinary inference: zero variances, restriction rank, dependence and
+  reference distributions need their own checks.
+- **Unsafe doors.** They cannot prove parameter labels, a common evaluation
+  parameter or retained-row identity. Producers must keep parameter order and
+  evaluate scores and derivatives at the reported parameter on the same retained
+  rows. `LinearFit` does this for the linear workflow: it owns complete arrays,
+  weights, parameter order, scores and mean derivatives, and `LinearUncertainty`
+  wraps that one fit so tests and intervals never take an unrelated fit and
+  covariance pair. Complete-array fitting has no retained-row mask to go stale.
+- **Linear covariance.** It uses the retained whitened-design QR map rather than a
+  weighted normal matrix, so conditioning is not squared again. Classical and HC
+  covariance carry `IndependentRows`, uncentered Bartlett HAC `PlainLongRun`, and
+  one-way cluster covariance `OneWayCluster`. Reference calibration and restriction
+  rank are separate inference operations; solver convergence never supplies them.
+
 ## Numerical and compatibility boundaries
 
 Precision belongs to the caller. Numerical inputs retain their floating dtypes;
@@ -190,6 +261,53 @@ stub coverage remains an audit rather than a guarantee.
 Do not add tracer-dependent Python assertions or validation to pytree rebuilding.
 Precision alone does not veto computation. Numerical failures and tested-domain
 limitations remain distinct from convergence and statistical assumptions.
+Supported backend operations run in caller precision, and an unsupported one
+stays visible instead of triggering a hidden upcast. Finite-reference results
+expose `finite_reference_outside_validated_range` independently of numerical
+success; it records the limits of the independent tests, not an alternative
+reference law.
+
+Why a library function cannot own x64: a scope such as
+`with jax.enable_x64(True)` inside a function reaches only values created inside
+it. Under `jit`, or `vmap` over a committed array, the argument was already
+canonicalized to float32 at the caller's boundary, so the function upcasts data
+that was rounded on the way in. The result dtype is still float64, so only a value
+check, not a dtype assertion, exposes it. A cotangent also follows the primal
+input dtype, eagerly as well as under `jit`. Bare `vmap` over a raw host buffer is
+the exception. The caller therefore owns the flag: process-wide through
+`jax.config`, or scoped around its whole numerical body (a stage using
+`geometry.embedding.pcoa_kernel` inside its own `enable_x64` scope is the model).
+The test session sets the global flag in `tests/conftest.py`. A spawned
+interpreter inherits no process-global flag, so a stage that fans out to `spawn`
+workers must set it at module import. Library-owned x64 scopes were removed
+because severely ill-conditioned dyadic bootstrap draws and Wolak solver lanes
+failed without client-selected precision; that justifies retained numerical
+diagnostics and explicit client configuration, not a library override.
+`tests/migration/test_sharpe_jax_scipy.py::test_door_scoped_x64_does_not_survive_jit`
+pins the property with a local door. It asserts the un-preserved direction on
+purpose, so a JAX release that changed canonicalization order fails there instead
+of silently moving a reported number.
+
+JAX transforms cross one numerical boundary. An eager entry point validates and
+packs array-like input; transformable numerical code takes JAX arrays and PRNG
+keys; the result is a registered array pytree (`TestResult`, `EstimateResult`,
+actual fit carriers). Python scalars and report objects appear only in a named
+`to_host_*` adapter, such as `to_host_test_result` and
+`to_host_confidence_interval`, after the pytree has left `jit` or `vmap`. These
+adapters reject tracers, and integer seeds belong to eager adapters. A numerical
+core must not concretize; host and report code may convert deliberately. A
+transformable door is qualified under direct execution, nested JIT and
+leading-axis vmap, and its host adapter must reject traced calls. Plain
+mathematical functions returning one array are values, not result boundaries, and
+a result record alone does not promise JIT. Procedure-specific assumptions stay
+with the producer of each result.
+
+Host conversion legitimately remains where a family assembles reports around
+numerical primitives: mixture and equivalence runners, block-length selectors,
+Mantel, GMM hypothesis, kappa, GMS and Wolak orchestration, covariance
+estimators, GEL fitting and testing (the private dual kernels stay numerical),
+and dyadic label, rank and bootstrap reporting. Each owner documents which doors
+are transformable; a guarantee for one family does not extend to another.
 
 Reusable objectives and solver loops have stable callable identities and receive
 changing arrays as explicit arguments. Only genuine algorithm choices are static.
@@ -203,7 +321,7 @@ contracts. Fit convergence, identification and inferential validity remain
 separate evidence. Preview status is documented at the real owning feature;
 empty future taxonomy directories are not shipped.
 
-The [module guide](docs/module-organization.md) records canonical imports and the
+The [module guide](docs/reference/upgrading.md) records canonical imports and the
 intentional namespace break, including historical Python qualified names.
 
 Dense least-squares adapters compose JAX's reduced QR and triangular solve,
@@ -231,7 +349,7 @@ PCoA and Wasserstein DISCO/ANOVA, learned linear embedding transforms targeting
 barycentric projection or spatial likelihood objectives, spatial survival and
 panel models, and broader `dcor`/POT parity. These are design requirements for
 incremental development, rather than claims of implemented support or a reason
-to create empty modules. The current [capability guide](docs/capabilities.md)
+to create empty modules. The current [capability guide](docs/reference/transformation-support.md)
 remains authoritative for qualified operations.
 
 ### Compose learning from scientific components
@@ -272,7 +390,10 @@ regularization must not silently replace an objective to obtain smoothness.
 ### Make unequal empirical supports a native design target
 
 Shipped source imports JAX numerical APIs only: NumPy and SciPy are independent
-test references, never runtime or type-only imports. Tach's explicit external
+test references (the suite checks the `jax.scipy` ports against upstream SciPy),
+never runtime or type-only imports. Statistical reference libraries stay optional
+parity oracles, not econometrics backends. Eager host validation uses JAX arrays
+and does not change caller precision. Tach's explicit external
 bans and the source AST guard run in `just python::architecture`; dynamic
 loading, execution and FFI/process escape patterns are also rejected. These
 checks are architectural review tools, not a sandbox for hostile Python.
@@ -330,7 +451,7 @@ spell likelihoods and dependent spatial likelihoods do not share a fabricated
 rowwise-score contract. Fixed-draw kernels remain transformable; adaptive
 integration refinement is an explicit eager controller retaining every attempt.
 Positive spatial delayed entry, frailty and start–stop histories remain separate
-scientific extensions. See [survival workflows](docs/survival-models.md).
+scientific extensions. See [survival workflows](docs/reference/survival.md).
 
 ### Establish parity and performance per method
 
