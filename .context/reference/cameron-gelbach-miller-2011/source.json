@@ -1,0 +1,23 @@
+{
+  "source_url": "https://cameron.econ.ucdavis.edu/research/JBESpaper2009version.pdf",
+  "statement_locations": [
+    "Author manuscript, section 2.2, equations (2.8)–(2.11).",
+    "Author manuscript, section 2.2, equation (2.7) and the union mask in (2.8).",
+    "Author manuscript §2.2, (2.7)–(2.11), and Appendix A on consistency with growing cluster counts."
+  ],
+  "proof_locations": [
+    "The indicator decomposition before equation (2.9), followed by the two-way subtraction in (2.11).",
+    "Section 2.2 derives the cluster variance using the restriction on pairs outside both cluster dimensions.",
+    "Match the mean of the retained-pair sum to the complete covariance sum using the off-mask restriction. This derivation uses the stated sufficient assumptions; Author manuscript §2.2, (2.7)–(2.11), and Appendix A on consistency with growing cluster counts.",
+    "Use unbiasedness and the finite-sample variance bound for the retained-pair sum. This derivation uses the stated sufficient assumptions; Author manuscript §2.2, (2.7)–(2.11), and Appendix A on consistency with growing cluster counts."
+  ],
+  "claim_ids": [
+    "STATADIC-PANELCOV-001",
+    "STATADIC-PANELCOV-002",
+    "STATADIC-CLUSTER-001",
+    "STATADIC-CLUSTER-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives each specialization and its assumptions, diagnostics and limits.",
+  "source_review": "Compared the indicated source with the formula and STATADIC branch implementation. Human semantic review pending."
+}

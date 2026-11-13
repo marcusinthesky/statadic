@@ -1,0 +1,17 @@
+{
+  "source_url": "https://users.ssc.wisc.edu/~behansen/718/Hall2000.pdf",
+  "statement_locations": [
+    "Equation (9), p. 1521, covariance calculation after subtracting the sample moment mean."
+  ],
+  "proof_locations": [
+    "Expand each centered pair product and use the sample-mean bound. This derivation uses the stated sufficient assumptions; Equation (9), p. 1521, covariance calculation after subtracting the sample moment mean.",
+    "Bound the variance of the sample mean by the score covariance-sum divided by N. This derivation uses the stated sufficient assumptions; Equation (9), p. 1521, covariance calculation after subtracting the sample moment mean."
+  ],
+  "claim_ids": [
+    "STATADIC-HAC-006",
+    "STATADIC-HAC-007"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Refer to the canonical registry for assumptions and limits.",
+  "source_review": "Compared the stated source construction with the verified algebra. Human semantic review pending."
+}

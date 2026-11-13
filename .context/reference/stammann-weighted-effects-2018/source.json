@@ -1,0 +1,27 @@
+{
+  "source_url": "https://arxiv.org/pdf/1707.01815v3",
+  "statement_locations": [
+    "arXiv:1707.01815v3, equation (3.4), pp. 6–7",
+    "Section 3.1, equation (3.3) and footnote 7, residual projection orthogonal to the weighted dummy design.",
+    "Section 3.2, alternating single-factor projections and weighted group update (3.4)."
+  ],
+  "proof_locations": [
+    "p. 6, single-factor weighted dummy projector immediately preceding (3.4), then groupwise formula (3.4)",
+    "Group the dummy-design normal equations by label and expand the squared objective around the certified residual.",
+    "Specialize (3.4) to a complete rectangular roster with product weights, and interchange the two marginal sums.",
+    "Weighted orthogonality after each individual sweep and the exact full-sweep fixed point force both corrections to vanish.",
+    "STATADIC three-observation calculation of the weighted group update (3.4).",
+    "Finite sweep induction plus simultaneous normal equations and the weighted dummy-projection identity of §3.1."
+  ],
+  "claim_ids": [
+    "STATADIC-PANEL-001",
+    "STATADIC-PANEL-002",
+    "STATADIC-PANEL-003",
+    "STATADIC-PANEL-004",
+    "STATADIC-PANEL-005",
+    "STATADIC-PANEL-006"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry states the assumptions, exact scope and Python correspondence.",
+  "source_review": "Compared the source equations with the mathematical statement and listed restrictions. Human semantic review pending."
+}

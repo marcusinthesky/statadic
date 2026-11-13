@@ -1,0 +1,51 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# The H1 names the API object. Every section includes its subsections.
+maxTokens: 3000
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: reference
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      const: Usage
+    maxTokens: 600
+    blocks:
+    - type: code
+      minContains: 1
+  - header:
+      const: Description
+    maxTokens: 600
+  - header:
+      const: Options
+    maxTokens: 600
+  - header:
+      const: Results
+    maxTokens: 600
+  - header:
+      const: Methods and formulas
+    minContains: 0
+    maxContains: 1
+    maxTokens: 600
+  - header:
+      const: Assumptions and limits
+    maxTokens: 600
+  - header:
+      const: Evidence
+    maxTokens: 600
+  - header:
+      const: See also
+    maxTokens: 600
+  additionalSections: false

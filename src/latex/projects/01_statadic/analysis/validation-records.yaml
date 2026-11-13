@@ -1,0 +1,31 @@
+# Retained validation records consumed by analysis/generate.py.
+# Source: the retained AFT qualification table and the public Sharpe coverage
+# study recorded in src/python/packages/statadic/docs/validation.md. Values
+# are copied verbatim; update them here when those records are re-qualified.
+#
+# aft_records (exactly 8 rows), one per qualification cell:
+#   family       Weibull or Lognormal
+#   n            sample size
+#   entry        Zero or Positive (delayed-entry setting)
+#   valid        trials that produced a valid fit
+#   requested    trials requested
+#   rejected     trials rejected by the cell's criterion
+#   lower_bound  coverage lower bound, kept as a string to preserve digits
+#   disposition  Qualified or Inconclusive
+#
+# sharpe_coverage: trials (out of `trials`) whose public Sharpe CI at T=128
+# covered the true value, for Gaussian, skewed and dependent returns.
+aft_records:
+  - {family: Weibull, n: 128, entry: Zero, valid: 10000, requested: 10000, rejected: 551, lower_bound: "0.941000", disposition: Qualified}
+  - {family: Lognormal, n: 128, entry: Zero, valid: 10000, requested: 10000, rejected: 589, lower_bound: "0.937081", disposition: Inconclusive}
+  - {family: Weibull, n: 512, entry: Zero, valid: 10000, requested: 10000, rejected: 544, lower_bound: "0.941722", disposition: Qualified}
+  - {family: Lognormal, n: 512, entry: Zero, valid: 10000, requested: 10000, rejected: 515, lower_bound: "0.944717", disposition: Qualified}
+  - {family: Weibull, n: 128, entry: Positive, valid: 9999, requested: 10000, rejected: 564, lower_bound: "0.939556", disposition: Inconclusive}
+  - {family: Lognormal, n: 128, entry: Positive, valid: 10000, requested: 10000, rejected: 557, lower_bound: "0.940381", disposition: Qualified}
+  - {family: Weibull, n: 512, entry: Positive, valid: 10000, requested: 10000, rejected: 504, lower_bound: "0.945853", disposition: Qualified}
+  - {family: Lognormal, n: 512, entry: Positive, valid: 10000, requested: 10000, rejected: 525, lower_bound: "0.943684", disposition: Qualified}
+sharpe_coverage:
+  trials: 10000
+  gaussian: 9312
+  skewed: 9335
+  dependent: 8711

@@ -1,0 +1,12 @@
+{% set live = rows | selectattr('terminal', 'equalto', 0) | list %}
+{% if live %}
+| Status | Item | Description |
+| --- | --- | --- |
+{% for row in live %}
+| {{ row.status }} | [{{ row.label | replace('\\', '\\\\') | replace('[', '\\[') | replace(']', '\\]') | replace('|', '\\|') }}]({{ row.path | relative_to(this.directory) }}) | {{ row.description | replace('\\', '\\\\') | replace('|', '\\|') | replace('\n', ' ') }} |
+{% endfor %}
+{% else %}
+_No open children._
+{% endif %}
+
+`{{ live | length }} open; {{ (rows | length) - (live | length) }} terminal`

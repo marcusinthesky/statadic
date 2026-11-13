@@ -1,0 +1,21 @@
+{
+  "source_url": "https://eprints.maths.manchester.ac.uk/342/1/30289.pdf",
+  "statement_locations": [
+    "Section 3, Theorem 3.1 and equation (3.2), spectral floor correction.",
+    "Theorem 3.1, equation (3.2), Frobenius-norm perturbation.",
+    "Theorem 3.1 and (3.2), orthogonal reconstruction with a spectral lower bound."
+  ],
+  "proof_locations": [
+    "Use cyclic trace invariance to remove the orthonormal basis. Section 3, Theorem 3.1 and equation (3.2), spectral floor correction.",
+    "Separate diagonal from off-diagonal contributions. Theorem 3.1, equation (3.2), Frobenius-norm perturbation.",
+    "Conjugate the error to the eigenbasis without changing its Frobenius norm. Theorem 3.1 and (3.2), orthogonal reconstruction with a spectral lower bound."
+  ],
+  "claim_ids": [
+    "STATADIC-PSD-001",
+    "STATADIC-PSD-002",
+    "STATADIC-PSD-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The source supplies the indicated result or motivation. The registry describes the exact specialization and diagnostic limits.",
+  "source_review": "Compared with the primary source and current STATADIC implementation. Human semantic review pending."
+}

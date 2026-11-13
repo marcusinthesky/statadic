@@ -1,0 +1,15 @@
+{
+  "source_url": "https://arxiv.org/abs/1809.04129",
+  "statement_locations": [
+    "Section 2.2, normalized-weight approximation in equation (7)."
+  ],
+  "proof_locations": [
+    "Compare each weight with total weight. Section 2.2, normalized-weight approximation in equation (7)."
+  ],
+  "claim_ids": [
+    "STATADIC-INTEGRATION-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The source supplies the indicated result or motivation. The registry describes the exact specialization and diagnostic limits.",
+  "source_review": "Compared with the primary source and current STATADIC implementation. Human semantic review pending."
+}

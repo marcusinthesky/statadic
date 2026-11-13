@@ -1,0 +1,15 @@
+{
+  "source_url": "https://doi.org/10.1016/j.csda.2017.11.004",
+  "statement_locations": [
+    "Marginal log-likelihood, opening paragraph immediately after equation (4), observed Gaussian covariance"
+  ],
+  "proof_locations": [
+    "Marginal log-likelihood, same paragraph, linear transformation of a Gaussian vector by an observation matrix"
+  ],
+  "claim_ids": [
+    "STATADIC-SPATIAL-002"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Gaussianity, the missingness mechanism, Cholesky stability, estimation and inference are outside this matrix identity. Suesse treats SAR and SEM. Taking F = BA combines filters by the same algebra.",
+  "source_review": "Compared to the publisher’s displayed marginalization argument. The rectangular solve is STATADIC’s implementation algebra. Human semantic review pending."
+}

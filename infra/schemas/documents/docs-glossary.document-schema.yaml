@@ -1,0 +1,23 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# A reference variant made of `{glossary}` entries.
+maxTokens: 3000
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: glossary
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  blocks:
+  - type: code
+    minContains: 1

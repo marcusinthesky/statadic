@@ -1,0 +1,15 @@
+{
+  "source_url": "https://bigwww.epfl.ch/preprints/unser9902p.pdf",
+  "statement_locations": [
+    "Section 2.1, equations (1) and (6), pp. 3–4 of the author manuscript"
+  ],
+  "proof_locations": [
+    "Equation (1) expands the spline in translated basis functions, and (6) gives the centred cubic pieces. STATADIC proves the explicit fourth-difference coefficient and cyclic-seam specialization by polynomial expansion."
+  ],
+  "claim_ids": [
+    "STATADIC-SPLINE-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "source_review": "Agent comparison of the cited formulas with the Lean definitions. Human semantic review pending.",
+  "scope_note": "The published formulas motivate the implementation. The STATADIC-specific refinements and their assumptions are stated in the claim registry."
+}

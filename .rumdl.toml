@@ -1,0 +1,10 @@
+[global]
+exclude = [".devenv/**", ".direnv/**", "**/.venv/**", "**/node_modules/**", "**/.lake/**", ".insitu/**", "**/build/**", "**/dist/**", "**/web/**", "**/print/**"]
+disable = ["MD013"]
+
+[MD025]
+front-matter-title = ""
+
+# Native HTML disclosure keeps detailed evidence available without crowding guides.
+[MD033]
+allowed-elements = ["details", "summary"]

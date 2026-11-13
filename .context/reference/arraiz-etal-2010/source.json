@@ -1,0 +1,28 @@
+{
+  "source_url": "https://econweb.umd.edu/~prucha/Papers/JRS50(2010).pdf",
+  "statement_locations": [
+    "Section 3, Step 1b, equation (13)",
+    "Section 3, Moment Conditions, equations (10)–(11)",
+    "Section 3, Step 1a, projected regressors and 2SLS coefficient in equation (12)",
+    "§§2–3, spatial filters, moment equations (10)–(11) and the quadratic criterion (13)."
+  ],
+  "proof_locations": [
+    "Equation (13) and Appendix B, definition of G and g. STATADIC uses symmetric moment matrices.",
+    "Rewrite equation (10) as (11) using zero diagonal entries and vanishing cross moments under Assumptions 1(a) and 2.",
+    "Equation (12), instrument projection P_H and the normal equations for the projected design.",
+    "Factor each moment difference into the candidate displacement and a linear secant factor. Use the product identity in both directions.",
+    "Substitute both roots and evaluate the derivative at 1/2. The quadratic form is the one in the source, and this counterexample is derived here.",
+    "Expand both products as polynomials in the same matrix, then substitute equality in the inverse covariance factors."
+  ],
+  "claim_ids": [
+    "STATADIC-GMM-001",
+    "STATADIC-GMM-002",
+    "STATADIC-IV-001",
+    "STATADIC-SPATIAL-004",
+    "STATADIC-SPATIAL-005",
+    "STATADIC-SPATIAL-006"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See each claim for assumptions, Python correspondence and limits. Locally derived special cases and counterexamples are identified separately from published results.",
+  "source_review": "Primary text and source locators reviewed. Human semantic review pending."
+}

@@ -1,0 +1,71 @@
+[project]
+id = "synthetic-ols-hc3"
+title = "A synthetic regression"
+[analysis]
+script = "analysis.py"
+seed = 17
+estimand = "Slope of the conditional mean of y with respect to x"
+assumptions = ["Observations are independent.", "The conditional mean is linear in x."]
+model = { family = "OLS", response = "y", terms = ["Intercept", "Linear(x)"] }
+covariance = "HC3"
+reference = "normal"
+snapshots = ["fit-snapshot", "inference-snapshot"]
+diagnostics = ["figure"]
+[[inputs]]
+id = "synthetic-data"
+path = "data/synthetic.csv"
+sha256 = "7c945ba9aba7a6fb5ba439f614dacad83756c0f5fc193ad2cb6fb96a6db4291d"
+redistributable = true
+[[outputs]]
+id = "fit-snapshot"
+path = "fit-snapshot/manifest.json"
+media_type = "application/json"
+required = true
+[[outputs]]
+id = "fit-arrays"
+path = "fit-snapshot/arrays.bin"
+media_type = "application/octet-stream"
+required = true
+[[outputs]]
+id = "inference-snapshot"
+path = "inference-snapshot/manifest.json"
+media_type = "application/json"
+required = true
+[[outputs]]
+id = "inference-arrays"
+path = "inference-snapshot/arrays.bin"
+media_type = "application/octet-stream"
+required = true
+[[outputs]]
+id = "table"
+path = "table.tex"
+media_type = "application/x-tex"
+required = true
+[[outputs]]
+id = "figure"
+path = "figure.tex"
+media_type = "application/x-tex"
+required = true
+[[outputs]]
+id = "methods"
+path = "methods.json"
+media_type = "application/json"
+required = true
+[manuscript]
+root = "manuscript"
+main = "main.tex"
+bibliography = { path = "../../../../../latex/refs.bib", sha256 = "aea3dd9c6168b9db491e76af677eb07a270f093c28f4e3e2e89827fa9ed3bd6e" }
+tex_bundle = { path = "../../../../../latex/bundle/tlextras-2022.0r0-statadic.zip", sha256 = "3c89d091d3648f59cf21d181793ffd4f22c07abf2709ebea66eede7fbfb13134" }
+check_log = "../../../../../latex/tools/check-log"
+[environment]
+lockfiles = ["../../../../uv.lock"]
+[[claims]]
+id = "slope-interval"
+text = "The HC3 interval describes uncertainty about the slope under the stated assumptions."
+outputs = ["inference-snapshot", "table"]
+citations = ["white-1980", "mackinnon-white-1985"]
+formal = "unavailable"
+source_fidelity = "not-run"
+implementation = "pending"
+qualification = "not-run"
+human_review = "pending"

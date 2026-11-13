@@ -1,0 +1,1556 @@
+# Scientific module ownership and supported cross-family interfaces.
+# Nested ownership separates taxonomy from dependency direction: ground geometry
+# can feed discrepancy families which feed geometric barycentres. Lightweight
+# namespace initializers have no outgoing family dependencies.
+source_roots = [
+  "packages/statadic/src", "packages/statadic-evidence/src", "packages/statadic-publishing/src", "apps/studies/src",
+  "apps/performance/src", "apps/docs/src",
+]
+exclude = ["**/tests/**"]
+root_module = "forbid"
+exact = true
+forbid_circular_dependencies = true
+ignore_type_checking_imports = false
+include_string_imports = true
+
+# Tach checks within packages. The architecture script owns cross-package rules.
+[[modules]]
+paths = ["statadic_evidence", "statadic_publishing", "statadic_studies", "statadic_performance", "statadic_docs_labs", "statadic_docs_pages"]
+depends_on = []
+
+[[modules]]
+path = "statadic"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.api"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.api.data"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.reporting", "statadic.core", "statadic.sample"]
+
+[[modules]]
+path = "statadic.api.tables"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.data", "statadic.core", "statadic.sample"]
+
+[[modules]]
+path = "statadic.api.roles"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.api.prediction"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.roles", "statadic.api.inputs", "statadic.api.data", "statadic.api.design", "statadic.core"]
+
+[[modules]]
+path = "statadic.api.inputs"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.roles", "statadic.api.data", "statadic.api.tables"]
+
+[[modules]]
+path = "statadic.api.plots"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.reporting", "statadic.api.regression", "statadic.core"]
+
+[[modules]]
+path = "statadic.api.representation"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.data",
+  "statadic.core",
+  "statadic.sample",
+  "statadic.discrepancy.mmd",
+  "statadic.discrepancy.transport",
+  "statadic.geometry.ground"
+]
+
+[[modules]]
+path = "statadic.api.spatial.graphs"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.data", "statadic.api.representation", "statadic.core", "statadic.operators", "statadic.sample", "statadic.api.design", "statadic.api.roles"]
+
+[[modules]]
+path = "statadic.api.spatial.learning"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.spatial.graphs",
+  "statadic.api.spatial",
+  "statadic.core",
+  "statadic.estimation.spatial",
+]
+
+[[modules]]
+path = "statadic.api.spatial.selection"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.regression", "statadic.api.spatial.learning", "statadic.api.spatial.graphs", "statadic.api.spatial"]
+
+[[modules]]
+path = "statadic.api.spatial.resampling"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.regression",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.spatial.learning",
+  "statadic.api.spatial.graphs",
+  "statadic.api.panel",
+  "statadic.api.reporting",
+  "statadic.api.spatial",
+  "statadic.core",
+  "statadic.operators",
+]
+
+[[modules]]
+path = "statadic.api.design"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.inputs", "statadic.api.roles", "statadic.api.data", "statadic.api.representation", "statadic.core", "statadic.api.ordination_terms"]
+
+[[modules]]
+path = "statadic.api.reporting"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.api.embedding"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.api.artifacts"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.spatial.graphs", "statadic.api.panel", "statadic.api.spatial", "statadic.estimation.spatial", "statadic.operators", "statadic.api.prediction", "statadic.api.inputs", "statadic.api.data", "statadic.api.design", "statadic.api.representation", "statadic.api.reporting", "statadic.core", "statadic.model.glm", "statadic.sample", "statadic.geometry.ground", "statadic.discrepancy.transport", "statadic.api.ordination_terms", "statadic.geometry.embedding"]
+
+[[modules]]
+path = "statadic.api.fit_statistics"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.reporting", "statadic.estimation.linear"]
+
+[[modules]]
+path = "statadic.api.base"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.fit_statistics",
+  "statadic.api.roles",
+  "statadic.api.inputs",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.inference.contracts"
+]
+
+[[modules]]
+path = "statadic.api.hypotheses"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.design", "statadic.api.reporting", "statadic.core"]
+
+[[modules]]
+path = "statadic.api.diagnostics"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.base",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.hypotheses",
+  "statadic.api.inference",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.estimation.gmm",
+  "statadic.estimation.iv",
+  "statadic.estimation.linear",
+  "statadic.inference.linear_diagnostics",
+  "statadic.inference.gmm",
+  "statadic.inference.iv"
+]
+
+[[modules]]
+path = "statadic.api.inference"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.design",
+  "statadic.api.fit_statistics",
+  "statadic.api.hypotheses",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.inference.contracts",
+  "statadic.inference.parameters"
+]
+
+[[modules]]
+path = "statadic.api.regression"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.diagnostics", "statadic.api.hypotheses", "statadic.api.prediction", "statadic.api.roles", "statadic.api.inputs", "statadic.api.base", "statadic.api.fit_statistics", "statadic.api.inference", "statadic.api.data", "statadic.api.design", "statadic.api.reporting", "statadic.api.artifacts", "statadic.core", "statadic.model.glm", "statadic.model.likelihood", "statadic.estimation.linear", "statadic.estimation.glm", "statadic.estimation.iv", "statadic.estimation.likelihood", "statadic.inference.iv", "statadic.inference.likelihood", "statadic.inference.contracts", "statadic.inference.linear_covariance", "statadic.inference.glm_covariance", "statadic.api.spatial.learning", "statadic.api.spatial.graphs", "statadic.api.panel", "statadic.api.spatial", "statadic.api.dyadic", "statadic.api.survival", "statadic.api.comparison", "statadic.api.representation", "statadic.estimation.panel", "statadic.estimation.spatial", "statadic.estimation.survival", "statadic.model.survival", "statadic.operators", "statadic.association", "statadic.inference.geometric", "statadic.inference.calibration"]
+
+[[modules]]
+path = "statadic.api.panel"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.spatial.graphs",
+  "statadic.api.prediction",
+  "statadic.api.roles",
+  "statadic.api.base",
+  "statadic.api.inference",
+  "statadic.api.inputs",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.estimation.panel",
+  "statadic.inference.panel_covariance",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.api.spatial"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.prediction", "statadic.api.spatial.graphs", "statadic.api.roles", "statadic.api.base", "statadic.api.fit_statistics", "statadic.api.inference", "statadic.api.data", "statadic.api.design", "statadic.api.panel", "statadic.api.reporting", "statadic.core", "statadic.estimation.linear", "statadic.estimation.spatial", "statadic.inference.contracts", "statadic.inference.linear_covariance", "statadic.inference.spatial", "statadic.operators", "statadic.api.diagnostics", "statadic.api.hypotheses"]
+
+[[modules]]
+path = "statadic.api.survival"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.inputs",
+  "statadic.api.prediction",
+  "statadic.api.base",
+  "statadic.api.fit_statistics",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.spatial.graphs",
+  "statadic.api.spatial",
+  "statadic.api.inference",
+  "statadic.api.panel",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.estimation.survival",
+  "statadic.inference.survival",
+  "statadic.model.survival",
+  "statadic.operators",
+  "statadic.optimize",
+]
+
+[[modules]]
+path = "statadic.api.comparison"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.base",
+  "statadic.api.data",
+  "statadic.api.design",
+  "statadic.api.hypotheses",
+  "statadic.api.representation",
+  "statadic.api.reporting",
+  "statadic.api.embedding",
+  "statadic.core",
+  "statadic.association",
+  "statadic.geometry.median",
+  "statadic.inference.disco",
+  "statadic.inference.dispersion",
+  "statadic.api.ordination",
+]
+
+[[modules]]
+path = "statadic.api.association"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.base",
+  "statadic.api.comparison",
+  "statadic.api.data",
+  "statadic.api.hypotheses",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.association",
+  "statadic.inference.mantel"
+]
+
+[[modules]]
+path = "statadic.api.covariance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.base",
+  "statadic.api.data",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.estimation.covariance"
+]
+
+[[modules]]
+path = "statadic.api.dyadic"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.base",
+  "statadic.api.data",
+  "statadic.api.hypotheses",
+  "statadic.api.reporting",
+  "statadic.model.dyadic",
+  "statadic.estimation.dyadic",
+  "statadic.inference.dyadic",
+  "statadic.api.design",
+]
+
+[[modules]]
+path = "statadic.core"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.api.moments"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.api.diagnostics",
+  "statadic.api.inference",
+  "statadic.api.hypotheses",
+  "statadic.api.base",
+  "statadic.api.data",
+  "statadic.api.reporting",
+  "statadic.core",
+  "statadic.estimation.moments",
+  "statadic.estimation.gmm",
+  "statadic.estimation.gel",
+  "statadic.inference.gmm",
+  "statadic.inference.gel"
+]
+
+[[modules]]
+path = "statadic.estimation.moments"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.optimize"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.sample"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.geometry"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.geometry.ground"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.sample"]
+
+[[modules]]
+path = "statadic.geometry.barycentre"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.geometry.barycentre.mmd"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.discrepancy.mmd", "statadic.geometry.ground", "statadic.sample", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.geometry.barycentre.wasserstein"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.geometry.ground", "statadic.sample"]
+
+[[modules]]
+path = "statadic.geometry.embedding"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.geometry.median"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.geometry.neighbour"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.discrepancy"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.discrepancy.mmd"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.discrepancy.provenance",
+  "statadic.geometry.ground",
+  "statadic.optimize",
+  "statadic.sample"
+]
+
+[[modules]]
+path = "statadic.discrepancy.transport"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.geometry.ground", "statadic.sample"]
+
+[[modules]]
+path = "statadic.discrepancy.metrize"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.discrepancy.provenance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.association"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.geometry.median"]
+
+[[modules]]
+path = "statadic.operators"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.model"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.model.glm"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.model.likelihood"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.model.survival"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.model.dyadic"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.operators"]
+
+[[modules]]
+path = "statadic.estimation"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.estimation._validation"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.estimation.covariance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.estimation.dyadic"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.model.dyadic",
+  "statadic.operators",
+  "statadic.optimize"
+]
+
+[[modules]]
+path = "statadic.estimation.gel"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.moments"]
+
+[[modules]]
+path = "statadic.estimation.glm"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.model.glm", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.estimation.likelihood"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.model.likelihood", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.estimation.iv"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.gmm", "statadic.operators"]
+
+[[modules]]
+path = "statadic.estimation.gmm"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation._validation",
+  "statadic.estimation.moments",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.estimation.linear"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation._validation", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.estimation.panel"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation._validation",
+  "statadic.estimation.linear",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.estimation.sharpe"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.estimation.survival"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.model.survival",
+  "statadic.operators",
+  "statadic.optimize",
+]
+
+[[modules]]
+path = "statadic.estimation.spatial"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation._validation",
+  "statadic.estimation.gmm",
+  "statadic.estimation.moments",
+  "statadic.estimation.linear",
+  "statadic.operators",
+  "statadic.optimize"
+]
+
+[[modules]]
+path = "statadic.inference"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.inference._common"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.inference._parameter_reference"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference._projection"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.optimize"]
+
+[[modules]]
+path = "statadic.inference.calibration"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference.clustering"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference.contracts"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference.disco"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.association", "statadic.core"]
+
+[[modules]]
+path = "statadic.inference.dispersion"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.association", "statadic.core", "statadic.geometry.median"]
+
+[[modules]]
+path = "statadic.inference.dyadic"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.dyadic",
+  "statadic.model.dyadic",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.inference.equivalence"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.geometry.ground", "statadic.inference.mixture"]
+
+[[modules]]
+path = "statadic.inference.gel"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.gel", "statadic.inference._common"]
+
+[[modules]]
+path = "statadic.inference.glm_covariance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.glm", "statadic.model.glm"]
+
+[[modules]]
+path = "statadic.inference.likelihood"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.likelihood"]
+
+[[modules]]
+path = "statadic.inference.iv"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.iv", "statadic.estimation.gmm", "statadic.operators", "statadic.inference._row_order"]
+
+[[modules]]
+path = "statadic.inference.gmm"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.gmm",
+  "statadic.estimation.moments",
+  "statadic.inference._common",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.inference.gms"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.moments",
+  "statadic.inference._common",
+  "statadic.inference._projection",
+  "statadic.operators",
+  "statadic.optimize"
+]
+
+[[modules]]
+path = "statadic.inference.kappa"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.moments", "statadic.inference._common", "statadic.operators"]
+
+[[modules]]
+path = "statadic.inference._row_order"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference.linear_covariance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.linear", "statadic.operators", "statadic.inference._row_order"]
+
+[[modules]]
+path = "statadic.inference.linear_diagnostics"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.linear",
+  "statadic.inference._row_order",
+  "statadic.inference._parameter_reference"
+]
+
+[[modules]]
+path = "statadic.inference.mantel"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.association", "statadic.core", "statadic.inference.resampling"]
+
+[[modules]]
+path = "statadic.inference.mixture"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.discrepancy.mmd",
+  "statadic.geometry.barycentre.mmd",
+  "statadic.geometry.ground",
+  "statadic.inference.resampling",
+  "statadic.inference.studentized",
+  "statadic.sample"
+]
+
+[[modules]]
+path = "statadic.inference.multiplicity"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = []
+
+[[modules]]
+path = "statadic.inference.panel_covariance"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.panel", "statadic.operators"]
+
+[[modules]]
+path = "statadic.inference.parameters"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.inference._parameter_reference",
+  "statadic.inference.contracts"
+]
+
+[[modules]]
+path = "statadic.inference.resampling"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.discrepancy.mmd",
+  "statadic.estimation.linear",
+  "statadic.geometry.ground"
+]
+
+[[modules]]
+path = "statadic.inference.sharpe"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.sharpe",
+  "statadic.inference.resampling",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.inference.spatial"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.linear",
+  "statadic.estimation.spatial",
+  "statadic.inference.gmm",
+  "statadic.inference.likelihood",
+  "statadic.operators"
+]
+
+[[modules]]
+path = "statadic.inference.survival"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core", "statadic.estimation.survival"]
+
+[[modules]]
+path = "statadic.inference.studentized"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.discrepancy.mmd",
+  "statadic.geometry.ground",
+  "statadic.inference.resampling"
+]
+
+[[modules]]
+path = "statadic.inference.wolak"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = [
+  "statadic.core",
+  "statadic.estimation.moments",
+  "statadic.inference._common",
+  "statadic.inference._projection",
+  "statadic.operators",
+  "statadic.optimize"
+]
+
+[[modules]]
+path = "statadic.testing"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.api.ordination_terms"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.data", "statadic.api.roles", "statadic.api.representation", "statadic.core", "statadic.geometry.embedding", "statadic.geometry.ground", "statadic.geometry.shortest_paths", "statadic.sample"]
+
+[[modules]]
+path = "statadic.api.ordination"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.base", "statadic.api.artifacts", "statadic.api.data", "statadic.api.design", "statadic.api.ordination_terms", "statadic.api.reporting", "statadic.api.representation", "statadic.api.roles", "statadic.core", "statadic.geometry.embedding", "statadic.geometry.ground", "statadic.geometry.shortest_paths", "statadic.sample"]
+
+[[modules]]
+path = "statadic.geometry.shortest_paths"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.core"]
+
+[[modules]]
+path = "statadic.inference.geometric"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.association"]
+
+[[modules]]
+path = "statadic.api.capabilities"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.fit_statistics", "statadic.api.reporting"]
+
+[[modules]]
+path = "statadic.api.estimand"
+cannot_depend_on_external = ["numpy", "scipy"]
+depends_on = ["statadic.api.base", "statadic.api.covariance", "statadic.api.data", "statadic.api.moments", "statadic.core", "statadic.estimation.covariance", "statadic.estimation.gel", "statadic.estimation.gmm", "statadic.estimation.moments"]
+
+[[interfaces]]
+from = ["statadic.inference._row_order"]
+expose = ["_validated_row_order"]
+visibility = ["statadic.inference.linear_covariance", "statadic.inference.linear_diagnostics", "statadic.inference.iv"]
+
+[[interfaces]]
+from = ["statadic.api.data"]
+expose = ["_resolve_row_order", "_row_order_metadata"]
+visibility = ["statadic.api.diagnostics", "statadic.api.regression", "statadic.api.spatial"]
+
+[[interfaces]]
+from = ["statadic.api.diagnostics"]
+expose = ["_diagnostic_requests"]
+visibility = ["statadic.api.regression", "statadic.api.moments", "statadic.api.spatial"]
+
+[[interfaces]]
+from = ["statadic.api.reporting"]
+expose = ["_confidence_label"]
+visibility = ["statadic.api.inference"]
+
+[[interfaces]]
+from = ["statadic.api.reporting"]
+expose = ["_row_identity"]
+visibility = ["statadic.api.data", "statadic.api.diagnostics", "statadic.api.inference", "statadic.api.association", "statadic.api.comparison", "statadic.api.moments", "statadic.api.regression", "statadic.api.spatial"]
+
+[[interfaces]]
+from = ["statadic.api.embedding"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.api.inference"]
+expose = ["_independent_covariance"]
+visibility = ["statadic.api.regression"]
+
+# Public module paths are explicit. Within each, an alphabetic-leading symbol
+# is public; underscore-prefixed symbols and private child modules are hidden.
+# These are Tach regular expressions, not shell globs. Keeping the symbol rule
+# uniform avoids duplicating every module's __all__ list in this configuration.
+
+[[interfaces]]
+from = ["statadic"]
+expose = ["__version__", "[A-Za-z][A-Za-z0-9_]*"]
+
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "axioms.[A-Za-z][A-Za-z0-9_]*",
+  "domains.[A-Za-z][A-Za-z0-9_]*",
+  "equations.[A-Za-z][A-Za-z0-9_]*",
+  "matrices.[A-Za-z][A-Za-z0-9_]*",
+  "precision.[A-Za-z][A-Za-z0-9_]*",
+  "random.[A-Za-z][A-Za-z0-9_]*",
+  "results.[A-Za-z][A-Za-z0-9_]*",
+  "statistics.[A-Za-z][A-Za-z0-9_]*",
+  "transforms.[A-Za-z][A-Za-z0-9_]*",
+  "typing.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.optimize"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "backends.[A-Za-z][A-Za-z0-9_]*",
+  "integration.[A-Za-z][A-Za-z0-9_]*",
+  "integration.gaussian.[A-Za-z][A-Za-z0-9_]*",
+  "glm.[A-Za-z][A-Za-z0-9_]*",
+  "psd.[A-Za-z][A-Za-z0-9_]*",
+  "simplex.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.sample"]
+expose = [
+  "alternatives.[A-Za-z][A-Za-z0-9_]*",
+  "evidence.[A-Za-z][A-Za-z0-9_]*",
+  "packed.[A-Za-z][A-Za-z0-9_]*",
+  "measures.[A-Za-z][A-Za-z0-9_]*",
+  "reduction.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.geometry.ground"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "config.[A-Za-z][A-Za-z0-9_]*",
+  "metrics.[A-Za-z][A-Za-z0-9_]*",
+  "similarities.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.geometry.barycentre.mmd"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "energy.[A-Za-z][A-Za-z0-9_]*",
+  "energy.weights.[A-Za-z][A-Za-z0-9_]*",
+  "solve.[A-Za-z][A-Za-z0-9_]*",
+  "weights.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.geometry.barycentre.wasserstein"]
+expose = ["[A-Za-z][A-Za-z0-9_]*", "measure.[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.geometry.embedding"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.geometry.median"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.geometry.neighbour"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.discrepancy.mmd"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "branded.[A-Za-z][A-Za-z0-9_]*",
+  "components.[A-Za-z][A-Za-z0-9_]*",
+  "contracts.[A-Za-z][A-Za-z0-9_]*",
+  "energy.[A-Za-z][A-Za-z0-9_]*",
+  "energy.balancing.[A-Za-z][A-Za-z0-9_]*",
+  "energy.balancing.effective_size.[A-Za-z][A-Za-z0-9_]*",
+  "energy.balancing.mixture.[A-Za-z][A-Za-z0-9_]*",
+  "energy.balancing.statistics.[A-Za-z][A-Za-z0-9_]*",
+  "energy.balancing.weights.[A-Za-z][A-Za-z0-9_]*",
+  "energy.geometry.[A-Za-z][A-Za-z0-9_]*",
+  "energy.kernel.[A-Za-z][A-Za-z0-9_]*",
+  "energy.matrix.[A-Za-z][A-Za-z0-9_]*",
+  "energy.mixture.[A-Za-z][A-Za-z0-9_]*",
+  "energy.scalar.[A-Za-z][A-Za-z0-9_]*",
+  "energy.statistics.[A-Za-z][A-Za-z0-9_]*",
+  "energy.weighted.[A-Za-z][A-Za-z0-9_]*",
+  "functional.[A-Za-z][A-Za-z0-9_]*",
+  "laws.[A-Za-z][A-Za-z0-9_]*",
+  "matrix.[A-Za-z][A-Za-z0-9_]*",
+  "scalar.[A-Za-z][A-Za-z0-9_]*",
+  "weighted.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.discrepancy.transport"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "exact.[A-Za-z][A-Za-z0-9_]*",
+  "matrix.[A-Za-z][A-Za-z0-9_]*",
+  "sinkhorn.sinkhorn_cost",
+  "sliced.[A-Za-z][A-Za-z0-9_]*",
+  "univariate.[A-Za-z][A-Za-z0-9_]*"
+]
+
+[[interfaces]]
+from = ["statadic.discrepancy.metrize"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.discrepancy.provenance"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.association"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "decomposition.[A-Za-z][A-Za-z0-9_]*",
+  "dispersion.[A-Za-z][A-Za-z0-9_]*",
+  "mantel.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.operators"]
+expose = [
+  "covariance.[A-Za-z][A-Za-z0-9_]*",
+  "design.[A-Za-z][A-Za-z0-9_]*",
+  "longrun.[A-Za-z][A-Za-z0-9_]*",
+  "panel.[A-Za-z][A-Za-z0-9_]*",
+  "parameters.[A-Za-z][A-Za-z0-9_]*",
+  "spatial.[A-Za-z][A-Za-z0-9_]*",
+  "spatial.distance.rbf_weights",
+  "spatial.moments.[A-Za-z][A-Za-z0-9_]*",
+  "spatial.weights.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.model.glm"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.model.likelihood", "statadic.estimation.likelihood", "statadic.estimation.iv", "statadic.inference.likelihood", "statadic.inference.iv"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.model.dyadic"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "specification.[A-Za-z][A-Za-z0-9_]*",
+  "validation.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.estimation.covariance"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "cross_validation.[A-Za-z][A-Za-z0-9_]*",
+  "estimators.[A-Za-z][A-Za-z0-9_]*",
+  "shrinkage.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.estimation.dyadic"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "contracts.[A-Za-z][A-Za-z0-9_]*",
+  "fit.[A-Za-z][A-Za-z0-9_]*",
+  "solve.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.estimation.gel"]
+expose = ["[A-Za-z][A-Za-z0-9_]*", "fit.[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.glm"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.gmm"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.moments"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.linear"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.panel"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.sharpe"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.estimation.spatial"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "gmm.[A-Za-z][A-Za-z0-9_]*",
+  "graph_likelihood.[A-Za-z][A-Za-z0-9_]*",
+  "graph_learning.[A-Za-z][A-Za-z0-9_]*",
+  "iv.[A-Za-z][A-Za-z0-9_]*",
+  "kkp.[A-Za-z][A-Za-z0-9_]*",
+  "likelihood.[A-Za-z][A-Za-z0-9_]*",
+  "panel.[A-Za-z][A-Za-z0-9_]*",
+  "observed_panel.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.estimation.survival"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "fit.[A-Za-z][A-Za-z0-9_]*",
+  "refinement.[A-Za-z][A-Za-z0-9_]*",
+  "spatial.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.model.survival"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "aft.[A-Za-z][A-Za-z0-9_]*",
+  "spatial.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.survival"]
+expose = ["[A-Za-z][A-Za-z0-9_]*", "information.[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.calibration"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.clustering"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.contracts"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.disco"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.dispersion"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.dyadic"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "bootstrap.[A-Za-z][A-Za-z0-9_]*",
+  "contracts.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.equivalence"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.gel"]
+expose = ["[A-Za-z][A-Za-z0-9_]*", "hypothesis.[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.glm_covariance"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.gmm"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "covariance.[A-Za-z][A-Za-z0-9_]*",
+  "hypothesis.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.gms"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.kappa"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.linear_covariance"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.linear_diagnostics"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.mantel"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.mixture"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "contracts.[A-Za-z][A-Za-z0-9_]*",
+  "test.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.multiplicity"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.panel_covariance"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.parameters"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.resampling"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "block_length.[A-Za-z][A-Za-z0-9_]*",
+  "blocks.[A-Za-z][A-Za-z0-9_]*",
+  "bootstrap.[A-Za-z][A-Za-z0-9_]*",
+  "permutation.[A-Za-z][A-Za-z0-9_]*",
+  "permutation.kernel.[A-Za-z][A-Za-z0-9_]*",
+  "permutation.test.[A-Za-z][A-Za-z0-9_]*",
+  "results.[A-Za-z][A-Za-z0-9_]*",
+  "schedule.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.sharpe"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "deflated.[A-Za-z][A-Za-z0-9_]*",
+  "difference.[A-Za-z][A-Za-z0-9_]*",
+  "multiple.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.spatial"]
+expose = [
+  "[A-Za-z][A-Za-z0-9_]*",
+  "covariance.[A-Za-z][A-Za-z0-9_]*",
+  "diagnostics.[A-Za-z][A-Za-z0-9_]*",
+  "graph.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.inference.studentized"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.inference.wolak"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.testing"]
+expose = [
+  "qualification.[A-Za-z][A-Za-z0-9_]*",
+  "[A-Za-z][A-Za-z0-9_]*",
+  "axioms.[A-Za-z][A-Za-z0-9_]*",
+  "fixtures.[A-Za-z][A-Za-z0-9_]*",
+]
+
+# Trusted constructors and shared stage-local validation/reporting helpers are
+# explicit exceptions. Their visibility is limited to actual numerical
+# producers/consumers; these are not general private implementation interfaces.
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["matrices._dmat", "matrices._pairwise_estimate"]
+visibility = ["statadic.discrepancy.mmd"]
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["matrices._dmat"]
+visibility = ["statadic.discrepancy.transport"]
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["equations._variability_matrix"]
+visibility = ["statadic.estimation.gmm", "statadic.operators"]
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["matrices._space_dmat"]
+visibility = ["statadic.geometry.ground"]
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["equations._parameter_covariance_from_limiting"]
+visibility = [
+  "statadic.inference.linear_covariance",
+  "statadic.inference.panel_covariance",
+  "statadic.inference.spatial",
+  "statadic.inference.gmm",
+  "statadic.inference.iv"
+]
+
+[[interfaces]]
+from = ["statadic.core"]
+expose = ["equations._symmetric_psd"]
+visibility = ["statadic.inference.gmm"]
+
+[[interfaces]]
+from = ["statadic.optimize"]
+expose = ["backends._least_squares_factored"]
+visibility = ["statadic.estimation.linear"]
+
+[[interfaces]]
+from = ["statadic.optimize"]
+expose = ["backends._newton_root_result"]
+# Visibility names Tach modules; panel belongs to this spatial family module.
+visibility = ["statadic.estimation.spatial"]
+
+[[interfaces]]
+from = ["statadic.estimation._validation"]
+expose = ["validate_parameter_names"]
+visibility = [
+  "statadic.estimation.gmm",
+  "statadic.estimation.linear",
+  "statadic.estimation.panel",
+  "statadic.estimation.spatial"
+]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["_chi2_survival"]
+visibility = ["statadic.inference.gel", "statadic.inference.wolak"]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["as_index"]
+visibility = ["statadic.inference.gmm"]
+
+[[interfaces]]
+from = ["statadic.estimation.moments"]
+expose = ["_validate_moment_panel"]
+visibility = [
+  "statadic.estimation.gel",
+  "statadic.inference.gmm",
+  "statadic.inference.gms",
+  "statadic.inference.kappa",
+  "statadic.inference.wolak"
+]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["_MATRIX_NDIM"]
+visibility = ["statadic.inference.gmm", "statadic.inference.kappa"]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["_validate_bandwidth", "_validate_full_rank_covariance"]
+visibility = [
+  "statadic.inference.gms",
+  "statadic.inference.kappa",
+  "statadic.inference.wolak"
+]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = [
+  "_BINDING_TOLERANCE",
+  "_require_projection_solution",
+  "_validate_positive_integer"
+]
+visibility = ["statadic.inference.gms", "statadic.inference.wolak"]
+
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["_WEAK_IDENTIFICATION_THRESHOLD"]
+visibility = ["statadic.inference.kappa"]
+
+[[interfaces]]
+from = ["statadic.inference._parameter_reference"]
+expose = [
+  "_MAX_VALIDATED_DEGREES",
+  "_outside_validated_range",
+  "_f_survival",
+  "_student_critical_value"
+]
+visibility = ["statadic.inference.parameters", "statadic.inference.linear_diagnostics"]
+
+[[interfaces]]
+from = ["statadic.inference._projection"]
+expose = ["PROJECTION_TOLERANCE", "refine_projection_solution"]
+visibility = ["statadic.inference.gms", "statadic.inference.wolak"]
+
+[[interfaces]]
+from = ["statadic.inference._projection"]
+expose = ["POLISH_ROUNDS"]
+visibility = ["statadic.inference.wolak"]
+
+[external]
+# Tach check-external does not resolve optional extras/dev-only fixture imports.
+# Exclusions are global; see scripts/architecture/README.md for their scope.
+exclude = ["pytest", "polars", "pyarrow", "matplotlib", "pyrefly_shape_extensions"]
+# The stubs' import name has no runtime module metadata. Tach matches the
+# normalized distribution identifier after this explicit mapping.
+rename = ["shape_extensions:pyrefly-shape-extensions"]
+
+# Public inference modules re-export the projection failure callers can catch.
+[[interfaces]]
+from = ["statadic.inference._common"]
+expose = ["ProjectionUnavailableError"]
+visibility = ["statadic.inference.gms", "statadic.inference.wolak"]
+
+[rules]
+require_ignore_directive_reasons = "error"
+unused_ignore_directives = "error"
+unused_external_dependencies = "warn"
+
+# These consumers retain implementation-source identity as evidence.
+[[interfaces]]
+from = ["statadic"]
+expose = ["__file__"]
+visibility = [
+  "statadic_performance.worker", "statadic_studies.campaign", "statadic_studies.source",
+  "statadic_performance.reference_worker", "statadic_docs_labs.consumer_fixtures",
+]
+
+# Internal host helpers shared only by the workflows that consume them.
+[[interfaces]]
+from = ["statadic.api.inputs"]
+expose = ["_validate_duplicate_predictors"]
+visibility = ["statadic.api.panel"]
+
+[[interfaces]]
+from = ["statadic.api.inputs"]
+expose = ["_node_predictor", "_matching_predictor"]
+visibility = ["statadic.api.survival"]
+
+[[interfaces]]
+from = ["statadic.api.reporting"]
+expose = ["_finite_metric"]
+visibility = ["statadic.api.panel", "statadic.api.regression", "statadic.api.spatial", "statadic.api.survival"]
+
+[[interfaces]]
+from = ["statadic.api.data"]
+expose = ["_check_array_precision"]
+visibility = ["statadic.api.artifacts", "statadic.api.inputs"]
+
+[[interfaces]]
+from = ["statadic.api.data"]
+expose = ["_numeric_column"]
+visibility = ["statadic.api.inputs"]
+
+[[interfaces]]
+from = ["statadic.api.data"]
+expose = ["_label_values"]
+visibility = ["statadic.api.tables", "statadic.api.comparison"]
+
+[[interfaces]]
+from = ["statadic.estimation.dyadic"]
+expose = ["solve._least_squares_host"]
+visibility = ["statadic.inference.dyadic"]
+
+[[interfaces]]
+from = ["statadic.model.dyadic"]
+expose = ["validation._array_shape", "validation._is_finite_real_array", "validation._validate_sample"]
+visibility = ["statadic.inference.dyadic"]
+
+[[interfaces]]
+from = ["statadic.model.dyadic"]
+expose = ["validation._validate_design_inputs", "validation._validate_model"]
+visibility = ["statadic.estimation.dyadic"]
+
+[[interfaces]]
+from = [
+  "statadic.api",
+  "statadic.api.regression",
+  "statadic.api.spatial.graphs",
+  "statadic.api.spatial.learning",
+  "statadic.api.spatial.selection",
+  "statadic.api.spatial.resampling",
+  "statadic.api.spatial.graphs",
+  "statadic.api.base",
+  "statadic.api.capabilities",
+  "statadic.api.estimand",
+  "statadic.api.inference",
+  "statadic.api.diagnostics",
+  "statadic.api.hypotheses",
+  "statadic.api.data",
+  "statadic.api.tables",
+  "statadic.api.inputs",
+  "statadic.api.roles",
+  "statadic.api.prediction",
+  "statadic.api.plots",
+  "statadic.api.representation",
+  "statadic.api.design",
+  "statadic.api.regression",
+  "statadic.api.panel",
+  "statadic.api.spatial",
+  "statadic.api.survival",
+  "statadic.api.moments",
+  "statadic.api.comparison",
+  "statadic.api.association",
+  "statadic.api.covariance",
+  "statadic.api.dyadic",
+  "statadic.api.reporting",
+  "statadic.api.artifacts"
+]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+
+# Composition selects internal native backends. The predictor codec shares the
+# fitted design and roster machinery with the graph model it reconstructs.
+[[interfaces]]
+from = ["statadic.api.spatial"]
+expose = [
+  "cross_section.[A-Za-z][A-Za-z0-9_]*",
+  "graph_regression.[A-Za-z][A-Za-z0-9_]*",
+  "observed.[A-Za-z][A-Za-z0-9_]*",
+  "panel.[A-Za-z][A-Za-z0-9_]*",
+  "prediction.[A-Za-z][A-Za-z0-9_]*",
+]
+
+[[interfaces]]
+from = ["statadic.api.spatial"]
+expose = [
+  "cross_section._SpatialRegressionBackend",
+  "graph_regression._prepare_graph_regression",
+  "observed._ObservedSpatialPanelBackend",
+  "panel._SpatialPanelBackend",
+]
+visibility = ["statadic.api.regression"]
+
+[[interfaces]]
+from = ["statadic.api.spatial"]
+expose = ["graph_regression._GraphDesign", "graph_regression._align", "graph_regression._arrays"]
+visibility = ["statadic.api.artifacts"]
+
+[[interfaces]]
+from = ["statadic.discrepancy.mmd"]
+expose = ["energy.mixture._mixture_energy_value"]
+visibility = ["statadic.geometry.barycentre.mmd"]
+
+[[interfaces]]
+from = ["statadic.estimation.spatial"]
+expose = ["graph_likelihood._graph_mean"]
+visibility = ["statadic.api.spatial", "statadic.api.artifacts"]
+
+[[interfaces]]
+from = ["statadic.api.prediction"]
+expose = ["_fitted_regression_options", "_spatial_prediction_options", "_supported_prediction_kinds", "_default_prediction_kind", "_validate_prediction_kind", "_prediction_role", "_prediction_design", "_prediction_inputs"]
+visibility = ["statadic.api.regression", "statadic.api.spatial", "statadic.api.artifacts"]
+
+# Prepared graph callbacks are package-internal numerical contracts.
+[[interfaces]]
+from = ["statadic.estimation.spatial"]
+expose = ["graph_learning._estimate_joint_graph_ml"]
+visibility = ["statadic.api.spatial.learning"]
+
+[[interfaces]]
+from = ["statadic.inference.spatial"]
+expose = ["graph._graph_covariance"]
+visibility = ["statadic.api.spatial"]
+
+[[interfaces]]
+from = ["statadic.api.base"]
+expose = ["_RegressionPreparation"]
+visibility = ["statadic.api.regression", "statadic.api.panel", "statadic.api.spatial"]
+
+[[interfaces]]
+from = ["statadic.api.base"]
+expose = ["_INFORMATION_NOTE", "_linear_fit_statistics"]
+visibility = ["statadic.api.regression", "statadic.api.spatial", "statadic.api.survival"]
+
+[[interfaces]]
+from = ["statadic.api.dyadic"]
+expose = ["_DyadicBackend"]
+visibility = ["statadic.api.regression"]
+
+[[interfaces]]
+from = ["statadic.api.panel"]
+expose = ["_PanelBackend", "_PanelWX", "_fit_panel"]
+visibility = ["statadic.api.regression"]
+
+[[interfaces]]
+from = ["statadic.api.survival"]
+expose = ["_model._SurvivalBackend"]
+visibility = ["statadic.api.regression"]
+
+[[interfaces]]
+from = ["statadic.api.comparison"]
+expose = ["_shared.draws._disco_draws", "_shared.plan.PermutationPlan", "_shared.design.ExchangeabilityDesign"]
+visibility = ["statadic.api.regression"]
+
+[[interfaces]]
+from = ["statadic.api.ordination", "statadic.api.ordination_terms", "statadic.geometry.shortest_paths", "statadic.inference.geometric"]
+expose = ["[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.association"]
+expose = ["geometric.[A-Za-z][A-Za-z0-9_]*"]
+
+[[interfaces]]
+from = ["statadic.api.covariance"]
+expose = ["_prepare_covariance"]
+visibility = ["statadic.api.estimand"]
+
+[[interfaces]]
+from = ["statadic.api.moments"]
+expose = ["_prepare_moments", "_moment_result"]
+visibility = ["statadic.api.estimand"]

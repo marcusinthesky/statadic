@@ -1,0 +1,26 @@
+{
+  "source_url": "https://doi.org/10.1002/9781118032985",
+  "statement_locations": [
+    "Section 1.6, p. 24, conditional survivor F(t)/F(a), and Section 3.2, equation (3.1), failure and right-censor likelihood contributions.",
+    "Sections 2.2–2.3, including the Weibull log-time model (2.9) and accelerated failure-time hazard and survivor (2.14)–(2.15).",
+    "Sections 2.2–2.3, parametric log-time location-scale models and accelerated failure-time survival; Section 3.2, equation (3.1), observed event/censor likelihood.",
+    "§1.6, p. 24, truncation at entry, and §3.2, equation (3.1), event and censoring contributions."
+  ],
+  "proof_locations": [
+    "Condition at entry, choose the event density or survival contribution, and factor out the independent censoring law. The formal theorem starts from these joint event/censor factors.",
+    "Differentiate the log-time location-scale transformation and compose it with the baseline survival derivative. This is the original-time density Jacobian used by STATADIC.",
+    "Evaluate the Weibull survivor under its specified normalized baseline law, then differentiate with respect to original time.",
+    "Evaluate the lognormal survivor under its specified normalized baseline law, then differentiate with respect to original time.",
+    "Slice the independent product law in each time direction and normalize the resulting event measures by the entry probability."
+  ],
+  "claim_ids": [
+    "STATADIC-SURVIVAL-001",
+    "STATADIC-SURVIVAL-002",
+    "STATADIC-SURVIVAL-004",
+    "STATADIC-SURVIVAL-005",
+    "STATADIC-SURVIVAL-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives the exact assumptions and diagnostic scope of each mapping.",
+  "source_review": "Compared with the source formula and STATADIC path; human semantic review pending."
+}

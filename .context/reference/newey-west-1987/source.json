@@ -1,0 +1,25 @@
+{
+  "source_url": "https://users.ssc.wisc.edu/~behansen/718/NeweyWest1987.pdf",
+  "statement_locations": [
+    "Equations (4)–(5) and Theorem 1, pp. 704–705.",
+    "Theorem 1 proof, p. 705, scalar lag moment with denominator T for all lags.",
+    "Equations (4)–(5), Theorem 2 (p. 705), and its proof in the Appendix (pp. 706–707)."
+  ],
+  "proof_locations": [
+    "Theorem 1 proves PSD by a scalar autocovariance matrix. The Lean argument instead factors the same triangular pair kernel into overlapping windows.",
+    "Count the admissible ordered pairs in the source lag sum and apply a common raw lag moment; this expectation identity is derived here.",
+    "Write the deterministic target as an infinite series with two bounded tapers. This derivation uses the stated sufficient assumptions; Equations (4)–(5), Theorem 2 (p. 705), and its proof in the Appendix (pp. 706–707).",
+    "Expand the variance into a double covariance sum over lag products. This derivation uses the stated sufficient assumptions; Equations (4)–(5), Theorem 2 (p. 705), and its proof in the Appendix (pp. 706–707).",
+    "Separate expectation bias from stochastic error and use the available-pair count. This derivation uses the stated sufficient assumptions; Equations (4)–(5), Theorem 2 (p. 705), and its proof in the Appendix (pp. 706–707)."
+  ],
+  "claim_ids": [
+    "STATADIC-HAC-001",
+    "STATADIC-HAC-002",
+    "STATADIC-HAC-003",
+    "STATADIC-HAC-004",
+    "STATADIC-HAC-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives each specialization and its assumptions, diagnostics and limits.",
+  "source_review": "Compared the indicated source with the formula and STATADIC branch implementation. Human semantic review pending."
+}

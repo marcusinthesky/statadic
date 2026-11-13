@@ -1,0 +1,53 @@
+\section{Discussion}\label{sec:discussion}
+
+STATADIC differs from conventional statistical interfaces mainly in the explicit
+separation and traceability of scientific responsibilities. This is not a claim
+that established libraries lack composability or validation: the agreement in
+\cref{tab:agreement} rests on their careful conventions. STATADIC's emphasis is on
+keeping lower-level components reusable while drawing a clear boundary between
+software compatibility and scientific validity.
+
+The approach has costs:
+\begin{itemize}
+  \item Explicit contracts require more design, documentation and review than
+    convenience defaults, and the public interface is correspondingly more
+    verbose. Roles such as exposure are declared on the model, and panel,
+    spatial and survival workflows still require explicitly structured
+    inputs.
+  \item Formalization requires a faithful translation of published mathematics.
+    A machine-checked proof of a mistranslated statement verifies nothing about
+    the original result.
+  \item Restricted persistence deliberately restores less than a pickled object
+    would.
+  \item Method-specific qualification is expensive and, as
+    \cref{sec:evidence} shows, often adverse.
+\end{itemize}
+
+Several limitations apply at this revision:
+\begin{itemize}
+  \item Human review of the formal source mappings is pending, and no claim
+    connects a Lean statement to compiled JAX execution.
+  \item \texttt{Report.to\_latex} renders one model per tabular, so
+    comparisons across software, such as \cref{tab:agreement}, are assembled
+    by the analysis script.
+  \item \texttt{PlotSpec} overlays series on shared axes but has no facets or
+    logarithmic scales; \cref{fig:coverage} arranges four specifications in
+    TeX.
+  \item Regression prediction plots carry no uncertainty bands, because no
+    qualified contract for regression prediction uncertainty exists yet.
+  \item No performance claim extends beyond the measured CPU.
+  \item The repository is access-restricted at the time of writing.
+\end{itemize}
+
+Formal foundations are also emerging in economics. MathEconLib
+\citep{matheconlib-2026} is building a Lean library for mathematical economics,
+with econometrics a long-term goal. Shared definitions could reduce the cost of
+formalizing estimators. Integration should proceed through reviewed
+correspondence between definitions, however, rather than by assuming that
+independently developed libraries agree.
+
+The longer-term value of the architecture is that mathematical claims,
+executable methods, validation results and publication artifacts can be treated
+as related but independently checkable research objects. An optional publishing
+companion that assembles them into a verified evidence bundle has been designed
+but not yet implemented.

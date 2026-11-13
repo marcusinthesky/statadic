@@ -1,0 +1,27 @@
+\section*{Software availability}
+
+STATADIC \jcvalue{statadic-version} is distributed under the Apache License 2.0 and
+requires Python~3.13 and JAX. The source repository at
+\url{https://github.com/marcusinthesky/statadic} contains the library, tests, Lean
+development, documentation and this paper; it is access-restricted at the time
+of writing. The results were generated from a working tree based on revision
+\texttt{\jcvalue{revision}} with locked Python environments. The analysis and
+listing source fingerprint is \texttt{\jcvalue{analysis-hash}}; the
+package source
+fingerprint is \texttt{\jcvalue{package-hash}}. Full SHA-256 fingerprints are
+recorded in \texttt{src/generated/provenance.json}. The command
+\texttt{just latex::generate 01\_statadic} regenerates every reported number, table
+and figure, and \texttt{just latex::build 01\_statadic arxiv} rebuilds the
+manuscript offline from a vendored TeX bundle.
+
+\section*{Use of generative AI}
+
+STATADIC was developed with substantial assistance from AI coding agents, which
+drafted code, tests, documentation and Lean proofs under the author's
+direction. The claim registry records that an agent compared each Lean
+claim and that human semantic review is pending. This manuscript was
+drafted with AI assistance: OpenAI's ChatGPT
+produced an initial outline, and Anthropic's Claude Code drafted the text, the
+analysis script and the build. Every reported number is produced by the
+analysis script from the recorded source. The author is responsible for the
+content.

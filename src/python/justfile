@@ -1,0 +1,84 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
+
+mod statadic 'packages/statadic/justfile'
+mod docs 'apps/docs/justfile'
+mod studies 'apps/studies/justfile'
+mod performance 'apps/performance/justfile'
+mod evidence 'packages/statadic-evidence/justfile'
+mod publishing 'packages/statadic-publishing/justfile'
+
+default:
+    @just --list
+
+setup:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv sync --locked --all-packages
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --frozen --script scripts/architecture/script.py
+    just docs::setup
+
+run:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen --package statadic python -c 'import statadic; print("STATADIC", statadic.__version__)'
+
+lint:
+    just statadic::lint
+
+test-layout:
+    just statadic::test-layout
+
+typecheck:
+    just statadic::typecheck
+
+test:
+    just statadic::test
+
+test-fresh:
+    just statadic::test-fresh
+
+build:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv build --python .venv/bin/python --offline --no-build-isolation --package statadic
+
+# Validate native boundaries and declarations without changing policy.
+tach:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen tach check
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen tach check-external
+
+# Cover cross-package boundaries and prove that forbidden imports are rejected.
+architecture: tach
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen --script scripts/architecture/script.py
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen python -m unittest discover -s scripts/architecture -p 'test_*.py'
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff check scripts/architecture
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format --check scripts/architecture
+
+# Explicitly format only the architecture tools.
+architecture-fmt:
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format scripts/architecture
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff check --fix scripts/architecture
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format scripts/architecture
+
+# CI can explicitly record a full baseline or select affected tests.
+test-check:
+    case "${STATADIC_TEST_MODE:-}" in affected) just statadic::test ;; record) just statadic::test-record ;; fresh) just statadic::test-fresh ;; '') if [ -n "${CI:-}" ]; then just statadic::test-fresh; else just statadic::test; fi ;; *) echo "Invalid STATADIC_TEST_MODE" >&2; exit 2 ;; esac; if [[ "${STATADIC_TEST_MODE:-}" = affected || "${STATADIC_TEST_MODE:-}" = record ]] && [[ -n "${GITHUB_OUTPUT:-}" ]]; then printf '%s\n' 'fast-tests-passed=true' >> "$GITHUB_OUTPUT"; fi
+
+# Application checks are shared by the local gate and the hosted shard aggregate.
+check-apps:
+    just statadic::doctest
+    just evidence::check
+    just publishing::check
+    just studies::check
+    just performance::check
+    just docs::check
+
+check: architecture test-layout lint typecheck test-check build check-apps
+
+# The complete package tests execute separately in the hosted shard jobs.
+check-ci-nontest: architecture test-layout lint typecheck build check-apps
+
+fmt:
+    just architecture-fmt
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format packages/statadic/src packages/statadic/tests packages/statadic/scripts
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff check --fix packages/statadic/src packages/statadic/tests packages/statadic/scripts
+    just docs::fmt
+    just studies::fmt
+    just performance::fmt
+    just evidence::fmt
+    just publishing::fmt

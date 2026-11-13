@@ -1,0 +1,20 @@
+{
+  "source_url": "https://sites.stat.washington.edu/courses/stat527/s14/readings/ann_stat1979.pdf",
+  "statement_locations": [
+    "Section 2, empirical row masses and bootstrap resampling recipe, equation (2.4)",
+    "Section 2, empirical bootstrap sampling, equation (2.4)"
+  ],
+  "proof_locations": [
+    "Recursive independent-draw calculation for the mean derived from the resampling experiment in equation (2.4).",
+    "STATADIC counterexample derived by enumerating Efron’s resampling experiment for a two-row fair Bernoulli sample.",
+    "STATADIC counterexample to generic null calibration, derived here for the current add-one tail. Efron supplies the resampling law."
+  ],
+  "claim_ids": [
+    "STATADIC-BOOTSTRAP-001",
+    "STATADIC-BOOTSTRAP-002",
+    "STATADIC-EQUIVALENCE-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See each claim for assumptions, Python correspondence and limits. Locally derived special cases and counterexamples are identified separately from published results.",
+  "source_review": "Primary text and source locators reviewed. Human semantic review pending."
+}

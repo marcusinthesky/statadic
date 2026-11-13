@@ -1,0 +1,21 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+app := source_directory()
+runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project '" + app + "/../..' --offline --frozen --package statadic-publishing --group dev --group reference"
+
+check:
+    {{ runner }} python -m ruff check '{{ app }}/src' '{{ app }}/tests' '{{ app }}/examples'
+    {{ runner }} python -m ruff format --check '{{ app }}/src' '{{ app }}/tests' '{{ app }}/examples'
+    {{ runner }} python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", sys.argv[1] + "/src", sys.argv[1] + "/src", sys.argv[1] + "/tests"], check=True)' '{{ app }}'
+    {{ runner }} python -m pytest -q '{{ app }}/tests'
+
+fmt:
+    {{ runner }} python -m ruff format '{{ app }}/src' '{{ app }}/tests' '{{ app }}/examples'
+
+build project output:
+    {{ runner }} python -m statadic_publishing build '{{ project }}' '{{ output }}'
+
+verify bundle project:
+    {{ runner }} python -m statadic_publishing verify '{{ bundle }}' '{{ project }}'
+
+archive bundle destination:
+    {{ runner }} python -m statadic_publishing archive '{{ bundle }}' '{{ destination }}'

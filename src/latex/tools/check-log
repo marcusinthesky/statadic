@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# check-log — publication log policy for one compiled target.
+#
+# Fails when the log contains unresolved or multiply-defined citations, references
+# or labels, missing glyphs, or an overfull box at least STATADIC_OVERFULL_PT wide
+# (default 1pt). Adapted from the Pricing Perspective workspace, with overfull
+# boxes promoted from advisory to blocking because these manuscripts start clean.
+set -euo pipefail
+
+if [[ $# -ne 1 || ! -f "$1" ]]; then
+  echo "usage: check-log TEX-LOG" >&2
+  exit 2
+fi
+
+logfile="$1"
+status=0
+
+pattern='(LaTeX|Package [^ ]+) (Error|Warning): (There were undefined|Citation .* undefined|Reference .* undefined|Label .* multiply defined)|There were undefined (citations|references)|multiply-defined'
+if matches=$(rg -n --ignore-case "$pattern" "$logfile"); then
+  echo "unresolved or multiply-defined manuscript objects in $logfile:" >&2
+  echo "$matches" >&2
+  status=1
+fi
+
+if glyphs=$(rg -n --ignore-case 'Missing character: There is no' "$logfile"); then
+  echo "missing glyphs in $logfile:" >&2
+  echo "$glyphs" >&2
+  status=1
+fi
+
+threshold="${STATADIC_OVERFULL_PT:-1.0}"
+while IFS= read -r line; do
+  [[ -n "$line" ]] || continue
+  width=$(sed -E 's/.*Overfull \\[hv]box \(([0-9]+(\.[0-9]+)?)pt too (wide|high).*/\1/' <<<"$line")
+  if awk -v a="$width" -v b="$threshold" 'BEGIN { exit !(a + 0 >= b + 0) }'; then
+    echo "overfull box at least ${threshold}pt in $logfile: $line" >&2
+    status=1
+  fi
+done < <(rg -n 'Overfull \\[hv]box \(' "$logfile" || true)
+
+exit "$status"

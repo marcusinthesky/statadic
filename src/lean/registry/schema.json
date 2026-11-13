@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "claims"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "scope",
+          "lean",
+          "python",
+          "methods",
+          "obligations",
+          "kind"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^STATADIC-[A-Z]+-[0-9]{3}$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "source": {
+            "type": "object",
+            "required": [
+              "key",
+              "locator",
+              "proof_locator",
+              "url",
+              "review"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "proof_locator": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "url": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "review": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          },
+          "scope": {
+            "type": "object",
+            "required": [
+              "assumptions",
+              "conclusion",
+              "relationship",
+              "limitations",
+              "proof_steps",
+              "diagnostics"
+            ],
+            "properties": {
+              "assumptions": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "conclusion": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "relationship": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "proof_steps": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "diagnostics": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "lean": {
+            "type": "object",
+            "required": [
+              "module",
+              "declaration"
+            ],
+            "properties": {
+              "module": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "declaration": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          },
+          "python": {
+            "type": "object",
+            "required": [
+              "symbols",
+              "relationship"
+            ],
+            "properties": {
+              "symbols": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                }
+              },
+              "relationship": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            },
+            "additionalProperties": false
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          },
+          "obligations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "kind": {
+            "enum": [
+              "published-specialization",
+              "published-proof-step",
+              "original-result",
+              "algorithm-refinement"
+            ]
+          },
+          "review": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "published-specialization",
+                    "published-proof-step"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "source"
+              ]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "original-result",
+                    "algorithm-refinement"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "review"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

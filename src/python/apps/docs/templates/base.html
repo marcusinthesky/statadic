@@ -1,0 +1,15 @@
+{% extends "!base.html" %}
+
+{% block styles %}
+  {# Run before styles paint: saved preferences must not darken the white site. #}
+  <script>
+    function setColorMode() {
+      const root = document.documentElement;
+      root.classList.remove("dark");
+      root.classList.add("light");
+      root.setAttribute("data-color-mode", "light");
+    }
+    setColorMode();
+  </script>
+  {{ super() }}
+{% endblock %}

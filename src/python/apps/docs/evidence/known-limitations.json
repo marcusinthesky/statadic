@@ -1,0 +1,34 @@
+{
+  "tables": [
+    {
+      "title": "Observed numerical and statistical limits",
+      "columns": ["Procedure and configuration", "Observed limit", "What to do"],
+      "rows": [
+        ["Ordinary lognormal AFT, n=128, zero entry", "The recorded coverage lower bound is 0.937081, leaving the study inconclusive", "Assess this configuration separately from the ordinary AFT cells that met the study criterion"],
+        ["Ordinary Weibull AFT, n=128, positive entry", "The coverage lower bound is 0.939556, with one unavailable fit among 10,000 requested", "Include unavailable fits when assessing the coverage of the complete procedure"],
+        ["Repeated-spell fixed-effect and dependent spatial survival Wald inference", "The independent-row ordinary AFT study leaves these settings unassessed", "Use evidence matching the repeated or dependent observations"],
+        ["High-censoring spatial log-time likelihood integration", "Recorded 50% and 80% censoring stress cases miss the numerical target, including selected high-budget cases", "Distinguish convergence and refinement stability from a bound on integration error"],
+        ["Preliminary spatial-survival stress records", "The source record lacks the manifest identifying the code before execution", "Treat the observations as preliminary when relating them to the current implementation"],
+        ["Gaussian SAR Wald inference", "The 48-unit cell exceeds the size budget and the 96-unit cell is inconclusive", "Treat Wald inference in these small samples as approximate"],
+        ["Pooled SAC panel optimization, seed 0, T=30, N=9", "Independent searches with fixed and repeated graph storage can stop at different points. In float64 the repeated-graph candidate fails the average profile-score tolerance and is unavailable", "Include stalled attempts in the accounting. The acceptance guard withholds the candidate without finding an optimum"],
+        ["Random-effects SEM panel, CPU float64, seed 26310, T=6, N=8, tolerance 1e-8", "The solver converges at the spatial boundary -0.999 and the boundary guard withholds the fit", "Count the unavailable procedure among attempted fits, since supported inputs can yield boundary solutions"],
+        ["Stationary-bootstrap mean interval, T=256", "The independent normal cell is inconclusive and the AR(1) coefficient 0.3 cell undercovers", "Use coverage evidence for the dependence and interval construction in your data"],
+        ["Public Sharpe confidence interval, T=128", "Gaussian, skewed and dependent-return cells report excess error under the prespecified coverage criterion", "Restrict conclusions to the interval construction and return model assessed"],
+        ["Canonical dyadic node bootstrap", "The manual-only study remains unexecuted in the source record", "Describe this study as unexecuted when presenting evidence for the procedure"],
+        ["Correlated GMS QLR and Wolak projections in float32", "Tested two- and three-moment examples include unconverged calculations. Float64 reference tolerances exceed the accuracy available in float32", "Inspect convergence and preserve unavailable trials. Reassess accuracy after an explicit change in precision"]
+      ]
+    },
+    {
+      "title": "Other limits to consider",
+      "columns": ["Method", "Limit", "What to do"],
+      "rows": [
+        ["Ordination", "Negative inertia and prediction capabilities depend on the fitted geometry", "Read the signed spectrum and prediction contract in the ordination reference"],
+        ["Selected-mixture equivalence", "The approximate percentile bootstrap lacks a proved Type I bound", "Interpret conclusions within the evidence for the chosen equivalence procedure"],
+        ["Multiplicity adjustment", "Holm and Bonferroni need valid individual true-null p-values", "Check the underlying tests before adjusting their p-values"],
+        ["Survival restricted means", "Bounded quadrature or incomplete-gamma underflow can leave a finite integral numerically unavailable", "Preserve unavailable values and inspect prediction diagnostics"],
+        ["OLS residual diagnostics", "The size study covers one 200-row Gaussian design with asymptotic references", "Assess other sample sizes, power and non-Gaussian settings separately"],
+        ["Resampling", "Failure policies vary between entry points", "Report the requested, successful and failed draw counts"]
+      ]
+    }
+  ]
+}

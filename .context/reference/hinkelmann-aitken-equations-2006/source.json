@@ -1,0 +1,18 @@
+{
+  "source_url": "https://catalogimages.wiley.com/images/db/pdf/0471743917.01.pdf",
+  "statement_locations": [
+    "Aitken Equations, pp. 103–104, equations (3)–(4) and following paragraph",
+    "Aitken Equations, pp. 103–104, equations (3)–(4) and the minimum-variance conclusion"
+  ],
+  "proof_locations": [
+    "p. 104, equation (4) and minimum-variance statement; proof cited to Hinkelmann and Kempthorne (1994)",
+    "p. 104, equation (4) and following paragraph. The entry refers the proof to Hinkelmann and Kempthorne (1994); Lean uses square-root whitening and STATADIC-LINEAR-010."
+  ],
+  "claim_ids": [
+    "STATADIC-LINEAR-006",
+    "STATADIC-LINEAR-011"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "STATADIC-LINEAR-006 treats a finite law and whitened-coordinate competitors. STATADIC-LINEAR-011 covers arbitrary square-integrable laws and original-coordinate competitors. Both specialize the published covariance model to known positive diagonal precisions and an invertible weighted Gram matrix.",
+  "source_review": "Existing independent source comparison for STATADIC-LINEAR-006. STATADIC-LINEAR-011 uses the same published minimum-variance result and a separately supplied whitening proof. Human semantic review pending."
+}

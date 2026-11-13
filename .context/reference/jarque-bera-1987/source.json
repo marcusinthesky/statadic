@@ -1,0 +1,15 @@
+{
+  "source_url": "https://doi.org/10.2307/1403192",
+  "statement_locations": [
+    "Definition of the normality LM statistic from sample skewness and kurtosis of regression residuals."
+  ],
+  "proof_locations": [
+    "Sign and zero set derived here from the definition."
+  ],
+  "claim_ids": [
+    "STATADIC-JB-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See the claim for assumptions, Python correspondence and limits. The finite result is derived here; the source supplies the statistic's definition.",
+  "source_review": "Source definition and locator reviewed. Human semantic review pending."
+}

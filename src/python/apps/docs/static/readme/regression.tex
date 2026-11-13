@@ -1,0 +1,24 @@
+% Regression inference
+\begin{tabular}{@{}lS[table-format=1.6,group-digits=integer]S[table-format=1.7,group-digits=integer]S[table-format=1.6,group-digits=integer]S[table-format=1.5,group-digits=integer]@{}}
+\toprule
+Parameter & {Estimate} & {SE} & \multicolumn{2}{c}{95\% CI} \\
+\cmidrule(lr){4-5}
+ & & & {Lower} & {Upper} \\
+\midrule
+intercept & 1.01905 & 0.170087 & 0.685683 & 1.35241 \\
+x & 0.985714 & 0.0707692 & 0.847009 & 1.12442 \\
+\midrule
+Observations & {\num{6}} & & & \\
+Parameters & {\num{3}} & & & \\
+$R^2$ & 0.982392 & & & \\
+Adjusted $R^2$ & 0.977990 & & & \\
+Log likelihood & 0.426321 & & & \\
+AIC & 5.14736 & & & \\
+BIC & 4.52264 & & & \\
+HQIC & 2.64655 & & & \\
+\bottomrule
+\end{tabular}
+\par 95\% intervals; normal reference; covariance HC3
+\par Information criteria use the maximised log likelihood and k estimated parameters, counting scale, dispersion, shape and spatial parameters: AIC (Akaike 1974), BIC (Schwarz 1978), HQIC (Hannan and Quinn 1979).
+\par R$^{2}$ is centred and unadjusted; adjusted R$^{2}$ uses n - 1 and n - rank degrees of freedom.
+% {"confidence": 0.95, "covariance": "HC", "covariance_options": {"finite_sample_correction": 1.0, "kind": "HC3"}, "degrees_of_freedom": null, "finite_reference_outside_validated_range": false, "inference_columns": {}, "inference_status": "AVAILABLE", "interval_status": "AVAILABLE", "n_observations": 6, "reference": "normal", "rows": {"count": 6, "sha256": "4e098021cf9ec15699efd082b803811ec67394af4b3ea324e86edbccc3cbeac3"}}

@@ -1,0 +1,4 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# The product overview includes executable examples and a linked evidence table.
+# Other context entry points retain budget.document-schema.yaml's 1,500-token cap.
+maxTokens: 6000

@@ -1,0 +1,27 @@
+{
+  "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6405018/",
+  "statement_locations": [
+    "Section 2, Theorem 1",
+    "Section 3.3, Definition 2 and Theorem 2, p. 819; Section 3.4, equation (6), pp. 822–823",
+    "Theorem 2 and §3.4 on the conservative random-transformation p-value.",
+    "§2, Proposition 1 and Condition 1 on full-group ranks and attainable levels."
+  ],
+  "proof_locations": [
+    "Section 2, Theorem 1, second proof (without conditioning)",
+    "Section 3.3, Theorem 2, first proof, pp. 819–820",
+    "Average finite rank counts over a uniformly translated group origin and the sampled schedules, then integrate the invariant data law.",
+    "All B transformed statistics attain the observed value, so both numerator and denominator are B+1.",
+    "Order transformed values. Exactly k origins lie in the upper k ranks. Integrate their indicators using invariance."
+  ],
+  "claim_ids": [
+    "STATADIC-RANDOMIZATION-001",
+    "STATADIC-RANDOMIZATION-003",
+    "STATADIC-RANDOMIZATION-002",
+    "STATADIC-RANDOMIZATION-004",
+    "STATADIC-RANDOMIZATION-005",
+    "STATADIC-RANDOMIZATION-006"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Exact assumptions, specializations, proof steps and remaining limitations belong to the canonical claim registry. Proof status is generated only from a current build and axiom audit.",
+  "source_review": "Independent agent comparison; human semantic review pending."
+}

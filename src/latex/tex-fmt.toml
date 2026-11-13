@@ -1,0 +1,3 @@
+# Formatting policy for hand-authored TeX, read by `just latex::fmt` and `fmt-check`.
+wraplen = 88
+tabsize = 2

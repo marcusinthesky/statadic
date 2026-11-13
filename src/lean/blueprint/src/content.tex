@@ -1,0 +1,9 @@
+\section{Literature and formalization scope}
+Each theorem states its hypotheses and gives a derivation checked against the
+formal argument. The claim registry links the theorem to its sources, Python
+methods and remaining proof obligations.
+
+% LeanArchitect defines each module's nodes before registering its body.
+% Render every registered body in the generated library's module order.
+\newcommand{\newleanmodule}[2]{#2}
+\input{../../.lake/build/blueprint/library/StatadicFormal}

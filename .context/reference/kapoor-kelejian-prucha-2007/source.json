@@ -1,0 +1,15 @@
+{
+  "source_url": "https://econweb.umd.edu/~prucha/papers/JE140(2007a).pdf",
+  "statement_locations": [
+    "Section 2, equations (4) and (8), repeated spatial lag and within/between projection matrices"
+  ],
+  "proof_locations": [
+    "Generalization derived here by expanding the two operators and testing a single period/unit impulse."
+  ],
+  "claim_ids": [
+    "STATADIC-KKP-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "See each claim for assumptions, Python correspondence and limits. Locally derived special cases and counterexamples are identified separately from published results.",
+  "source_review": "Primary text and source locators reviewed. Human semantic review pending."
+}

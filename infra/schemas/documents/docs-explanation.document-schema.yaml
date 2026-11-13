@@ -1,0 +1,27 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+maxTokens: 2500
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: explanation
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      # Any heading except `Step N: ...` (Rust regex has no look-ahead).
+      pattern: ^([^S].*|S($|[^t].*)|St($|[^e].*)|Ste($|[^p].*)|Step($|[^ ].*)|Step [^0-9].*)$
+    minContains: 1
+    maxContains: 6
+    maxTokens: 500
+  additionalSections: false

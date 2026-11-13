@@ -1,0 +1,23 @@
+\section{Introduction}\label{sec:introduction}
+
+This compiling project is the starting point for a paper. It reads
+\jcvalue{example-count} generated value through the same narrow interface a
+real analysis uses, and it typesets a native PGFplots figure.
+
+\section{An example identity}
+
+For real numbers $x$ and $y$,
+\begin{equation}
+  {(x+y)}^2 = x^2 + 2xy + y^2.
+\end{equation}
+
+\begin{center}
+  \begin{tikzpicture}
+    \begin{axis}[width=8cm,height=5cm,xlabel={$x$},ylabel={$x^2$}]
+      \addplot[no marks] coordinates {(0,0) (1,1) (2,4) (3,9)};
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+Research reference records are the canonical bibliography. Create one with
+\texttt{just reference-new}, run \texttt{just sync}, then cite its key.

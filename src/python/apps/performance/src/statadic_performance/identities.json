@@ -1,0 +1,45 @@
+{
+  "discrepancy": {
+    "smoke": [
+      "mmd-value-gradient",
+      "energy-euclidean"
+    ],
+    "full": [
+      "mmd-value-gradient",
+      "energy-euclidean"
+    ]
+  },
+  "ols": {
+    "smoke": [
+      "full-fit",
+      "parameters-projection",
+      "fit-and-inference"
+    ],
+    "full": [
+      "full-fit",
+      "parameters-projection",
+      "fit-and-inference"
+    ]
+  },
+  "row-refits": {
+    "smoke": [
+      "chunk-1",
+      "chunk-2"
+    ],
+    "full": [
+      "chunk-1",
+      "chunk-8",
+      "chunk-32"
+    ]
+  },
+  "graph-profile": {
+    "smoke": [
+      "profile-value",
+      "profile-value-angle-gradient"
+    ],
+    "full": [
+      "profile-value",
+      "profile-value-angle-gradient"
+    ]
+  }
+}

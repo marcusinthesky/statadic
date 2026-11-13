@@ -1,0 +1,29 @@
+$schema: https://document-schema.org/draft/2026-06/schema
+# One H2 per symptom, each with a Cause and a Fix paragraph.
+maxTokens: 2500
+frontmatter:
+  type: object
+  required: [type]
+  properties:
+    type:
+      const: troubleshooting
+    description:
+      type: string
+    orphan:
+      type: boolean
+    myst:
+      type: object
+sections:
+- header:
+    pattern: ^\S
+  minContains: 1
+  maxContains: 1
+  sections:
+  - header:
+      pattern: ^\S
+    minContains: 1
+    maxTokens: 150
+    blocks:
+    - type: paragraph
+      minContains: 2
+  additionalSections: false

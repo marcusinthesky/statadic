@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "provenance": "standalone integration 89a59b4; source archive retained in statadic-reference-tmp",
+  "candidates": [
+    {
+      "source_file": "Discrepancy/Energy/Finite.lean",
+      "name": "groundForm_symm",
+      "source_sha256": "d441faccc70ad5af428d4f80ae372b0dfb99fd68a5c54547ca0bf071648d191c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Discrepancy/Energy/Finite.lean",
+      "name": "energy_signed_difference",
+      "source_sha256": "d441faccc70ad5af428d4f80ae372b0dfb99fd68a5c54547ca0bf071648d191c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Discrepancy/Energy/Finite.lean",
+      "name": "energy_nonneg",
+      "source_sha256": "d441faccc70ad5af428d4f80ae372b0dfb99fd68a5c54547ca0bf071648d191c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/GaussMarkov.lean",
+      "name": "normal_orthogonality",
+      "source_sha256": "8e3ec54fb8b990ca87bd40f04dfad130f3e6fad16600ec1f0aac2c252c70fa24",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/GaussMarkov.lean",
+      "name": "squares_decomposition",
+      "source_sha256": "8e3ec54fb8b990ca87bd40f04dfad130f3e6fad16600ec1f0aac2c252c70fa24",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/GaussMarkov.lean",
+      "name": "gauss_markov_gap",
+      "source_sha256": "8e3ec54fb8b990ca87bd40f04dfad130f3e6fad16600ec1f0aac2c252c70fa24",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/GaussMarkov.lean",
+      "name": "gauss_markov_efficiency",
+      "source_sha256": "8e3ec54fb8b990ca87bd40f04dfad130f3e6fad16600ec1f0aac2c252c70fa24",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/GaussMarkov.lean",
+      "name": "gauss_markov_observation_efficiency",
+      "source_sha256": "8e3ec54fb8b990ca87bd40f04dfad130f3e6fad16600ec1f0aac2c252c70fa24",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/Moments.lean",
+      "name": "mean_estimate",
+      "source_sha256": "b420ca04c6f88886fda39fdbd36dfc695ea12bc4a15f6a552ce45f7ffbd3e8ce",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/Moments.lean",
+      "name": "bias_formula",
+      "source_sha256": "b420ca04c6f88886fda39fdbd36dfc695ea12bc4a15f6a552ce45f7ffbd3e8ce",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/Moments.lean",
+      "name": "unbiased",
+      "source_sha256": "b420ca04c6f88886fda39fdbd36dfc695ea12bc4a15f6a552ce45f7ffbd3e8ce",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/Moments.lean",
+      "name": "variance_spherical",
+      "source_sha256": "b420ca04c6f88886fda39fdbd36dfc695ea12bc4a15f6a552ce45f7ffbd3e8ce",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Estimation/Linear/Moments.lean",
+      "name": "variance_shifted_estimate",
+      "source_sha256": "b420ca04c6f88886fda39fdbd36dfc695ea12bc4a15f6a552ce45f7ffbd3e8ce",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Geometry/Ground/Real.lean",
+      "name": "realDistance_nonneg",
+      "source_sha256": "8b833b9d8de5a01e5b95acd8bbce1b61a31e54478fa2dd3cbab2ef3fb028a0c5",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Geometry/Ground/Real.lean",
+      "name": "realDistance_symm",
+      "source_sha256": "8b833b9d8de5a01e5b95acd8bbce1b61a31e54478fa2dd3cbab2ef3fb028a0c5",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Geometry/Ground/Real.lean",
+      "name": "realDistance_eq_zero",
+      "source_sha256": "8b833b9d8de5a01e5b95acd8bbce1b61a31e54478fa2dd3cbab2ef3fb028a0c5",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Geometry/Ground/Real.lean",
+      "name": "realDistance_triangle",
+      "source_sha256": "8b833b9d8de5a01e5b95acd8bbce1b61a31e54478fa2dd3cbab2ef3fb028a0c5",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Inference/MonteCarlo.lean",
+      "name": "addOneP_pos",
+      "source_sha256": "d0a92038b6111d5a596cf640576da0645b927a3ef28991dc18cecf9e6c5e736c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Inference/MonteCarlo.lean",
+      "name": "addOneP_le_one",
+      "source_sha256": "d0a92038b6111d5a596cf640576da0645b927a3ef28991dc18cecf9e6c5e736c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Inference/MonteCarlo.lean",
+      "name": "addOneP_resolution",
+      "source_sha256": "d0a92038b6111d5a596cf640576da0645b927a3ef28991dc18cecf9e6c5e736c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Inference/MonteCarlo.lean",
+      "name": "addOneP_decision",
+      "source_sha256": "d0a92038b6111d5a596cf640576da0645b927a3ef28991dc18cecf9e6c5e736c",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_const",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_add",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_sub",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_smul",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_sum",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_centered",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mean_nonneg",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "variance_nonneg",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mse_decomposition",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "mse_of_unbiased",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    },
+    {
+      "source_file": "Probability/Finite.lean",
+      "name": "variance_add_const",
+      "source_sha256": "d2c820b9a8a9af0d2272942a09f0c8900e78f852f978e03cf49aa9172b806020",
+      "disposition": "unreviewed candidate; not proof or literature-correspondence evidence"
+    }
+  ]
+}

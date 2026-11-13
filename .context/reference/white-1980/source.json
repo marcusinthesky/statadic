@@ -1,0 +1,23 @@
+{
+  "source_url": "https://crooker.faculty.unlv.edu/econ441/econ_papers/White-Heteroskedasticity-Correction-1980.pdf",
+  "statement_locations": [
+    "Section 2, p. 819, fixed-regressor diagonal covariance sandwich",
+    "Section 2, Theorem 1(i)–(ii), p. 820, and discussion on p. 821",
+    "White (1980), Theorem 1(i)–(ii), pp. 820–821, residual-score and robust covariance consistency."
+  ],
+  "proof_locations": [
+    "Section 2, p. 819, covariance expression following Lemma 2",
+    "Mathematical Appendix, proof of Theorem 1(i)–(ii); fitted-residual moment replacement and convergence of the normalized sandwich",
+    "Expand the oracle weighted-square variance under zero covariance of squared errors. This derivation uses the stated sufficient assumptions; White (1980), Theorem 1(i)–(ii), pp. 820–821, residual-score and robust covariance consistency.",
+    "Expand each fitted pair product around its true-score product. This derivation uses the stated sufficient assumptions; White (1980), Theorem 1(i)–(ii), pp. 820–821, residual-score and robust covariance consistency."
+  ],
+  "claim_ids": [
+    "STATADIC-LINEAR-007",
+    "STATADIC-LINEAR-012",
+    "STATADIC-HC-002",
+    "STATADIC-COVBRIDGE-001"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "STATADIC-LINEAR-007 is finite-law covariance algebra. STATADIC-LINEAR-012 is the fixed-limit pathwise HC0 sandwich result conditional on sample moment limits and residual replacement bounds. Neither supplies t/F coverage.",
+  "source_review": "Independent agent comparison on 2026-11-06; human semantic review pending."
+}

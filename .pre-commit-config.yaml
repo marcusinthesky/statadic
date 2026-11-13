@@ -1,0 +1,51 @@
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+        args: [--assume-in-merge]
+      - id: detect-private-key
+      - id: check-case-conflict
+      - id: check-added-large-files
+        args: [--maxkb=5120, --enforce-all]
+  - repo: local
+    hooks:
+      - id: lean-quality
+        name: Lean conventional quality gate
+        entry: just lean::lint
+        language: system
+        pass_filenames: false
+        stages: [manual]
+        files: ^src/lean/
+      - id: python-architecture
+        name: Python architecture boundaries
+        entry: just python::architecture
+        language: system
+        pass_filenames: false
+        files: ^src/python/(?:apps/|packages/|scripts/architecture/|tach\.toml$|pyproject\.toml$|uv\.lock$|justfile$)
+      - id: markdown
+        name: Markdown formatting and local links
+        entry: rumdl check .
+        language: system
+        pass_filenames: false
+        types: [markdown]
+      - id: nix-format
+        name: Nix formatting
+        entry: nixfmt --check
+        language: system
+        types: [nix]
+      - id: nix-lint
+        name: Nix anti-patterns
+        entry: statix check infra/nix
+        language: system
+        pass_filenames: false
+        types: [nix]
+      - id: text-check
+        name: Whitespace and final newlines
+        entry: bash infra/nix/check-text.sh
+        language: system
+        types: [text]

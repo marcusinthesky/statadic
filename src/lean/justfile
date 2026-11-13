@@ -1,0 +1,110 @@
+set shell := ["bash", "-euo", "pipefail", "-c"]
+set positional-arguments
+
+runner := "env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project " + source_directory() + "/../python/apps/docs --offline --frozen --package statadic-docs"
+
+bundle := "https://data1.fullyjustified.net/tlextras-2022.0r0.tar"
+
+default:
+    @just --list
+
+# Explicit network step: provision locked sources and their compiled cache.
+setup: cache
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV CFLAGS="$LEAN_BLUEPRINT_CFLAGS" LDFLAGS="$LEAN_BLUEPRINT_LDFLAGS" uv sync --project blueprint --frozen
+    just blueprint-web
+    mkdir -p blueprint/print
+    cd blueprint/src && bash ../../../../infra/nix/retry-tex-setup.sh tectonic --untrusted --bundle "{{ bundle }}" --keep-logs --outdir ../print print.tex
+
+cache *modules:
+    {{ runner }} python check_setup.py --toolchain-only
+    imports_text=$(rg --no-filename --no-line-number "^(public )?import Mathlib\." Example packages/StatadicFormal --glob "*.lean" | sed -E "s/^(public )?import //" | sort -u); \
+    [[ -n "$imports_text" ]] || { echo 'No Mathlib imports found' >&2; exit 1; }; \
+    mapfile -t imports <<< "$imports_text"; \
+    lake exe cache get "${imports[@]}" "$@"
+
+build:
+    {{ runner }} python check_setup.py
+    LAKE_NO_CACHE=true lake --no-cache --wfail build
+
+test: build
+
+blueprint-web: build
+    LAKE_NO_CACHE=true lake --no-cache --wfail build :blueprint
+    mkdir -p blueprint/web
+    cd blueprint/src && env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project .. --offline --frozen plastex -c plastex.cfg web.tex 2>&1 | tee ../web/build.log
+    if rg -n 'WARNING: (File not found|unrecognized command)|WARNING: Using default renderer for inputlean' blueprint/web/build.log; then echo 'Invalid blueprint input' >&2; exit 1; fi
+
+blueprint-pdf: blueprint-web
+    mkdir -p blueprint/print
+    cd blueprint/src && tectonic --untrusted --only-cached --bundle "{{ bundle }}" --keep-logs --outdir ../print print.tex
+    if rg -n 'Reference.+undefined|There were undefined|multiply-defined|Multiply defined' blueprint/print/print.log; then echo 'Unresolved blueprint references' >&2; exit 1; fi
+
+check: lint certify blueprint-pdf
+    just registry-test
+    git diff --check -- .
+
+# Conventional quality gate, using the already pinned dependencies.
+lint:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh lint
+
+# Mathlib's available text fixes; remaining findings still fail.
+fmt:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh fmt
+
+# Explicitly refresh complete library import indexes.
+indexes:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh indexes-fix
+
+# Strict native syntax/environment diagnostics.
+lint-builtin:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh builtin
+
+# JSON-stream report; upstream report mode does not fail on findings.
+quality-report:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh report
+
+# Community import-graph analysis; candidates require human review.
+imports:
+    {{ runner }} python check_setup.py
+    bash scripts/quality.sh imports
+
+# Native import minimization; never automatically rewrite public APIs.
+shake:
+    {{ runner }} python check_setup.py
+    lake shake --keep-public
+
+# Independent sandboxed proof replay; requires host user namespaces and bubblewrap.
+kernel-check:
+    {{ runner }} python check_setup.py
+    lake check
+
+# Compile every source module and join the checked declarations to literature.
+certify:
+    {{ runner }} python tools/bridge.py certify
+
+# Explicitly accept changed statement/source pins after reviewing their meaning.
+statement-pin:
+    {{ runner }} python tools/bridge.py pin
+
+# Check the all-method endpoint; open obligations produce a nonzero exit.
+programme-check:
+    {{ runner }} python tools/bridge.py coverage
+
+# Explicit source inventory refresh after reviewing API changes.
+inventory-refresh:
+    {{ runner }} python tools/inventory.py --write
+
+# Trust, provenance and inventory regression fixtures in an isolated process.
+registry-test:
+    {{ runner }} ruff check tools
+    {{ runner }} ruff format --check tools
+    {{ runner }} python -m unittest discover -s tools/tests -v
+    {{ runner }} python tools/correspondence.py check
+
+# Export certified mathematical annotations through stable manuscript macros.
+export-manuscript: certify

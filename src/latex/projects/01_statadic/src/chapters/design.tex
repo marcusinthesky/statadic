@@ -1,0 +1,86 @@
+\section{Design}\label{sec:design}
+
+\subsection{Responsibilities before families}
+
+A statistical analysis combines observations, a model, an estimator and usually
+an inferential procedure. These answer different questions and have different
+requirements, so STATADIC organizes its source by scientific responsibility first
+and by method family second (\cref{tab:modules}). Instrumental-variable
+identification, two-stage least squares estimation, the QR factorization that
+computes it and an overidentification test therefore have four different
+owners. A static architecture check enforces the dependency direction between
+owners. It also rejects runtime imports of NumPy and SciPy, which serve only as
+independent test references.
+
+\begin{table}[t]
+  \centering
+  \small
+  \caption{Principal source owners in STATADIC. Further owners hold association
+  statistics, structured operators and reusable test batteries.}
+  \label{tab:modules}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    Owner & Responsibility \\
+    \midrule
+    \texttt{core} & Shared semantic, equation, matrix and result contracts \\
+    \texttt{sample} & Empirical samples and distribution-valued observations \\
+    \texttt{geometry} & Ground metrics, kernels, embeddings and barycentres \\
+    \texttt{discrepancy} & Comparisons between distributions, including MMD
+    and energy \\
+    \texttt{model} & Statistical specifications and family equations \\
+    \texttt{estimation} & Point estimation and retained fitted state \\
+    \texttt{optimize} & Numerical algorithms, solver adapters and numerical evidence \\
+    \texttt{inference} & Sampling uncertainty, tests, diagnostics and resampling \\
+    \texttt{api} & Host workflows composing aligned inputs, reports and artifacts \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{One lifecycle, family-specific capabilities}
+
+User-facing models share a three-step lifecycle. \texttt{prepare} validates
+data and retains learned state, such as an encoded design and categorical
+levels; \texttt{fit\_prepared} fits that state; \texttt{fit} composes the two.
+Prepared state is bound to the model instance that produced it, so a model with
+a different specification cannot reuse it. Numerical estimation sits beneath
+this layer. An estimator brick maps a typed numerical problem to a native fit,
+both JAX pytrees, so the same implementation serves the host workflow and,
+where they are supported, \texttt{jit} and \texttt{vmap} transformations
+(\cref{sec:coverage}). Labels, preparation and rendering stay outside traced
+code.
+
+Prediction and inference belong to the family that supports them rather than
+to a universal interface. A Poisson model distinguishes the linear predictor,
+the event rate and the expected count under exposure, and requires the exposure
+only for the expected count. Survival models
+distinguish survival probabilities, hazards, quantiles and restricted means,
+and spatial models distinguish structural from reduced-form predictions. A
+Python protocol that two components happen to satisfy does not make their
+combination valid, and unsupported combinations are rejected rather than
+assigned a default.
+
+Results retain numerical evidence rather than point estimates alone. Solver
+convergence, parameter identification, finite-optimum existence and
+inferential availability are recorded separately. An unavailable quantity is
+reported with its reason, never replaced by a silent fallback to a
+pseudoinverse, a penalized fit or a different specification; a caller who
+needs a valid fit can ask for one with \texttt{require\_valid}, which raises an
+error carrying those diagnostics. STATADIC never changes the global JAX precision
+setting, and its observation, table and artifact boundaries refuse 64-bit
+inputs that the active configuration would narrow.
+
+\subsection{Distribution-valued observations}
+
+Some analyses treat each observation as an empirical distribution rather than
+a vector. \texttt{PackedClouds} stores such observations as coordinates of
+shape $(\ldots, c, d)$ for a storage capacity $c$, together with integer
+support counts and atom probabilities. Unequal supports thus share one array
+layout, and padded atoms carry no mass. Kernels and ground metrics are declared
+strategies that carry the mathematical laws a consumer may rely on, such as
+positive semidefiniteness, rather than plain functions that return matrices.
+The declarations have practical consequences. Energy distance requires an
+explicit metric, because angular geometry normalizes vectors, gives
+$\mathcal{E}(X, 3X) = 0$ and so cannot detect a change of scale. Maximum mean
+discrepancy (MMD) and energy statistics
+\citep{gretton-etal-2012,szekely-rizzo-2013,sejdinovic-equivalence-2013}
+consume the same packed representation.

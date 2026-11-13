@@ -1,0 +1,23 @@
+{
+  "source_url": "https://link.springer.com/content/pdf/10.1155/2010/259672.pdf",
+  "statement_locations": [
+    "Theorem 3.2, p. 3; Theorem 4.1 and (4.4), pp. 4–5",
+    "Theorem 4.1, p. 4; equations (4.2)–(4.5)",
+    "Section 4, equations (4.1)–(4.4), p. 4",
+    "Theorem 4.1, pp. 4–5; equations (4.2)–(4.5)"
+  ],
+  "proof_locations": [
+    "Theorem 4.1 proof, pp. 4–5; Theorem 3.2 proof, p. 3",
+    "p. 4, linearity-of-expectation criterion preceding equation (4.3), applied to the normal equations (4.4)",
+    "Proof of Theorem 4.1 from the design-space decomposition of an unbiased linear estimator, pp. 4–5"
+  ],
+  "claim_ids": [
+    "STATADIC-LINEAR-004",
+    "STATADIC-LINEAR-005",
+    "STATADIC-LINEAR-009",
+    "STATADIC-LINEAR-010"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Exact assumptions, specializations, proof steps and remaining limitations belong to the canonical claim registry. Proof status is generated only from a current build and axiom audit.",
+  "source_review": "Independent agent comparison for STATADIC-LINEAR-004 and STATADIC-LINEAR-005. The new first-moment and square-integrable arguments were compared with section 4. Human semantic review pending."
+}

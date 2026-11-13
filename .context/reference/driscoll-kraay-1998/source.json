@@ -1,0 +1,15 @@
+{
+  "source_url": "https://doi.org/10.1162/003465398557825",
+  "statement_locations": [
+    "Driscoll and Kraay (1998), pp. 549–553, temporal covariance after aggregating cross-sectional moment contributions."
+  ],
+  "proof_locations": [
+    "Collapse the two membership sums in TᵀKT to the kernel entry at the row labels. This derivation uses the stated sufficient assumptions; Driscoll and Kraay (1998), pp. 549–553, temporal covariance after aggregating cross-sectional moment contributions."
+  ],
+  "claim_ids": [
+    "STATADIC-PANELCOV-003"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "Refer to the canonical registry for assumptions and limits.",
+  "source_review": "Compared the stated source construction with the verified algebra. Human semantic review pending."
+}

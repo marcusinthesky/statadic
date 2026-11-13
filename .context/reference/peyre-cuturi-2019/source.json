@@ -1,0 +1,42 @@
+{
+  "source_url": "https://www.math.ucdavis.edu/~saito/data/acha.read.f19/peyre-cuturi_computational-optxport.pdf",
+  "statement_locations": [
+    "Sections 2.3 and 2.5, transportation polytope, discrete primal and dual potentials, equations (2.10)–(2.11) and (2.20).",
+    "Section 2.2, Remark 2.5, discrete pushforward of an atomic measure with unchanged row weights.",
+    "Chapter 2, Proposition 2.1 (uniform assignment) and Proposition 2.4, equations (2.11), (2.20) (discrete dual).",
+    "Chapter 2, section on one-dimensional transport and Remark 2.30 (1-D case).",
+    "Section 10.4, sliced projection formula (10.13) and direction averaging.",
+    "Chapter 2, Proposition 2.4, transportation polytope (2.11) and finite dual (2.20).",
+    "Section 9.2, weighted objective (9.11), with the free-support measure restricted to uniform atoms.",
+    "Sections 7.1 and 9.2, geodesic interpolation and the two-measure barycentre in Remark 9.8.",
+    "Section 9.2, Remark 9.8, with the discrete displacement interpolant in (7.9).",
+    "Section 7.1, discrete displacement interpolation (7.9); section 9.2, two-source interpolation in Remark 9.8."
+  ],
+  "proof_locations": [
+    "The discrete dual bound and complementary slackness; expand the reduced-cost gap with both prescribed marginal equations.",
+    "Specialize the pushforward formula to an affine map and integrate the identity coordinate function by a finite weighted sum.",
+    "Proposition 2.4 invokes finite LP duality. STATADIC instead constructs potentials by infima of flow costs and uses Birkhoff decomposition.",
+    "Use the rearrangement inequality on the cross term in the quadratic cost; apply Birkhoff’s decomposition for fractional competitors.",
+    "Project a candidate transport and use contraction of one-dimensional linear projections.",
+    "Alternative STATADIC attainment proof via compactness of the coupling polytope and residual row-flow potentials.",
+    "STATADIC finite-support proof minimizes the exact conditional centroid cost over all tuples of permutations.",
+    "STATADIC equal-weight, real-p generalization by triangle inequality, monotonicity and convexity of the power.",
+    "STATADIC direct finite assignment proof completes the square at each matched pair and relabels the competing assignments.",
+    "STATADIC all-orders equal-weight extension: sum the metric midpoint lower bound over competing matched pairs and apply optimality of the powered source assignment."
+  ],
+  "claim_ids": [
+    "STATADIC-TRANSPORT-001",
+    "STATADIC-SAMPLE-001",
+    "STATADIC-TRANSPORT-002",
+    "STATADIC-TRANSPORT-003",
+    "STATADIC-TRANSPORT-004",
+    "STATADIC-TRANSPORT-005",
+    "STATADIC-BARYCENTRE-002",
+    "STATADIC-BARYCENTRE-004",
+    "STATADIC-BARYCENTRE-005",
+    "STATADIC-BARYCENTRE-006"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The registry distinguishes the source statement, STATADIC specialization, runtime observations and outstanding conditions.",
+  "source_review": "Primary source compared with the exact-real argument. Human semantic review pending."
+}

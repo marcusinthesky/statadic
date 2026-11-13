@@ -1,0 +1,24 @@
+{
+  "source_url": "https://www.maths.usyd.edu.au/u/jchan/GLM/Liang%26Zeger1986GEE.pdf",
+  "statement_locations": [
+    "Theorem 2 and following empirical covariance construction in section 3, using outer products of estimating functions.",
+    "Section 3, Theorem 2, empirical estimating-equation sandwich and its Appendix proof."
+  ],
+  "proof_locations": [
+    "The proof in the Appendix treats Theorem 2. The directional Gram identity is an exact-real specialization of its empirical sandwich to independent rows.",
+    "Expand the variance as a double covariance sum, remove cross terms and subtract the working information.",
+    "Use the score secant identity to remove the negligible optimization error, apply continuous inversion and Slutsky.",
+    "Use continuity of inversion at A, transpose, multiplication and scalar correction, then simplify under the information equality.",
+    "Apply the shared Gaussian linear-response theorem to the negative inverse sensitivity and cancel the signs in the response and covariance."
+  ],
+  "claim_ids": [
+    "STATADIC-GLMCOV-001",
+    "STATADIC-GLMCOV-002",
+    "STATADIC-GLMCOV-003",
+    "STATADIC-GLMCOV-004",
+    "STATADIC-GLMCOV-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The claim registry gives each specialization and its assumptions, diagnostics and limits.",
+  "source_review": "Compared the indicated source with the formula and STATADIC branch implementation. Human semantic review pending."
+}

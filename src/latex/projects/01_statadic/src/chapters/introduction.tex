@@ -1,0 +1,50 @@
+\section{Introduction}\label{sec:introduction}
+
+Open-source scientific software has lowered the cost of applying sophisticated
+statistical methods. Libraries such as scikit-learn
+\citep{pedregosa-etal-2011}, statsmodels \citep{seabold-perktold-2010}, dcor
+\citep{ramos-carreno-torrecilla-2023} and lifelines \citep{davidson-pilon-2019}
+make machine-learning, econometric, distributional and survival methods
+available through consistent interfaces, and each was introduced with a short
+paper describing its design.
+
+Implementing a statistical method and justifying it are nevertheless different
+activities. A procedure combines a target quantity, a model and its
+assumptions, a numerical algorithm, an uncertainty estimate and a reference
+distribution. A converged optimizer establishes none of the inferential claims
+made from its output, and an algebraic identity between two formulas does not
+make their floating-point evaluations interchangeable. These distinctions
+matter more as software becomes easier to extend. Automatic differentiation and
+compilation through JAX \citep{bradbury-etal-2018} make sophisticated numerical
+programs practical, and AI-assisted programming reduces the effort of producing
+candidate implementations. Neither change makes it easier to establish what an
+implementation guarantees.
+
+Proof assistants offer a complementary capability. Lean~4
+\citep{de-moura-ullrich-2021} checks mathematical developments mechanically,
+Mathlib \citep{mathlib-2020} supplies reusable foundations, and verified
+compiler work shows how proofs can establish that well-specified program
+rewrites preserve meaning \citep{bhat-etal-2024}. A proof, however, establishes
+a stated proposition under its hypotheses. It does not by itself certify a
+Python function, a compiled kernel or the finite-sample behaviour of a
+statistical procedure.
+
+STATADIC is a statistical computing library built around these boundaries. Its
+contribution is not a claim to replace established packages, nor a collection
+of universally validated estimators. It is an architecture in which statistical
+components are reusable while their mathematical meaning, numerical behaviour
+and supporting evidence stay distinguishable. The paper makes three
+contributions:
+\begin{enumerate}
+  \item a separation of statistical responsibilities, from data representation
+    to reporting, that lets methods share components without erasing the
+    assumptions that govern them (\cref{sec:design,sec:workflow});
+  \item a layered treatment of assurance, in which machine-checked
+    mathematics, implementation correspondence, numerical conformance,
+    statistical qualification and performance are recorded as separate claims
+    (\cref{sec:assurance});
+  \item evidence produced from recorded source by a single script, including
+    results that are unfavourable to procedures STATADIC implements
+    (\cref{sec:evidence}).
+\end{enumerate}
+\Cref{sec:discussion} discusses costs and limitations.

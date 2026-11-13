@@ -1,0 +1,18 @@
+{
+  "source_url": "https://doi.org/10.1137/050624509",
+  "statement_locations": [
+    "Introduction, equations (1)–(3), nearest-correlation primal and shifted positive-part representation.",
+    "Introduction, equation (1), unit-diagonal PSD constraint. The final diagonal rescaling is specific to STATADIC."
+  ],
+  "proof_locations": [
+    "Apply the PSD projection inequality to equation (3). The diagonal shift changes the objective by a constant on the feasible slice.",
+    "Direct diagonal-congruence calculation for the postprocessing step after the paper’s positive-part projection."
+  ],
+  "claim_ids": [
+    "STATADIC-PSD-004",
+    "STATADIC-PSD-005"
+  ],
+  "canonical_mappings": "src/lean/registry/claims.json",
+  "scope_note": "The raw dual certificate uses exact feasibility; the returned matrix is positively floored and renormalized. See the separate postprocessing claim.",
+  "source_review": "Primary paper compared with the declared optimization problem. Human semantic review pending."
+}

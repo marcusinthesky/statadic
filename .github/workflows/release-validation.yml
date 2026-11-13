@@ -1,0 +1,109 @@
+name: Release preflight
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      check_receipt_artifact:
+        description: Same-run checkout check receipt artifact prefix.
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: read
+concurrency:
+  group: release-validation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  preflight:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 360
+    env:
+      JAX_ENABLE_COMPILATION_CACHE: 'false'
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - run: bash infra/nix/ci-capacity.sh prepare
+      - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
+      - name: Restore tool downloads
+        id: tools-cache
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/tectonic
+            ~/.cache/mathlib
+          key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-release
+          restore-keys: |
+            tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
+      - run: bash infra/nix/install-devenv.sh
+      - name: Prepare locked inputs
+        run: |
+          set -o pipefail
+          devenv shell -- just setup 2>&1 | tee build/ci/setup.log
+          bash infra/nix/ci-capacity.sh diagnose provisioned
+      - name: Prepare locked reference environment
+        run: devenv shell -- just setup-references
+      - name: Save prepared tool downloads
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.cache/tectonic
+            ~/.cache/mathlib
+          key: ${{ steps.tools-cache.outputs.cache-primary-key }}
+      - name: Check release candidate without long scientific campaigns
+        if: inputs.check_receipt_artifact == '' || inputs.check_receipt_artifact == null
+        run: bash infra/nix/ci-capacity.sh run release-preflight devenv shell -- just release-preflight
+      - name: Download same-run checkout check receipt
+        if: inputs.check_receipt_artifact != '' && inputs.check_receipt_artifact != null
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: ${{ inputs.check_receipt_artifact }}-${{ matrix.runner }}
+          path: build/ci/checkout-check
+      - name: Check release candidate with verified checkout checks
+        if: inputs.check_receipt_artifact != '' && inputs.check_receipt_artifact != null
+        run: >-
+          bash infra/nix/ci-capacity.sh run release-preflight devenv shell --
+          env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV
+          uv run --project src/python --offline --frozen --package statadic-docs
+          python src/python/apps/docs/scripts/release.py --mode preflight
+          --output build/release-preflight --archive build/release-preflight.tar
+          --preflight-check-receipt build/ci/checkout-check
+      - name: Verify retained archive round trip
+        run: >-
+          devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV
+          uv run --project src/python --offline --frozen --package statadic-docs
+          python src/python/apps/docs/scripts/release.py
+          --verify-archive build/release-preflight.tar --allow-preflight
+      # Publish the exact files exercised by the installed-distribution lanes.
+      # STATADIC ships a platform-independent wheel; retain one canonical build.
+      - name: Retain validated distributions
+        if: runner.arch == 'X64'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: statadic-distributions
+          path: |
+            build/release-preflight/artifacts/*.whl
+            build/release-preflight/artifacts/*.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+      - name: Final capacity
+        if: always()
+        run: bash infra/nix/ci-capacity.sh diagnose final
+      - name: Retain release evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: release-evidence-${{ runner.arch }}
+          path: |
+            build/ci/
+            build/release-preflight.tar
+          include-hidden-files: true
+          retention-days: 0
