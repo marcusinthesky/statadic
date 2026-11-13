@@ -32,10 +32,11 @@ of Testmon. A collected inventory and canonical execution reports establish that
 the shards cover every selected test exactly once. Local Testmon remains the
 affected-test loop; source-inspection tests and child interpreters have dependencies
 it cannot trace, so it is not the hosted coverage authority. Reference and installed
-release lanes execute in full. STATADIC tests cache compiled JAX programs in
+release lanes execute in full. Local STATADIC tests cache compiled JAX programs in
 `$XDG_CACHE_HOME/statadic/jax-tests` (default `~/.cache`); delete it to reclaim
-space. Optional reference and qualification suites remain explicit package
-commands. `just python::build` writes a wheel and sdist to ignored
+space. Hosted CI temporarily disables the persistent compilation cache. Optional
+reference and qualification suites remain explicit package commands.
+`just python::build` writes a wheel and sdist to ignored
 `src/python/dist/`.
 
 For the hosted regression loop, prepare the locked Python inputs once:
@@ -45,12 +46,17 @@ devenv --profile python-ci shell -- env -u VIRTUAL_ENV uv sync --project src/pyt
 devenv --profile python-ci shell -- just ci-regressions
 ```
 
-This runs the recorded numerical regressions before Lean, TeX and site setup.
+This runs the recorded package numerical regressions and the studies precision
+regression in separate float32 and float64 processes before Lean, TeX and site
+setup. Run the studies regression alone with `just python::studies::ci-regressions`.
 Its printed Hypothesis seed can be replayed with `just ci-regressions --seed SEED`.
 The data seeds 58 and 132638 are permanent explicit examples, independent of the
 Hypothesis generation seed. The full hosted shards retain the ordinary example
 budgets. Their logs show failing nodes and tracebacks as they finish; diagnostics
 include timing, memory, selected nodes and exact execution identity.
+A failed early regression stays failed even if a bounded diagnostic child is
+run. Fix a production numerical defect at its source, and merge only once all
+required CI checks pass.
 
 The [documentation app](apps/docs/README.md) builds the learning site and native labs.
 

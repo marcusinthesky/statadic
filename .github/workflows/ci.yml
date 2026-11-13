@@ -5,6 +5,8 @@ on:
     branches: [main]
 permissions:
   contents: read
+env:
+  JAX_ENABLE_COMPILATION_CACHE: 'false'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,19 +26,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - id: python
-        uses: ./.github/actions/python-ci-setup
+      - uses: ./.github/actions/python-ci-setup
         with:
-          cache-suffix: regressions
           prepare-offline-install: 'true'
       - name: Replay current numerical regressions
         run: bash infra/nix/ci-capacity.sh run regressions devenv shell --profile python-ci -- just ci-regressions
-      - name: Save compiled programs
-        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: ${{ runner.temp }}/statadic-jax-cache
-          key: ${{ steps.python.outputs.jax-cache-key }}
       - name: Retain early diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -64,13 +58,6 @@ jobs:
           lfs: true
       - run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - id: nix-cache
-        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-full-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
-          restore-prefixes-first-match: |
-            nix-v3-${{ runner.os }}-${{ runner.arch }}-full-
-            nix-v2-${{ runner.os }}-${{ runner.arch }}-
       - id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
@@ -85,10 +72,6 @@ jobs:
       - run: devenv shell -- just setup
       - name: Prepare isolated wheel installation inputs
         run: bash infra/nix/ci-capacity.sh run offline-install devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --all-packages python infra/release/check_offline_install.py --prepare --output build/ci/offline-install
-      - uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
-          gc-max-store-size-linux: 3G
       - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
           path: |
@@ -133,10 +116,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - id: python
-        uses: ./.github/actions/python-ci-setup
-        with:
-          cache-suffix: plan
+      - uses: ./.github/actions/python-ci-setup
       - name: Restore test timings
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
         with:
@@ -145,12 +125,6 @@ jobs:
           restore-keys: |
             timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-
       - run: devenv shell --profile python-ci -- just ci-test-plan --durations build/ci/timing/durations.json --output build/ci/plan
-      - name: Save compiled programs
-        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: ${{ runner.temp }}/statadic-jax-cache
-          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: plan-${{ matrix.runner }}
@@ -169,29 +143,17 @@ jobs:
     env:
       STATADIC_CI_MEMORY_BOUNDED: '1'
       STATADIC_CI_SEED: ${{ github.sha }}
-      JAX_COMPILATION_CACHE_DIR: /tmp/statadic-jax-cache
-      JAX_COMPILATION_CACHE_MAX_SIZE: '268435456'
-      JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS: '0'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - id: python
-        uses: ./.github/actions/python-ci-setup
-        with:
-          cache-suffix: shard-${{ matrix.shard }}
+      - uses: ./.github/actions/python-ci-setup
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: plan-${{ matrix.runner }}
           path: build/ci/plan
       - name: Execute shard
         run: bash infra/nix/ci-capacity.sh run shard-${{ matrix.shard }} devenv shell --profile python-ci -- just ci-test-shard --plan build/ci/plan --shard ${{ matrix.shard }} --output build/ci/shard-${{ matrix.shard }}
-      - name: Save compiled programs
-        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: ${{ runner.temp }}/statadic-jax-cache
-          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -285,10 +247,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - id: python
-        uses: ./.github/actions/python-ci-setup
-        with:
-          cache-suffix: aggregate
+      - uses: ./.github/actions/python-ci-setup
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: plan-${{ matrix.runner }}
@@ -308,12 +267,6 @@ jobs:
             mv "build/ci/downloaded-shards/shard-${{ matrix.runner }}-${index}" "build/ci/inputs/shard-${index}"
           done
           devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen python infra/nix/ci_shards.py aggregate --inputs build/ci/inputs --output build/ci/receipt
-      - name: Save compiled programs
-        if: ${{ !cancelled() && steps.python.outputs.jax-cache-key != '' }}
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
-        with:
-          path: ${{ runner.temp }}/statadic-jax-cache
-          key: ${{ steps.python.outputs.jax-cache-key }}
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: checkout-check-${{ matrix.runner }}
@@ -345,12 +298,6 @@ jobs:
       - name: Prepare runner capacity
         run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - name: Restore Nix store
-        id: nix-cache
-        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
-          restore-prefixes-first-match: nix-v3-${{ runner.os }}-${{ runner.arch }}-python-ci-
       - name: Restore reference downloads
         id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -363,11 +310,6 @@ jobs:
         run: |
           set -o pipefail
           devenv shell --profile python-ci -- just setup-references 2>&1 | tee build/ci/reference-setup.log
-      - name: Save prepared Nix store
-        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
-          gc-max-store-size-linux: 3G
       - name: Save prepared reference downloads
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:

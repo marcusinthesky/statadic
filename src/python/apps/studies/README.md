@@ -8,6 +8,7 @@ Run commands from the repository root through the pinned devenv environment:
 
 ```bash
 just python::studies::check
+just python::studies::ci-regressions
 just python::studies::run build/studies/mmd-smoke --study mmd.finite-bias --profile smoke
 just python::studies::resume build/studies/mmd-smoke
 just python::studies::summarize build/studies/mmd-smoke
@@ -20,6 +21,9 @@ campaign defaults to 10,000. Smoke runs cannot qualify a method. Every campaign
 freezes its source identities, versions, precision, complete study definition,
 seed and trial budget before execution. Run float32/float64 in separate processes
 using `JAX_ENABLE_X64=0` and `JAX_ENABLE_X64=1` respectively.
+`ci-regressions` runs the fixed studies regression in separate float32 and
+float64 processes. The root `just ci-regressions` includes it in the early
+hosted gate alongside the recorded package regressions.
 
 `run --start I --stop J` executes a disjoint replicate range. Independent shards
 must use identical study, profile, trials, seed and environment. `merge DEST SRC...`

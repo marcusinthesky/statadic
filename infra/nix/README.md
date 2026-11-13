@@ -31,20 +31,19 @@ cgroup usage every 30 seconds. These measurements remain in the Actions console
 if a lost runner cannot upload its final artifacts. CI retains diagnostics on
 failure; x86-64 and ARM64 validation do not cancel one another.
 
-Workflows restore a Nix store per architecture, profile and locked environment,
-then save the prepared store before running validation. Tool downloads are saved
-at the same boundary. A later test failure therefore leaves setup reusable.
-The store save collects unreferenced paths toward a 3 GiB target; live environment
-roots remain protected. No publishing credentials are needed for these caches.
+Hosted workflows temporarily bypass Nix store archive restoration and saving
+after a restore failed with permission errors. The pinned installer and Nix
+binary substitutes still prepare the environment; uv, Mathlib and TeX download
+caches remain available. A cache-key match alone does not establish that an
+archive restored successfully.
 
 The `python-ci` profile supplies the pinned Python, uv, Just and native runtime
 without Lean or TeX. Regression, collection and shard jobs prepare only Python
-inputs. The default development shell retains the complete toolchain. CI saves
-JAX's persistent compilation cache separately for each architecture, CPU identity,
-locked environment and shard, with a 256 MiB limit per cache. Cached compilation
-still executes each test; local Testmon remains available for affected tests.
-Compilation caches are saved after ordinary test failures as well as successful
-runs. Cancelled runs do not save them. The early regression gate also prepares
+inputs. The default development shell retains the complete toolchain. Hosted
+CI temporarily disables JAX's persistent compilation cache after observed cache
+eviction and lock overhead. Local Testmon remains available for affected tests.
+The early regression gate runs the recorded package failures and the studies
+precision regression in float32 and float64, and also prepares
 exact locked wheel artifacts and verifies an isolated offline installation,
 before the larger test matrix starts. The complete-toolchain job prepares the
 same inputs for its independent publishing replication check.
@@ -99,13 +98,18 @@ uv run --project src/python --offline --frozen --all-packages --group reference 
 
 Repeat with `--dist load`, then with one worker if resource measurements warrant
 it. Hold the checkout, seed, float64 CPU settings and memory-bounded setting
-fixed. Compare both cold and warm compilation caches on the same runner using
+fixed. Compare cache settings on the same runner using
 `ci-capacity.sh run` for memory and elapsed-time diagnostics. Replay results are
 diagnostic only: they emit no passing shard receipt, and nondefault scheduling
 cannot replace production timing history. Change the default only after comparing
 runtime, peak memory and test outcomes across representative shards.
 
 Hosted scientific tests set `STATADIC_CI_MEMORY_BOUNDED=1` to release in-memory
-JAX compilation caches between test modules. The persistent compilation cache is
-preserved. This bounds cache accumulation in long suites; resource logs still
+JAX compilation caches between test modules. This bounds cache accumulation in
+long suites; resource logs still
 determine whether a particular runner shutdown involved memory pressure.
+
+An early regression failure remains a failure even when a bounded diagnostic
+child is run to collect more evidence. Correct a production numerical defect at
+its source and require every required CI check to pass before merging; reruns
+alone do not resolve an observed failure.

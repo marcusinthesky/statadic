@@ -19,6 +19,7 @@ jobs:
     env:
       JAX_PLATFORMS: cpu
       JAX_ENABLE_X64: '1'
+      JAX_ENABLE_COMPILATION_CACHE: 'false'
       OMP_NUM_THREADS: '1'
       OPENBLAS_NUM_THREADS: '1'
       MKL_NUM_THREADS: '1'
@@ -34,14 +35,6 @@ jobs:
       - name: Prepare runner capacity
         run: bash infra/nix/ci-capacity.sh prepare
       - uses: DeterminateSystems/nix-installer-action@c5a866b6ab867e88becbed4467b93592bce69f8a
-      - name: Restore Nix store
-        id: nix-cache
-        uses: nix-community/cache-nix-action/restore@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: nix-v3-${{ runner.os }}-${{ runner.arch }}-full-${{ hashFiles('devenv.lock', 'devenv.nix', 'devenv.yaml', 'infra/nix/**/*.nix') }}
-          restore-prefixes-first-match: |
-            nix-v3-${{ runner.os }}-${{ runner.arch }}-full-
-            nix-v2-${{ runner.os }}-${{ runner.arch }}-
       - name: Restore tool downloads
         id: tools-cache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
@@ -60,11 +53,6 @@ jobs:
           set -o pipefail
           devenv shell -- just python::setup 2>&1 | tee build/ci/pages-python-setup.log
           devenv shell -- just lean::setup 2>&1 | tee build/ci/pages-lean-setup.log
-      - name: Save prepared Nix store
-        uses: nix-community/cache-nix-action/save@135667ec418502fa5a3598af6fb9eb733888ce6a
-        with:
-          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
-          gc-max-store-size-linux: 3G
       - name: Save prepared tool downloads
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:

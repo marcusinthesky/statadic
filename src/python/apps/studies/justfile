@@ -13,6 +13,10 @@ check:
     {{runner}} pytest -q -c "{{app}}/pyproject.toml" "{{app}}/tests"
     {{runner}} statadic-studies check --repository "{{app}}/../../../.."
 
+# Retain both precision subprocesses in the early hosted regression gate.
+ci-regressions:
+    {{runner}} pytest -q -c "{{app}}/pyproject.toml" "{{app}}/tests/test_spatial_remaining.py::test_period_varying_random_panel_retains_precision_and_trial_outcomes"
+
 suite *args:
     {{runner}} statadic-studies suite "$@"
 

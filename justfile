@@ -46,9 +46,10 @@ check-ci-nontest: check-source
     just latex::check
     just agents::check
 
-# Replay the numerical regressions using the same runner as hosted CI.
+# Replay package regressions and the studies precision case before the CI matrix.
 ci-regressions *args:
     {{ ci_runner }} regressions "$@"
+    just python::studies::ci-regressions
 
 # Collect the complete fast-test inventory and assign four disjoint shards.
 ci-test-plan *args:

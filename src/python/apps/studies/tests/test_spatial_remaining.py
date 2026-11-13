@@ -1,12 +1,11 @@
 """Independent graph derivatives, filters and conventional diagnostic formulas."""
 
 import os
-import subprocess
-import sys
 
 import jax.numpy as jnp
 import numpy as np
 import pytest
+from _spatial_diagnostic import run_with_diagnostic
 from scipy.stats import chi2, norm
 from statadic.estimation.linear import LeastSquares, LinearProblem
 from statadic.inference.spatial import spatial_diagnostics
@@ -245,9 +244,4 @@ assert np.isfinite(spatial_covariance(fit).covariance.values).all()
         "MKL_NUM_THREADS": "1",
         "XLA_FLAGS": "--xla_cpu_multi_thread_eigen=false",
     }
-    subprocess.run(
-        [sys.executable, "-c", code],
-        env=environment,
-        check=True,
-        timeout=60,
-    )
+    run_with_diagnostic(code, environment)
