@@ -15,6 +15,7 @@ from statadic.core.results import (
     SolverStatus,
 )
 from statadic.optimize.backends import (
+    _newton_root_result,
     bounded_scalar_minimise,
     least_squares,
     least_squares_result,
@@ -31,6 +32,44 @@ if TYPE_CHECKING:
     from statadic.core.results import (
         SolverResult,
     )
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+def test_newton_root_result_retains_success_and_failures_under_jit() -> None:
+    """Root termination and nonfinite lanes keep distinct numerical statuses."""
+    target = jnp.array([1.0, -2.0])
+    tolerance = 1e-6
+    budget = 8
+
+    def solve(initial: jax.Array, budget: int) -> SolverResult[jax.Array]:
+        return _newton_root_result(
+            lambda value: value - target,
+            initial,
+            max_steps=budget,
+            rtol=tolerance,
+            atol=tolerance,
+        )
+
+    def solve_with_budget(value: jax.Array) -> SolverResult[jax.Array]:
+        return solve(value, budget)
+
+    result = jax.jit(solve_with_budget)(jnp.zeros(2))
+    assert bool(result.converged)
+    assert int(result.status) == SolverStatus.SUCCESS
+    np.testing.assert_allclose(result.value, target, atol=tolerance)
+    assert float(result.residual_norm) < tolerance
+    assert int(result.rank) == -1
+    assert int(result.max_steps) == budget
+
+    exhausted = solve(jnp.zeros(2), 0)
+    assert not bool(exhausted.converged)
+    assert int(exhausted.status) == SolverStatus.MAX_STEPS
+    assert int(exhausted.iterations) == 0
+
+    nonfinite = solve(jnp.array([jnp.nan, 0.0]), budget)
+    assert not bool(nonfinite.converged)
+    assert int(nonfinite.status) == SolverStatus.NONFINITE
 
 
 @pytest.mark.component

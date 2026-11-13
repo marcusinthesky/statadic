@@ -25,6 +25,8 @@ N_SHARDS = 4
 REGRESSIONS = [
     "tests/api/regression/test__linear.py::test_constant_response_r_squared_is_unavailable",
     "tests/estimation/spatial/test_panel.py::test_pooled_fixed_graph_optimizer_parity",
+    "tests/estimation/spatial/test_panel_recovery.py::test_float32_stalled_candidate_recovers_against_full_covariance",
+    "tests/estimation/spatial/test_panel_recovery.py::test_witness_fit_is_valid_in_eager_and_jit[float32-0]",
     "tests/inference/test_resampling.py::test_rank_failed_refit_is_retained_and_invalidates_summary",
     "tests/integration/api/test_spatial_likelihood_references.py::test_random_effects_error_panel_matches_spreg_objective",
     "tests/optimize/test_backends.py::test_qr_result_preserves_the_iterate_and_separates_rank",

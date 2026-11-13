@@ -139,3 +139,19 @@ suite with retained logs and events. Interrupted partial publication directories
 are retained separately before publication restarts. Use a fresh suite directory
 for a changed source revision or design. `--wheel` supports the existing isolated,
 noneditable installed-wheel consumer; source-only suites remain source-only.
+
+## Panel regression diagnostics
+
+When the early random-panel precision regression fails, a bounded diagnostic
+rerun saves its rounded inputs and execution metadata under
+`build/ci/panel-diagnostic/x64-0/` or `x64-1/`. The logged solver state belongs
+to the diagnostic rerun; the original failure remains authoritative. Replay a
+retained input file with an explicitly selected precision:
+
+```bash
+just python::studies::panel-replay build/ci/panel-diagnostic/x64-0/inputs.npz 0
+```
+
+The command reports the captured and current environments, then checks direct
+and JIT fits and covariance validity. Different hardware or library versions can
+change the result.

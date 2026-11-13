@@ -1258,6 +1258,12 @@ expose = ["backends._least_squares_factored"]
 visibility = ["statadic.estimation.linear"]
 
 [[interfaces]]
+from = ["statadic.optimize"]
+expose = ["backends._newton_root_result"]
+# Visibility names Tach modules; panel belongs to this spatial family module.
+visibility = ["statadic.estimation.spatial"]
+
+[[interfaces]]
 from = ["statadic.estimation._validation"]
 expose = ["validate_parameter_names"]
 visibility = [

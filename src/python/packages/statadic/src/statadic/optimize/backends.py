@@ -7,7 +7,7 @@ only fixed-shape array results and therefore compose with ``jit`` and ``vmap``.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, cast
 
 import jax
 import jax.numpy as jnp
@@ -31,6 +31,64 @@ __all__ = [
     "minimise_bfgs_result",
     "minimise_bfgs_result_args",
 ]
+
+
+@static_jaxtyping("p")
+def _newton_root_result(
+    score: Callable[[Array], Array],
+    initial: Float[Array, " p"],  # noqa: F722
+    *,
+    max_steps: int,
+    rtol: float,
+    atol: float | Array,
+) -> SolverResult[Float[Array, " p"]]:  # noqa: F722
+    """Solve a score equation and retain backend termination and residual."""
+
+    def equation(value: Array, args: None) -> Array:
+        del args
+        return score(value)
+
+    solution = ox.root_find(
+        equation,
+        ox.Newton(
+            rtol=rtol,
+            # Optimistix uses this in array arithmetic, including under JIT.
+            atol=cast("float", atol),
+            linear_solver=lx.QR(),
+            cauchy_termination=False,
+        ),
+        initial,
+        max_steps=max_steps,
+        throw=False,
+    )
+    final_score = score(solution.value)
+    residual = jnp.max(jnp.abs(final_score))
+    finite = (
+        jnp.all(jnp.isfinite(initial))
+        & jnp.all(jnp.isfinite(score(initial)))
+        & jnp.all(jnp.isfinite(solution.value))
+        & jnp.all(jnp.isfinite(final_score))
+        & jnp.isfinite(residual)
+    )
+    converged = finite & (solution.result == ox.RESULTS.successful)
+    status = jnp.where(converged, SolverStatus.SUCCESS, SolverStatus.FAILED)
+    exhausted = (solution.result == ox.RESULTS.nonlinear_max_steps_reached) | (
+        solution.result == ox.RESULTS.max_steps_reached
+    )
+    status = jnp.where(exhausted, SolverStatus.MAX_STEPS, status)
+    status = jnp.where(
+        solution.result == ox.RESULTS.stagnation, SolverStatus.STALLED, status
+    )
+    status = jnp.where(finite, status, SolverStatus.NONFINITE)
+    return SolverResult(
+        value=solution.value,
+        converged=converged,
+        iterations=jnp.asarray(solution.stats["num_steps"], dtype=jnp.int32),
+        status=jnp.asarray(status, dtype=jnp.int32),
+        residual_norm=residual,
+        rank=jnp.asarray(-1, dtype=jnp.int32),
+        max_steps=jnp.asarray(max_steps, dtype=jnp.int32),
+    )
 
 
 def bounded_scalar_minimise(  # noqa: C901, PLR0914, PLR0915  # scalar search and boundary

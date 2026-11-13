@@ -54,3 +54,8 @@ installed-resume preparation directory:
 
 installed-status preparation directory:
     {{runner}} python -m statadic_studies.installation status "{{preparation}}" "{{directory}}"
+
+# Replay saved panel inputs in a fresh process with explicitly selected precision.
+[working-directory: "../../../.."]
+panel-replay inputs x64:
+    JAX_ENABLE_X64="$2" JAX_PLATFORMS=cpu OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 {{runner}} python "{{app}}/tests/_panel_replay.py" replay "$1" "$2"

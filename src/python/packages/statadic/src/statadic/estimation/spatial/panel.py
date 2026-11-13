@@ -46,7 +46,11 @@ from statadic.operators.spatial import (  # noqa: TC001
     SpatialPanelWeights,
     spatial_panel_lag,
 )
-from statadic.optimize.backends import bounded_scalar_minimise, minimise_bfgs_result
+from statadic.optimize.backends import (
+    _newton_root_result,
+    bounded_scalar_minimise,
+    minimise_bfgs_result,
+)
 
 __all__ = [
     "FixedGraphCache",
@@ -540,6 +544,122 @@ def _recover_stalled_panel_search(
     return jax.lax.cond(retry, recover, retain, selected)
 
 
+def _recover_panel_score_root(
+    selected: SolverResult[Array],
+    objective: Callable[[Array], Array],
+    average_objective: Callable[[Array], Array],
+    limit: Array,
+    *,
+    dimension: int,
+    max_steps: int,
+    tolerance: float,
+) -> SolverResult[Array]:
+    """Polish an interior random-effect score after likelihood rounding stalls.
+
+    Newton solves the normalized score rather than comparing nearly identical
+    likelihood values. A candidate still needs positive full-rank curvature,
+    the original score threshold, and at most one ULP of objective rounding.
+    That allowance concerns the computed likelihood, not a proof of decrease.
+    All certificates are evaluated at the encoded point returned to the caller.
+    """
+    allowance = 8
+    if max_steps < allowance:
+        return selected
+
+    score_function = jax.grad(average_objective)
+    hessian_function = jax.hessian(average_objective)
+
+    def coordinates(value: Array) -> Array:
+        return jnp.concatenate([jnp.tanh(value[:dimension]), value[dimension:]])
+
+    def admissible(value: Array) -> Array:
+        ratio = jnp.exp(value[-1])
+        return (
+            jnp.all(jnp.isfinite(value))
+            & jnp.all(jnp.abs(limit * value[:dimension]) < limit - 2 * tolerance)
+            & jnp.isfinite(ratio)
+            & (ratio > 0)
+        )
+
+    def positive_curvature(value: Array) -> Array:
+        hessian = hessian_function(value)
+        symmetric = (hessian + hessian.T) / 2
+        eigenvalues = jnp.linalg.eigvalsh(symmetric)
+        cutoff = jnp.finfo(value.dtype).eps * value.size * jnp.max(jnp.abs(eigenvalues))
+        symmetry_tolerance = (
+            8 * jnp.finfo(value.dtype).eps * value.size * jnp.max(jnp.abs(hessian))
+        )
+        return (
+            jnp.all(jnp.isfinite(hessian))
+            & (jnp.max(jnp.abs(hessian - hessian.T)) <= symmetry_tolerance)
+            & jnp.all(jnp.isfinite(eigenvalues))
+            & jnp.all(eigenvalues > cutoff)
+        )
+
+    def recover(previous: SolverResult[Array]) -> SolverResult[Array]:
+        initial = coordinates(previous.value)
+        candidate = _newton_root_result(
+            score_function,
+            initial,
+            max_steps=allowance,
+            rtol=tolerance,
+            atol=_panel_score_tolerance(initial.dtype, tolerance),
+        )
+        encoded = jnp.concatenate(
+            [jnp.arctanh(candidate.value[:dimension]), candidate.value[dimension:]]
+        )
+        returned = coordinates(encoded)
+        score = jnp.max(jnp.abs(score_function(returned)))
+        old_score = jnp.max(jnp.abs(score_function(initial)))
+        value = objective(encoded)
+        ceiling = jnp.nextafter(objective(previous.value), jnp.inf)
+        accepted = (
+            candidate.converged
+            & (candidate.status == SolverStatus.SUCCESS)
+            & admissible(candidate.value)
+            & admissible(returned)
+            & jnp.all(jnp.isfinite(encoded))
+            & positive_curvature(returned)
+            & jnp.isfinite(value)
+            & jnp.isfinite(ceiling)
+            & (value <= ceiling)
+            & jnp.isfinite(score)
+            & (score <= _panel_score_tolerance(returned.dtype, tolerance))
+            & (score <= old_score)
+        )
+        return SolverResult(
+            jnp.where(accepted, encoded, previous.value),
+            accepted | previous.converged,
+            previous.iterations
+            + jnp.asarray(candidate.iterations, dtype=previous.iterations.dtype),
+            jnp.where(accepted, SolverStatus.SUCCESS, previous.status),
+            jnp.where(accepted, score, previous.residual_norm),
+            jnp.where(accepted, returned.size, previous.rank),
+            previous.max_steps,
+        )
+
+    def retain(previous: SolverResult[Array]) -> SolverResult[Array]:
+        return previous
+
+    def qualify(previous: SolverResult[Array]) -> SolverResult[Array]:
+        initial = coordinates(previous.value)
+        qualified = (
+            jnp.isfinite(objective(previous.value))
+            & jnp.all(jnp.isfinite(score_function(initial)))
+            & positive_curvature(initial)
+        )
+        return jax.lax.cond(qualified, recover, retain, previous)
+
+    retry = (
+        ~selected.converged
+        & (selected.status == SolverStatus.STALLED)
+        & (selected.iterations <= max_steps - allowance)
+        & admissible(coordinates(selected.value))
+        & jnp.isfinite(selected.residual_norm)
+    )
+    return jax.lax.cond(retry, qualify, retain, selected)
+
+
 def _multistart_panel_search(
     profile: Callable[[Array, Array | None], tuple[Array, Array, Array, Array, Array]],
     dimension: int,
@@ -654,6 +774,16 @@ def _multistart_panel_search(
             max_steps=max_steps,
             tolerance=tolerance,
         )
+        if random_effects:
+            selected = _recover_panel_score_root(
+                selected,
+                objective,
+                average_objective,
+                limit,
+                dimension=dimension,
+                max_steps=max_steps,
+                tolerance=tolerance,
+            )
     else:
         eligible = jnp.isfinite(values) if guard_unconverged else solutions.converged
         best = jnp.argmin(jnp.where(eligible, values, jnp.inf))

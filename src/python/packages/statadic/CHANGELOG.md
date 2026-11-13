@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Execute public API doctests and reference Usage examples during checks.
 - Respect working precision when screening spatial-panel profile scores, and
   retain a better positive-variance candidate when the zero-variance fit is worse.
+- Recover stalled interior balanced random-effects panel fits with a bounded
+  score solve, retaining the score threshold and allowing at most one ULP of
+  likelihood rounding when accepting the returned point.
 - Reject available metrics with unavailable reasons and enumerate finite reporting
   states independently of Hypothesis search budgets.
 - Random-stream checks preserve keys, shapes, dtypes and statistical baselines;
