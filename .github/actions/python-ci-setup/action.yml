@@ -15,6 +15,7 @@ runs:
       with:
         path: ~/.cache/uv
         key: uv-python-ci-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/release/check_offline_install.py') }}
+        restore-keys: uv-python-ci-v2-${{ runner.os }}-${{ runner.arch }}-
     - shell: bash
       run: bash infra/nix/install-devenv.sh
     - shell: bash

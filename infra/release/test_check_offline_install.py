@@ -8,21 +8,22 @@ import os
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
 
-from check_offline_install import install_locked_environment
+from check_offline_install import install_locked_environment, sync_locked_dependencies
 
 UV = shutil.which("uv")
 
 
-def wheel(directory, name, requires=()):
+def wheel(directory, name, requires=(), module="VALUE = 42\n"):
     """Make a tiny standards-compliant wheel without downloading build tools."""
     dist = f"{name}-1.0.dist-info"
     entries = {
-        f"{name}/__init__.py": "VALUE = 42\n",
+        f"{name}/__init__.py": module,
         f"{dist}/METADATA": (
             f"Metadata-Version: 2.3\nName: {name}\nVersion: 1.0\n"
             + "".join(f"Requires-Dist: {requirement}\n" for requirement in requires)
@@ -121,6 +122,103 @@ class OfflineInstallTests(unittest.TestCase):
         consumer = wheel(self.directory, "consumer", ["missing-dependency==1.0"])
         with self.assertRaises(subprocess.CalledProcessError):
             self.install(consumer)
+
+    def source_dependency(self):
+        """Provide a source-only artifact and an independently locked build backend."""
+        backend = wheel(
+            self.directory,
+            "locked_builder",
+            module=(
+                "from pathlib import Path\nimport shutil\n"
+                "def build_wheel(wheel_directory, config_settings=None, "
+                "metadata_directory=None):\n"
+                f"    wheel = Path({self.dependency.name!r})\n"
+                "    shutil.copyfile(wheel, Path(wheel_directory) / wheel.name)\n"
+                "    return wheel.name\n"
+            ),
+        )
+        source = self.directory / "source"
+        source.mkdir()
+        (source / "pyproject.toml").write_text(
+            '[build-system]\nrequires = ["locked-builder==1.0"]\n'
+            'build-backend = "locked_builder"\n'
+        )
+        shutil.copy2(self.dependency, source / self.dependency.name)
+        archive = self.directory / "locked_dependency-1.0.tar.gz"
+        with tarfile.open(archive, "w:gz") as bundle:
+            bundle.add(source, arcname="locked_dependency-1.0")
+        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+        self.lock.write_text(
+            'lock-version = "1.0"\ncreated-by = "statadic-test"\n'
+            'requires-python = ">=3.11"\n'
+            '[[packages]]\nname = "locked-dependency"\nversion = "1.0"\n'
+            f'sdist = {{ path = "{archive.name}", '
+            f'hashes = {{ sha256 = "{digest}" }} }}\n'
+        )
+        constraints = self.directory / "build-constraints.txt"
+        digest = hashlib.sha256(backend.read_bytes()).hexdigest()
+        constraints.write_text(
+            f"locked-builder @ {backend.as_uri()} --hash=sha256:{digest}\n"
+        )
+        # Even the preparation phase must use only these local test artifacts.
+        self.environment["UV_NO_INDEX"] = "true"
+        return constraints, backend
+
+    def test_source_dependency_prepared_then_installed_offline(self):
+        constraints, _ = self.source_dependency()
+        sync_locked_dependencies(
+            UV,
+            self.python,
+            self.lock,
+            self.directory,
+            self.environment,
+            prepare=True,
+            build_constraints=constraints,
+        )
+        # Discard the preparation environment: the next consumer is genuinely fresh.
+        shutil.rmtree(self.target)
+        subprocess.run(
+            [UV, "venv", "--python", sys.executable, str(self.target)],
+            cwd=self.directory,
+            env=self.environment,
+            check=True,
+        )
+        consumer = wheel(self.directory, "consumer", ["locked-dependency==1.0"])
+        install_locked_environment(
+            UV,
+            self.python,
+            self.lock,
+            [consumer],
+            self.directory,
+            self.environment,
+            build_constraints=constraints,
+        )
+        subprocess.run(
+            [
+                str(self.python),
+                "-I",
+                "-c",
+                "import locked_dependency; assert locked_dependency.VALUE == 42",
+            ],
+            cwd=self.directory,
+            env=self.environment,
+            check=True,
+        )
+
+    def test_source_build_rejects_changed_locked_backend(self):
+        constraints, backend = self.source_dependency()
+        with zipfile.ZipFile(backend, "a") as archive:
+            archive.writestr("unexpected.txt", "changed after locking")
+        with self.assertRaises(subprocess.CalledProcessError):
+            sync_locked_dependencies(
+                UV,
+                self.python,
+                self.lock,
+                self.directory,
+                self.environment,
+                prepare=True,
+                build_constraints=constraints,
+            )
 
 
 if __name__ == "__main__":

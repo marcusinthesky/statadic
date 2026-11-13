@@ -88,6 +88,23 @@ The publishing reconstruction test uses the same installer before exercising the
 installed wheels. A successful workspace `uv sync` or a cached package index alone
 does not establish that this independent offline consumer installation works.
 
+The release preflight prepares its larger development and reference dependency
+closure before documentation and installed-wheel checks:
+
+```bash
+devenv shell -- uv run --project src/python --offline --frozen --all-packages python infra/release/check_offline_install.py --profile release --prepare --output build/ci/release-install
+```
+
+This profile excludes the same source-only layout tool as the installed-wheel
+harness. It also prepares the locked source distribution for `autograd-gamma`;
+its build dependencies are constrained by versions and hashes exported from the
+reviewed reference closure. Only preparation permits the index lookup needed to
+build that source dependency. The fresh verification and the later release
+harness install use the artifact lock with network and index access disabled.
+Both validate the installed wheel's dependency metadata with `uv pip check`.
+The release bundle retains its exported artifact lock, build constraints and
+installation receipt under `installed-environment/`.
+
 ## Release evidence
 
 The early CI gate uses the locked workspace backend to build a fresh sdist

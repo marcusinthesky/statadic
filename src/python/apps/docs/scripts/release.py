@@ -643,29 +643,6 @@ def main() -> int:
                 str(output / "distribution"),
             ],
         )
-        requirements = output / "requirements.txt"
-        execute(
-            "export",
-            [
-                "uv",
-                "export",
-                "--offline",
-                "--project",
-                str(PROJECT),
-                "--frozen",
-                "--package",
-                "statadic",
-                "--group",
-                "reference",
-                "--no-emit-workspace",
-                # Source layout was checked before building. The source-free
-                # wheel harness needs no Git-only layout development tool.
-                "--no-emit-package",
-                "pytest-layout-enforcer",
-                "--output-file",
-                str(requirements),
-            ],
-        )
         with tempfile.TemporaryDirectory(prefix="statadic-release-") as temporary:
             harness = Path(temporary)
             shutil.copytree(PACKAGE / "tests", harness / "tests")
@@ -681,32 +658,19 @@ def main() -> int:
                 ["uv", "venv", "--python", sys.executable, str(python.parent.parent)],
                 cwd=harness,
             )
+            (wheel,) = artifacts.glob("*.whl")
             execute(
                 "dependencies",
                 [
-                    "uv",
-                    "pip",
-                    "install",
-                    "--offline",
+                    sys.executable,
+                    str(ROOT / "infra/release/check_offline_install.py"),
+                    "--profile",
+                    "release",
+                    "--output",
+                    str(output / "installed-environment"),
                     "--python",
                     str(python),
-                    "--require-hashes",
-                    "-r",
-                    str(requirements),
-                ],
-                cwd=harness,
-            )
-            (wheel,) = artifacts.glob("*.whl")
-            execute(
-                "install",
-                [
-                    "uv",
-                    "pip",
-                    "install",
-                    "--offline",
-                    "--python",
-                    str(python),
-                    "--no-deps",
+                    "--wheels",
                     str(wheel),
                 ],
                 cwd=harness,
