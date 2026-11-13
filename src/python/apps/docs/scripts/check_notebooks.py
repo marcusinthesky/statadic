@@ -82,10 +82,21 @@ def gates(notebook: Path):
     published = any(
         notebook.resolve().is_relative_to(DOCS / section) for section in SECTIONS
     )
-    yield "tests", lambda: run([*pytest, str(notebook)], allow_no_tests=not published)
     yield (
-        "doctests",
-        lambda: run([*pytest, "--doctest-modules", str(notebook)], allow_no_tests=True),
+        "tests+doctests",
+        lambda: run(
+            [
+                *pytest,
+                "--doctest-modules",
+                *(
+                    ["--require-notebook-tests", str(notebook.resolve())]
+                    if published
+                    else []
+                ),
+                str(notebook),
+            ],
+            allow_no_tests=not published,
+        ),
     )
 
 

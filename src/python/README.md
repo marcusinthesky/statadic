@@ -52,7 +52,9 @@ setup. Run the studies regression alone with `just python::studies::ci-regressio
 Its printed Hypothesis seed can be replayed with `just ci-regressions --seed SEED`.
 The data seeds 58 and 132638 are permanent explicit examples, independent of the
 Hypothesis generation seed. The full hosted shards retain the ordinary example
-budgets. Their logs show failing nodes and tracebacks as they finish; diagnostics
+budgets. The FWL gate also retains the reported subnormal outcome and neighboring
+precision cases, with comparisons accounting for roundoff and CPU underflow.
+Their logs show failing nodes and tracebacks as they finish; diagnostics
 include timing, memory, selected nodes and exact execution identity.
 A failed early regression stays failed even if a bounded diagnostic child is
 run. Fix a production numerical defect at its source, and merge only once all

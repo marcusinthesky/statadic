@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import math
+from operator import itemgetter
 from typing import TYPE_CHECKING
 
 import jax
@@ -20,6 +22,7 @@ from statadic.operators.design import (
 )
 
 from .._budgets import examples
+from .._validation.numeric import Tolerance, assert_finite_close
 
 if TYPE_CHECKING:
     from hypothesis.strategies import DrawFn
@@ -41,6 +44,24 @@ def _design() -> tuple[np.ndarray, np.ndarray]:
 
 _ROWS = 7
 _MAX_CONDITION = 100.0
+_UNDERFLOW_DESIGN = (
+    np.array([[1.0, 0.0, 1.0], [1.0, 1.0, 0.0], *[[1.0, 1.0, 1.0]] * 5]),
+    np.full(7, 1.1125369292536007e-308),
+)
+_DENSE_UNDERFLOW_DESIGN = np.array(
+    [
+        [1.0, 0.4675093422520456, -0.8592924628832382],
+        [1.0, 0.36875078408249884, -0.9588826008289989],
+        [1.0, 0.8784503013072725, -0.049925910986252896],
+        [1.0, -0.18486236354526056, -0.6809295444039414],
+        [1.0, 1.2225413386740303, -0.15452948206880215],
+        [1.0, -0.4283278221631072, -0.3521335504882296],
+        [1.0, 0.5323091855533487, 0.36544406436407834],
+    ]
+)
+_TRANSFORM_RATIONALE = (
+    "Accumulated roundoff and underflow, amplified by conditioning in each evaluation."
+)
 _SERIES = hnp.arrays(
     np.float64,
     (_ROWS,),
@@ -58,6 +79,79 @@ def _designs(draw: DrawFn) -> tuple[np.ndarray, np.ndarray]:
     x = np.column_stack([np.ones(_ROWS), draw(_SERIES), draw(_SERIES)])
     assume(np.linalg.cond(x) < _MAX_CONDITION)
     return x, draw(_SERIES)
+
+
+def _assert_transformed_close(
+    result: FWLResiduals,
+    direct: FWLResiduals,
+    x: np.ndarray,
+    y: np.ndarray,
+    scale: float,
+) -> None:
+    """Compare projections with estimated roundoff and CPU underflow allowances."""
+    info = np.finfo(np.asarray(direct.focal_residual).dtype)
+    relative = 4 * info.eps * np.linalg.cond(x.astype(np.float64))
+    # Unlike relative roundoff, each underflow loss can be as large as tiny.
+    # Allow n-term accumulation and solve amplification using the same four-
+    # condition factor as roundoff. This is a conservative empirical budget.
+    underflow = float(relative / info.eps) * x.shape[0] * float(info.tiny)
+    # Both evaluations contribute roundoff. Scaling the direct result also
+    # scales its underflow error, independently of the transformed evaluation.
+    focal_atol = 2 * (relative * float(np.max(np.abs(x[:, 1]))) + underflow)
+    outcome_atol = (
+        2 * relative * float(np.max(np.abs(y))) * scale + (1 + abs(scale)) * underflow
+    )
+    expected_focal = np.asarray(direct.focal_residual, dtype=np.float64)
+    expected_outcome = np.asarray(direct.outcome_residual, dtype=np.float64) * scale
+    actual_focal = np.asarray(result.focal_residual, dtype=np.float64)
+    assert_finite_close(
+        actual_focal,
+        expected_focal,
+        tolerance=Tolerance(relative, focal_atol, _TRANSFORM_RATIONALE),
+        label="focal",
+    )
+    assert_finite_close(
+        np.asarray(result.outcome_residual, dtype=np.float64),
+        expected_outcome,
+        tolerance=Tolerance(relative, outcome_atol, _TRANSFORM_RATIONALE),
+        label="outcome",
+    )
+
+    # Hypot avoids squaring away subnormal outcomes. Perturbing f and y in
+    # (f @ y)/(f @ f) propagates the residual allowances as Ey/||g|| +
+    # ||y|| Ef/(||g|| ||f||), with g the transformed focal residual. These
+    # prespecified comparison budgets are not a formal floating-point bound.
+    focal_norm = math.hypot(*expected_focal)
+    actual_norm = math.hypot(*actual_focal)
+    outcome_norm = math.hypot(*expected_outcome)
+    assert focal_norm > 0
+    assert actual_norm > 0
+    focal_error = math.sqrt(x.shape[0]) * focal_atol + relative * focal_norm
+    outcome_error = math.sqrt(x.shape[0]) * outcome_atol + relative * outcome_norm
+    dot_error = (
+        (1 + abs(scale))
+        * x.shape[0]
+        * (
+            info.eps
+            * float(np.max(np.abs(expected_focal)))
+            * float(np.max(np.abs(expected_outcome)))
+            + info.tiny
+        )
+        / (actual_norm * actual_norm)
+    )
+    slope_atol = (
+        outcome_error / actual_norm
+        + (outcome_norm / focal_norm) * (focal_error / actual_norm)
+        + dot_error
+    )
+    assert_finite_close(
+        np.asarray(result.slope, dtype=np.float64),
+        np.asarray(direct.slope, dtype=np.float64) * scale,
+        tolerance=Tolerance(
+            relative, slope_atol, "Residual perturbation and dot rounding."
+        ),
+        label="slope",
+    )
 
 
 @pytest.mark.component
@@ -88,10 +182,9 @@ def test_residuals_match_independent_qr_projection_and_full_ols(
     np.testing.assert_allclose(nuisance.T @ result.focal_residual, 0.0, atol=1e-12)
     full_ols = np.linalg.lstsq(x, y, rcond=None)[0][1]
     assert float(result.slope) == pytest.approx(full_ols, rel=1e-12, abs=1e-12)
-    assert fwl_coefficient(x, y, 1) == pytest.approx(
-        float(result.slope), rel=1e-12, abs=1e-12
-    )
-    assert isinstance(fwl_coefficient(x, y, 1), float)
+    coefficient = fwl_coefficient(x, y, 1)
+    assert coefficient == pytest.approx(float(result.slope), rel=1e-12, abs=1e-12)
+    assert isinstance(coefficient, float)
 
 
 @pytest.mark.component
@@ -208,6 +301,8 @@ def test_out_of_range_focal_column_is_rejected(column: int) -> None:
 @pytest.mark.contract
 @examples(20)
 @example(design=_design())
+@example(design=_UNDERFLOW_DESIGN)
+@example(design=(_DENSE_UNDERFLOW_DESIGN, np.full(7, 4.450147717014403e-308)))
 @given(design=_designs())
 def test_result_pytree_supports_nested_jit_and_batched_projections(
     design: tuple[np.ndarray, np.ndarray],
@@ -223,9 +318,7 @@ def test_result_pytree_supports_nested_jit_and_batched_projections(
     leaves, structure = jax.tree_util.tree_flatten(result)
     assert all(isinstance(leaf, jax.Array) for leaf in leaves)
     rebuilt = jax.tree_util.tree_unflatten(structure, leaves)
-    np.testing.assert_allclose(rebuilt.outcome_residual, direct.outcome_residual)
-    np.testing.assert_allclose(rebuilt.focal_residual, direct.focal_residual)
-    assert float(rebuilt.slope) == pytest.approx(float(direct.slope))
+    _assert_transformed_close(rebuilt, direct, x, y, 1.0)
 
     batch_x = jnp.stack([jnp.asarray(x), jnp.asarray(x)])
     batch_y = jnp.stack([jnp.asarray(y), jnp.asarray(2.0 * y)])
@@ -236,11 +329,81 @@ def test_result_pytree_supports_nested_jit_and_batched_projections(
     batched = jax.jit(jax.vmap(evaluate_fwl_residualize))(batch_x, batch_y)
     assert isinstance(batched, FWLResiduals)
     assert batched.focal_residual.shape == batch_y.shape
-    np.testing.assert_allclose(batched.focal_residual[1], direct.focal_residual)
-    np.testing.assert_allclose(
-        batched.outcome_residual[1], 2.0 * direct.outcome_residual
-    )
-    np.testing.assert_allclose(batched.slope, [direct.slope, 2.0 * direct.slope])
+    for index, scale in enumerate((1.0, 2.0)):
+        row = jax.tree_util.tree_map(itemgetter(index), batched)
+        _assert_transformed_close(row, direct, x, y, scale)
+
+
+@pytest.mark.integration
+@pytest.mark.numerical
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize(
+    "x",
+    [
+        pytest.param(_UNDERFLOW_DESIGN[0], id="binary"),
+        pytest.param(_DENSE_UNDERFLOW_DESIGN, id="dense"),
+    ],
+)
+def test_transformed_projection_precision_boundaries(
+    dtype: type[np.float32 | np.float64],
+    x: np.ndarray,
+) -> None:
+    """Check zero, cancellation and both sides of the normal boundary."""
+    tiny = np.finfo(dtype).tiny
+    relative = float(4 * np.finfo(dtype).eps)
+    x = x.astype(dtype)
+    below = np.nextafter(dtype(tiny), dtype(0), dtype=dtype)
+    above = np.nextafter(dtype(tiny), dtype(np.inf), dtype=dtype)
+    normal_scale = dtype(np.sqrt(tiny))
+    outcomes = [
+        np.array([0.0, -0.0, 0.0, -0.0, 0.0, -0.0, 0.0], dtype=dtype),
+        np.ones(7, dtype=dtype),
+        np.full(7, below, dtype=dtype),
+        np.full(7, tiny, dtype=dtype),
+        np.full(7, above, dtype=dtype),
+        np.full(7, 2 * tiny, dtype=dtype),
+        np.full(7, 4 * tiny, dtype=dtype),
+        np.full(7, 8 * tiny, dtype=dtype),
+        x[:, 1] * normal_scale,
+    ]
+    with jax.enable_x64(new_val=dtype is np.float64):
+        compiled = jax.jit(fwl_residualize, static_argnums=(2,))
+
+        def evaluate_outcome(outcome: jax.Array) -> FWLResiduals:
+            return fwl_residualize(x, outcome, 1)
+
+        batched_projection = jax.jit(jax.vmap(evaluate_outcome))
+        for index, y in enumerate(outcomes):
+            direct = fwl_residualize(x, y, 1)
+            result = compiled(x, y, 1)
+            _assert_transformed_close(result, direct, x, y, 1.0)
+            batched = batched_projection(jnp.asarray(np.stack([y, 2.0 * y])))
+            for row_index, scale in enumerate((1.0, 2.0)):
+                row = jax.tree_util.tree_map(itemgetter(row_index), batched)
+                _assert_transformed_close(row, direct, x, y, scale)
+            if index == 0:
+                np.testing.assert_array_equal(direct.outcome_residual, np.zeros(7))
+                np.testing.assert_array_equal(result.outcome_residual, np.zeros(7))
+            if index == len(outcomes) - 1:
+                # A full-rank nuisance projection must retain this known slope.
+                # Normalize on the host so relative-error arithmetic stays normal.
+                for fit in (direct, result):
+                    np.testing.assert_allclose(
+                        np.asarray(fit.slope, dtype=np.float64) / float(normal_scale),
+                        1.0,
+                        rtol=float(relative * np.linalg.cond(x)),
+                        atol=0,
+                    )
+
+        # With no nuisance block, every dot product term is normal and the
+        # dyadic input has an exact, independently known slope.
+        focal = np.array([1.0, -1.0, 1.0, -1.0], dtype=dtype)
+        y = focal * (8 * tiny)
+        direct = fwl_residualize(focal[:, None], y, 0)
+        result = compiled(focal[:, None], y, 0)
+        np.testing.assert_allclose(result.outcome_residual, y, rtol=relative, atol=0)
+        np.testing.assert_allclose(result.slope, 8 * tiny, rtol=relative, atol=0)
+        np.testing.assert_allclose(direct.slope, 8 * tiny, rtol=relative, atol=0)
 
 
 @pytest.mark.unit

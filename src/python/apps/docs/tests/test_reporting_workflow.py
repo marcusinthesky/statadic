@@ -18,8 +18,6 @@ from statadic.api.reporting import (
     TestRow,
 )
 
-pytestmark = pytest.mark.native
-
 APP = Path(__file__).resolve().parents[1]
 NOTEBOOK = APP.parents[1] / "packages/statadic/docs/tutorials/ols/report.py"
 
@@ -29,6 +27,7 @@ def chapter():
     return runpy.run_path(str(NOTEBOOK))
 
 
+@pytest.mark.native
 def test_ols_chapter_matches_independent_fit_and_hc3(chapter):
     data = chapter["make_data"]()
     fit = chapter["fit_data"](data)
@@ -71,6 +70,7 @@ def test_ols_chapter_matches_independent_fit_and_hc3(chapter):
         )
 
 
+@pytest.mark.native
 def test_ols_predictor_and_report_round_trip(chapter, tmp_path):
     fit = chapter["fit_data"](chapter["make_data"]())
     report = fit.infer(covariance=HC("HC3")).report(reference="normal")
@@ -83,8 +83,7 @@ def test_ols_predictor_and_report_round_trip(chapter, tmp_path):
     assert load_analysis(tmp_path / "analysis").report.to_latex() == report.to_latex()
 
 
-def test_latex_compiles_with_escaped_labels_and_unavailability(tmp_path):
-    chapter = runpy.run_path(str(NOTEBOOK))
+def test_latex_compiles_with_escaped_labels_and_unavailability(chapter, tmp_path):
     fit = chapter["fit_data"](chapter["make_data"]())
     latex = fit.infer(covariance=HC("HC3")).report(reference="normal").to_latex()
     unavailable = Report(

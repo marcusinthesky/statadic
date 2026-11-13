@@ -56,7 +56,9 @@ just python::docs::check-notebooks /absolute/path/to/notebook.py
 
 The runner checks strict Marimo rules, unparsable cells, script execution in
 both JAX precisions, collected output tests and any doctests. Schema and prose
-checks run separately. Notebook tests live in a hidden Appendix. Independent
+checks run separately. Output tests and doctests share one pytest invocation;
+published notebooks must collect an ordinary output test even when doctests pass.
+Notebook tests live in a hidden Appendix. Independent
 comparison tests belong in `tests/` and import the notebook's top-level helpers.
 
 The renderer runs Marimo's public `export ipynb --include-outputs --sort top-down`

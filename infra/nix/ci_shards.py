@@ -28,6 +28,8 @@ REGRESSIONS = [
     "tests/inference/test_resampling.py::test_rank_failed_refit_is_retained_and_invalidates_summary",
     "tests/integration/api/test_spatial_likelihood_references.py::test_random_effects_error_panel_matches_spreg_objective",
     "tests/optimize/test_backends.py::test_qr_result_preserves_the_iterate_and_separates_rank",
+    "tests/operators/test_design_fwl.py::test_result_pytree_supports_nested_jit_and_batched_projections",
+    "tests/operators/test_design_fwl.py::test_transformed_projection_precision_boundaries",
     "tests/estimation/test_spatial_reference.py::test_spatial_ml_state_and_information_match_spreg",
 ]
 
