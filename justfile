@@ -46,8 +46,9 @@ check-ci-nontest: check-source
     just latex::check
     just agents::check
 
-# Replay package regressions and the studies precision case before the CI matrix.
+# Check distribution inputs and replay regressions before the CI matrix.
 ci-regressions *args:
+    just python::statadic::test-artifacts --inputs-only
     {{ ci_runner }} regressions "$@"
     just python::studies::ci-regressions
 

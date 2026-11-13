@@ -90,6 +90,15 @@ does not establish that this independent offline consumer installation works.
 
 ## Release evidence
 
+The early CI gate uses the locked workspace backend to build a fresh sdist
+offline and checks its required qualification inputs before the main matrix.
+Run that bounded check in the pinned workspace with
+`just python::statadic::test-artifacts --inputs-only`. It does not qualify wheels.
+The complete `just python::statadic::test-artifacts` check installs both wheel
+build routes, exercises Polars and Arrow through the wheel's `[data]` extra in
+float32 and float64, and checks standalone sdist development. Its smoke driver
+ships in the sdist; documentation notebooks have their own execution lane.
+
 The manual and tag workflow runs a bounded artifact preflight. A complete release
 qualification additionally needs the exact installed-wheel studies, source reviews,
 consumer acceptance and resource measurements selected by its frozen scope.

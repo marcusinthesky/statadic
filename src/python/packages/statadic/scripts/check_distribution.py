@@ -361,10 +361,20 @@ def _check_wheel(
     _run([str(python), "-I", "-c", _INSTALLED_CHECK], directory, environment)
 
 
-def _check_data_examples(
-    uv: str, wheel: Path, source: Path, directory: Path, environment: dict[str, str]
+def _distribution_inputs(source: Path) -> Path:
+    """Require the installed-data smoke driver in the extracted sdist."""
+    relative = Path("scripts/check_distribution_data.py")
+    driver = source / relative
+    if not driver.is_file():
+        message = f"Source distribution is missing required file: {relative}"
+        raise RuntimeError(message)
+    return driver
+
+
+def _check_data_extra(
+    uv: str, wheel: Path, driver: Path, directory: Path, environment: dict[str, str]
 ) -> None:
-    """Run sdist examples against the direct wheel and its data extra."""
+    """Check table adapters and artifacts against the direct wheel's data extra."""
     directory.mkdir()
     venv = directory / "venv"
     _run([uv, "venv", "--python", sys.executable, str(venv)], directory, environment)
@@ -374,37 +384,18 @@ def _check_data_examples(
         directory,
         environment,
     )
-    examples = directory / "examples"
-    examples.mkdir()
-    for name in ("first_regression.py", "poisson_exposure.py"):
-        shutil.copy2(source / "examples" / name, examples / name)
-    _run(
-        [
-            str(python),
-            "-I",
-            "-c",
-            (
-                "import statadic, sys; from pathlib import Path; "
-                "assert Path(statadic.__file__).resolve().is_relative_to("
-                "Path(sys.prefix).resolve())"
-            ),
-        ],
-        examples,
-        environment,
-    )
     for x64 in ("0", "1"):
-        for name in ("first_regression.py", "poisson_exposure.py"):
-            _run(
-                [
-                    str(python),
-                    "-I",
-                    str(examples / name),
-                    "--output",
-                    str(directory / f"{name}-{x64}"),
-                ],
-                examples,
-                {**environment, "JAX_ENABLE_X64": x64},
-            )
+        _run(
+            [
+                str(python),
+                "-I",
+                str(driver),
+                "--output",
+                str(directory / f"artifacts-{x64}"),
+            ],
+            directory,
+            {**environment, "JAX_ENABLE_X64": x64},
+        )
 
 
 def _check_development(uv: str, source: Path, environment: dict[str, str]) -> None:
@@ -448,6 +439,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifacts-dir", type=Path)
     parser.add_argument("--evidence-dir", type=Path)
+    parser.add_argument(
+        "--inputs-only",
+        action="store_true",
+        help="Check real sdist inputs before rebuilding or installing wheels.",
+    )
     args = parser.parse_args()
     if args.evidence_dir is not None:
         args.evidence_dir.mkdir(parents=True, exist_ok=True)
@@ -503,6 +499,18 @@ def main() -> None:
                     uv,
                     "build",
                     "--no-sources",
+                    # The early gate uses the release build's locked backend;
+                    # full qualification still checks an isolated build.
+                    *(
+                        [
+                            "--offline",
+                            "--no-build-isolation",
+                            "--python",
+                            sys.executable,
+                        ]
+                        if args.inputs_only
+                        else []
+                    ),
                     "--sdist",
                     "--wheel",
                     "--out-dir",
@@ -516,6 +524,16 @@ def main() -> None:
         checked_hashes = {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (sdist, wheel)
         }
+        extracted = directory / "unpacked"
+        with tarfile.open(sdist) as archive:
+            archive.extractall(extracted, filter="data")
+        extracted = next(extracted.iterdir())
+        driver = _distribution_inputs(extracted)
+        if args.inputs_only:
+            _LOGGER.info(
+                "Source distribution inputs passed; wheels were not qualified."
+            )
+            return
         rebuilt = directory / "rebuilt"
         _run(
             [
@@ -534,11 +552,7 @@ def main() -> None:
         _check_wheel(
             uv, _one_artifact(rebuilt, "*.whl"), directory / "from-sdist", environment
         )
-        unpacked = directory / "unpacked"
-        with tarfile.open(sdist) as archive:
-            archive.extractall(unpacked, filter="data")
-        extracted = next(unpacked.iterdir())
-        _check_data_examples(uv, wheel, extracted, directory / "data", environment)
+        _check_data_extra(uv, wheel, driver, directory / "data", environment)
         _check_development(uv, extracted, environment)
         if checked_hashes != {
             p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in (sdist, wheel)
