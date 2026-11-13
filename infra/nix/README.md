@@ -50,9 +50,14 @@ same inputs for its independent publishing replication check.
 
 `ci_shards.py` plans four complete Python shards, retains canonical node outcomes
 and verifies their disjoint, exhaustive coverage alongside the remaining root
-checks. A passing aggregate is bound to the checked-out sources, environment and
-workflow run. PR release preflight can consume that same-run receipt; standalone
-release checks still execute the full checkout gate.
+checks. A failed shard-evidence upload is retried once under the same artifact
+name, replacing any partial upload; a failed retry remains a job failure.
+Each architecture verifies its own complete, successful component and shard
+artifacts, so a failing sibling does not invalidate its evidence. Both
+architecture checks must pass before PR release preflight. A passing aggregate
+is bound to the checked-out sources, environment and workflow run. PR release
+preflight can consume that same-run receipt; standalone release checks still
+execute the full checkout gate.
 
 Timing history is a scheduling hint, independent of a passing check receipt.
 The pytest plugin checkpoints on completed tests when at least 15 seconds have

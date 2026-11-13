@@ -39,8 +39,10 @@ jobs:
             ~/.cache/uv
             ~/.cache/tectonic
             ~/.cache/mathlib
-          key: tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-release
+          key: tools-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json', 'infra/release/check_offline_install.py') }}-release
           restore-keys: |
+            tools-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json', 'infra/release/check_offline_install.py') }}-
+            tools-v3-${{ runner.os }}-${{ runner.arch }}-
             tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
       - run: bash infra/nix/install-devenv.sh
       - name: Prepare locked inputs
@@ -50,6 +52,8 @@ jobs:
           bash infra/nix/ci-capacity.sh diagnose provisioned
       - name: Prepare locked reference environment
         run: devenv shell -- just setup-references
+      - name: Prepare isolated release installation inputs
+        run: bash infra/nix/ci-capacity.sh run release-install devenv shell -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --all-packages python infra/release/check_offline_install.py --profile release --prepare --output build/ci/release-install
       - name: Save prepared tool downloads
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         with:

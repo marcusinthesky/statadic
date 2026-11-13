@@ -67,6 +67,8 @@ jobs:
             ~/.cache/mathlib
           key: tools-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json', 'infra/release/check_offline_install.py') }}-check
           restore-keys: |
+            tools-v3-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json', 'infra/release/check_offline_install.py') }}-
+            tools-v3-${{ runner.os }}-${{ runner.arch }}-
             tools-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/uv.lock', '**/*.py.lock', '**/lake-manifest.json') }}-
       - run: bash infra/nix/install-devenv.sh
       - run: devenv shell -- just setup
@@ -154,12 +156,23 @@ jobs:
           path: build/ci/plan
       - name: Execute shard
         run: bash infra/nix/ci-capacity.sh run shard-${{ matrix.shard }} devenv shell --profile python-ci -- just ci-test-shard --plan build/ci/plan --shard ${{ matrix.shard }} --output build/ci/shard-${{ matrix.shard }}
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - name: Retain shard evidence
+        id: shard-evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
+        continue-on-error: true
         with:
           name: shard-${{ matrix.runner }}-${{ matrix.shard }}
           path: build/ci/shard-${{ matrix.shard }}/
           if-no-files-found: error
+      - name: Retry shard evidence upload
+        if: ${{ !cancelled() && steps.shard-evidence.outcome == 'failure' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: shard-${{ matrix.runner }}-${{ matrix.shard }}
+          path: build/ci/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          overwrite: true
       - name: Retain shard diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -223,7 +236,7 @@ jobs:
   check:
     name: check (${{ matrix.runner }})
     timeout-minutes: 30
-    if: always()
+    if: ${{ !cancelled() }}
     needs: [check-nontest, plan, shard]
     strategy:
       fail-fast: false
@@ -233,21 +246,10 @@ jobs:
     env:
       STATADIC_CI_SEED: ${{ github.sha }}
     steps:
-      - name: Require every validation component
-        env:
-          DEPENDENCY_RESULTS: ${{ join(needs.*.result, ' ') }}
-        run: |
-          read -ra results <<< "$DEPENDENCY_RESULTS"
-          for result in "${results[@]}"; do
-            if [[ "$result" != success ]]; then
-              echo "A required validation component did not pass: $result" >&2
-              exit 1
-            fi
-          done
+      # Verify this architecture's complete evidence even if its sibling failed.
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           lfs: true
-      - uses: ./.github/actions/python-ci-setup
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: plan-${{ matrix.runner }}
@@ -260,6 +262,7 @@ jobs:
         with:
           pattern: shard-${{ matrix.runner }}-[0-3]
           path: build/ci/downloaded-shards
+      - uses: ./.github/actions/python-ci-setup
       - name: Verify complete and disjoint test execution
         shell: bash
         run: |
