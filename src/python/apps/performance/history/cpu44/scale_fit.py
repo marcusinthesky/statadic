@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 CASES = {
     "sar160": dict(
         method="SAR ML (larger workload)",
@@ -47,8 +46,8 @@ def _sar(side):
 
     if side == "statadic":
         from statadic.estimation.spatial import ML, SAR, SpatialProblem
+        from statadic.geometry.graph import prepare_spatial_weights
         from statadic.inference.spatial import spatial_covariance
-        from statadic.operators.spatial import prepare_spatial_weights
 
         problem = SpatialProblem(x, y, prepare_spatial_weights(w))
         estimator = ML(SAR())
@@ -60,8 +59,8 @@ def _sar(side):
 
         return evaluate
 
-    from spreg import ML_Lag
     from libpysal.weights import full2W
+    from spreg import ML_Lag
 
     graph = full2W(w)
 
@@ -87,9 +86,9 @@ def _weibull(side):
 
     if side == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.survival import SurvivalML, SurvivalProblem
-        from statadic.inference.survival import observed_information
-        from statadic.model.survival import WeibullAFT
+        from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+        from statadic.inference.covariance.survival import observed_information
+        from statadic.law.survival import WeibullAFT
 
         estimator = SurvivalML(WeibullAFT())
         problem = SurvivalProblem(

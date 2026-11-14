@@ -8,10 +8,10 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     energy_distance,
 )
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 if TYPE_CHECKING:
     from collections.abc import (

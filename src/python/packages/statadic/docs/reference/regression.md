@@ -8,9 +8,9 @@ description: Specify, fit and draw inference from regression models, from ordina
 ## Usage
 
 ```python
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.regression import Regression
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression import Regression
 
 data = {"x": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0], "y": [1.1, 1.8, 3.2, 3.7, 5.3, 5.8]}
 fit = Regression.ols("y", Intercept() + Linear("x")).estimate(data).require_valid()
@@ -20,7 +20,7 @@ print(report.to_text())
 
 ## Description
 
-{py:class}`~statadic.api.regression.Regression` describes a model by naming its
+{py:class}`~statadic.regression.Regression` describes a model by naming its
 response and its predictor terms, and optionally a response law, a structure for
 the observations and a numerical estimator. Calling `estimate` fits the model to
 data and returns a result that keeps the design built from the training rows.
@@ -30,18 +30,18 @@ each of those is a separate request.
 Named constructors such as `Regression.ols` select familiar combinations and
 return the same specification you could write explicitly. For panel, spatial,
 instrumental-variable, dyadic and geometric models, compose `Regression`
-directly, as described in the [composition reference](composition.md).
+directly, as described in the [composition reference](model.md).
 
 ## Options
 
 | Constructor | Equivalent explicit choice | Additional inputs |
 | --- | --- | --- |
-| {py:meth}`Regression.ols <statadic.api.regression.Regression.ols>` | `LeastSquares()` | None |
-| {py:meth}`Regression.wls <statadic.api.regression.Regression.wls>` | Least squares with relative precision | `precision=RelativePrecision("w")` |
-| {py:meth}`Regression.logit <statadic.api.regression.Regression.logit>` | `Binomial(link="logit")` | Optional offset and estimator |
-| {py:meth}`Regression.probit <statadic.api.regression.Regression.probit>` | `Binomial(link="probit")` | Optional offset and estimator |
-| {py:meth}`Regression.poisson <statadic.api.regression.Regression.poisson>` | `Poisson()` | Optional offset, exposure and estimator |
-| {py:meth}`Regression.aft <statadic.api.regression.Regression.aft>` | Censored response with an AFT law | `RightCensored(...)` and `law=...` |
+| {py:meth}`Regression.ols <statadic.regression.Regression.ols>` | `LeastSquares()` | None |
+| {py:meth}`Regression.wls <statadic.regression.Regression.wls>` | Least squares with relative precision | `precision=RelativePrecision("w")` |
+| {py:meth}`Regression.logit <statadic.regression.Regression.logit>` | `Binomial(link="logit")` | Optional offset and estimator |
+| {py:meth}`Regression.probit <statadic.regression.Regression.probit>` | `Binomial(link="probit")` | Optional offset and estimator |
+| {py:meth}`Regression.poisson <statadic.regression.Regression.poisson>` | `Poisson()` | Optional offset, exposure and estimator |
+| {py:meth}`Regression.aft <statadic.regression.Regression.aft>` | Censored response with an AFT law | `RightCensored(...)` and `law=...` |
 
 Every constructor requires explicit terms, including the intercept when one is
 wanted. Grouped binomial outcomes use `Observed("successes", trials="trials")` as
@@ -72,8 +72,8 @@ Fitting least squares returns a `LinearResult`. Its main operations are:
 | `result.predict(data)` | Applies the training design to new rows, which must contain the predictor columns |
 | `result.diagnose(...)` | Runs residual diagnostics on the fitted model. See [linear diagnostics](linear-diagnostics.md) |
 | `result.infer(covariance=...)` | Adds sampling covariance for these coefficients without refitting |
-| `result.report()` | Summarises the point fit as a [report](reporting.md), without standard errors |
-| `result.save_predictor(path)` | Saves what prediction needs. See [saved artifacts](artifacts.md) |
+| `result.report()` | Summarises the point fit as a [report](report.md), without standard errors |
+| `result.save_predictor(path)` | Saves what prediction needs. See [saved artifacts](prediction.md) |
 
 `result.valid` reports whether every fitted quantity is finite and the design
 has full column rank, and `require_valid()` raises when it does not. Inference
@@ -82,8 +82,8 @@ results carry their own availability, which you can check with
 
 For array workflows inside `jax.jit` or `jax.vmap`, the numerical layer offers
 `LeastSquares().estimate(LinearProblem(design, response))`, with covariance from
-`statadic.inference.linear_covariance` and intervals and Wald tests from
-`statadic.inference.parameters`. The design must include any intercept column,
+`statadic.inference.covariance.linear` and intervals and Wald tests from
+`statadic.inference.restriction.linear`. The design must include any intercept column,
 and named fits require the same ordered names for prediction.
 
 ## Methods and formulas
@@ -144,4 +144,4 @@ $F$ distribution whose denominator degrees of freedom you supply.
 - [Your first regression](../start/first-regression.py) and the
   [OLS analysis tutorial](../tutorials/ols/index.md)
 - [Change the covariance estimator](../guides/change-covariance.py)
-- [Hypotheses and tests](hypotheses.md) and [reports](reporting.md)
+- [Hypotheses and tests](hypothesis.md) and [reports](report.md)

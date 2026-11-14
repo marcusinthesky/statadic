@@ -11,13 +11,13 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.core.equations import MeanCenteredLongRun
-from statadic.estimation.gel import FixedGEL
-from statadic.estimation.gmm import IteratedGMM
-from statadic.estimation.moments import AffineMomentProblem, FixedMomentProblem
-from statadic.inference.gel import gel_test
-from statadic.inference.gmm import hansen_j_from_fit
-from statadic.inference.gms import indicator_gms
-from statadic.inference.wolak import wolak_test_kernel
+from statadic.estimation.empirical_likelihood import FixedGEL
+from statadic.estimation.moments.gmm import IteratedGMM
+from statadic.estimation.moments.problem import AffineMomentProblem, FixedMomentProblem
+from statadic.inference.inequality.gms import indicator_gms
+from statadic.inference.inequality.wolak import wolak_test_kernel
+from statadic.inference.restriction.empirical_likelihood import gel_test
+from statadic.inference.restriction.moments import hansen_j_from_fit
 
 from .._validation.calibration import (
     DEFAULT_DRAWS,

@@ -12,7 +12,7 @@ from statadic.estimation.covariance.shrinkage import (
     sample_cov_entry_variance,
     shrink_to_dist,
 )
-from statadic.optimize.psd import ridge_psd
+from statadic.numerics.optimize.psd import ridge_psd
 
 from statadic_studies.adapters._random import rng
 

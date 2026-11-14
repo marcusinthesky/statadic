@@ -8,12 +8,12 @@ import numpy as np
 import pytest
 from scipy.integrate import quad
 from scipy.stats import multivariate_normal, norm
-from statadic.api.survival import SpatialSurvivalData
-from statadic.estimation.survival import (
+from statadic.estimation.likelihood.survival import (
     SpatialSurvivalProblem,
     prepare_spatial_survival_period,
     spatial_survival_log_likelihood,
 )
+from statadic.structure.survival import SpatialSurvivalData
 from statadic_studies.adapters.dependence import spatial_survival_variants as variants
 from statadic_studies.adapters.dependence.spatial_survival_variants import (
     joint_data,

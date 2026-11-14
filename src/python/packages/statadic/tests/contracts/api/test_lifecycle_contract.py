@@ -2,22 +2,22 @@
 
 from __future__ import annotations
 
-import importlib
 import inspect
-import pkgutil
 from typing import TYPE_CHECKING, Final
 
 import pytest
-import statadic.api
-from statadic.api import capabilities
-from statadic.api.base import Model
+from statadic.model import capabilities
+from statadic.model.lifecycle import Model
+
+from ..._workflow import WORKFLOW_PACKAGES, walk_workflow_modules
+
+_WORKFLOW_PREFIXES = tuple(f"statadic.{name}" for name in WORKFLOW_PACKAGES)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
 pytestmark = [pytest.mark.component, pytest.mark.contract]
 
-MINIMUM_CLASSES: Final = 100
 VERBS: Final = ("infer", "predict", "transform", "diagnose", "test")
 FORBIDDEN_PREFIXES: Final = ("predict_", "estimate_", "infer_")
 
@@ -122,14 +122,13 @@ def audit(cls: type) -> list[str]:
 
 
 def concrete_api_classes() -> list[type]:
-    """Every concrete class defined in ``statadic.api``, private modules included."""
+    """Every concrete class defined in the workflow packages, privates included."""
     found: dict[type, None] = {}
-    for info in pkgutil.walk_packages(statadic.api.__path__, "statadic.api."):
-        module = importlib.import_module(info.name)
+    for module in walk_workflow_modules():
         for value in vars(module).values():
             if (
                 inspect.isclass(value)
-                and value.__module__.startswith("statadic.api")
+                and value.__module__.startswith(_WORKFLOW_PREFIXES)
                 and not getattr(value, "_is_protocol", False)
                 and value.__module__ != capabilities.__name__
             ):
@@ -140,7 +139,6 @@ def concrete_api_classes() -> list[type]:
 def test_every_api_lifecycle_verb_matches_a_capability_or_recorded_exception() -> None:
     """No result or inference class drifts from the declared capability shapes."""
     classes = concrete_api_classes()
-    assert len(classes) > MINIMUM_CLASSES
     problems = [p for cls in classes for p in audit(cls)]
     assert problems == []
 

@@ -17,7 +17,7 @@ from statadic_studies.definitions.extended import EXTENDED_STUDIES
 
 @cache
 def _likelihood_kernel(family, estimated, covariance):
-    from statadic.estimation.likelihood import (
+    from statadic.estimation.likelihood.conditional import (
         EstimatedDispersion,
         FixedDispersion,
         GammaMLE,
@@ -25,7 +25,7 @@ def _likelihood_kernel(family, estimated, covariance):
         NegativeBinomialMLE,
         ProbitMLE,
     )
-    from statadic.inference.likelihood import likelihood_covariance
+    from statadic.inference.covariance.likelihood import likelihood_covariance
 
     policy = EstimatedDispersion() if estimated else FixedDispersion(0.6)
     estimator = (
@@ -73,8 +73,8 @@ def _likelihood(study, scenario, replicate, seed):
 
 @cache
 def _survival_kernel(name):
-    from statadic.estimation.survival import SurvivalML, SurvivalProblem
-    from statadic.model.survival import (
+    from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+    from statadic.law.survival import (
         LogLogisticAFT,
         LogNormalAFT,
         WeibullAFT,
@@ -135,13 +135,13 @@ def _survival(study, scenario, replicate, seed):
 
 def _iv(study, scenario, replicate, seed):
     from statadic.core.equations import OneWayCluster, PlainLongRun
-    from statadic.estimation.iv import (
+    from statadic.estimation.moments.instrumental import (
         IteratedIVGMM,
         IVProblem,
         TwoStageLeastSquares,
         TwoStepIVGMM,
     )
-    from statadic.inference.iv import iv_covariance
+    from statadic.inference.covariance.instrumental import iv_covariance
 
     generator = rng(study, scenario, replicate, seed=seed)
     z = generator.normal(size=(128, 4))

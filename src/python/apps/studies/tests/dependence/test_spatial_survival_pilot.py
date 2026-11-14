@@ -4,13 +4,13 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from scipy.stats import multivariate_normal
-from statadic.estimation.survival import (
+from statadic.estimation.likelihood.survival import (
     SpatialSurvivalProblem,
     prepare_spatial_survival_period,
     spatial_survival_log_likelihood,
 )
-from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
-from statadic.optimize.integration import IntegrationDesign
+from statadic.geometry.graph import ObservedSpatialPeriod, prepare_spatial_weights
+from statadic.numerics.quadrature import IntegrationDesign
 from statadic_studies.adapters.dependence.spatial_survival import (
     run_spatial_survival_pilot,
     spatial_design,

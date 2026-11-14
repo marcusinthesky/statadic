@@ -7,7 +7,8 @@ uncertainty, tests and resampling results. Operators and optimize supply shared
 numerical operations; core supplies semantic and result contracts.
 
 Import the owning family explicitly, for example
-``from statadic.estimation.linear import LeastSquares``. Compound namespaces do not load
+``from statadic.estimation.least_squares.linear import LeastSquares``. Compound
+namespaces do not load
 unrelated families. See the package docs/index.md question guide and
 ARCHITECTURE.md for ownership and dependency rules.
 """

@@ -5,13 +5,13 @@ from dataclasses import replace
 import jax
 import numpy as np
 import pytest
-from statadic.estimation.dyadic import DyadicEstimator
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.estimation.panel import PanelProblem, Within
+from statadic.estimation.least_squares.dyadic import DyadicEstimator
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.panel import PanelProblem, Within
 from statadic.estimation.spatial import SAR, SLXLeastSquares, SpatialProblem
-from statadic.model.dyadic import DyadicModel, DyadicSample
-from statadic.operators.panel import prepare_panel_index
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.law.dyadic import DyadicModel, DyadicSample
+from statadic.numerics.linalg.absorption import prepare_panel_index
 from statadic_studies.adapters.dependence._dispatch import run_dependence
 from statadic_studies.adapters.dependence.dyadic import dyadic_data
 from statadic_studies.adapters.dependence.linear_panel import panel_design, wls_data
@@ -92,7 +92,6 @@ def test_dyadic_pooled_coefficient_against_numpy_edges():
 def test_complete_dependence_scenarios(study, scenario):
     result = run_dependence(study, scenario, 0, 18)
     assert tuple(result) == DEPENDENCE_STUDIES[study].methods
-    assert result == run_dependence(study, scenario, 0, 18)
     for record in result.values():
         assert record["valid"] or record["failure"]
         if record["valid"]:

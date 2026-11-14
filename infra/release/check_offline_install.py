@@ -14,9 +14,121 @@ import sys
 import tempfile
 from pathlib import Path
 
+import tomllib
+
 ROOT = Path(__file__).resolve().parents[2]
 WORKSPACE = ROOT / "src/python"
 PACKAGES = ("statadic", "statadic-evidence", "statadic-publishing")
+
+
+def build_options(
+    uv: str, python: Path, lock: Path, environment: dict[str, str]
+) -> list[str]:
+    """Build the reviewed source-only reference with existing locked backends."""
+    packages = tomllib.loads(lock.read_text())["packages"]
+    source_only = {item["name"] for item in packages if not item.get("wheels")}
+    if not source_only:
+        return ["--only-binary", ":all:"]
+    if source_only != {"autograd-gamma"}:
+        raise ValueError(
+            f"Review the build backend for source-only dependencies: {sorted(source_only)}"
+        )
+    # Its hash-verified 0.5.0 sdist uses only setuptools.setup. Avoid an
+    # independent build-isolation resolution by bootstrapping locked build tools.
+    workspace = tomllib.loads((WORKSPACE / "uv.lock").read_text())
+    requirements = lock.parent / "source-build-requirements.txt"
+    lines = []
+    for name in ("setuptools", "wheel", "packaging"):
+        package = next(item for item in workspace["package"] if item["name"] == name)
+        artifact = next(
+            item
+            for item in package["wheels"]
+            if item["url"].endswith("py3-none-any.whl")
+        )
+        lines.append(f"{name} @ {artifact['url']} --hash={artifact['hash']}")
+    requirements.write_text("\n".join(lines) + "\n")
+    run(
+        [
+            uv,
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "--require-hashes",
+            "--python",
+            str(python),
+            "-r",
+            str(requirements),
+        ],
+        lock.parent,
+        environment,
+    )
+    return ["--no-build-isolation"]
+
+
+def export_lock(
+    uv: str, selection: str, output: Path, environment: dict[str, str]
+) -> Path:
+    """Retain artifact addresses rather than relying on cached index metadata."""
+    output.mkdir(parents=True, exist_ok=True)
+    lock = output / f"pylock.{selection}.toml"
+    options = ["--package", "statadic-publishing", "--no-dev"]
+    if selection != "publishing":
+        options = ["--package", "statadic"]
+        options += ["--group", "reference"] if selection == "tests" else ["--no-dev"]
+        if selection in ("data", "tests"):
+            options += ["--extra", "data"]
+        options += ["--no-emit-package", "pytest-layout-enforcer"]
+    run(
+        [
+            uv,
+            "export",
+            "--project",
+            str(WORKSPACE),
+            "--offline",
+            "--frozen",
+            *options,
+            "--no-emit-workspace",
+            "--format",
+            "pylock.toml",
+            "--output-file",
+            str(lock),
+            "--quiet",
+        ],
+        ROOT,
+        environment,
+    )
+    return lock
+
+
+def prepare_lock(
+    uv: str, lock: Path, directory: Path, environment: dict[str, str]
+) -> None:
+    """Fetch only reviewed artifacts, then prove a second install works offline."""
+    for name, offline in (("prepared", False), ("offline-probe", True)):
+        target = directory / name
+        execution_environment = environment | {"UV_OFFLINE": str(offline).lower()}
+        run(
+            [uv, "venv", "--python", sys.executable, str(target)],
+            directory,
+            environment,
+        )
+        run(
+            [
+                uv,
+                "pip",
+                "sync",
+                *(["--offline"] if offline else []),
+                "--no-index",
+                *build_options(uv, target / "bin/python", lock, execution_environment),
+                "--python",
+                str(target / "bin/python"),
+                str(lock),
+            ],
+            directory,
+            execution_environment,
+        )
+        shutil.rmtree(target)
 
 
 def run(command: list[str], directory: Path, environment: dict[str, str]) -> None:
@@ -41,8 +153,7 @@ def install_locked_environment(
             "sync",
             "--offline",
             "--no-index",
-            "--only-binary",
-            ":all:",
+            *build_options(uv, python, lock, environment | {"UV_OFFLINE": "true"}),
             "--python",
             str(python),
             str(lock),
@@ -80,8 +191,14 @@ def main() -> None:
         "--output", type=Path, default=ROOT / "build/ci/offline-install"
     )
     parser.add_argument("--python", type=Path, help="An existing isolated environment.")
+    parser.add_argument("--lock", type=Path, help="An already exported artifact lock.")
     parser.add_argument(
         "--wheels", type=Path, nargs="+", help="Fresh workspace wheels."
+    )
+    parser.add_argument(
+        "--selection",
+        choices=("publishing", "runtime", "data", "tests"),
+        default="publishing",
     )
     args = parser.parse_args()
     uv = shutil.which("uv")
@@ -94,56 +211,15 @@ def main() -> None:
     environment = os.environ.copy()
     for name in ("PYTHONPATH", "PYTHONHOME", "VIRTUAL_ENV"):
         environment.pop(name, None)
-    lock = output / "pylock.publishing.toml"
-    run(
-        [
-            uv,
-            "export",
-            "--project",
-            str(WORKSPACE),
-            "--offline",
-            "--frozen",
-            "--package",
-            "statadic-publishing",
-            "--no-dev",
-            "--no-emit-workspace",
-            "--format",
-            "pylock.toml",
-            "--output-file",
-            str(lock),
-            "--quiet",
-        ],
-        ROOT,
-        environment,
+    lock = (
+        args.lock.resolve()
+        if args.lock
+        else export_lock(uv, args.selection, output, environment)
     )
     with tempfile.TemporaryDirectory(prefix="statadic-offline-install-") as temporary:
         directory = Path(temporary)
         if args.prepare:
-            # A pylock retains the lock's URLs and hashes; no registry candidate
-            # metadata is needed. uv chooses the wheel for this interpreter/CPU.
-            prepared = directory / "prepared"
-            run(
-                [uv, "venv", "--python", sys.executable, str(prepared)],
-                directory,
-                environment,
-            )
-            online = environment | {"UV_OFFLINE": "false"}
-            run(
-                [
-                    uv,
-                    "pip",
-                    "sync",
-                    "--no-index",
-                    "--only-binary",
-                    ":all:",
-                    "--python",
-                    str(prepared / "bin/python"),
-                    str(lock),
-                ],
-                directory,
-                online,
-            )
-            shutil.rmtree(prepared)
+            prepare_lock(uv, lock, directory, environment)
         wheels = [path.resolve() for path in args.wheels or []]
         build_constraints = None
         if not wheels:
@@ -170,7 +246,9 @@ def main() -> None:
                 environment,
             )
             built = directory / "wheels"
-            for package in PACKAGES:
+            for package in (
+                PACKAGES if args.selection == "publishing" else ("statadic",)
+            ):
                 run(
                     [
                         uv,
@@ -204,6 +282,19 @@ def main() -> None:
             )
             python = target / "bin/python"
         install_locked_environment(uv, python, lock, wheels, directory, environment)
+        names = (
+            (
+                "statadic",
+                "statadic_evidence",
+                "statadic_publishing",
+                "jax",
+                "numpy",
+                "polars",
+                "pyarrow",
+            )
+            if args.selection == "publishing"
+            else ("statadic", "jax", "numpy")
+        )
         run(
             [
                 str(python),
@@ -211,8 +302,7 @@ def main() -> None:
                 "-c",
                 (
                     "import importlib, sys; from pathlib import Path; "
-                    "names = ('statadic', 'statadic_evidence', 'statadic_publishing', "
-                    "'jax', 'numpy', 'polars', 'pyarrow'); "
+                    f"names = {names!r}; "
                     "modules = [importlib.import_module(name) for name in names]; "
                     "assert all(Path(module.__file__).resolve().is_relative_to("
                     "Path(sys.prefix).resolve()) for module in modules); "

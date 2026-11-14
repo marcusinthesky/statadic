@@ -1,17 +1,13 @@
 """Exercise the authored example and compare retained estimates with an oracle."""
 
 import json
-import os
-import shutil
-import subprocess
-import sys
 from pathlib import Path
 
 import jax
 import numpy as np
 import polars as pl
 import pytest
-from statadic.api.artifacts import load_analysis
+from statadic.prediction.artifacts import load_analysis
 from statadic_publishing.operations import _BIB_KEY
 from statadic_publishing.project import read_project
 
@@ -31,29 +27,12 @@ def test_example_claims_resolve_in_repository_registries() -> None:
 
 
 @pytest.mark.requires_optional("statsmodels")
-def test_paper_analysis_and_manuscript(tmp_path: Path) -> None:
+def test_paper_analysis_and_manuscript(bundle: Path) -> None:
     import statsmodels.api as sm
 
     spec = read_project(EXAMPLE / "publishing.toml")
     (data,) = [EXAMPLE / item.path for item in spec.inputs if item.path is not None]
-    generated = tmp_path / "generated"
-    env = os.environ.copy()
-    env["JAX_ENABLE_X64"] = "1" if jax.config.x64_enabled else "0"
-    subprocess.run(
-        [
-            sys.executable,
-            "-I",
-            str(EXAMPLE / spec.analysis.script),
-            "--input",
-            str(data),
-            "--seed",
-            str(spec.analysis.seed),
-            "--output",
-            str(generated),
-        ],
-        check=True,
-        env=env,
-    )
+    generated = bundle / "generated"
     assert {
         p.relative_to(generated).as_posix() for p in generated.rglob("*") if p.is_file()
     } == {out.path for out in spec.outputs}
@@ -79,32 +58,4 @@ def test_paper_analysis_and_manuscript(tmp_path: Path) -> None:
             err_msg=field,
         )
     assert len(report.plots) == 1
-    shutil.copy(
-        EXAMPLE / spec.manuscript.root / spec.manuscript.main, tmp_path / "main.tex"
-    )
-    shutil.copy(EXAMPLE / spec.manuscript.bibliography.path, tmp_path / "refs.bib")
-    bundle = (EXAMPLE / spec.manuscript.tex_bundle.path).resolve()
-    subprocess.run(
-        [
-            "tectonic",
-            "-X",
-            "compile",
-            "--untrusted",
-            "--only-cached",
-            "--bundle",
-            str(bundle),
-            "--keep-logs",
-            "main.tex",
-        ],
-        cwd=tmp_path,
-        check=True,
-    )
-    subprocess.run(
-        [
-            "bash",
-            str((EXAMPLE / spec.manuscript.check_log).resolve()),
-            str(tmp_path / "main.log"),
-        ],
-        check=True,
-    )
-    assert (tmp_path / "main.pdf").is_file()
+    assert (bundle / "manuscript/main.pdf").is_file()

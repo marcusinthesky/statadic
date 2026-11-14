@@ -185,17 +185,20 @@ def prepare(case, backend):
             ML,
             SAR,
             SEM,
+            SLXLeastSquares,
+            SpatialGMM,
             SpatialIV,
             SpatialProblem,
-            SpatialGMM,
-            SLXLeastSquares,
         )
+        from statadic.geometry.graph import prepare_spatial_weights
         from statadic.inference.spatial import spatial_covariance
-        from statadic.operators.spatial import prepare_spatial_weights
 
         problem = SpatialProblem(x, y, prepare_spatial_weights(w))
         if case == "moran_lm":
-            from statadic.estimation.linear import LeastSquares, LinearProblem
+            from statadic.estimation.least_squares.linear import (
+                LeastSquares,
+                LinearProblem,
+            )
             from statadic.inference.spatial.diagnostics import spatial_diagnostics
 
             def run():
@@ -218,7 +221,7 @@ def prepare(case, backend):
 
             return run
         if case == "slx":
-            from statadic.inference.linear_covariance import hc_covariance
+            from statadic.inference.covariance.linear import hc_covariance
 
             def run():
                 fit = SLXLeastSquares((1, 2)).estimate(problem)
@@ -357,17 +360,17 @@ def prepare_panel(case, backend):
     if backend == "statadic":
         from statadic.estimation.spatial import (
             KKP,
-            PanelML,
             SAR,
             SEM,
-            SpatialPanelProblem,
-            ObservedSpatialPanelProblem,
             ObservedPanelML,
+            ObservedSpatialPanelProblem,
+            PanelML,
+            SpatialPanelProblem,
         )
-        from statadic.operators.spatial import (
+        from statadic.geometry.graph import (
+            ObservedSpatialPeriod,
             prepare_spatial_panel_weights,
             prepare_spatial_weights,
-            ObservedSpatialPeriod,
         )
 
         if observed:
@@ -388,7 +391,7 @@ def prepare_panel(case, backend):
             x, y, prepare_spatial_panel_weights(w, period_ids=np.arange(t))
         )
         if kkp:
-            from statadic.inference.linear_covariance import classical_covariance
+            from statadic.inference.covariance.linear import classical_covariance
 
             estimator = KKP(full_weights=case.endswith("_full"), tolerance=1e-9)
 
@@ -420,6 +423,7 @@ def prepare_panel(case, backend):
     if kkp:
         from functools import partial
         from unittest.mock import patch
+
         from scipy import optimize
 
         strict_lbfgsb = partial(

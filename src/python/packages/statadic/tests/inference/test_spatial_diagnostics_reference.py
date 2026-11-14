@@ -8,18 +8,18 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pytest
 from scipy import stats
-from statadic.estimation.linear import (
+from statadic.estimation.least_squares.linear import (
     LeastSquares,
     LinearProblem,
 )
 from statadic.estimation.spatial import ML, SAR, SpatialIV, SpatialProblem
+from statadic.geometry.graph import prepare_spatial_weights
 from statadic.inference.spatial import (
     spatial_ak_test,
     spatial_common_factor_test,
     spatial_covariance,
 )
 from statadic.inference.spatial.diagnostics import spatial_diagnostics
-from statadic.operators.spatial import prepare_spatial_weights
 
 if TYPE_CHECKING:
     from collections.abc import Callable

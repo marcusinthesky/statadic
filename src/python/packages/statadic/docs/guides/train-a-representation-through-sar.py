@@ -23,9 +23,9 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.regression import Regression
-    from statadic.api.data import Observations
+    from statadic.observation.design import Intercept, Linear
+    from statadic.regression import Regression
+    from statadic.observation.data import Observations
 
     DARK = mo.app_meta().theme == "dark"
     INK = "#eeeeee" if DARK else "#000000"
@@ -37,12 +37,12 @@ with app.setup:
 
     import optax
     from flax import nnx
-    from statadic.api.data import PanelLayout
-    from statadic.api.representation import Energy
-    from statadic.api.spatial.graphs import DistanceGraph, PanelData, RBFWeights, SpatialLag
+    from statadic.observation.data import PanelLayout
+    from statadic.observation.geometry import Energy
+    from statadic.observation.graph import DistanceGraph, PanelData, RBFWeights, SpatialLag
     from statadic.estimation.spatial.graph_likelihood import graph_profile
-    from statadic.operators.spatial.distance import rbf_weights
-    from statadic.sample.packed import PackedClouds
+    from statadic.geometry.graph.distance import rbf_weights
+    from statadic.measure.clouds import PackedClouds
 
 
 @app.cell(hide_code=True)

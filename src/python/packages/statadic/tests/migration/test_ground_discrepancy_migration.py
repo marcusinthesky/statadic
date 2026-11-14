@@ -18,7 +18,8 @@ Four things this suite exists to stop from drifting silently:
   the one energy callable that did not validate ``exponent`` before the move.
 
 Runs under the t46.1 jaxtyping/beartype import hook (``tests/conftest.py``), so
-the NumPy-vs-JAX annotation split in :mod:`statadic.discrepancy.metrize` is checked
+the NumPy-vs-JAX annotation split in :mod:`statadic.geometry.discrepancy.metrize` is
+checked
 here rather than merely asserted in a docstring.
 """
 
@@ -41,12 +42,9 @@ from statadic.core.axioms import (
     Premetric,
     Semimetric,
 )
-from statadic.discrepancy import metrize
-from statadic.discrepancy.mmd import energy
-from statadic.discrepancy.mmd.components import (
-    candidate_energy_components,
-)
-from statadic.sample.packed import PackedClouds, pack
+from statadic.geometry.discrepancy import metrize
+from statadic.geometry.discrepancy.mmd import energy
+from statadic.measure.clouds import PackedClouds, pack
 
 if TYPE_CHECKING:
     from jax import Array
@@ -102,7 +100,8 @@ def test_every_brand_is_the_strongest_marker_its_flags_imply(
     """A brand may never promise an axiom the declaration does not carry.
 
     Extends ``test_marker_brand_is_the_strongest_available`` to the shipped
-    tables, including :mod:`statadic.discrepancy.metrize`, which the battery does
+    tables, including :mod:`statadic.geometry.discrepancy.metrize`, which the battery
+    does
     not cover.
 
     Args:
@@ -392,18 +391,3 @@ def test_retired_shim_path_no_longer_imports(dotted: str) -> None:
     """
     with pytest.raises(ModuleNotFoundError):
         importlib.import_module(dotted)
-
-
-@pytest.mark.integration
-@pytest.mark.contract
-def test_private_energy_component_names_live_on_the_migrated_module() -> None:
-    """Resolve the packed helpers on ``discrepancy/_mmd/components.py`` alone.
-
-    Wave B asserted this through two shims; the shims are gone, so the check is
-    now that the migrated module is the single owner. The private accesses are
-    the subject of the test, not incidental -- SLF001 is suppressed for exactly
-    that reason.
-    """
-    from statadic.discrepancy.mmd import components as _components  # noqa: PLC0415
-
-    assert _components.candidate_energy_components is candidate_energy_components

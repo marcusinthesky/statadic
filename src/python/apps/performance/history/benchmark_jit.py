@@ -28,7 +28,8 @@ import jax.numpy as jnp
 import numpy as np
 from jax import config as jax_config
 from jax import random
-from statadic.discrepancy.mmd.energy import (
+from notebooks import _benchmark_environment
+from statadic.geometry.discrepancy.mmd.energy import (
     energy_distance,
     energy_test_statistic,
 )
@@ -39,10 +40,8 @@ from statadic.inference.mixture import (
 from statadic.inference.resampling.bootstrap import (
     bootstrap_confidence_interval,
 )
-from statadic.inference.resampling.permutation import permutation_test_result
+from statadic.inference.resampling.permutation_test import permutation_test_result
 from statadic.inference.resampling.results import to_host_test_result
-
-from notebooks import _benchmark_environment
 
 if TYPE_CHECKING:
     from statadic.inference.resampling.results import HypothesisTest

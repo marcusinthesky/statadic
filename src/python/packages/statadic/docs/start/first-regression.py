@@ -26,11 +26,11 @@ with app.setup:
     import marimo as mo
     import matplotlib.pyplot as plt
     from wigglystuff import TangleSlider
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.diagnostics import BreuschPagan
-    from statadic.api.inference import HC
-    from statadic.api.regression import Regression
-    from statadic.api.artifacts import load_analysis, load_predictor, save_analysis
+    from statadic.observation.design import Intercept, Linear
+    from statadic.hypothesis.specification import BreuschPagan
+    from statadic.hypothesis.uncertainty import HC
+    from statadic.regression import Regression
+    from statadic.prediction.artifacts import load_analysis, load_predictor, save_analysis
 
     DARK = mo.app_meta().theme == "dark"
     INK = "#eeeeee" if DARK else "#000000"

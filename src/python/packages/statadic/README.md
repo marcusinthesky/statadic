@@ -7,8 +7,8 @@ components. Retained state connects your result to its assumptions and evidence.
 Use [Regression](docs/reference/regression.md) for outcomes,
 [Ordination](docs/reference/ordination.md) for coordinates and
 [Estimand](docs/reference/estimand.md) for covariance or supplied moments.
-State a [Hypothesis](docs/reference/hypotheses.md); inspect a
-[Report](docs/reference/reporting.md). Ordination can also supply predictor terms.
+State a [Hypothesis](docs/reference/hypothesis.md); inspect a
+[Report](docs/reference/report.md). Ordination can also supply predictor terms.
 
 **Align → Specify → Estimate → Inspect → Diagnose → Predict or infer → Report.**
 

@@ -4,7 +4,8 @@
 The difference comparison uses circular blocks of paired observations; the
 interval uses the stationary bootstrap. Both require an appropriate resampling
 law for the actual serial dependence. Numerical execution does not establish
-calibration. The Sharpe calculation is owned by :mod:`statadic.estimation.sharpe`.
+calibration. The Sharpe calculation is owned by
+:mod:`statadic.estimation.moments.sharpe`.
 """
 
 from __future__ import annotations
@@ -17,14 +18,14 @@ import jax.numpy as jnp
 from jaxtyping import Float, Int
 
 from statadic.core.typing import Array, ArrayLike, PRNGKey  # noqa: TC001
-from statadic.estimation.sharpe import sharpe_ratio_axis
+from statadic.estimation.moments.sharpe import sharpe_ratio_axis
 from statadic.inference.resampling.block_length import (
     heuristic_block_length,
     heuristic_block_length_result,
     stationary_bootstrap_ci,
 )
 from statadic.inference.resampling.results import ConfidenceInterval  # noqa: TC001
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     circular_block_bootstrap_indices,
     circular_block_bootstrap_indices_kernel,
 )

@@ -8,23 +8,23 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.data import Observations, PanelLayout
-from statadic.api.design import Intercept, Linear
-from statadic.api.hypotheses import Hypothesis, LinearRestriction
-from statadic.api.inference import HAC, HC, Clustered, ModelBased
-from statadic.api.ordination import Ordination
-from statadic.api.panel import PanelCovariance, PanelResult
-from statadic.api.regression import IVResult, LinearResult, Regression
-from statadic.api.representation import ObservedDissimilarity
-from statadic.api.spatial.graphs import PanelData
-from statadic.estimation.iv import TwoStageLeastSquares
-from statadic.estimation.panel import PanelFit, Within
+from statadic.estimation.least_squares.panel import PanelFit, Within
+from statadic.estimation.moments.instrumental import TwoStageLeastSquares
+from statadic.hypothesis.core import Hypothesis, LinearRestriction
+from statadic.hypothesis.uncertainty import HAC, HC, Clustered, ModelBased
+from statadic.observation.data import Observations, PanelLayout
+from statadic.observation.design import Intercept, Linear
+from statadic.observation.geometry import ObservedDissimilarity
+from statadic.observation.graph import PanelData
+from statadic.ordination.fit import Ordination
+from statadic.regression import IVResult, LinearResult, Regression
+from statadic.structure.panel import PanelCovariance, PanelResult
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from types import ModuleType
 
-    from statadic.api.inference import CovarianceSpec
+    from statadic.hypothesis.uncertainty import CovarianceSpec
 
 _MISSING_PERIOD = 2
 

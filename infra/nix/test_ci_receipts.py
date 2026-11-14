@@ -122,6 +122,22 @@ class ReceiptTests(unittest.TestCase):
     def test_complete_receipt(self):
         verify(self.root, self.identity)
 
+    def test_package_scope_cannot_replace_repository_checks(self):
+        mutate(
+            self.root, "component.json", lambda record: record.update(scope="package")
+        )
+        with self.assertRaisesRegex(ValueError, "scope"):
+            verify(self.root, self.identity)
+        ci_shards.verify_receipt(
+            self.root,
+            source_files=self.identity["source_files"],
+            revision=self.identity["revision"],
+            architecture=self.identity["architecture"],
+            run_id=self.identity["run_id"],
+            run_attempt=self.identity["run_attempt"],
+            scope="package",
+        )
+
     def test_recorded_setup_and_call_skips_are_complete(self):
         record = ci_shards._load(self.root / "shard-0.json")
         node = record["selected"][0]
@@ -140,7 +156,7 @@ class ReceiptTests(unittest.TestCase):
 
     def test_bad_identity_and_schema(self):
         for field, value in (
-            ("schema_version", 2),
+            ("schema_version", 99),
             ("revision", "old"),
             ("architecture", "arm"),
             ("run_id", "other"),
@@ -212,13 +228,16 @@ class ReceiptTests(unittest.TestCase):
                     verify(self.root, self.identity)
 
     def test_retained_junit_tampering_and_missing_file(self):
-        path = self.root / "shard-0.xml"
-        path.write_text("<testsuites><tampered/></testsuites>")
-        with self.assertRaises(ValueError):
-            verify(self.root, self.identity)
-        path.unlink()
-        with self.assertRaises((ValueError, OSError)):
-            verify(self.root, self.identity)
+        for filename in ("shard-0.xml", "shard-0.log"):
+            with self.subTest(filename=filename):
+                make_receipt(self.root)
+                path = self.root / filename
+                path.write_text("tampered")
+                with self.assertRaisesRegex(ValueError, "file changed"):
+                    verify(self.root, self.identity)
+                path.unlink()
+                with self.assertRaises(ValueError):
+                    verify(self.root, self.identity)
 
 
 if __name__ == "__main__":

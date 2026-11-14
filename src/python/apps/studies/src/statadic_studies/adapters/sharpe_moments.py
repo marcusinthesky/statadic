@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.sharpe import sample_skew_kurtosis
+from statadic.estimation.moments.sharpe import sample_skew_kurtosis
 
 from statadic_studies.adapters._outcomes import _record
 from statadic_studies.adapters._random import rng

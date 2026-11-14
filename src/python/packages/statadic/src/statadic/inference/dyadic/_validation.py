@@ -11,15 +11,15 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 
 from statadic.inference.dyadic.contracts import NodeCountSchedule
-from statadic.model.dyadic import DyadicInputError
-from statadic.model.dyadic.validation import _array_shape, _is_finite_real_array
+from statadic.law.dyadic import DyadicInputError
+from statadic.law.dyadic.validation import _array_shape, _is_finite_real_array
 
 if TYPE_CHECKING:
     from statadic.inference.dyadic.contracts import (
         DyadicBootstrapDesign,
         DyadicInference,
     )
-    from statadic.operators.design import (
+    from statadic.numerics.linalg.dyadic import (
         NodeIndex,
     )
 

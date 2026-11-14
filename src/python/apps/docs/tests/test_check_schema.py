@@ -236,8 +236,13 @@ def test_missing_type_fails_unless_allowlisted(tmp_path):
 
 
 @needs_schematter
-def test_scaffold_validates_as_a_tutorial():
-    assert check_schema.check(check_schema.DOCS, check_schema.ROOT, allowlist=None) == 0
+def test_scaffold_validates_as_a_tutorial(tmp_path, capsys):
+    docs = tmp_path / "docs"
+    template = docs / "_templates/notebook.py"
+    template.parent.mkdir(parents=True)
+    shutil.copy2(check_schema.DOCS / "_templates/notebook.py", template)
+    assert check_schema.check(docs, check_schema.ROOT, allowlist=[]) == 0
+    assert "checked 1 files in 1 schemas" in capsys.readouterr().out
 
 
 def test_migration_allowlist_is_retired():

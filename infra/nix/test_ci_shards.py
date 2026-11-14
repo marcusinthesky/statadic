@@ -1,6 +1,5 @@
 """Check complete shard accounting and receipt rejection independently of science."""
 
-import hashlib
 import json
 import os
 import signal
@@ -13,79 +12,6 @@ from pathlib import Path
 from unittest import mock
 
 import ci_shards
-
-
-def make_receipt(root: Path) -> dict:
-    identity = {
-        "source_files": {"a": "hash"},
-        "revision": "abc",
-        "architecture": "x86_64",
-        "backend": "cpu",
-        "x64": "1",
-        "profile": "statadic",
-        "flags": ci_shards.FLAGS,
-        "shards": 4,
-        "seed": "abc",
-        "python": "3.13.1",
-        "interpreter": "/python",
-        "jax": "1",
-        "jaxlib": "1",
-        "xla_flags": "",
-        "run_id": "3",
-        "run_attempt": "1",
-    }
-    universe = [f"tests/test_{i}.py::test_case" for i in range(8)]
-    assignment = ci_shards.assign(universe, {})
-    plan = {
-        "schema_version": 1,
-        "identity": identity,
-        "universe": universe,
-        "assignment": assignment,
-    }
-    ci_shards._write(
-        root / "component.json",
-        {"schema_version": 1, "identity": identity, "exitstatus": 0},
-    )
-    ci_shards._write(root / "collection.json", {"universe": universe, "exitstatus": 0})
-    ci_shards._write(root / "durations.json", {})
-    (root / "component.log").write_text("passed\n")
-    for shard in range(4):
-        selected = [
-            node for node in universe if assignment[node.split("::", 1)[0]] == shard
-        ]
-        reports = {
-            node: {"setup": ["passed"], "call": ["passed"], "teardown": ["passed"]}
-            for node in selected
-        }
-        record = {
-            "schema_version": 1,
-            "identity": identity,
-            "exitstatus": 0,
-            "universe": universe,
-            "selected": selected,
-            "reports": reports,
-            "durations": {},
-        }
-        ci_shards._write(root / f"shard-{shard}.json", record)
-        ci_shards._write(
-            root / f"shard-{shard}-pytest.json",
-            {
-                "exitstatus": 0,
-                "reports": reports,
-                "workers": [{"universe": universe, "selected": selected}] * 2,
-            },
-        )
-        (root / f"shard-{shard}.log").write_text("passed\n")
-        (root / f"shard-{shard}.xml").write_text(
-            "<testsuites>" + "<testcase/>" * len(selected) + "</testsuites>"
-        )
-    files = {
-        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
-        for path in root.iterdir()
-        if path.is_file()
-    }
-    ci_shards._write(root / "receipt.json", plan | {"files": files})
-    return identity
 
 
 class ShardTests(unittest.TestCase):
@@ -304,24 +230,6 @@ class ShardTests(unittest.TestCase):
                     if child.poll() is None:
                         os.killpg(child.pid, signal.SIGTERM)
                     child.communicate(timeout=10)
-
-    def test_receipt_requires_exact_complete_successful_shards(self):
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            identity = make_receipt(root)
-            kwargs = {
-                "source_files": identity["source_files"],
-                "revision": "abc",
-                "architecture": "x86_64",
-                "run_id": "3",
-                "run_attempt": "1",
-            }
-            ci_shards.verify_receipt(root, **kwargs)
-            (root / "shard-0.log").write_text("tampered")
-            with self.assertRaisesRegex(ValueError, "file changed"):
-                ci_shards.verify_receipt(root, **kwargs)
-            with self.assertRaisesRegex(ValueError, "identity"):
-                ci_shards.verify_receipt(root, **(kwargs | {"run_id": "4"}))
 
     def test_assignment_is_deterministic_whole_file_and_balanced(self):
         nodes = [

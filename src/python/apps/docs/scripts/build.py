@@ -154,6 +154,19 @@ def provenance(*, study_exports: list[Path], release_evidence: bool) -> dict:
     }
 
 
+def validate_notebook_page(notebook: Path, session: dict) -> None:
+    """Check publication requirements using the already executed export."""
+    from statadic_docs_pages.marimo_pages import compose
+
+    markdown = compose(session)
+    for required in ("# ", "## Introduction", "{marimo-output}", "{marimo-launch}"):
+        if required not in markdown:
+            raise ValueError(f"{notebook}: rendered notebook is missing {required!r}")
+    for hidden in ("## Appendix", "def test_"):
+        if hidden in markdown:
+            raise ValueError(f"{notebook}: rendered notebook exposes {hidden!r}")
+
+
 def main() -> None:
     selected = study_selection()
     for checker in ("check_schema.py", "check_prose.py"):
@@ -233,9 +246,9 @@ def main() -> None:
     prose_failures = []
     for notebook in check_prose.check_schema.discover(DOCS):
         if notebook.suffix == ".py":
-            problems = check_prose.check_executed_prose(
-                notebook, execute(notebook, OUTPUT / "notebook-cache")
-            )
+            session = execute(notebook, OUTPUT / "notebook-cache")
+            validate_notebook_page(notebook, session)
+            problems = check_prose.check_executed_prose(notebook, session)
             prose_failures.extend((notebook, problem) for problem in problems)
     if prose_failures:
         for notebook, problem in prose_failures:

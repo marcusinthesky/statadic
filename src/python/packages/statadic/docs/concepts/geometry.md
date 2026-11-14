@@ -54,6 +54,6 @@ A theorem about distances between unit vectors states a general result under
 its hypotheses. The source and hypotheses of that result remain relevant
 even when a particular input passes its numerical checks.
 
-Use the [distance catalogue](../reference/catalogue-metrics.md) to compare
+Use the [distance laws](../reference/energy.md#distance-laws) to compare
 constructions and the [formal mathematics](../formal/index.md) to inspect the
 scope of individual statements.

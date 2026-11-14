@@ -10,9 +10,9 @@ description: Compare empirical distributions with energy distance, and choose be
 ```python
 import jax.numpy as jnp
 
-from statadic.api.representation import Energy
-from statadic.discrepancy.mmd.energy import energy_distance
-from statadic.sample.packed import PackedClouds
+from statadic.observation.geometry import Energy
+from statadic.geometry.discrepancy.mmd.energy import energy_distance
+from statadic.measure.clouds import PackedClouds
 
 x = PackedClouds.from_points(jnp.array([[0.0], [1.0]]))
 y = PackedClouds.from_points(jnp.array([[2.0], [3.0]]))
@@ -48,7 +48,7 @@ The rooted value is the square root of the raw value for the same ground and
 exponent. In the example the raw value is 3, and the rooted entry is
 $\sqrt3 \approx 1.732$. Rooting gives a metric between distributions when the
 ground separates them. A rooted matrix can feed
-{py:class}`~statadic.api.ordination.Ordination` directly. The
+{py:class}`~statadic.ordination.fit.Ordination` directly. The
 `Energy` constructor always returns the rooted value. Use the scalar function
 for the raw functional, for example as a statistic whose scale you interpret
 yourself.
@@ -72,6 +72,28 @@ The exponent 2 regime is a different quantity and raises a `ValueError`, and
 leaving `metric` out of `energy_distance` raises a `TypeError` because the
 function assumes no default ground.
 
+### Distance laws
+
+A declared law describes the construction of a dissimilarity on its stated
+domain, which can differ from the properties of one finite numerical result.
+
+| Dissimilarity | What holds |
+| --- | --- |
+| `euclidean_distance` | Metric of negative type |
+| `angular_distance`, `cosine_distance`, `normalized_euclidean_distance` | Premetric only, since `d(x, 2x) = 0` |
+| `energy_distance` with a Euclidean ground | Semimetric |
+| `energy_distance` with an angular ground | Premetric only |
+| `mmd` with RBF or Euclidean distance-induced kernels | Metric of negative type on the V-statistic domain |
+| `mmd` with linear, cosine or angular distance-induced kernels | Premetric only |
+| Unbiased `mmd_squared` | Signed estimate with no distance law |
+| `w1_1d`, `w2_1d` | Metric |
+| Finite-design `sliced_wasserstein` | Pseudometric |
+| `metrize_energy` | Metric of negative type |
+| `exact_balanced_wasserstein` for finite `p >= 1` | Premetric on rows, and a metric on equal-size empirical measures over the unit sphere |
+
+Each distance carries its declared law with the matrix it returns, so ordination
+and `metrize_energy` can read that law before accepting a matrix.
+
 ## Results
 
 For two single distributions, `energy_distance` returns a zero-dimensional JAX
@@ -89,7 +111,7 @@ and the order of the measures for the pairwise and cross evaluation of new
 rows, while atom counts and masses stay inside each observation.
 
 For advanced numerical work, `energy_distance_with_geometry(x, y, geometry)`
-takes a prevalidated `EnergyGeometry` from `statadic.discrepancy.mmd.energy`.
+takes a prevalidated `EnergyGeometry` from `statadic.geometry.discrepancy.mmd.energy`.
 The related `MMD` and `Wasserstein1D` representations follow their own
 contracts, and `Wasserstein1D` currently supports `p=2` on the real line.
 
@@ -104,6 +126,12 @@ contracts, and `Wasserstein1D` currently supports `p=2` on the real line.
   U-statistic.
 - A rooted result separates distributions only when the ground and the
   exponent give a geometry of negative type with enough moments.
+- A declared law describes the construction. It does not prove that your data
+  satisfy the moment conditions behind a population result.
+- The `metrize_energy` square root is a metric only when the energy construction
+  separates measures, which angular energy does not.
+- Oriented rays and projective classes use different equality relations, and
+  ordinary angular distance does not identify antipodes.
 
 ## Evidence
 

@@ -21,15 +21,15 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.comparison import PermutationPlan
-    from statadic.api.data import MeasureColumn, Observations
-    from statadic.api.design import Categorical, DistanceToLandmarks, Intercept, Linear
-    from statadic.api.hypotheses import Hypothesis
-    from statadic.api.ordination import DistanceGram, Ordination, PrincipalCoordinates
-    from statadic.api.regression import GeometricResponse, Reduced, Regression, ResponsePermutation
-    from statadic.api.representation import MMD
+    from statadic.hypothesis.homogeneity import PermutationPlan
+    from statadic.observation.data import MeasureColumn, Observations
+    from statadic.observation.design import Categorical, DistanceToLandmarks, Intercept, Linear
+    from statadic.hypothesis.core import Hypothesis
+    from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
+    from statadic.regression import GeometricResponse, Reduced, Regression, ResponsePermutation
+    from statadic.observation.geometry import MMD
     from statadic.geometry.ground.similarities import RBFKernel
-    from statadic.sample.packed import PackedClouds
+    from statadic.measure.clouds import PackedClouds
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#9bbaff" if DARK else "#1d3f8f"

@@ -1,9 +1,8 @@
-# Tags publish the validated distributions; pull requests exercise every build
-# gate with no publishing credentials. Versions are authored before tagging.
 name: Release
-on:
+'on':
   push:
-    tags: ['v*']
+    tags:
+      - v*
   pull_request:
     paths:
       - .github/workflows/release.yml
@@ -12,11 +11,17 @@ on:
       - src/python/packages/statadic/pyproject.toml
       - src/python/uv.lock
       - src/lean/registry/public-api.json
+  workflow_dispatch:
+    inputs:
+      producer_run_id:
+        description: Optional exact-commit CI run containing the validated package candidate
+        required: false
+        type: string
 permissions:
   contents: read
 concurrency:
   group: release-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   version:
     runs-on: ubuntu-24.04
@@ -30,33 +35,78 @@ jobs:
         id: version
         run: python3 infra/release/check_version.py
   validation:
+    name: Select validated package
     needs: version
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    uses: ./.github/workflows/release-validation.yml
+    if: startsWith(github.ref, 'refs/tags/v') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - name: Verify and download the exact-commit package candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRODUCER_RUN_ID: ${{ inputs.producer_run_id }}
+        run: |-
+          args=()
+          if [[ -n "$PRODUCER_RUN_ID" ]]; then args+=(--run-id "$PRODUCER_RUN_ID"); fi
+          python3 infra/release/package_candidate.py download --output build/promoted "${args[@]}"
+          mkdir dist
+          cp build/promoted/artifacts/*.whl build/promoted/artifacts/*.tar.gz dist/
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: statadic-distributions
+          path: dist/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: publication-provenance
+          path: build/promoted/candidate.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
   pypi:
-    needs: [version, validation]
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - version
+      - validation
+    if: startsWith(github.ref, 'refs/tags/v') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-24.04
     environment:
       name: release
       url: https://pypi.org/p/statadic
     permissions:
       id-token: write
+      contents: read
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: statadic-distributions
           path: dist
+      - name: Verify existing PyPI files and select missing uploads
+        id: publication
+        run: python3 infra/release/package_candidate.py prepare-publication --artifacts dist --output build/upload
       - name: Publish validated wheel and sdist to PyPI
         uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086
         with:
-          packages-dir: dist
+          packages-dir: build/upload
+        if: steps.publication.outputs.published != 'true'
   github:
-    needs: [version, validation, pypi]
+    needs:
+      - version
+      - validation
+      - pypi
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: statadic-distributions
@@ -68,10 +118,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PRERELEASE: ${{ needs.version.outputs.prerelease }}
-        run: |
-          args=(--verify-tag --generate-notes)
-          if [[ "$PRERELEASE" == true ]]; then
-            args+=(--prerelease --latest=false)
-          fi
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --repo "$GITHUB_REPOSITORY" "${args[@]}"
+        run: python3 infra/release/package_candidate.py github-publication --artifacts dist --output build/github

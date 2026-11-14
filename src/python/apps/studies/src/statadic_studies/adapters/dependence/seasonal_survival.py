@@ -7,13 +7,13 @@ from statistics import NormalDist
 import jax.numpy as jnp
 import numpy as np
 from scipy.interpolate import CubicSpline
-from statadic.api.data import Observations, PanelLayout, SpatialPanelData
-from statadic.api.design import Linear
-from statadic.api.inference import ModelBased
-from statadic.api.survival import RightCensored, SpatialSurvivalData
-from statadic.estimation.survival import SpatialSurvivalML
-from statadic.operators.spatial import prepare_spatial_weights
-from statadic.optimize.integration import IntegrationDesign
+from statadic.estimation.likelihood.survival import SpatialSurvivalML
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.hypothesis.uncertainty import ModelBased
+from statadic.numerics.quadrature import IntegrationDesign
+from statadic.observation.data import Observations, PanelLayout, SpatialPanelData
+from statadic.observation.design import Linear
+from statadic.structure.survival import RightCensored, SpatialSurvivalData
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence.spatial_survival import _key
@@ -129,10 +129,10 @@ def _wald(result, censored):
 
 def seasonal_trial(scenario, replicate, seed, draws):
     """Fit both public interfaces to the same simulated panel."""
-    from statadic.api.design import CyclicSpline
-    from statadic.api.regression import Regression
-    from statadic.api.spatial.graphs import PanelData, SpatialLag
-    from statadic.model.survival import LogNormalAFT
+    from statadic.law.survival import LogNormalAFT
+    from statadic.observation.design import CyclicSpline
+    from statadic.observation.graph import PanelData, SpatialLag
+    from statadic.regression import Regression
 
     data, graphs, designs, censored = _data(scenario, replicate, seed, draws)
     layout = PanelLayout("unit", "period")

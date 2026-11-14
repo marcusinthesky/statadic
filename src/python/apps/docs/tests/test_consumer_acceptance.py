@@ -46,14 +46,13 @@ def test_missing_frozen_witness_cannot_be_treated_as_acceptance():
         acceptance.adapt_numerical_source("def numerical_qualification(n): return {}")
 
 
-@pytest.mark.native
 def test_covariance_adaptation_uses_estimand_without_rewriting_innovations():
     import numpy as np
-    from statadic.api.estimand import Covariance, Estimand
+    from statadic.estimand.core import Covariance, Estimand
     from statadic.estimation.covariance import LedoitWolf
 
     source = """
-from statadic.api.covariance import LedoitWolf
+from statadic.estimand.covariance import LedoitWolf
 class SpatialCovarianceEstimate:
     pass
 def spatial_ledoit_wolf_covariance(values):
@@ -76,7 +75,7 @@ def _spatialize_covariance(system, innovation):
     np.testing.assert_array_equal(result.sigma, expected.sigma)
     assert result.shrinkage == expected.shrinkage
     assert lines == [7]
-    assert "from statadic.api.covariance import LedoitWolf" not in adapted
+    assert "from statadic.estimand.covariance import LedoitWolf" not in adapted
     assert (
         "Estimand(Covariance(), estimator=LedoitWolf()).estimate(innovations)"
         in adapted
@@ -106,7 +105,6 @@ def test_worker_rejects_changed_source_before_importing_any_consumer(
         fixtures.main(tmp_path / "candidate.whl")
 
 
-@pytest.mark.native
 @pytest.mark.parametrize(
     "fixture", [fixtures._dyadic_fixture, fixtures._frontier_fixture]
 )

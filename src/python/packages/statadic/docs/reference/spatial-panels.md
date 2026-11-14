@@ -10,12 +10,12 @@ description: Fit spatial regression, static panel and dyadic models with explici
 ```python
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
-from statadic.api.spatial.cross_section import SpatialInformation
-from statadic.api.spatial.graphs import SpatialData, SpatialLag
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Regression
+from statadic.structure.spatial.cross_section import SpatialInformation
+from statadic.observation.graph import SpatialData, SpatialLag
+from statadic.geometry.graph import prepare_spatial_weights
 
 rng = np.random.default_rng(12)
 units = 32
@@ -36,15 +36,15 @@ print("\n".join(report.to_text().splitlines()[:5]))
 
 ## Description
 
-{py:class}`~statadic.api.regression.Regression` fits spatial and panel models
+{py:class}`~statadic.regression.Regression` fits spatial and panel models
 when you add a graph-based `dependence`, a panel `structure` or both. Graph
-preparation lives in `statadic.operators.spatial` and `statadic.operators.panel`,
+preparation lives in `statadic.geometry.graph` and `statadic.numerics.linalg.absorption`,
 so the inputs to a fit do not depend on estimation or inference code. Spatial
 likelihoods, instrumental variables, GMM and the KKP component model live in
 `statadic.estimation.spatial`, with covariance and diagnostics in
 `statadic.inference.spatial`. General static panels use the estimators in
-`statadic.estimation.panel` over a `PanelProblem`, and their covariance comes
-from `statadic.inference.panel_covariance`.
+`statadic.estimation.least_squares.panel` over a `PanelProblem`, and their covariance comes
+from `statadic.inference.covariance.panel`.
 
 ## Options
 
@@ -141,6 +141,6 @@ time-demeaned arrays and keeps all $T$ log-Jacobians.
 
 ## See also
 
-- [Composition](composition.md) and [survival models](survival.md)
+- [Composition](model.md) and [survival models](survival.md)
 - [Learned panel graphs tutorial](../guides/learn-panel-graphs.py)
-- [Reports](reporting.md)
+- [Reports](report.md)

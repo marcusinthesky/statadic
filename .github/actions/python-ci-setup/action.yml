@@ -1,6 +1,9 @@
 name: Prepare Python CI
 description: Prepare pinned Python inputs and save reusable caches before validation.
 inputs:
+  package-only:
+    default: 'false'
+    description: Select only STATADIC for the independent package validation lane.
   prepare-offline-install:
     default: 'false'
     description: Prepare and verify the exact locked artifacts for isolated wheel installs.
@@ -18,7 +21,14 @@ runs:
     - shell: bash
       run: bash infra/nix/install-devenv.sh
     - shell: bash
-      run: devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv sync --project src/python --locked --all-packages --group reference
+      env:
+        PACKAGE_ONLY: ${{ inputs.package-only }}
+      run: |
+        if [[ "$PACKAGE_ONLY" == true ]]; then selection=(--package statadic); else selection=(--all-packages); fi
+        devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv sync --project src/python --locked "${selection[@]}" --group reference
+        nix --version
+        devenv --version
+        nix store ping --store daemon --json
     - name: Verify isolated offline installation
       if: inputs.prepare-offline-install == 'true'
       shell: bash

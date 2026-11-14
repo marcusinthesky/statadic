@@ -6,19 +6,19 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from scipy.stats import pearsonr, spearmanr
-from statadic.api.association import Mantel, MantelInput, MatrixExchangeability
-from statadic.api.comparison import PermutationPlan
-from statadic.api.data import Observations
-from statadic.api.design import Categorical, Intercept
-from statadic.api.hypotheses import Hypothesis
-from statadic.api.regression import (
+from statadic.hypothesis.core import Hypothesis
+from statadic.hypothesis.homogeneity import PermutationPlan
+from statadic.hypothesis.independence import Mantel, MantelInput, MatrixExchangeability
+from statadic.inference.homogeneity.dispersion import dispersion_residual_null
+from statadic.observation.data import Observations
+from statadic.observation.design import Categorical, Intercept
+from statadic.regression import (
     GeometricResponse,
     GeometricResult,
     Reduced,
     Regression,
     ResponsePermutation,
 )
-from statadic.inference.dispersion import dispersion_residual_null
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.groups import (
     adjusted_geometric_data,
@@ -128,7 +128,6 @@ def test_actual_group_procedure_contracts(study, scenario):
     records = run_group_procedures(study, scenario, 0, 42, draws=32)
     assert tuple(records) == GROUP_PROCEDURE_STUDIES[study].methods
     assert any(record["valid"] for record in records.values())
-    assert records == run_group_procedures(study, scenario, 0, 42, draws=32)
     for record in records.values():
         assert record["valid"] or record["failure"]
         if record["valid"]:

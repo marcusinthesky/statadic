@@ -12,22 +12,22 @@ import pytest
 from statadic.core.domains import (
     FiniteValues,
 )
-from statadic.discrepancy.mmd import mmd_squared, mmd_squared_matrix
-from statadic.discrepancy.mmd.components import (
+from statadic.geometry.discrepancy.mmd import mmd_squared, mmd_squared_matrix
+from statadic.geometry.discrepancy.mmd.components import (
     candidate_energy_components,
     candidate_kernel_components,
 )
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     UNIT_EXPONENT,
     energy_distance,
     energy_distance_matrix_values,
     energy_geometry,
 )
-from statadic.discrepancy.mmd.energy.kernel import distance_induced_kernel
+from statadic.geometry.discrepancy.mmd.energy.kernel import distance_induced_kernel
 from statadic.geometry.ground.metrics import EUCLIDEAN
 from statadic.geometry.ground.similarities import RBFKernel, gram, rbf_gram, rbf_kernel
-from statadic.sample.packed import PackedClouds, pack
-from statadic.sample.reduction import Projection
+from statadic.measure.clouds import PackedClouds, pack
+from statadic.measure.reduction import Projection
 
 if TYPE_CHECKING:
     from jax import Array

@@ -3,8 +3,8 @@
 import os
 
 import numpy as np
-
-from other_refs import CASES as DISTANCE_CASES, prepare as prepare_distance
+from other_refs import CASES as DISTANCE_CASES
+from other_refs import prepare as prepare_distance
 
 CASES = {}
 for scale in ("fixture", "scaled"):

@@ -42,11 +42,11 @@ from statadic.estimation.spatial.likelihood import (
     _fixed_graph_information,
     _information_rank,
 )
-from statadic.operators.spatial import (  # noqa: TC001
+from statadic.geometry.graph import (  # noqa: TC001
     SpatialPanelWeights,
     spatial_panel_lag,
 )
-from statadic.optimize.backends import (
+from statadic.numerics.optimize.backends import (
     _newton_root_result,
     bounded_scalar_minimise,
     minimise_bfgs_result,

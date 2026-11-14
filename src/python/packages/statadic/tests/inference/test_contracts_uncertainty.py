@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from statadic.inference.parameters import coefficient_intervals
+from statadic.inference.restriction.linear import coefficient_intervals
 
 if TYPE_CHECKING:
     from statadic.inference.contracts import FittedUncertainty
-    from statadic.inference.parameters import CoefficientIntervals
+    from statadic.inference.restriction.linear import CoefficientIntervals
 
 from dataclasses import dataclass
 
@@ -23,14 +23,14 @@ from statadic.core.equations import (
     ParameterCovariance,  # noqa: TC002
 )
 from statadic.core.typing import Array  # noqa: TC002
-from statadic.estimation.linear import (
+from statadic.estimation.least_squares.linear import (
     LeastSquares,
     LinearEquation,  # noqa: TC002
     LinearFit,  # noqa: TC002
     LinearProblem,
 )
-from statadic.inference.linear_covariance import classical_covariance
-from statadic.inference.parameters import linear_restriction_test
+from statadic.inference.covariance.linear import classical_covariance
+from statadic.inference.restriction.linear import linear_restriction_test
 
 from .._budgets import examples
 from .._strategies import float_arrays

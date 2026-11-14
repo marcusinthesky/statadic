@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from statadic.api.reporting import ParameterRow, Report
+from statadic.report.core import ParameterRow, Report
 
 APP = Path(__file__).resolve().parents[1]
 BUNDLE = APP.parents[2] / "latex/bundle/tlextras-2022.0r0-statadic.zip"
@@ -70,7 +70,7 @@ def main() -> None:
             ),
         )
         compile_report(report.to_latex(), Path(temporary), only_cached=False)
-        from statadic.api.reporting import PlotSpec
+        from statadic.report.core import PlotSpec
 
         compile_figure(
             PlotSpec("line", (0.0, 1.0), (0.0, 1.0)).to_pgfplots(width_cm=10),

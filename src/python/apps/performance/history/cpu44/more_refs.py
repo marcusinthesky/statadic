@@ -9,7 +9,7 @@ CASES = {
         reference="glum GeneralizedLinearRegressor",
         fixture="12 counts, 2 columns",
         work="Unpenalized Poisson fit returning coefficients",
-        source="src/python/packages/statadic/tests/estimation/test_glm.py",
+        source="src/python/packages/statadic/tests/estimation/likelihood/test_glm.py",
         note="Explicit design intercept. glum gradient tolerance 1e-10; max_iter=200.",
         rtol=1e-5,
         atol=2e-7,
@@ -56,7 +56,7 @@ def prepare(case, side):
         offset, exposure = np.linspace(-0.15, 0.2, 12), np.linspace(0.75, 1.75, 12)
         if side == "statadic":
             import jax.numpy as jnp
-            from statadic.estimation.glm import PoissonMLE, PoissonProblem
+            from statadic.estimation.likelihood.glm import PoissonMLE, PoissonProblem
 
             x, counts, offset, exposure = map(
                 jnp.asarray, (x, counts, offset, exposure)
@@ -100,7 +100,7 @@ def prepare(case, side):
     if case == "arch-bartlett":
         series = np.vstack([x, y])
         if side == "statadic":
-            from statadic.operators.longrun import hall_centered_hac
+            from statadic.numerics.linalg.longrun import hall_centered_hac
 
             return lambda: np.asarray(hall_centered_hac(series, bandwidth=2))
         from arch.covariance.kernel import Bartlett
@@ -110,7 +110,7 @@ def prepare(case, side):
         )
     a, b = (np.linalg.norm(p[:, None] - p[None, :], axis=-1) for p in (x[:3], y))
     if side == "statadic":
-        from statadic.api.association import Mantel
+        from statadic.hypothesis.independence import Mantel
 
         return lambda: np.asarray(Mantel("pearson").estimate(a, b).statistic)
     from skbio import DistanceMatrix

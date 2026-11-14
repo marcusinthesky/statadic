@@ -13,7 +13,7 @@ from statadic.estimation.spatial.graph_likelihood import (
     GraphMLFit,  # noqa: TC001
     graph_log_density,
 )
-from statadic.inference.likelihood import LikelihoodCovariance
+from statadic.inference.covariance.likelihood import LikelihoodCovariance
 
 __all__: list[str] = []
 

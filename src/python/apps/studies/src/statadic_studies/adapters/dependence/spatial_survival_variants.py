@@ -5,17 +5,17 @@ from statistics import NormalDist
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.data import Observations, PanelLayout
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
-from statadic.api.spatial.graphs import PanelData, SpatialLag, SpatialX
-from statadic.api.survival import RightCensored, SpatialSurvivalData, refine
-from statadic.estimation.survival import SpatialSurvivalML
-from statadic.estimation.survival.refinement import IntegrationRefinement
-from statadic.inference.survival import observed_information
-from statadic.model.survival import LogNormalAFT
-from statadic.operators.spatial import prepare_spatial_weights
-from statadic.optimize.integration import GaussianIntegration, IntegrationDesign
+from statadic.estimation.likelihood.survival import SpatialSurvivalML
+from statadic.estimation.likelihood.survival.refinement import IntegrationRefinement
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.inference.covariance.survival import observed_information
+from statadic.law.survival import LogNormalAFT
+from statadic.numerics.quadrature import GaussianIntegration, IntegrationDesign
+from statadic.observation.data import Observations, PanelLayout
+from statadic.observation.design import Intercept, Linear
+from statadic.observation.graph import PanelData, SpatialLag, SpatialX
+from statadic.regression import Regression
+from statadic.structure.survival import RightCensored, SpatialSurvivalData, refine
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence.spatial_survival import _key

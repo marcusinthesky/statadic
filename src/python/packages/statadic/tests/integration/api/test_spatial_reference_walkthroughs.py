@@ -6,20 +6,6 @@ from typing import TYPE_CHECKING, Literal
 
 import numpy as np
 import pytest
-from statadic.api.data import Observations, PanelLayout
-from statadic.api.design import Intercept, Linear
-from statadic.api.hypotheses import Normal, TestOutcome
-from statadic.api.regression import Regression
-from statadic.api.spatial.cross_section import (
-    SpatialInformation,
-    SpatialRegressionResult,
-)
-from statadic.api.spatial.diagnostics import AnselinKelejian, ResidualMoran, SpatialLM
-from statadic.api.spatial.graph_regression import GraphRegressionResult
-from statadic.api.spatial.graphs import PanelData, SpatialData, SpatialError, SpatialLag
-from statadic.api.spatial.learning import GraphML
-from statadic.api.spatial.observed import ObservedSpatialPanelResult
-from statadic.api.spatial.panel import SpatialPanelResult
 from statadic.estimation.spatial import (
     ML,
     ObservedPanelML,
@@ -27,7 +13,25 @@ from statadic.estimation.spatial import (
     SpatialFit,
     SpatialIV,
 )
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.hypothesis.core import Normal, TestOutcome
+from statadic.observation.data import Observations, PanelLayout
+from statadic.observation.design import Intercept, Linear
+from statadic.observation.graph import PanelData, SpatialData, SpatialError, SpatialLag
+from statadic.regression import Regression
+from statadic.structure.spatial.cross_section import (
+    SpatialInformation,
+    SpatialRegressionResult,
+)
+from statadic.structure.spatial.diagnostics import (
+    AnselinKelejian,
+    ResidualMoran,
+    SpatialLM,
+)
+from statadic.structure.spatial.graph_regression import GraphRegressionResult
+from statadic.structure.spatial.learning import GraphML
+from statadic.structure.spatial.observed import ObservedSpatialPanelResult
+from statadic.structure.spatial.panel import SpatialPanelResult
 
 if TYPE_CHECKING:
     from collections.abc import Callable

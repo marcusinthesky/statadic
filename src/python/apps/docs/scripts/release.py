@@ -561,6 +561,18 @@ def main() -> int:
             manifest["method_evaluations"] = inspect_campaigns(
                 ROOT, args.campaign, scope=scope
             )
+        execute(
+            "prepare-dependencies",
+            [
+                sys.executable,
+                str(ROOT / "infra/release/check_offline_install.py"),
+                "--selection",
+                "tests",
+                "--prepare",
+                "--output",
+                str(output / "dependency-inputs"),
+            ],
+        )
         if args.preflight_check_receipt is None:
             execute("check", ["just", "check"])
         else:
@@ -643,29 +655,7 @@ def main() -> int:
                 str(output / "distribution"),
             ],
         )
-        requirements = output / "requirements.txt"
-        execute(
-            "export",
-            [
-                "uv",
-                "export",
-                "--offline",
-                "--project",
-                str(PROJECT),
-                "--frozen",
-                "--package",
-                "statadic",
-                "--group",
-                "reference",
-                "--no-emit-workspace",
-                # Source layout was checked before building. The source-free
-                # wheel harness needs no Git-only layout development tool.
-                "--no-emit-package",
-                "pytest-layout-enforcer",
-                "--output-file",
-                str(requirements),
-            ],
-        )
+        lock = output / "dependency-inputs/pylock.tests.toml"
         with tempfile.TemporaryDirectory(prefix="statadic-release-") as temporary:
             harness = Path(temporary)
             shutil.copytree(PACKAGE / "tests", harness / "tests")
@@ -686,13 +676,14 @@ def main() -> int:
                 [
                     "uv",
                     "pip",
-                    "install",
+                    "sync",
                     "--offline",
+                    "--no-index",
+                    "--only-binary",
+                    ":all:",
                     "--python",
                     str(python),
-                    "--require-hashes",
-                    "-r",
-                    str(requirements),
+                    str(lock),
                 ],
                 cwd=harness,
             )

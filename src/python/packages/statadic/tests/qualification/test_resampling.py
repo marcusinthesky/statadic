@@ -11,12 +11,12 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.core.random import permutation_batch
-from statadic.inference.mantel import mantel_permutation_kernel
+from statadic.inference.independence import mantel_permutation_kernel
 from statadic.inference.resampling.block_length import (
     optimal_block_length_result,
     stationary_bootstrap_estimate,
 )
-from statadic.inference.resampling.permutation.kernel import permutation_test_kernel
+from statadic.inference.resampling.permutation_kernel import permutation_test_kernel
 
 from .._validation.calibration import (
     DEFAULT_DRAWS,

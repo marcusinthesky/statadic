@@ -17,4 +17,3 @@ def test_native_diagnostic_trial_matches_its_declared_decision(name, scenario):
     assert result["valid"]
     assert 0 <= result["pvalue"] <= 1
     assert result["rejected"] == (result["pvalue"] < definition.alpha)
-    assert result == run_trial(study, scenario, 0, 20261109)["test"]

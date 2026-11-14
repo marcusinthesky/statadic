@@ -12,13 +12,13 @@ from typing import TYPE_CHECKING
 
 import jax.numpy as jnp
 from jax import random
-from statadic.inference.resampling.permutation import permutation_test_result
+from statadic.inference.resampling.permutation_test import permutation_test_result
 from statadic.inference.resampling.results import to_host_test_result
 
 if TYPE_CHECKING:
     from statadic.core.typing import ArrayLike
-    from statadic.inference.resampling.permutation.kernel import Alternative
-    from statadic.inference.resampling.permutation.test import StatisticFn
+    from statadic.inference.resampling.permutation_kernel import Alternative
+    from statadic.inference.resampling.permutation_test import StatisticFn
     from statadic.inference.resampling.results import HypothesisTest
 
 

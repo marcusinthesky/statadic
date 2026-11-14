@@ -16,9 +16,9 @@ import numpy as np
 import pytest
 from jax.scipy.special import ndtr
 from scipy.stats import norm
-from statadic.estimation.survival import SurvivalML, SurvivalProblem
-from statadic.inference.survival import observed_information
-from statadic.model.survival import LogNormalAFT, WeibullAFT
+from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+from statadic.inference.covariance.survival import observed_information
+from statadic.law.survival import LogNormalAFT, WeibullAFT
 
 from .._validation.calibration import (
     DEFAULT_TRIALS,

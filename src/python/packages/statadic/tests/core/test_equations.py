@@ -4,8 +4,9 @@
 Two claims are pinned here, and they are different in kind.
 
 **The numerical claim** is that branding costs nothing.
-:func:`statadic.operators.longrun.newey_west_variability` and
-:func:`~statadic.operators.longrun.hall_centered_variability` must be bit-identical
+:func:`statadic.numerics.linalg.longrun.newey_west_variability` and
+:func:`~statadic.numerics.linalg.longrun.hall_centered_variability` must be
+bit-identical
 to the untyped doors they delegate to, and the carriers must stay one-leaf
 pytrees so ``jit`` and ``vmap`` are unaffected. A waist that changed the numbers
 would not be a waist, it would be a rewrite.
@@ -50,7 +51,7 @@ from statadic.core.equations import (
     unsafe_assume_mean_equation_jacobian,
     unsafe_assume_variability_matrix,
 )
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     hall_centered_hac,
     hall_centered_variability,
     newey_west,

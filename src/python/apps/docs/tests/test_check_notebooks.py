@@ -27,6 +27,18 @@ def test_scaffold_is_discovered_and_passes_lint_and_parse():
 
 
 @pytest.mark.notebook
+@pytest.mark.parametrize("x64", ["0", "1"])
+def test_scaffold_executes_as_a_script(x64):
+    """Retain the script entrypoint contract on one representative notebook."""
+    assert (
+        check_notebooks.run(
+            [sys.executable, str(SCAFFOLD)], env={"JAX_ENABLE_X64": x64}
+        )
+        is None
+    )
+
+
+@pytest.mark.notebook
 def test_a_failing_cell_is_reported(tmp_path):
     broken = tmp_path / "broken.py"
     broken.write_text(
@@ -34,12 +46,13 @@ def test_a_failing_cell_is_reported(tmp_path):
         "@app.cell\ndef _():\n    raise ValueError('boom')\n    return\n\n\n"
         "if __name__ == '__main__':\n    app.run()\n"
     )
-    assert "boom" in dict(check_notebooks.gates(broken))["x64=0"]()
+    assert "boom" in dict(check_notebooks.gates(broken, extended=True))["x64=0"]()
 
 
 @pytest.mark.parametrize("problem", [None, "gate failure"])
+@pytest.mark.parametrize("extended", [False, True])
 def test_main_reports_results_and_continues_after_failure(
-    tmp_path, monkeypatch, capsys, problem
+    tmp_path, monkeypatch, capsys, problem, extended
 ):
     notebook = tmp_path / "notebook.py"
     visited = []
@@ -51,12 +64,16 @@ def test_main_reports_results_and_continues_after_failure(
 
         return execute
 
-    monkeypatch.setattr(
-        check_notebooks,
-        "gates",
-        lambda _: [("first", gate("first", problem)), ("later", gate("later", None))],
-    )
-    assert check_notebooks.main(["--paths", str(notebook)]) == (problem is not None)
+    def gates(path, **options):
+        assert path == notebook
+        assert options["extended"] is extended
+        return [("first", gate("first", problem)), ("later", gate("later", None))]
+
+    monkeypatch.setattr(check_notebooks, "gates", gates)
+    arguments = [str(notebook)] if extended else ["--paths", str(notebook)]
+    if extended:
+        arguments.insert(0, "--extended")
+    assert check_notebooks.main(arguments) == (problem is not None)
     output = capsys.readouterr()
     assert visited == ["first", "later"]
     assert "first" in output.out and "later" in output.out
@@ -77,16 +94,22 @@ def test_gate_commands_and_published_requirement(tmp_path, monkeypatch):
         lambda command, **kwargs: calls.append((command, kwargs)),
     )
     gates = dict(check_notebooks.gates(notebook))
-    assert list(gates) == ["lint", "parse", "x64=0", "x64=1", "tests+doctests"]
+    assert list(gates) == ["lint", "parse", "tests+doctests"]
     for gate in gates.values():
         gate()
-    assert calls[1][1]["env"] == {"JAX_ENABLE_X64": "0"}
-    assert calls[2][1]["env"] == {"JAX_ENABLE_X64": "1"}
-    command, options = calls[3]
+    command, options = calls[1]
     assert command.count("--doctest-modules") == 1
     assert command[command.index("--require-notebook-tests") + 1] == str(notebook)
     assert command[-1] == str(notebook)
     assert options["allow_no_tests"] is False
+    calls.clear()
+    extended = dict(check_notebooks.gates(notebook, extended=True))
+    extended["x64=0"]()
+    extended["x64=1"]()
+    assert [options["env"] for _, options in calls] == [
+        {"JAX_ENABLE_X64": "0"},
+        {"JAX_ENABLE_X64": "1"},
+    ]
     calls.clear()
     dict(check_notebooks.gates(tmp_path / "other.py"))["tests+doctests"]()
     assert "--require-notebook-tests" not in calls[0][0]

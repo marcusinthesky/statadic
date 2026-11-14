@@ -8,16 +8,18 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:
-    from statadic.estimation.glm import GLMFit
-    from statadic.estimation.likelihood import LikelihoodFit as GeneralisedFit
+    from statadic.estimation.likelihood.conditional import (
+        LikelihoodFit as GeneralisedFit,
+    )
+    from statadic.estimation.likelihood.glm import GLMFit
+    from statadic.estimation.likelihood.survival.fit import SurvivalFit
+    from statadic.estimation.likelihood.survival.spatial import SpatialSurvivalFit
     from statadic.estimation.spatial.graph_likelihood import GraphMLFit
     from statadic.estimation.spatial.likelihood import SpatialFit
     from statadic.estimation.spatial.observed_panel import ObservedSpatialPanelFit
     from statadic.estimation.spatial.panel import SpatialPanelFit
-    from statadic.estimation.survival.fit import SurvivalFit
-    from statadic.estimation.survival.spatial import SpatialSurvivalFit
     from statadic.inference.contracts import LikelihoodFit
-    from statadic.model.glm import GLMEquation
+    from statadic.law.glm import GLMEquation
 
 
 @pytest.mark.unit

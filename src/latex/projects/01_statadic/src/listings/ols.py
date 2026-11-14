@@ -1,8 +1,8 @@
 import jax.numpy as jnp
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.regression import Regression
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression import Regression
 
 data = Observations({
     "x": jnp.arange(8.0),

@@ -40,9 +40,9 @@ Estimate a line, request HC3 uncertainty, and export a manuscript table and figu
 ```python
 from pathlib import Path
 
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.regression import Regression
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression import Regression
 
 data = {
     "x": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
@@ -97,12 +97,12 @@ fixed effects, spatial lag and a spatially lagged predictor:
 <!-- statadic:readme-composition:start -->
 
 ```python
-from statadic.api.design import CyclicSpline, Linear
-from statadic.api.regression import Regression
-from statadic.api.spatial.graphs import SpatialLag, SpatialX
-from statadic.api.survival import RightCensored, SpatialSurvivalData
-from statadic.estimation.survival import SpatialSurvivalML
-from statadic.model.survival import LogNormalAFT
+from statadic.observation.design import CyclicSpline, Linear
+from statadic.regression import Regression
+from statadic.observation.graph import SpatialLag, SpatialX
+from statadic.structure.survival import RightCensored, SpatialSurvivalData
+from statadic.estimation.likelihood.survival import SpatialSurvivalML
+from statadic.law.survival import LogNormalAFT
 
 model = Regression(
     RightCensored("duration", "event"),
@@ -122,7 +122,7 @@ print(result.report().to_text())
 
 <!-- statadic:readme-composition:end -->
 
-This [integration example](src/python/packages/statadic/tests/api/test_survival_composition.py)
+This [integration example](src/python/packages/statadic/tests/structure/test_survival_composition.py)
 also exercises a censored spell and a missing node. It fixes the spatial
 coefficient at 0.2; spline terms are unpenalized. The
 [survival guide](src/python/packages/statadic/docs/reference/survival.md) explains
@@ -150,9 +150,9 @@ with trainable rho.
 import jax.numpy as jnp
 import optax
 from flax import nnx
-from statadic.api.representation import Energy
+from statadic.observation.geometry import Energy
 from statadic.estimation.spatial.graph_likelihood import graph_profile
-from statadic.operators.spatial.distance import rbf_weights
+from statadic.geometry.graph.distance import rbf_weights
 
 model = NeuralSAR()
 optimizer = nnx.Optimizer(model, optax.adam(0.01), wrt=nnx.Param)
@@ -190,12 +190,12 @@ and published sources. Each link opens the evidence behind that part of the meth
 
 | Method | Test suites | Selected Lean 4 mathematics | Independent comparisons | Sources / BibTeX |
 | --- | --- | --- | --- | --- |
-| OLS / WLS | [✓ Fits and invariants](src/python/packages/statadic/tests/estimation/test_linear.py) | [Gauss–Markov](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Linear/GaussMarkov.lean), [WLS](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Linear/WLS.lean) | [statsmodels](src/python/packages/statadic/tests/estimation/test_linear_reference.py) | [✓ Sources](.context/reference/stepniak-gauss-markov-2010/README.md) |
-| Binomial / Poisson GLMs | [✓ Fits and covariance](src/python/packages/statadic/tests/estimation/test_glm.py) | [Score and curvature](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/GLM/CanonicalLikelihood.lean) | [statsmodels](src/python/packages/statadic/tests/estimation/test_glm.py) | [✓ Sources](.context/reference/nelder-wedderburn-1972/README.md) |
-| Fixed-effects panels | [✓ Estimation contracts](src/python/packages/statadic/tests/estimation/test_panel_validation.py) | [Weighted two-way projections](src/lean/packages/StatadicFormal/StatadicFormal/Operators/Panel/TwoWay.lean) | [linearmodels](src/python/packages/statadic/tests/estimation/test_panel_reference.py) | [✓ Sources](.context/reference/stammann-weighted-effects-2018/README.md) |
-| Parametric AFT survival | [✓ Likelihood and prediction](src/python/packages/statadic/tests/model/survival/test_aft.py) | [AFT families](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Survival/AFTFamilies.lean) | [lifelines, selected configurations](src/python/packages/statadic/tests/testing/test_survival_references.py) | [✓ Sources](.context/reference/kalbfleisch-prentice-2002/README.md) |
+| OLS / WLS | [✓ Fits and invariants](src/python/packages/statadic/tests/estimation/least_squares/test_linear.py) | [Gauss–Markov](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Linear/GaussMarkov.lean), [WLS](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Linear/WLS.lean) | [statsmodels](src/python/packages/statadic/tests/estimation/least_squares/test_linear_reference.py) | [✓ Sources](.context/reference/stepniak-gauss-markov-2010/README.md) |
+| Binomial / Poisson GLMs | [✓ Fits and covariance](src/python/packages/statadic/tests/estimation/likelihood/test_glm.py) | [Score and curvature](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/GLM/CanonicalLikelihood.lean) | [statsmodels](src/python/packages/statadic/tests/estimation/likelihood/test_glm.py) | [✓ Sources](.context/reference/nelder-wedderburn-1972/README.md) |
+| Fixed-effects panels | [✓ Estimation contracts](src/python/packages/statadic/tests/estimation/least_squares/test_panel_validation.py) | [Weighted two-way projections](src/lean/packages/StatadicFormal/StatadicFormal/Operators/Panel/TwoWay.lean) | [linearmodels](src/python/packages/statadic/tests/estimation/least_squares/test_panel_reference.py) | [✓ Sources](.context/reference/stammann-weighted-effects-2018/README.md) |
+| Parametric AFT survival | [✓ Likelihood and prediction](src/python/packages/statadic/tests/law/survival/test_aft.py) | [AFT families](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Survival/AFTFamilies.lean) | [lifelines, selected configurations](src/python/packages/statadic/tests/testing/test_survival_references.py) | [✓ Sources](.context/reference/kalbfleisch-prentice-2002/README.md) |
 | Spatial panels | [✓ Observed-panel contracts](src/python/packages/statadic/tests/estimation/spatial/test_observed_panel.py) | [Filter Jacobians](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Spatial/PanelJacobian.lean) | [spreg, selected configurations](src/python/packages/statadic/tests/integration/api/test_spatial_reference_walkthroughs.py) | [✓ Sources](.context/reference/elhorst-spatial-panel-2003/README.md) |
-| Energy statistics / MMD | [✓ Weighted reductions](src/python/packages/statadic/tests/discrepancy/mmd/test_weighted.py) | [Selected nonnegativity results](src/lean/packages/StatadicFormal/StatadicFormal/Discrepancy/MMD/Nonnegativity.lean) | [NumPy controls](src/python/packages/statadic/tests/discrepancy/test_mmd_independent_reference.py), [dcor](src/python/packages/statadic/tests/discrepancy/mmd/test_energy_independent_reference.py) | [✓ Sources](.context/reference/sejdinovic-equivalence-2013/README.md) |
+| Energy statistics / MMD | [✓ Weighted reductions](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_weighted.py) | [Selected nonnegativity results](src/lean/packages/StatadicFormal/StatadicFormal/Discrepancy/MMD/Nonnegativity.lean) | [NumPy controls](src/python/packages/statadic/tests/geometry/discrepancy/test_mmd_independent_reference.py), [dcor](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_energy_independent_reference.py) | [✓ Sources](.context/reference/sejdinovic-equivalence-2013/README.md) |
 
 ✓ identifies linked evidence, rather than a coverage percentage or a live passing
 result. Lean proves the stated mathematical results; numerical implementations,

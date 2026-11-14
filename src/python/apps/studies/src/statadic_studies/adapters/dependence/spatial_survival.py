@@ -4,17 +4,17 @@ from __future__ import annotations
 
 import jax
 import numpy as np
-from statadic.estimation.survival import (
+from statadic.estimation.likelihood.survival import (
     SpatialSurvivalML,
     SpatialSurvivalProblem,
     prepare_spatial_survival_period,
 )
-from statadic.estimation.survival.refinement import (
+from statadic.estimation.likelihood.survival.refinement import (
     IntegrationRefinement,
     refine_spatial_survival,
 )
-from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
-from statadic.optimize.integration import GaussianIntegration, IntegrationDesign
+from statadic.geometry.graph import ObservedSpatialPeriod, prepare_spatial_weights
+from statadic.numerics.quadrature import GaussianIntegration, IntegrationDesign
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.definitions.dependence.spatial_survival import (

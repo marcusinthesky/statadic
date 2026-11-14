@@ -35,7 +35,9 @@ class EvidenceCrosswalkTests(unittest.TestCase):
         checked = {
             "id": "example",
             "proof_status": "kernel-checked-and-axiom-audited",
-            "python": {"symbols": ["statadic.optimize.simplex.simplex_qp_result"]},
+            "python": {
+                "symbols": ["statadic.numerics.optimize.simplex.simplex_qp_result"]
+            },
         }
         unchecked = {**checked, "id": "candidate", "proof_status": "unproved"}
         rows = crosswalk(public, [checked, unchecked], comparisons)
@@ -46,7 +48,7 @@ class EvidenceCrosswalkTests(unittest.TestCase):
             for item in module["exports"]
         )
         self.assertEqual(len(by_name), expected)
-        qp = by_name["statadic.optimize.simplex.simplex_qp_result"]
+        qp = by_name["statadic.numerics.optimize.simplex.simplex_qp_result"]
         self.assertIs(
             by_name["statadic.core.SolverResult"],
             by_name["statadic.core.results.SolverResult"],
@@ -54,10 +56,12 @@ class EvidenceCrosswalkTests(unittest.TestCase):
         self.assertEqual(qp["claims"], ["example"])
         self.assertEqual(qp["comparisons"], ["capped-simplex"])
         self.assertEqual(
-            by_name["statadic.estimation.glm.PoissonMLE"]["comparisons"], []
+            by_name["statadic.estimation.likelihood.glm.PoissonMLE"]["comparisons"], []
         )
         self.assertEqual(
-            by_name["statadic.estimation.glm.PoissonMLE.estimate"]["comparisons"],
+            by_name["statadic.estimation.likelihood.glm.PoissonMLE.estimate"][
+                "comparisons"
+            ],
             ["poisson-exposure"],
         )
         with self.assertRaisesRegex(ValueError, "symbol absent"):

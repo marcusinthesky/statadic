@@ -168,13 +168,20 @@ def test_complete_equivalence_public_procedure():
             assert record["failure"]
 
 
-def test_evaluation_budget_uses_999_inner_draws():
+def test_evaluation_budget_uses_999_inner_draws(monkeypatch):
+    calls = []
+    expected = object()
+
+    def permutation(scenario, replicate, seed, draws):
+        calls.append((scenario, replicate, seed, draws))
+        return expected
+
+    monkeypatch.setattr(inference, "_permutation", permutation)
     outcomes = inference.run_inference(
         "permutation.bernoulli-size-power", "null-equal", 0, 20261104
     )
-    assert all(
-        item["valid"] and item["inner_draws"] == 999 for item in outcomes.values()
-    )
+    assert calls == [("null-equal", 0, 20261104, 999)]
+    assert outcomes is expected
 
 
 def test_complete_multiplicity_public_procedure():

@@ -21,11 +21,11 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.data import Observations
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.inference import ModelBased
-    from statadic.api.regression import Gamma, Observed, Poisson, Regression
-    from statadic.estimation.likelihood import FixedDispersion
+    from statadic.observation.data import Observations
+    from statadic.observation.design import Intercept, Linear
+    from statadic.hypothesis.uncertainty import ModelBased
+    from statadic.regression import Gamma, Observed, Poisson, Regression
+    from statadic.estimation.likelihood.conditional import FixedDispersion
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#9bbaff" if DARK else "#1d3f8f"
@@ -190,7 +190,7 @@ def _():
     mo.md(r"""
     ## Next steps
 
-    - [Reporting](../reference/reporting.md).
+    - [Reporting](../reference/report.md).
     """)
     return
 

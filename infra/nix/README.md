@@ -48,11 +48,14 @@ exact locked wheel artifacts and verifies an isolated offline installation,
 before the larger test matrix starts. The complete-toolchain job prepares the
 same inputs for its independent publishing replication check.
 
-`ci_shards.py` plans four complete Python shards, retains canonical node outcomes
-and verifies their disjoint, exhaustive coverage alongside the remaining root
-checks. A passing aggregate is bound to the checked-out sources, environment and
-workflow run. PR release preflight can consume that same-run receipt; standalone
-release checks still execute the full checkout gate.
+`ci_shards.py` plans four complete Python shards per architecture, retains
+canonical node outcomes and verifies their disjoint, exhaustive coverage in the
+package workflow. A passing package receipt is bound to the checked-out sources,
+environment and workflow run. Repository status checks require this package gate
+and the shared x86 workspace checks; they do not emit a full repository receipt.
+The legacy scientific/documentation preflight still accepts a separately produced
+complete repository receipt, or executes its full checkout gate by default.
+Hosted package publication uses the separate package candidate.
 
 Timing history is a scheduling hint, independent of a passing check receipt.
 The pytest plugin checkpoints on completed tests when at least 15 seconds have
@@ -77,8 +80,33 @@ python3 infra/nix/ci_shards.py timings \
 The input directory contains `plan/plan.json` and `shard-N/timings.json`.
 The previous and output paths may be identical. The hosted workflow keeps
 architecture-specific artifact names and cache namespaces.
-The checkout, architecture, `GITHUB_RUN_ID`, `GITHUB_RUN_ATTEMPT` and
-`STATADIC_CI_SEED` must match the producing run.
+The checkout, architecture, `GITHUB_RUN_ID`, environment and `STATADIC_CI_SEED`
+must match the producing run. Version 2 plans retain `GITHUB_RUN_ATTEMPT` as
+provenance and accept compatible earlier attempts within that same run. Future
+attempts and changed inputs remain invalid. Legacy version 1 receipts retain
+strict attempt matching. Partial reruns replace their own same-run artifacts;
+missing shard outputs cannot create passing receipts.
+
+The reusable package workflow owns package quality, fast-test shards, installed
+reference/precision checks and canonical distributions on both architectures. It
+has read-only repository permissions. Installed reports are reconciled with the
+authored reference catalogue; their full float64 execution also supplies the
+float64 precision subset. The existing reference status names depend on this gate
+without rerunning its tests.
+
+Workspace application, Lean, TeX and source checks run once on x86. Package quality
+is not repeated in this lane. The former ARM workspace status requires this
+shared gate without repeating its execution, preserving existing required check
+names. Pages owns the single strict, float64 site build
+and its deployment artifact. Local `just check` still validates the full site.
+Publication independently verifies a retained candidate for the exact tagged
+commit. Testmon is not a publication authority.
+
+`Extended validation` runs weekly and on manual dispatch on x86 and ARM. It
+executes the complete notebook script precision matrix and the bounded generated
+linear/GLM tests with the existing exploration profile. PRs retain notebook cell
+tests, the canonical site export, targeted precision checks and the exact FWL and
+spatial regressions. Exploration does not replace scientific qualification.
 
 Shards retain the 25 slowest durations and a traceback after 180 seconds without
 test completion. `last-started.json` and streamed node-start messages identify

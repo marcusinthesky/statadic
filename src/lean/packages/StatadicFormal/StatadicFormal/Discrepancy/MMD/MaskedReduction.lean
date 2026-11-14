@@ -4,7 +4,7 @@ public import Mathlib.Data.Rat.Defs
 public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
-/-! Exact-arithmetic model of the leading-block mask in `statadic.sample.packed.masked_sum`.
+/-! Exact-arithmetic model of the leading-block mask in `statadic.measure.clouds.masked_sum`.
 This does not specify JAX floating-point reduction order or prove Python correspondence. -/
 @[expose] public section
 open scoped BigOperators

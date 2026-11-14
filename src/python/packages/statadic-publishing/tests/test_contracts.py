@@ -170,25 +170,6 @@ def test_manifest_roundtrip_and_rejections(tmp_path: Path) -> None:
             read_manifest(path)
 
 
-def test_snapshot_in_bundle_preserves_unavailable_report(tmp_path: Path) -> None:
-    from statadic.api.artifacts import load_analysis, save_analysis
-    from statadic.api.reporting import ParameterRow, Report
-
-    report = Report(
-        "Inference",
-        parameters=(
-            ParameterRow(
-                "slope", None, valid=False, unavailable_reason="rank deficient"
-            ),
-        ),
-        warnings=("inference unavailable",),
-        notes=("researcher note",),
-    )
-    snapshot = tmp_path / "snapshot"
-    save_analysis(snapshot, report)
-    assert load_analysis(snapshot).report == report
-
-
 def test_authored_model_metadata_is_accepted_and_frozen() -> None:
     """Records accept authored lists and retain immutable metadata."""
     from statadic_publishing.manifest import AnalysisRecord  # noqa: PLC0415

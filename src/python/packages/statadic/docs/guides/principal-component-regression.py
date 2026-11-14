@@ -22,12 +22,12 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.inference import HAC, HC, Clustered, ModelBased
-    from statadic.api.regression import Regression
-    from statadic.api.data import Observations
-    from statadic.api.ordination import LinearGram, Ordination, PrincipalCoordinates
-    from statadic.estimation.iv import TwoStageLeastSquares
+    from statadic.observation.design import Intercept, Linear
+    from statadic.hypothesis.uncertainty import HAC, HC, Clustered, ModelBased
+    from statadic.regression import Regression
+    from statadic.observation.data import Observations
+    from statadic.ordination.fit import LinearGram, Ordination, PrincipalCoordinates
+    from statadic.estimation.moments.instrumental import TwoStageLeastSquares
 
     DARK = mo.app_meta().theme == "dark"
     INK = "#eeeeee" if DARK else "#000000"

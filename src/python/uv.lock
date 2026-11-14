@@ -3426,7 +3426,7 @@ wheels = [
 
 [[package]]
 name = "statadic"
-version = "0.5.0a1"
+version = "0.5.0a2"
 source = { editable = "packages/statadic" }
 dependencies = [
     { name = "jax" },
@@ -3456,6 +3456,7 @@ dev = [
     { name = "beartype" },
     { name = "deptry" },
     { name = "filelock" },
+    { name = "hatchling" },
     { name = "hypothesis" },
     { name = "jax" },
     { name = "marimo" },
@@ -3524,6 +3525,7 @@ dev = [
     { name = "beartype", specifier = ">=0.22.9" },
     { name = "deptry" },
     { name = "filelock", specifier = ">=4.2,<5" },
+    { name = "hatchling", specifier = "==1.27.0" },
     { name = "hypothesis", specifier = ">=6.164.0" },
     { name = "jax", extras = ["cpu"], specifier = ">=0.11.0,<0.12" },
     { name = "marimo", specifier = ">=0.8.0" },

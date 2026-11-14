@@ -13,7 +13,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from scipy import stats
-from statadic.estimation.sharpe import (
+from statadic.estimation.moments.sharpe import (
     sample_skew_kurtosis,
     sharpe_ratio,
     sharpe_ratio_axis,

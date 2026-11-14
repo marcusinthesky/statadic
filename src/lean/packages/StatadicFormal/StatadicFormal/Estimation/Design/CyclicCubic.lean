@@ -9,7 +9,7 @@ import Mathlib.Tactic.Ring
 # Uniform cyclic cubic design
 
 These exact-real local identities describe the four weights in
-`statadic.api.design.CyclicSpline.transform`. Shared equally spaced cells use the
+`statadic.observation.design.CyclicSpline.transform`. Shared equally spaced cells use the
 same coordinate scale. At a join their polynomial extensions differ by a
 multiple of the cube of displacement, including at the cyclic seam.
 -/

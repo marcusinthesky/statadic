@@ -138,14 +138,14 @@ def prepare_geometry(
         raise ValueError(f"Unknown benchmark side: {side}")
     import jax
     import jax.numpy as jnp
-    from statadic.api.ordination import (
+    from statadic.geometry.ground.similarities import RBFKernel
+    from statadic.ordination.fit import (
         DistanceGram,
         KernelGram,
         Ordination,
         PrincipalCoordinates,
         ShortestPathDistances,
     )
-    from statadic.geometry.ground.similarities import RBFKernel
 
     names = tuple(f"feature_{index}" for index in range(inputs[0].shape[1]))
     specification = (
@@ -200,7 +200,7 @@ def _prepare_geometric(side, inputs):
         geometric_projection,
     )
     from statadic.inference.calibration import add_one_p_kernel
-    from statadic.inference.geometric import freedman_lane_null
+    from statadic.inference.restriction.geometric import freedman_lane_null
 
     def execute(functional, design, schedules):
         gram = centered_response_gram(functional)

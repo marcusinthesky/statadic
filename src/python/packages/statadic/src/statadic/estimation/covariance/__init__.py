@@ -6,7 +6,7 @@ blending an estimate with a declared target, and cross_validation to tune the
 sample weight on held-out data. Kernel variants accept validated arrays for
 JAX transformations; eager doors validate statistical inputs.
 
-Distance-implied operator construction belongs to statadic.operators.covariance.
+Distance-implied operator construction belongs to statadic.geometry.ground.covariance.
 Sampling uncertainty of fitted parameters belongs to statadic.inference.
 """
 

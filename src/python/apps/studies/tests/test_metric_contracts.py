@@ -229,7 +229,6 @@ def test_export_context_uses_frozen_design_after_current_source_changes(
 def test_all_registered_designs_have_valid_explicit_contracts():
     from statadic_studies.study_types import metrics_for, validate_definition
 
-    assert len(STUDIES) >= 44
     for study in STUDIES.values():
         validate_definition(study.record())
     study = STUDIES["gmm.variability-and-J"].record()

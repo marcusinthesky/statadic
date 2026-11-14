@@ -13,8 +13,10 @@ import jax
 import jax.numpy as jnp
 from jax import vmap
 
-from statadic.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
-from statadic.discrepancy.mmd.energy.balancing import inverse_variance_m_eff
+from statadic.geometry.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
+from statadic.geometry.discrepancy.mmd.energy.balance_effective_size import (
+    inverse_variance_m_eff,
+)
 from statadic.geometry.ground.config import (  # noqa: TC001
     GroundDistanceSelection,
     resolve_ground_distance,

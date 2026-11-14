@@ -12,9 +12,12 @@ import numpy as np
 import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
-from statadic.estimation.dyadic import DyadicEstimator, build_dyadic_design
-from statadic.estimation.dyadic.contracts import DyadicComputationError
-from statadic.estimation.dyadic.solve import _least_squares_host
+from statadic.estimation.least_squares.dyadic import (
+    DyadicEstimator,
+    build_dyadic_design,
+)
+from statadic.estimation.least_squares.dyadic.contracts import DyadicComputationError
+from statadic.estimation.least_squares.dyadic.solve import _least_squares_host
 from statadic.inference.dyadic import (
     DyadicBootstrapDesign,
     DyadicFitRequest,
@@ -26,8 +29,8 @@ from statadic.inference.dyadic import (
     node_bootstrap_report,
 )
 from statadic.inference.dyadic.bootstrap import _effective_rank
-from statadic.model.dyadic import DyadicInputError, DyadicModel, DyadicSample
-from statadic.operators.design import (
+from statadic.law.dyadic import DyadicInputError, DyadicModel, DyadicSample
+from statadic.numerics.linalg.dyadic import (
     NodeIndex,
     drop_collinear_columns,
     symmetric_dyadic_effects,

@@ -2,14 +2,14 @@
 
 import numpy as np
 import pytest
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.estimation.panel import FamaMacBeth, PanelProblem, Within
-from statadic.inference.linear_covariance import cluster_covariance, hac_covariance
-from statadic.inference.panel_covariance import (
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.panel import FamaMacBeth, PanelProblem, Within
+from statadic.inference.covariance.linear import cluster_covariance, hac_covariance
+from statadic.inference.covariance.panel import (
     fama_macbeth_covariance,
     panel_covariance,
 )
-from statadic.operators.panel import prepare_panel_index
+from statadic.numerics.linalg.absorption import prepare_panel_index
 from statadic_studies.adapters.dependence.covariance import (
     fama_data,
     linear_covariance_data,

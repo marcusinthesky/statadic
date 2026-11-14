@@ -13,14 +13,14 @@ from hypothesis import HealthCheck, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
 from statadic.core.random import cell_key, permutation_batch
-from statadic.discrepancy.mmd.energy import (
-    energy_distance,
-    energy_distance_matrix,
-    parse_distribution_exponent,
-)
 from statadic.estimation.covariance import (
     sample_covariance,
     shrink_to_dist,
+)
+from statadic.geometry.discrepancy.mmd.energy import (
+    energy_distance,
+    energy_distance_matrix,
+    parse_distribution_exponent,
 )
 from statadic.geometry.ground.config import (
     InvalidGroundDistanceConfigError,
@@ -37,19 +37,19 @@ from statadic.inference.dyadic import (
     DyadicInference,
     NodeCountSchedule,
 )
-from statadic.model.dyadic import DyadicInputError, DyadicModel, DyadicSample
-from statadic.operators.design import (
-    NodeIndex,
-)
-from statadic.optimize.simplex import (
-    batched_nonnegative_quadratic_program,
-    pgd_simplex_affine,
-)
-from statadic.sample.evidence import checked_unit_norm_clouds
-from statadic.sample.packed import (
+from statadic.law.dyadic import DyadicInputError, DyadicModel, DyadicSample
+from statadic.measure.clouds import (
     PackedClouds,
     checked_packed_clouds,
     pack,
+)
+from statadic.measure.evidence import checked_unit_norm_clouds
+from statadic.numerics.linalg.dyadic import (
+    NodeIndex,
+)
+from statadic.numerics.optimize.simplex import (
+    batched_nonnegative_quadratic_program,
+    pgd_simplex_affine,
 )
 
 from .._budgets import examples

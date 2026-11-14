@@ -24,10 +24,12 @@ from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
 from jax import random
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     mixture_energy_distance as _med,
 )
-from statadic.discrepancy.mmd.energy.balancing import inverse_variance_m_eff
+from statadic.geometry.discrepancy.mmd.energy.balance_effective_size import (
+    inverse_variance_m_eff,
+)
 from statadic.geometry.ground.metrics import (
     EUCLIDEAN,
     cdist,
@@ -37,7 +39,7 @@ from statadic.inference.studentized import (
     studentized_mixture_kernel,
     studentized_mixture_statistic,
 )
-from statadic.sample.packed import PackedClouds, pack
+from statadic.measure.clouds import PackedClouds, pack
 
 from .._budgets import examples
 from .._strategies import float_arrays

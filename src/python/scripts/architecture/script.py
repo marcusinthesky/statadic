@@ -99,11 +99,13 @@ REFLECTIVE_FIELDS = {
 }
 SYS_CONTAINERS = {"sys.path", "sys.meta_path", "sys.path_hooks", "sys.modules"}
 CUSTOM_DERIVATIVES = {
-    "statadic.optimize.psd._positive_projection",
-    "statadic.optimize.psd._positive_energy",
+    "statadic.numerics.optimize.psd._positive_projection",
+    "statadic.numerics.optimize.psd._positive_energy",
 }
 CUSTOM_APIS = {"jax.custom_jvp", "jax.custom_vjp", "jax.custom_gradient"}
-ENVELOPE_RULES = {"statadic.estimation.gel._dual._gel_profile_objective_kernel"}
+ENVELOPE_RULES = {
+    "statadic.estimation.empirical_likelihood._dual._gel_profile_objective_kernel"
+}
 MUTATORS = {
     "__delitem__",
     "__setitem__",

@@ -23,10 +23,13 @@ from statadic.estimation.spatial import (
     SpatialIVProblem,
     SpatialProblem,
 )
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 from statadic.inference.spatial import spatial_likelihood_ratio
 from statadic.inference.spatial.covariance import spatial_covariance, spatial_impacts
-from statadic.operators.spatial import prepare_spatial_weights
 
 from .._budgets import examples
 
@@ -256,7 +259,7 @@ def test_slx_fit_covariance_prediction_and_intervals_match_statsmodels(
 ) -> None:
     """Exercise public SLX through the shared linear inference path."""
     statsmodels = optional_reference("statsmodels.api")
-    from statadic.inference.linear_covariance import hc_covariance  # noqa: PLC0415
+    from statadic.inference.covariance.linear import hc_covariance  # noqa: PLC0415
 
     x, y, w = _sample(seed)
     fit = SLXLeastSquares().estimate(

@@ -2,12 +2,20 @@
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.association import Mantel, MantelInput, MatrixExchangeability
-from statadic.api.comparison import PERMDISP, EqualGroupDispersion, PermutationPlan
-from statadic.api.data import Observations
-from statadic.api.design import Categorical, Intercept, Linear
-from statadic.api.hypotheses import Hypothesis
-from statadic.api.regression import (
+from statadic.geometry.ground.similarities import LINEAR_KERNEL
+from statadic.hypothesis.core import Hypothesis
+from statadic.hypothesis.homogeneity import (
+    PERMDISP,
+    EqualGroupDispersion,
+    PermutationPlan,
+)
+from statadic.hypothesis.independence import Mantel, MantelInput, MatrixExchangeability
+from statadic.inference.mixture import corrected_mixture_test
+from statadic.measure.clouds import PackedClouds
+from statadic.observation.data import Observations
+from statadic.observation.design import Categorical, Intercept, Linear
+from statadic.observation.geometry import MMD
+from statadic.regression import (
     FreedmanLane,
     GeometricResponse,
     GeometricResult,
@@ -15,10 +23,6 @@ from statadic.api.regression import (
     Regression,
     ResponsePermutation,
 )
-from statadic.api.representation import MMD
-from statadic.geometry.ground.similarities import LINEAR_KERNEL
-from statadic.inference.mixture import corrected_mixture_test
-from statadic.sample.packed import PackedClouds
 
 from statadic_studies.adapters._random import rng
 

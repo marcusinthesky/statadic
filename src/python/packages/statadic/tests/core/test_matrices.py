@@ -526,10 +526,10 @@ def test_checked_pairwise_estimate_admits_signed_values() -> None:
 @pytest.mark.numerical
 def test_metrize_energy_roots_the_functional_and_stays_a_pytree() -> None:
     """Actual Euclidean construction survives compiled carrier reuse."""
-    from statadic.discrepancy.mmd.energy.matrix import (  # noqa: PLC0415
+    from statadic.geometry.discrepancy.mmd.energy.matrix import (  # noqa: PLC0415
         energy_functional_matrix,
     )
-    from statadic.sample.packed import PackedClouds  # noqa: PLC0415
+    from statadic.measure.clouds import PackedClouds  # noqa: PLC0415
 
     compiled = jax.jit(metrize_energy)
     for middle in (2.0, 3.0):

@@ -17,7 +17,7 @@ from statadic.estimation.spatial import (
     ObservedSpatialPanelProblem,
     observed_panel_profile,
 )
-from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
+from statadic.geometry.graph import ObservedSpatialPeriod, prepare_spatial_weights
 
 from ..._budgets import examples
 
@@ -317,7 +317,7 @@ def test_complete_mask_reduces_to_balanced_profile(
 ) -> None:
     """A complete selected panel reproduces the retained balanced likelihood."""
     from statadic.estimation.spatial.panel import spatial_panel_profile  # noqa: PLC0415
-    from statadic.operators.spatial import (  # noqa: PLC0415
+    from statadic.geometry.graph import (  # noqa: PLC0415
         prepare_spatial_panel_weights,
     )
 

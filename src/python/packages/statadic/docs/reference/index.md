@@ -17,10 +17,10 @@ Worked analyses live in the [tutorials](../tutorials/index.md), while the
 regression
 ordination
 estimand
-hypotheses
-reporting
-artifacts
-composition
+hypothesis
+report
+prediction
+model
 conditional-laws
 moment-estimators
 linear-diagnostics
@@ -28,8 +28,6 @@ spatial-panels
 survival
 energy
 resampling
-method-catalogue
 transformation-support
-upgrading
 api
 ```

@@ -8,8 +8,8 @@ description: Declare a covariance or a set of supplied moment conditions and est
 ## Usage
 
 ```python
-from statadic.api.data import Observations
-from statadic.api.estimand import Covariance, Estimand
+from statadic.observation.data import Observations
+from statadic.estimand.core import Covariance, Estimand
 from statadic.estimation.covariance import SampleCovariance
 
 observations = Observations(
@@ -24,7 +24,7 @@ print(result.report().to_text())
 
 ## Description
 
-{py:class}`~statadic.api.estimand.Estimand` pairs a declared quantity with a numerical
+{py:class}`~statadic.estimand.core.Estimand` pairs a declared quantity with a numerical
 estimator and fits the pair to aligned data. It supports two quantities, the covariance of
 named columns and a set of supplied fixed or affine moment conditions. Preparation takes a
 snapshot of the arrays from your input without sorting rows, dropping rows or inventing a response, and the
@@ -62,11 +62,11 @@ Moment fits return the GMM or GEL result types of the
 ```python
 import jax.numpy as jnp
 
-from statadic.api.estimand import Estimand, MomentConditions
-from statadic.api.moments import GMMSandwich, MomentData
+from statadic.estimand.core import Estimand, MomentConditions
+from statadic.estimand.moments import GMMSandwich, MomentData
 from statadic.core.equations import PlainLongRun
-from statadic.estimation.gmm import FixedWeightGMM
-from statadic.estimation.moments import AffineMomentProblem
+from statadic.estimation.moments.gmm import FixedWeightGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
 
 problem = AffineMomentProblem(
     jnp.array([[-1.0, 0.2], [-2.0, -0.4], [-0.5, 0.1], [-3.0, 0.3]]),
@@ -104,5 +104,5 @@ covariance, which is why its keyword differs from `covariance`.
 
 ## See also
 
-- [Moment estimators](moment-estimators.md) and [hypotheses](hypotheses.md)
-- [Reports](reporting.md) and [transformation support](transformation-support.md)
+- [Moment estimators](moment-estimators.md) and [hypotheses](hypothesis.md)
+- [Reports](report.md) and [transformation support](transformation-support.md)

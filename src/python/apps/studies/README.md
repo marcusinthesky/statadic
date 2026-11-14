@@ -25,6 +25,13 @@ using `JAX_ENABLE_X64=0` and `JAX_ENABLE_X64=1` respectively.
 float64 processes. The root `just ci-regressions` includes it in the early
 hosted gate alongside the recorded package regressions.
 
+Scenario smoke tests execute each declared cell once and retain independent
+numerical witnesses. Named-stream scheduling tests, representative estimator and
+JAX permutation replays, and a labeled stationary-bootstrap replay cover
+reproducibility without repeating every scenario fit. Population and discrepancy
+witnesses reuse the outcomes already computed in their precision process; their
+float32/float64 runs and fixed-versus-redrawn projection checks remain separate.
+
 `run --start I --stop J` executes a disjoint replicate range. Independent shards
 must use identical study, profile, trials, seed and environment. `merge DEST SRC...`
 accepts disjoint shards only. `resume` verifies existing records before continuing.

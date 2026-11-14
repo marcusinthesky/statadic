@@ -18,20 +18,20 @@ with app.setup:
     import numpy as np
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.data import Observations, PanelLayout, MeasureColumn
-    from statadic.api.design import Intercept, Linear, CyclicSpline
-    from statadic.api.inference import ModelBased
-    from statadic.api.regression import Regression
-    from statadic.api.representation import Energy
-    from statadic.api.spatial.graphs import PanelData, SpatialLag, SpatialX, DistanceGraph, ProjectionRef, RBFWeights
-    from statadic.api.spatial.learning import GraphML, LearnLinear
-    from statadic.api.spatial.resampling import TimeBlockPairs
-    from statadic.api.survival import RightCensored, SpatialSurvivalData
-    from statadic.estimation.survival import SurvivalML, SpatialSurvivalML
-    from statadic.model.survival import LogNormalAFT
-    from statadic.operators.spatial import prepare_spatial_weights
-    from statadic.optimize.integration import IntegrationDesign
-    from statadic.sample.packed import PackedClouds
+    from statadic.observation.data import Observations, PanelLayout, MeasureColumn
+    from statadic.observation.design import Intercept, Linear, CyclicSpline
+    from statadic.hypothesis.uncertainty import ModelBased
+    from statadic.regression import Regression
+    from statadic.observation.geometry import Energy
+    from statadic.observation.graph import PanelData, SpatialLag, SpatialX, DistanceGraph, ProjectionRef, RBFWeights
+    from statadic.structure.spatial.learning import GraphML, LearnLinear
+    from statadic.structure.spatial.resampling import TimeBlockPairs
+    from statadic.structure.survival import RightCensored, SpatialSurvivalData
+    from statadic.estimation.likelihood.survival import SurvivalML, SpatialSurvivalML
+    from statadic.law.survival import LogNormalAFT
+    from statadic.geometry.graph import prepare_spatial_weights
+    from statadic.numerics.quadrature import IntegrationDesign
+    from statadic.measure.clouds import PackedClouds
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#8fb8ff" if DARK else "#1d3f8f"
@@ -194,7 +194,7 @@ def _():
     ## See also
 
     - [Spatial survival tutorial](../tutorials/spatial-panel-survival.py).
-    - [Cyclic spline reference](../reference/composition.md).
+    - [Cyclic spline reference](../reference/model.md).
     """)
     return
 

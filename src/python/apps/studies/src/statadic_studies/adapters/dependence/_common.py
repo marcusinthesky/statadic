@@ -2,7 +2,10 @@
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 
 
 def _inference(fit, covariance, position, truth, reference="t"):

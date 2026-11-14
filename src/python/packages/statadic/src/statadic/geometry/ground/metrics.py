@@ -104,7 +104,7 @@ from statadic.geometry.ground._strategy import (
 
 if TYPE_CHECKING:
     from statadic.core.matrices import MatrixContract, SpaceDMat
-    from statadic.sample.evidence import CheckedClouds
+    from statadic.measure.evidence import CheckedClouds
 
 __all__ = [
     "ANGULAR",
@@ -871,7 +871,7 @@ def cdist(
         True
 
         >>> # Custom metrics require a law declaration.
-        >>> from statadic.sample.evidence import FiniteValues
+        >>> from statadic.measure.evidence import FiniteValues
         >>> def scaled_euclidean(x, y):
         ...     return 2.0 * euclidean_distance(x, y)
         >>> custom = declare_ground_distance(

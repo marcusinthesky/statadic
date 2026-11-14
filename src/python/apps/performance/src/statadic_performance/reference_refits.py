@@ -62,7 +62,10 @@ def prepare_refits(case: str, side: str, inputs: tuple) -> tuple[Callable, tuple
         import jax.numpy as jnp
 
         if case == "row-pairs-refits":
-            from statadic.estimation.linear import LeastSquares, LinearProblem
+            from statadic.estimation.least_squares.linear import (
+                LeastSquares,
+                LinearProblem,
+            )
             from statadic.inference.resampling.schedule import (
                 linear_pairs_replicates,
                 row_resample_schedule,
@@ -90,8 +93,8 @@ def prepare_refits(case: str, side: str, inputs: tuple) -> tuple[Callable, tuple
             NodeCountSchedule,
             bootstrap_dyadic,
         )
-        from statadic.model.dyadic import DyadicSample
-        from statadic.operators.design import NodeIndex
+        from statadic.law.dyadic import DyadicSample
+        from statadic.numerics.linalg.dyadic import NodeIndex
 
         design, outcome, left, right, counts = inputs
         endpoints = tuple(map(int, left)), tuple(map(int, right))

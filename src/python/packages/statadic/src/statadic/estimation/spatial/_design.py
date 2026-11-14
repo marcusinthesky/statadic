@@ -10,7 +10,7 @@ from statadic.core.typing import (  # noqa: TC001
     ArrayLike,
 )
 from statadic.estimation._validation import validate_parameter_names
-from statadic.operators.spatial import (  # noqa: TC001
+from statadic.geometry.graph import (  # noqa: TC001
     SpatialWeights,
     spatial_lag,
 )

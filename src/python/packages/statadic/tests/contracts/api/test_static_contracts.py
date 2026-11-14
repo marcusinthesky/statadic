@@ -23,16 +23,16 @@ pytestmark = [
 ]
 
 REQUIRED_FIELDS = """
-from statadic.api.representation import Wasserstein1D
-from statadic.api.design import Intercept, Linear
-from statadic.api.survival import RightCensored
-from statadic.api.regression import Regression
+from statadic.observation.geometry import Wasserstein1D
+from statadic.observation.design import Intercept, Linear
+from statadic.structure.survival import RightCensored
+from statadic.regression import Regression
 from statadic.core.equations import PlainLongRun
 from statadic.core.typing import Array
 from statadic.estimation.spatial import ML, SAR, SpatialProblem
-from statadic.estimation.survival import SurvivalML
-from statadic.model.survival import WeibullAFT
-from statadic.operators.spatial import SpatialWeights
+from statadic.estimation.likelihood.survival import SurvivalML
+from statadic.law.survival import WeibullAFT
+from statadic.geometry.graph import SpatialWeights
 
 terms = Intercept() + Linear("x")
 
@@ -58,9 +58,9 @@ wasserstein_accepted = Wasserstein1D(2)
 
 REQUIRED_METRIC = """
 import jax.numpy as jnp
-from statadic.discrepancy.mmd.energy import energy_distance
+from statadic.geometry.discrepancy.mmd.energy import energy_distance
 from statadic.geometry.ground.similarities import distance_induced_gram
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 x = jnp.zeros((3, 2))
 y = jnp.ones((4, 2))
@@ -74,12 +74,12 @@ gram_accepted = distance_induced_gram(x, y, metric="euclidean")
 """
 
 NAMED_CONSTRUCTORS = """
-from statadic.api.data import RelativePrecision
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Observed, Regression
-from statadic.api.survival import RightCensored
-from statadic.estimation.glm import BinomialLogitMLE, PoissonMLE
-from statadic.model.survival import WeibullAFT
+from statadic.observation.data import RelativePrecision
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Observed, Regression
+from statadic.structure.survival import RightCensored
+from statadic.estimation.likelihood.glm import BinomialLogitMLE, PoissonMLE
+from statadic.law.survival import WeibullAFT
 
 terms = Intercept() + Linear("x")
 precision = RelativePrecision("w")
@@ -99,7 +99,7 @@ aft_response_rejected = Regression.aft("t", terms, law=WeibullAFT())  # E: `resp
 """
 
 DERIVED_FIELDS = """
-from statadic.api.representation import MMD, Energy
+from statadic.observation.geometry import MMD, Energy
 from statadic.geometry.ground.similarities import LINEAR_KERNEL
 
 energy_rejected = Energy(rooted=False)  # E: Unexpected keyword argument `rooted`
@@ -110,7 +110,7 @@ mmd_accepted = MMD(LINEAR_KERNEL)
 """
 
 FROZEN_REPORT = """
-from statadic.api.reporting import Report
+from statadic.report.core import Report
 
 report = Report("title")
 report.title = "changed"  # E: frozen
@@ -118,10 +118,10 @@ copy = Report(report.title + " (copy)")
 """
 
 HYPOTHESIS_BOUNDARIES = """
-from statadic.api.diagnostics import HansenJ
-from statadic.api.hypotheses import GaussianMoments, Hypothesis, LinearRestriction
-from statadic.api.inference import InferenceResult
-from statadic.api.regression import FreedmanLane, GeometricResult, LinearResult, Reduced
+from statadic.hypothesis.specification import HansenJ
+from statadic.hypothesis.core import GaussianMoments, Hypothesis, LinearRestriction
+from statadic.hypothesis.uncertainty import InferenceResult
+from statadic.regression import FreedmanLane, GeometricResult, LinearResult, Reduced
 
 def check(u: InferenceResult, l: LinearResult, g: GeometricResult):
     accepted = u.test(Hypothesis(LinearRestriction.zero("x")), reference="chi2")
@@ -134,8 +134,8 @@ def check(u: InferenceResult, l: LinearResult, g: GeometricResult):
 """
 
 EXPLICIT_ORDER = """
-from statadic.api.diagnostics import BreuschGodfrey, DurbinWatson
-from statadic.api.inference import HAC
+from statadic.hypothesis.specification import BreuschGodfrey, DurbinWatson
+from statadic.hypothesis.uncertainty import HAC
 
 bg_accepted = BreuschGodfrey(lags=2, order_by="time")
 dw_accepted = DurbinWatson(order_by=None)

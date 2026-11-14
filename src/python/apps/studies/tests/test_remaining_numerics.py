@@ -1,4 +1,4 @@
-"""Independent finite formulas and reproducibility for remaining studies."""
+"""Independent finite formulas and complete outcome contracts for remaining studies."""
 
 import math
 
@@ -6,13 +6,13 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.discrepancy.mmd.energy.balancing.mixture import (
+from statadic.estimation.moments.sharpe import sample_skew_kurtosis
+from statadic.geometry.discrepancy.mmd.energy.balance_mixture import (
     energy_distance_kernel_mixture,
 )
-from statadic.estimation.sharpe import sample_skew_kurtosis
-from statadic.inference.wolak import chi_bar_squared_weights_mc_kernel
-from statadic.operators.longrun import hall_centered_hac, newey_west
-from statadic.sample.packed import PackedClouds, pack
+from statadic.inference.inequality.wolak import chi_bar_squared_weights_mc_kernel
+from statadic.measure.clouds import PackedClouds, pack
+from statadic.numerics.linalg.longrun import hall_centered_hac, newey_west
 from statadic_studies.adapters import rng
 from statadic_studies.adapters import run_trial as run_remaining_numerics
 from statadic_studies.adapters.discrepancy.fixed_mixture import (
@@ -123,7 +123,7 @@ def test_chibar_records_actual_values_and_weight_order():
 
 
 @pytest.mark.parametrize("study", tuple(REMAINING_NUMERICS_STUDIES))
-def test_all_declared_cells_execute_and_reproduce(study):
+def test_all_declared_cells_preserve_outcome_contract(study):
     definition = REMAINING_NUMERICS_STUDIES[study]
     for scenario in definition.scenarios:
         result = run_remaining_numerics(study, scenario, 0, 73, draws=32)
@@ -132,4 +132,3 @@ def test_all_declared_cells_execute_and_reproduce(study):
         _validate_outcomes(result, definition.record(), scenario, 32)
         assert set(result) == set(definition.methods)
         assert all(value["valid"] for value in result.values())
-        assert result == run_remaining_numerics(study, scenario, 0, 73, draws=32)

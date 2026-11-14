@@ -22,7 +22,7 @@ from statadic.estimation.spatial.graph_likelihood import (
     graph_norms,
     graph_profile,
 )
-from statadic.optimize.backends import minimise_bfgs_result_args
+from statadic.numerics.optimize.backends import minimise_bfgs_result_args
 
 __all__: list[str] = []
 

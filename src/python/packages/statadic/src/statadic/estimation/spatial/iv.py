@@ -25,12 +25,12 @@ from statadic.core.typing import (  # noqa: TC001
     Array,
     ArrayLike,
 )
-from statadic.estimation.gmm import (  # noqa: TC001
+from statadic.estimation.moments.gmm import (  # noqa: TC001
     AffineGMMFit,
     FixedWeightGMM,
 )
-from statadic.estimation.moments import AffineMomentProblem
-from statadic.operators.spatial import (  # noqa: TC001
+from statadic.estimation.moments.problem import AffineMomentProblem
+from statadic.geometry.graph import (  # noqa: TC001
     SpatialWeights,
     spatial_lag,
 )

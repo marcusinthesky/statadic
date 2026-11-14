@@ -72,12 +72,12 @@ nitpicky = True
 # Resolve these annotations to real curated targets, using the type-alias role
 # where appropriate rather than suppressing missing public API references.
 _ANNOTATION_TARGETS = {
-    "MetadataValue": ("type", "statadic.api.reporting.MetadataValue"),
-    "FrozenMetadataValue": ("type", "statadic.api.reporting.FrozenMetadataValue"),
-    "ReportNumber": ("type", "statadic.api.reporting.ReportNumber"),
-    "Reference": ("type", "statadic.api.hypotheses.Reference"),
-    "IVFit": ("class", "statadic.estimation.iv.IVFit"),
-    "AffineGMMFit": ("class", "statadic.estimation.gmm.AffineGMMFit"),
+    "MetadataValue": ("type", "statadic.report.core.MetadataValue"),
+    "FrozenMetadataValue": ("type", "statadic.report.core.FrozenMetadataValue"),
+    "ReportNumber": ("type", "statadic.report.core.ReportNumber"),
+    "Reference": ("type", "statadic.hypothesis.core.Reference"),
+    "IVFit": ("class", "statadic.estimation.moments.instrumental.IVFit"),
+    "AffineGMMFit": ("class", "statadic.estimation.moments.gmm.AffineGMMFit"),
     "VariabilityScheme": ("class", "statadic.core.equations.VariabilityScheme"),
 }
 _ANNOTATION_TARGETS.update(
@@ -126,15 +126,15 @@ nitpick_ignore = [
         "collections.abc.Mapping",
         "jax.Array",
         "jaxtyping.Float",
-        "statadic.api.base.Estimator",
-        "statadic.api.data.MeasureColumn",
-        "statadic.api.design.Term",
+        "statadic.model.lifecycle.Estimator",
+        "statadic.observation.data.MeasureColumn",
+        "statadic.observation.design.Term",
         "statadic.core.domains.ClaimAuthority",
         "statadic.core.domains.SpaceDescriptor",
         "statadic.core.domains.ValueEvidence",
         "statadic.core.transforms.TransformDescriptor",
-        "statadic.estimation.linear.LinearFit",
-        "statadic.estimation.linear.LinearProblem",
+        "statadic.estimation.least_squares.linear.LinearFit",
+        "statadic.estimation.least_squares.linear.LinearProblem",
         "statadic.geometry.ground._similarity_strategy.PositiveSemidefiniteKernelLaw",
         "statadic.geometry.ground._similarity_strategy.SimilarityStrategy",
     )
@@ -157,18 +157,18 @@ nitpick_ignore += [
     ("py:class", "collections.abc.Sequence"),
     ("py:class", "pathlib.Path"),
     ("py:class", "Path"),  # Autodoc's shortened standard-library annotation.
-    ("py:class", "statadic.api.comparison._results.GroupComparisonResult"),
-    ("py:class", "statadic.api.comparison._shared.inputs.ComparisonInput"),
+    ("py:class", "statadic.hypothesis.homogeneity._results.GroupComparisonResult"),
+    ("py:class", "statadic.hypothesis.homogeneity._shared.inputs.ComparisonInput"),
     ("py:class", "DesignLabels"),
     ("py:class", "InputRole"),
-    ("py:class", "statadic.api.design.FittedDesign"),
-    ("py:class", "statadic.api.inference.Clustered"),
-    ("py:class", "statadic.api.inference.InferenceResult"),
-    ("py:class", "statadic.api.inference.ModelBased"),
-    ("py:class", "statadic.api.representation.GeometrySpec"),
-    ("py:class", "statadic.api.representation.PairwiseGeometry"),
-    ("py:class", "statadic.api.representation.PreparedGeometry"),
-    ("py:class", "statadic.sample.packed.PackedClouds"),
+    ("py:class", "statadic.observation.design.FittedDesign"),
+    ("py:class", "statadic.hypothesis.uncertainty.Clustered"),
+    ("py:class", "statadic.hypothesis.uncertainty.InferenceResult"),
+    ("py:class", "statadic.hypothesis.uncertainty.ModelBased"),
+    ("py:class", "statadic.observation.geometry.GeometrySpec"),
+    ("py:class", "statadic.observation.geometry.PairwiseGeometry"),
+    ("py:class", "statadic.observation.geometry.PreparedGeometry"),
+    ("py:class", "statadic.measure.clouds.PackedClouds"),
     ("py:class", "numpy.bool"),
     ("py:class", "numpy.ndarray"),
     ("py:class", "numpy.number"),
@@ -190,7 +190,7 @@ nitpick_ignore += [
 ] + [
     ("py:exc", "InsufficientUStatisticSampleError"),
     ("py:func", "mmd_matrix"),
-    ("py:func", "statadic.sample.packed.pack"),
+    ("py:func", "statadic.measure.clouds.pack"),
     ("py:func", "statadic.association.dispersion.dispersion_f_ratio"),
     ("py:func", "statadic.core.random.cell_key"),
 ]
@@ -219,7 +219,7 @@ nitpick_ignore += [
         "FitContext",
         "FittedDesign",
         "LinearFit",
-        "statadic.api.reporting.Metric",
+        "statadic.report.core.Metric",
     )
 ]
 

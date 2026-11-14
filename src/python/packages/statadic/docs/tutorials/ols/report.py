@@ -22,12 +22,12 @@ with app.setup:
     import numpy as np
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.diagnostics import BreuschPagan, BreuschGodfrey, DurbinWatson, Influence, JarqueBera, RESET, White
-    from statadic.api.inference import HAC, HC, ModelBased
-    from statadic.api.data import Observations
-    from statadic.api.hypotheses import Hypothesis, LinearRestriction
-    from statadic.api.regression import Regression
+    from statadic.observation.design import Intercept, Linear
+    from statadic.hypothesis.specification import BreuschPagan, BreuschGodfrey, DurbinWatson, Influence, JarqueBera, RESET, White
+    from statadic.hypothesis.uncertainty import HAC, HC, ModelBased
+    from statadic.observation.data import Observations
+    from statadic.hypothesis.core import Hypothesis, LinearRestriction
+    from statadic.regression import Regression
 
     DARK = mo.app_meta().theme == "dark"
     INK = "#eeeeee" if DARK else "#000000"
@@ -225,7 +225,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.callout(mo.md('See the [assumptions and limits](../../reference/reporting.md#assumptions-and-limits) and [evidence](../../reference/reporting.md#evidence).'), kind="info")
+    mo.callout(mo.md('See the [assumptions and limits](../../reference/report.md#assumptions-and-limits) and [evidence](../../reference/report.md#evidence).'), kind="info")
     return
 
 
@@ -236,7 +236,7 @@ def _():
 
     - [OLS chapter](index.md)
     - [Linear diagnostics](../../reference/linear-diagnostics.md)
-    - [Reports](../../reference/reporting.md)
+    - [Reports](../../reference/report.md)
     """)
     return
 

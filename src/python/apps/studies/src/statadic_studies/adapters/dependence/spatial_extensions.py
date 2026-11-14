@@ -19,13 +19,13 @@ from statadic.estimation.spatial import (
     SpatialPanelProblem,
     SpatialProblem,
 )
-from statadic.inference.linear_covariance import classical_covariance
-from statadic.inference.spatial import spatial_covariance
-from statadic.operators.spatial import (
+from statadic.geometry.graph import (
     ObservedSpatialPeriod,
     prepare_spatial_panel_weights,
     prepare_spatial_weights,
 )
+from statadic.inference.covariance.linear import classical_covariance
+from statadic.inference.spatial import spatial_covariance
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence._common import _inference, _record

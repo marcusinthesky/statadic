@@ -4,7 +4,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 from statadic_performance.reference_workloads import CASES, EAGER_CASES, prepare
 
 

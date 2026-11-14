@@ -21,7 +21,7 @@ from statadic.core.typing import (  # runtime contract  # noqa: TC001
     Array,
     ArrayLike,
 )
-from statadic.estimation.sharpe import sample_skew_kurtosis, sharpe_ratio
+from statadic.estimation.moments.sharpe import sample_skew_kurtosis, sharpe_ratio
 
 __all__ = [
     "DeflatedSharpeResult",

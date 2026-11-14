@@ -31,13 +31,13 @@ def _load(name: str, path: Path):
 def _dyadic_fixture(compare):
     import jax.numpy as jnp
     import numpy as np
-    from statadic.estimation.dyadic import DyadicEstimator
+    from statadic.estimation.least_squares.dyadic import DyadicEstimator
     from statadic.inference.dyadic import (
         DyadicInference,
         NodeCountSchedule,
         node_bootstrap_report,
     )
-    from statadic.model.dyadic import DyadicModel, DyadicSample
+    from statadic.law.dyadic import DyadicModel, DyadicSample
 
     rng = np.random.default_rng(8041)
     i, j = np.triu_indices(9, k=1)
@@ -114,7 +114,7 @@ def _frontier_fixture(compare):
         percentile_summary,
         row_resample_schedule,
     )
-    from statadic.optimize.simplex import simplex_qp_result
+    from statadic.numerics.optimize.simplex import simplex_qp_result
 
     rng = np.random.default_rng(3103)
     returns = rng.normal(size=(64, 3)) * [1.0, 1.5, 2.0]
@@ -169,7 +169,7 @@ def _frontier_fixture(compare):
 
 def _spatial_covariance_fixture(root: Path, compare):
     import numpy as np
-    from statadic.api.estimand import Covariance, Estimand
+    from statadic.estimand.core import Covariance, Estimand
     from statadic.estimation.covariance import LedoitWolf
 
     stage = _load("consumer_spatial_acceptance", root / "spatial-covariance-adapted.py")

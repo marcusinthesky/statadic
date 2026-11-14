@@ -117,8 +117,9 @@ register a pytest plugin.
 
 `just test-artifacts` builds a wheel and sdist from a temporary package snapshot,
 rebuilds a wheel from that sdist and checks both installed runtime closures in
-separate temporary environments outside the checkout. It also runs lint, types and
-the typing tests from the extracted sdist, and may download build, runtime and
+separate temporary environments outside the checkout. It also verifies development
+tool availability and runs typing fixtures from the extracted sdist; source lint
+and type checks belong to the package quality gate. It may download build, runtime and
 development dependencies. It leaves out the optional reference group and does not
 publish. License selection and publication policy remain maintainer decisions.
 
@@ -165,7 +166,7 @@ dependencies. They do not qualify the full fast suite on 3.14 or every dependenc
 combination. For a local installed-wheel check, run:
 
 ```bash
-devenv shell -- just python::statadic::compat -e 3.13-lowest -- tests/api/test_inputs.py
+devenv shell -- just python::statadic::compat -e 3.13-lowest -- tests/observation/test_inputs.py
 ```
 
 The locked contributor `compat` group supplies tox and tox-uv in an isolated launcher
@@ -198,18 +199,18 @@ review tool, not a hostile-code sandbox. The [module migration
 guide](src/python/packages/statadic/docs/reference/upgrading.md) records canonical
 paths and clean import breaks.
 
-Numerical adapters in `statadic.optimize` have result-bearing variants:
+Numerical adapters in `statadic.numerics.optimize` have result-bearing variants:
 `least_squares_result`, `minimise_bfgs_result`, `pgd_simplex_affine_result` and
 `simplex_qp_result`, which solves convex quadratic objectives on a possibly capped
 probability simplex and keeps feasibility, KKT and optimality-gap evidence. Inspect
 status and residual evidence before using an iterate. The value-returning functions
 remain, and affine PGD supports JIT and batching but not reverse-mode differentiation.
-`RBFKernel` and `sample.reduction.Projection` are immutable pytrees that keep learned
+`RBFKernel` and `measure.reduction.Projection` are immutable pytrees that keep learned
 numerical state dynamic, while metric and kernel laws stay static declarations. The
 RBF kernel uses squared Euclidean differences directly, which keeps derivatives finite
 at coincident points.
 
-`discrepancy.transport.wasserstein_1d` and `wasserstein_1d_power` support weighted
+`geometry.discrepancy.transport.wasserstein_1d` and `wasserstein_1d_power` support weighted
 `PackedClouds` with unequal support counts and broadcast cloud axes. The latter returns
 the unrooted objective, and sliced transport uses masses from the same carrier under
 one shared projection design. Exact uniform multivariate assignment keeps its

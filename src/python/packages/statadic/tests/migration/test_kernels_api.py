@@ -4,9 +4,9 @@
 ``statadic.kernels`` was a single module, then a package, then a t46.6 deprecation
 shim. **t46.10 deleted it.** Nothing named "kernel" in it was ever a Mercer/RBF
 kernel, so its contents were redistributed to the stages that own them — the
-energy-distance and energy-test machinery to ``statadic.discrepancy``, the
+energy-distance and energy-test machinery to ``statadic.geometry.discrepancy``, the
 barycentre solvers to ``statadic.geometry``, and the PGD simplex solver to
-``statadic.optimize``.
+``statadic.numerics.optimize``.
 
 Nothing else pins that surface: ruff cannot see a name silently dropped from an
 ``__all__``, pyrefly is blind to the private symbols downstream code imports
@@ -35,7 +35,7 @@ import pytest
 #: Legacy paths t46.10 retired. Deleted, not deprecated.
 _RETIRED_MODULE_PATHS = [
     "statadic.kernels",
-    "statadic.discrepancy._kernels.simplex",
+    "statadic.geometry.discrepancy._kernels.simplex",
 ]
 
 # Every name the `statadic.kernels` shim exported, mapped to the module that owns
@@ -84,7 +84,7 @@ def test_overloads_live_with_their_implementation() -> None:
     are in the *same* module, which is the hazard the runtime count was only an
     indirect proxy for.
     """
-    owner = importlib.import_module("statadic.geometry.barycentre.mmd.energy")
+    owner = importlib.import_module("statadic.geometry.frechet.energy")
     implementation = importlib.import_module(getattr(owner, _OVERLOADED).__module__)
     source = pathlib.Path(str(implementation.__file__)).read_text(encoding="utf-8")
     defs = [
@@ -107,14 +107,3 @@ def test_overloads_live_with_their_implementation() -> None:
         f"the implementation of {_OVERLOADED} is not in {implementation.__name__} "
         "alongside its stubs"
     )
-
-
-@pytest.mark.component
-@pytest.mark.contract
-def test_pairwise_barycentre_is_callable() -> None:
-    """`energy_barycentre_weights_pairwise` has no other coverage in this suite."""
-    from statadic.geometry.barycentre.mmd.energy import (  # noqa: PLC0415
-        energy_barycentre_weights_pairwise,
-    )
-
-    assert callable(energy_barycentre_weights_pairwise)

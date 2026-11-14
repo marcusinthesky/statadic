@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pytest
-from statadic.operators.longrun import hall_centered_hac, newey_west
+from statadic.numerics.linalg.longrun import hall_centered_hac, newey_west
 
 if TYPE_CHECKING:
     from collections.abc import (

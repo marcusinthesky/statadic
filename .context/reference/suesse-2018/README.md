@@ -16,7 +16,7 @@ links: []
 
 The section on marginal log-likelihood applies the Gaussian linear transformation rule to the observed rows after equation (4). If $y$ has covariance $\sigma^2 V$ and $P$ selects those rows, $Py$ has covariance $\sigma^2 PVP^T$. The paper develops SAR and SEM marginal likelihood estimators. [Publisher's text](https://www.sciencedirect.com/science/article/abs/pii/S0167947317302396)
 
-For STATADIC's period-specific composite filter $F=BA$, the innovation covariance $\sigma^2 I$ gives $V=F^{-1}F^{-T}$. STATADIC solves $F^T Z=P^T$ on the full roster. Transposition and right multiplication give $Z^T=PF^{-1}$, so $Z^TZ=PVP^T$. The registered theorem proves this matrix step. STATADIC's independent numerical example instead forms the full inverse, selects the covariance submatrix and scores it with SciPy. [Source mapping](source.json) · [Reference test](../../../src/python/packages/statadic/tests/api/test_spatial_graph_regression.py) · [SciPy Gaussian log density](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.multivariate_normal.html)
+For STATADIC's period-specific composite filter $F=BA$, the innovation covariance $\sigma^2 I$ gives $V=F^{-1}F^{-T}$. STATADIC solves $F^T Z=P^T$ on the full roster. Transposition and right multiplication give $Z^T=PF^{-1}$, so $Z^TZ=PVP^T$. The registered theorem proves this matrix step. STATADIC's independent numerical example instead forms the full inverse, selects the covariance submatrix and scores it with SciPy. [Source mapping](source.json) · [Reference test](../../../src/python/packages/statadic/tests/structure/test_spatial_graph_regression.py) · [SciPy Gaussian log density](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.multivariate_normal.html)
 
 ## Backlinks
 

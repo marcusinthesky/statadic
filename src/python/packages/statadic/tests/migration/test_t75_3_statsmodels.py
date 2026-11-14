@@ -14,7 +14,7 @@ from statadic.core.equations import (
     unsafe_assume_equation_jacobian,
     unsafe_assume_estimating_function,
 )
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     bartlett_weights,
     newey_west,
     newey_west_variability,

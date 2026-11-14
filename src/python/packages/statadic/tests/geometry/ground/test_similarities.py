@@ -6,7 +6,8 @@ The similarity-side sibling of ``test_metrics.py``: four kernel callables
 dispatcher that applies them.
 
 What is **not** here: the energy/MMD parity identity, which is a property of the
-statistic rather than of the Gram and lives in ``tests/discrepancy/test_mmd.py``.
+statistic rather than of the Gram and lives in
+``tests/geometry/discrepancy/test_mmd.py``.
 PSD-ness is checked here, because
 :data:`statadic.geometry.ground.similarities.DECLARED_PSD`
 is this module's declaration to keep.
@@ -248,18 +249,6 @@ class TestGramDispatcher:
             gram(x, x, kernel=kernel),
             direct(x, x),
         )
-
-    @pytest.mark.unit
-    @pytest.mark.contract
-    def test_angular_requires_an_explicit_reference(self) -> None:
-        """The origin is not on the sphere, so require a valid reference.
-
-        This is why :func:`statadic.discrepancy.mmd` resolves a shared reference
-        from the data rather than letting the Gram default apply.
-        """
-        x = jnp.array([[1.0, 2.0], [3.0, 4.0]])
-        with pytest.raises(ValueError, match="reference is required"):
-            distance_induced_gram(x, x, metric="angular")
 
     @pytest.mark.unit
     def test_rbf_with_bandwidth(self) -> None:

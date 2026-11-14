@@ -17,9 +17,6 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.association import Mantel, MantelInput, MatrixExchangeability
-from statadic.api.comparison import PermutationPlan
-from statadic.api.hypotheses import Hypothesis
 from statadic.core.random import cell_key, permutation_batch
 from statadic.core.typing import (
     ArrayLike,
@@ -27,21 +24,24 @@ from statadic.core.typing import (
 from statadic.estimation.covariance import (
     cv_lambda_grid,
 )
-from statadic.inference.disco import disco_permutation_null
-from statadic.inference.dispersion import dispersion_permutation_null
+from statadic.hypothesis.core import Hypothesis
+from statadic.hypothesis.homogeneity import PermutationPlan
+from statadic.hypothesis.independence import Mantel, MantelInput, MatrixExchangeability
 from statadic.inference.dyadic import draw_node_counts
-from statadic.inference.gms import (
+from statadic.inference.homogeneity.disco import disco_permutation_null
+from statadic.inference.homogeneity.dispersion import dispersion_permutation_null
+from statadic.inference.inequality.gms import (
     indicator_gms,
 )
-from statadic.inference.wolak import (
+from statadic.inference.inequality.wolak import (
     chi_bar_squared_weights_mc,
 )
-from statadic.operators.design import (
+from statadic.numerics.linalg.dyadic import (
     NodeIndex,
 )
 
 if TYPE_CHECKING:
-    from statadic.api.association import MantelResult, MantelTestEvidence
+    from statadic.hypothesis.independence import MantelResult, MantelTestEvidence
 
 _N_PERMUTATIONS = 17
 #: `disco_permutation_null` is still an eager NumPy door; `dispersion_permutation_null`

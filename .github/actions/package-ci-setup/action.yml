@@ -1,0 +1,8 @@
+name: Prepare package validation
+description: Reuse pinned setup with only the package dependency selection.
+runs:
+  using: composite
+  steps:
+    - uses: ./.github/actions/python-ci-setup
+      with:
+        package-only: 'true'

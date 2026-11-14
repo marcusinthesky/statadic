@@ -3,7 +3,8 @@
 
 This module is the sink of the :mod:`statadic.inference` package: it imports
 no sibling, so every other module may depend on it without creating a cycle.
-(:class:`~statadic.optimize.simplex.NonnegativeQPSolution` is imported for typing
+(:class:`~statadic.numerics.optimize.simplex.NonnegativeQPSolution` is imported for
+typing
 only and lives outside the package, so it does not weaken that property.)
 
 Shared checks serve multiple inference families. Finite moment-row validation
@@ -25,7 +26,8 @@ the scope itself (``pipeline.precision.own_float64``).
 The validators remain **eager**: each closes a device sync with ``bool()`` or
 ``float()`` to reach a Python ``raise``, so none is jittable and none is
 intended to be. That is the same shape as
-:func:`statadic.discrepancy.metrize.sqrt_energy_functional`, and it is why they sit
+:func:`statadic.geometry.discrepancy.metrize.sqrt_energy_functional`, and it is why
+they sit
 at API doors rather than inside kernels.
 """
 
@@ -46,7 +48,7 @@ from statadic.core.typing import (  # noqa: TC001
 )
 
 if TYPE_CHECKING:
-    from statadic.optimize.simplex import NonnegativeQPSolution
+    from statadic.numerics.optimize.simplex import NonnegativeQPSolution
 
 
 class ProjectionUnavailableError(RuntimeError):
