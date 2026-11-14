@@ -8,6 +8,12 @@ The documentation site has a separate [GitHub Pages workflow](../../.github/work
 It builds on pull requests and publishes successful builds from `main`.
 See [GitHub Pages](#github-pages) for setup.
 
+New pushes cancel older CI and Pages runs for the same pull request. Release
+pull-request checks and the read-only manual preflight also cancel superseded
+runs on the same ref. Tagged publication and active Pages deployments finish
+without cancellation. Package validation shares its caller's run and has no
+separate concurrency group that could cancel the caller.
+
 Before publishing, configure these account settings:
 
 1. Create the GitHub environment `release` in `marcusinthesky/statadic`.
@@ -90,6 +96,18 @@ uv run --project src/python --offline --frozen --package statadic-docs python -m
 ```
 
 ## Offline consumer installation
+
+Package-only setup installs STATADIC's development group, including its pinned
+Hatchling backend. The candidate build uses `--no-build-isolation`, so the
+workspace root's development tools cannot supply this dependency. To reproduce
+the candidate lane locally without a populated workspace environment:
+
+```bash
+UV_PROJECT_ENVIRONMENT="$PWD/build/package-smoke-venv" devenv shell --profile python-ci -- uv sync --project src/python --locked --package statadic --group reference
+UV_PROJECT_ENVIRONMENT="$PWD/build/package-smoke-venv" devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference python infra/release/package_candidate.py build --output build/package-smoke-inputs
+```
+
+Use new environment and output paths for each clean reproduction.
 
 Before the expensive validation jobs, prepare and check the source-free publishing
 environment with the pinned Python runner:

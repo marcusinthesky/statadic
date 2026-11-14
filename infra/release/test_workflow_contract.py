@@ -20,6 +20,28 @@ class WorkflowContractTests(unittest.TestCase):
     def test_complete_package_and_workspace_gates(self):
         validate(self.ci, self.package)
 
+    def test_obsolete_validation_is_cancelled_but_publication_is_preserved(self):
+        workflows = ROOT / ".github/workflows"
+        release = yaml.safe_load((workflows / "release.yml").read_text())
+        pages = yaml.safe_load((workflows / "pages.yml").read_text())
+        preflight = yaml.safe_load((workflows / "release-validation.yml").read_text())
+        pr_only = "${{ github.event_name == 'pull_request' }}"
+        self.assertIs(self.ci["concurrency"]["cancel-in-progress"], True)
+        self.assertIs(preflight["concurrency"]["cancel-in-progress"], True)
+        self.assertEqual(release["concurrency"]["cancel-in-progress"], pr_only)
+        self.assertEqual(pages["concurrency"]["cancel-in-progress"], pr_only)
+        self.assertIs(
+            pages["jobs"]["deploy"]["concurrency"]["cancel-in-progress"], False
+        )
+        # The caller owns cancellation; a matching called-workflow group can
+        # accidentally cancel the caller when package validation starts.
+        self.assertNotIn("concurrency", self.package)
+        groups = [
+            workflow["concurrency"]["group"]
+            for workflow in (self.ci, release, pages, preflight)
+        ]
+        self.assertEqual(len(groups), len(set(groups)))
+
     def test_every_package_dependency_is_required(self):
         for name in (
             "regressions",
