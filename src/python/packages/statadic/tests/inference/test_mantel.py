@@ -304,8 +304,8 @@ def test_self_correlation_is_one(x: np.ndarray) -> None:
         x: Generated distance matrix.
 
     """
-    result = _mantel(x, x, num_permutations=200)
-    assert result.correlation == pytest.approx(1.0, abs=1e-10)
+    result = Mantel().estimate(MantelInput(x, x))
+    assert float(result.statistic) == pytest.approx(1.0, abs=1e-10)
 
 
 @pytest.mark.component
@@ -319,9 +319,9 @@ def test_independent_matrices_not_strongly_correlated() -> None:
     rng = np.random.default_rng(2)
     x = _random_distance_matrix(rng, n=20)
     y = _random_distance_matrix(rng, n=20)
-    result = _mantel(x, y, num_permutations=500, seed=2)
+    result = Mantel().estimate(MantelInput(x, y))
     weak_correlation_limit = 0.5
-    assert abs(result.correlation) < weak_correlation_limit
+    assert abs(float(result.statistic)) < weak_correlation_limit
 
 
 @pytest.mark.component
@@ -336,9 +336,9 @@ def test_spearman_method(x: np.ndarray) -> None:
         x: Generated distance matrix.
 
     """
-    result = _mantel(x, x, method="spearman", num_permutations=100)
+    result = Mantel("spearman").estimate(MantelInput(x, x))
     assert result.method == "spearman"
-    assert result.correlation == pytest.approx(1.0, abs=1e-10)
+    assert float(result.statistic) == pytest.approx(1.0, abs=1e-10)
 
 
 @pytest.mark.unit
@@ -700,11 +700,10 @@ def test_returns_named_tuple_fields(x: np.ndarray) -> None:
         x: Generated distance matrix.
 
     """
-    result = _mantel(x, x, num_permutations=20)
     fit = Mantel().estimate(MantelInput(x, x))
     inference = _mantel_evidence(fit, PermutationPlan(n=20))
     assert isinstance(inference, MantelTestEvidence)
-    assert result.method == "pearson"
+    assert fit.method == "pearson"
     assert inference.pvalue is not None
 
 

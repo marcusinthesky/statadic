@@ -202,17 +202,18 @@ def test_linear_fitting_preserves_caller_dtypes_and_configuration(
     # The well-conditioned fixture uses a small QR solve and matrix products.
     # 100 eps allows float32 rounding while preserving rank and fitted behavior.
     tolerance = 100 * np.finfo(dtype).eps
-    for fit in (
+    fits = (
         LeastSquares().estimate(LinearProblem(design, outcome)),
         LeastSquares().estimate(LinearProblem(design, outcome, weights)),
-    ):
+    )
+    for fit in fits:
         assert fit.parameters.dtype == dtype
         assert fit.design.dtype == dtype
         assert fit.normalized_covariance.dtype == dtype
         assert fit.valid
         assert fit.predict(design).dtype == dtype
     np.testing.assert_allclose(
-        LeastSquares().estimate(LinearProblem(design, outcome, weights)).parameters,
+        fits[1].parameters,
         expected,
         rtol=tolerance,
         atol=tolerance,
@@ -504,6 +505,7 @@ def test_finite_qr_output_cannot_certify_overflowing_original_scale_state() -> N
 
 @pytest.mark.component
 @pytest.mark.reference
+@examples(20)
 @pytest.mark.parametrize(("n", "p"), [(8, 2), (12, 3), (7, 5)])
 @pytest.mark.parametrize("weighted", [False, True])
 @given(data=st.data())
@@ -552,6 +554,7 @@ def test_generated_complete_linear_state_matches_independent_qr(
 
 @pytest.mark.component
 @pytest.mark.property
+@examples(20)
 @given(data=st.data(), multiplier=st.sampled_from([0.25, 3.0, 16.0]))
 def test_generated_precision_scaling_and_named_permutations_preserve_inference(
     data: st.DataObject, multiplier: float

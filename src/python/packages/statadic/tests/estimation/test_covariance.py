@@ -261,12 +261,18 @@ def _shrinkage_panel(regime: str) -> np.ndarray:
 
 
 def _assert_covariance_accuracy(
-    actual: np.ndarray | jax.Array, expected: np.ndarray, dtype: type[np.floating]
+    actual: np.ndarray | jax.Array,
+    expected: np.ndarray,
+    dtype: type[np.floating],
+    *,
+    label: str = "",
 ) -> None:
     """Allow reduction roundoff at the represented matrix's natural scale."""
     margin = 128.0 * float(np.finfo(dtype).eps)
     scale = float(np.max(np.abs(expected), initial=1.0))
-    np.testing.assert_allclose(actual, expected, rtol=margin, atol=margin * scale)
+    np.testing.assert_allclose(
+        actual, expected, rtol=margin, atol=margin * scale, err_msg=label
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -794,10 +800,9 @@ def test_sample_covariance_divisor_and_centering_match_outer_product_sum(
 @pytest.mark.reference
 @pytest.mark.parametrize("regime", ["interior", "wide", "repeated"])
 @pytest.mark.parametrize("dtype", [np.float32, np.float64], ids=["float32", "float64"])
-@pytest.mark.parametrize("part", ["target", "shrinkage", "sigma"])
 @pytest.mark.parametrize("execution", ["eager", "kernel", "batched"])
 def test_ledoit_wolf_components_match_independent_entry_sums(
-    regime: str, dtype: type[np.floating], part: str, execution: str
+    regime: str, dtype: type[np.floating], execution: str
 ) -> None:
     """Assert target, intensity and matrix independently in each execution mode."""
     panel = _shrinkage_panel(regime).astype(dtype)
@@ -813,10 +818,13 @@ def test_ledoit_wolf_components_match_independent_entry_sums(
         )
         result = estimate(panel)
         witnesses = [_constant_correlation_witness(panel)]
-    expected = np.stack([getattr(witness, part) for witness in witnesses])
-    if execution != "batched":
-        expected = expected[0]
-    _assert_covariance_accuracy(np.asarray(getattr(result, part)), expected, dtype)
+    for part in ("target", "shrinkage", "sigma"):
+        expected = np.stack([getattr(witness, part) for witness in witnesses])
+        if execution != "batched":
+            expected = expected[0]
+        _assert_covariance_accuracy(
+            np.asarray(getattr(result, part)), expected, dtype, label=part
+        )
 
 
 @pytest.mark.component
@@ -824,9 +832,8 @@ def test_ledoit_wolf_components_match_independent_entry_sums(
 @pytest.mark.external_reference
 @pytest.mark.requires_optional("PyPortfolioOpt")
 @pytest.mark.parametrize("regime", ["interior", "wide", "repeated"])
-@pytest.mark.parametrize("part", ["shrinkage", "sigma"])
 def test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor(
-    optional_reference: Callable[[str], ModuleType], regime: str, part: str
+    optional_reference: Callable[[str], ModuleType], regime: str
 ) -> None:
     """Match the constant-correlation target after explicit reference normalization.
 
@@ -845,8 +852,13 @@ def test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor(
     reference.S = np.asarray(reference.S) * (len(panel) - 1) / len(panel)
     sigma = np.asarray(reference.ledoit_wolf(shrinkage_target="constant_correlation"))
     result = _eager_ledoit_wolf(panel)
-    expected = np.asarray(reference.delta if part == "shrinkage" else sigma)
-    _assert_covariance_accuracy(np.asarray(getattr(result, part)), expected, np.float64)
+    for part, expected in (("shrinkage", reference.delta), ("sigma", sigma)):
+        _assert_covariance_accuracy(
+            np.asarray(getattr(result, part)),
+            np.asarray(expected),
+            np.float64,
+            label=part,
+        )
 
 
 @pytest.mark.component

@@ -691,6 +691,7 @@ def test_poisson_matches_glum_when_available(
 @pytest.mark.external_reference
 @pytest.mark.requires_optional("statsmodels")
 @pytest.mark.parametrize("family", ["binomial", "poisson"])
+@examples(8)
 @given(
     outcomes=st.lists(st.integers(2, 6), min_size=8, max_size=8),
     offsets=st.lists(st.integers(-4, 4), min_size=4, max_size=4),

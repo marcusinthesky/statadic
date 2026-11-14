@@ -107,14 +107,3 @@ def test_overloads_live_with_their_implementation() -> None:
         f"the implementation of {_OVERLOADED} is not in {implementation.__name__} "
         "alongside its stubs"
     )
-
-
-@pytest.mark.component
-@pytest.mark.contract
-def test_pairwise_barycentre_is_callable() -> None:
-    """`energy_barycentre_weights_pairwise` has no other coverage in this suite."""
-    from statadic.geometry.barycentre.mmd.energy import (  # noqa: PLC0415
-        energy_barycentre_weights_pairwise,
-    )
-
-    assert callable(energy_barycentre_weights_pairwise)

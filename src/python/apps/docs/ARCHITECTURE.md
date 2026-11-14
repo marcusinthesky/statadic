@@ -32,15 +32,27 @@ numerical recipe, figures, controls and output tests. Native Sphinx pages render
 executed outputs and offer source downloads and optional server-mode molab links.
 The site itself requires neither browser-WASM nor a hosted kernel.
 
+Hosted documentation checks own notebook output tests and renderer integration
+fixtures; Pages owns the full float64 export and site build. The build checks
+every canonical export's headings, output and launch controls, and excludes
+Appendix tests. The extended notebook command retains the full script execution
+matrix for deliberate audits. Precision repeats select numerical guarantees,
+rather than every test that happens to import STATADIC.
+
 `statadic_docs_pages` owns notebook execution, content-based caches and conversion
 to native document nodes. `statadic_docs_labs` retains formal, release and
 scientific evidence tooling. These packages remain internal workspace consumers.
 
-The release runner owns retained build artifacts and an isolated installed-wheel
+The scientific qualification runner owns retained evidence and an isolated installed-wheel
 test environment. It exports reference dependencies from the workspace lock,
 never installs editable STATADIC into that environment, and records source/artifact
 hashes and per-study dispositions. Its verification rejects changed evidence or
 source trees. Human source-fidelity review remains separate from compilation.
+
+Package publication belongs to `infra/release` and the reusable package-validation
+workflow. Its standard-library promotion driver verifies complete package evidence
+and publishes the exact tested distributions without importing this application.
+Documentation builds and scientific qualification remain separate from that gate.
 
 An explicit release scope retains every required variant's canonical campaign
 cells and selects additional statistical tests by exact parameterized node.

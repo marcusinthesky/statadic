@@ -8,6 +8,12 @@ The documentation site has a separate [GitHub Pages workflow](../../.github/work
 It builds on pull requests and publishes successful builds from `main`.
 See [GitHub Pages](#github-pages) for setup.
 
+New pushes cancel older CI and Pages runs for the same pull request. Release
+pull-request checks and the read-only manual preflight also cancel superseded
+runs on the same ref. Tagged publication and active Pages deployments finish
+without cancellation. Package validation shares its caller's run and has no
+separate concurrency group that could cancel the caller.
+
 Before publishing, configure these account settings:
 
 1. Create the GitHub environment `release` in `marcusinthesky/statadic`.
@@ -23,32 +29,60 @@ For each release:
    matching `statadic` version in `src/python/uv.lock`. Use the locked uv tooling
    to refresh the lock. Review and refresh the Lean public API inventory with
    `just lean::inventory-refresh` so its package version agrees.
-2. Open a pull request. CI runs the complete preflight as a dry run, without
-   publishing. Its checkout gate consumes the verified results of that same
-   run's four Python shards and remaining repository checks.
-3. After merging, push an exact package-version tag, for example `v0.5.0a1`.
+2. Open a pull request. CI validates a canonical wheel and sdist on x86-64 and
+   ARM64, with four complete package-test shards per architecture. Dependency
+   preparation runs before expensive tests. Repository and documentation checks
+   retain their separate scopes.
+3. After merging, wait for **Package candidate** for the exact `main` commit,
+   then push an exact package-version tag, for example `v0.5.0a2`.
    Supported prerelease suffixes are `aN`, `bN` and `rcN`; they are marked as
    prereleases on GitHub. Versions are explicit; commits do not trigger bumps.
 
 The version job rejects mismatched package, lock, registry and tag versions.
-The reusable [preflight](../../.github/workflows/release-validation.yml) runs
-on Linux x86-64 and ARM64 and verifies its retained archive. Both runners must
-succeed before publication. PyPI receives the exact x86-64 preflight wheel and
-sdist, already exercised by the installed-distribution checks. The wheel is
-platform independent; dependencies such as JAX supply their own platform wheels.
+The reusable package workflow checks both supported architectures. The tag
+workflow selects its exact-commit `package-candidate` artifact and verifies
+producer metadata, package quality, complete shard coverage, installed comparison
+reports, source/lock identities and distribution hashes. PR candidates cannot be
+published. PyPI receives those exact files without rebuilding or repeating tests.
+The wheel is platform independent; dependencies such as JAX supply platform wheels.
 
-PR preflight follows the complete CI aggregate rather than repeating its checkout
-suite. `--preflight-check-receipt PATH` accepts only a completed receipt from the
-same source revision, architecture, GitHub run and attempt. Its retained node
-reports must prove complete, non-overlapping execution and successful repository
-checks. The release archive contains this receipt and verifies it again. Wheel
-and sdist builds, installed-distribution checks, live references and both precision
-lanes still execute separately. The Release workflow keeps the PR version check;
-PR preflight statuses now belong to CI. Update any required status selection to
-the new CI preflight names when adopting this workflow.
+Candidates remain available for 30 days. An absent or expired candidate stops
+publication early. Dispatch CI at the tagged commit, wait for its package
+candidate, then retry Release with that producer run ID:
 
-Tag and manually dispatched releases, and local `just release-preflight`, run
-fresh checkout checks by default. Qualification rejects imported CI receipts.
+```bash
+gh workflow run ci.yml --ref v0.5.0a2
+gh workflow run release.yml --ref v0.5.0a2 -f producer_run_id=RUN_ID
+```
+
+Dispatched commits must be reachable from `main`. To create the next release:
+
+```bash
+git tag -a v0.5.0a2 VALIDATED_MAIN_SHA -m "STATADIC 0.5.0a2"
+git push origin refs/tags/v0.5.0a2
+```
+
+Retries require existing PyPI and GitHub files to match the validated bytes and
+upload only missing files. Conflicting published files stop publication.
+Leave `v0.5.0a1` unchanged: its failed pipeline skipped PyPI publication and the
+existing GitHub prerelease had no distribution assets when reviewed. Check the
+current publication state independently before retrying any version.
+
+The package candidate does not depend on docs or workspace application checks.
+Repository CI still reports those checks separately and its aggregate requires
+both scopes. Scientific qualification remains a separate command and claim.
+
+The legacy documentation/scientific preflight can consume a separately produced
+complete repository receipt through `--preflight-check-receipt PATH`. Routine CI
+combines shared workspace status with package evidence and does not produce full
+repository receipts. A supplied receipt's retained reports must prove
+complete, non-overlapping execution and successful repository checks. The release
+archive verifies that evidence again. This command remains separate from package
+publication; a package-only receipt cannot replace a full repository receipt.
+
+The legacy manual preflight and local `just release-preflight` run fresh checkout
+checks by default. They are separate from publication. Qualification rejects
+imported CI receipts.
 
 After PyPI succeeds, the workflow creates a GitHub release with those same
 distributions and `SHA256SUMS`. Detailed preflight evidence remains in each
@@ -59,11 +93,23 @@ retain the separate `just release-check` evidence before making that claim.
 Run the lightweight version gates locally in the prepared environment:
 
 ```bash
-uv run --project src/python --offline --frozen --package statadic-docs python infra/release/check_version.py --tag v0.5.0a1
+uv run --project src/python --offline --frozen --package statadic-docs python infra/release/check_version.py --tag v0.5.0a2
 uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/release -p 'test_*.py' -v
 ```
 
 ## Offline consumer installation
+
+Package-only setup installs STATADIC's development group, including its pinned
+Hatchling backend. The candidate build uses `--no-build-isolation`, so the
+workspace root's development tools cannot supply this dependency. To reproduce
+the candidate lane locally without a populated workspace environment:
+
+```bash
+UV_PROJECT_ENVIRONMENT="$PWD/build/package-smoke-venv" devenv shell --profile python-ci -- uv sync --project src/python --locked --package statadic --group reference
+UV_PROJECT_ENVIRONMENT="$PWD/build/package-smoke-venv" devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference python infra/release/package_candidate.py build --output build/package-smoke-inputs
+```
+
+Use new environment and output paths for each clean reproduction.
 
 Before the expensive validation jobs, prepare and check the source-free publishing
 environment with the pinned Python runner:
@@ -96,10 +142,13 @@ Run that bounded check in the pinned workspace with
 `just python::statadic::test-artifacts --inputs-only`. It does not qualify wheels.
 The complete `just python::statadic::test-artifacts` check installs both wheel
 build routes, exercises Polars and Arrow through the wheel's `[data]` extra in
-float32 and float64, and checks standalone sdist development. Its smoke driver
+float32 and float64, and checks standalone sdist development. Development checks
+resolve the declared group, retain its lock, verify Ruff/Pyrefly/Just availability
+and execute shipped typing fixtures. Package quality owns the full source lint
+and type checks before building. Its smoke driver
 ships in the sdist; documentation notebooks have their own execution lane.
 
-The manual and tag workflow runs a bounded artifact preflight. A complete release
+The legacy manual workflow runs a bounded artifact preflight. A complete release
 qualification additionally needs the exact installed-wheel studies, source reviews,
 consumer acceptance and resource measurements selected by its frozen scope.
 Neither a successful site build nor a preflight qualifies the release.
@@ -128,7 +177,7 @@ and a fixed archive epoch (`315532800`). Qualification compares exact wheel
 archives, so equal implementation payloads with different ZIP timestamps are not
 treated as the same release artifact.
 
-The manual and tag workflow runs `just release-preflight` on both supported CPU
+The legacy manual workflow runs `just release-preflight` on both supported CPU
 architectures, retains a complete tar archive and verifies its transport. This
 bounded preflight does not claim scientific qualification. Verify a full bundle
 with the locked app runner:
@@ -276,9 +325,16 @@ skipping it. Precision jobs report separate selected-node counts. The full locke
 reference lane still runs with its legacy x64 default, and precision runs do not
 replace it.
 
-The required CI reference jobs use the same locked dependencies in an isolated
-environment, independently of the ordinary fast gate. Run the complete local
-equivalent from the repository root:
+The required CI reference statuses consume installed-wheel comparisons from the
+package workflow on both architectures, using the same locked dependencies.
+The installed full float64 run supplies both the external and float64 precision
+catalogue mappings; only the float32 subset executes separately. Its retained
+`reference-index.json` binds exact nodes and comparators to the catalogue and
+JUnit bytes, and candidate sealing reconstructs these claims. Routine CI does
+not repeat these comparisons against the editable source.
+
+The standalone source-reference diagnostic remains available from the repository
+root:
 
 ```bash
 just setup-references
@@ -299,7 +355,10 @@ run. Independent-formula mappings outside these lanes stay unexecuted by this
 command. These are live parity checks, not statistical qualification.
 
 Branch protection should require both `Reference validation (ubuntu-24.04)` and
-`Reference validation (ubuntu-24.04-arm)` CI statuses. The generated
+`Reference validation (ubuntu-24.04-arm)` CI statuses, both package architecture
+gates, and the Pages build. The reference names are dependency checks, so a
+missing, skipped or failed package gate cannot report successful references.
+The generated
 [reference index](../../src/python/packages/statadic/docs/validation/references.md)
 is the configuration-to-test map for constructors and explicit compositions.
 
@@ -345,11 +404,13 @@ qualification. Bounds apply per scenario. JUnit properties retain requested, val
 and failed counts, conditional rejection, failure-inclusive bounds and
 qualification status.
 
-Pull requests run the complete fast suite, locked external comparisons and the
-separate float32 and float64 precision-reference processes. Weekly and manually
-dispatched Actions runs execute the non-dyadic statistical studies in the locked
-environment. Current-reference exploration runs in an isolated package copy,
-records its environment and does not rewrite the reviewed workspace lock.
+Pull requests run the complete fast suite, installed locked external comparisons
+in float64 and the separate float32 precision subset. Weekly and manually
+dispatched `Extended validation` runs exercise notebook script modes in both
+precisions and the selected generated linear/GLM references with the exploration
+profile on x86 and ARM. These bounded searches are not statistical qualification.
+The non-dyadic qualification command above remains explicit and may take hours;
+ordinary PR and extended validation do not execute it.
 
 Replay the original adverse cells separately. An assertion failure from these
 commands is a statistical qualification failure and must not be converted to a skip

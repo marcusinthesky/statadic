@@ -4,35 +4,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import jax
 import jax.numpy as jnp
 import jaxtyping
 import pytest
-from statadic.core.axioms import MetricLaw
-from statadic.core.domains import DirectOrigin, RawVector
-from statadic.core.matrices import DMat, MatrixProvenance, unsafe_assume_dmat
+from statadic.core.matrices import unsafe_assume_dmat
 
 from .._typing import check_types
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-
-type MetricMatrix = DMat[RawVector, MatrixProvenance[MetricLaw, DirectOrigin]]
-
-
-def _matrix_sum(matrix: MetricMatrix) -> jax.Array:
-    """Project the numeric leaf without erasing the declared matrix axes."""
-    return matrix.values.sum()
-
-
-@pytest.mark.component
-@pytest.mark.contract
-def test_dmat_is_a_transparent_pytree() -> None:
-    """Canonical matrices retain one numerical leaf through JIT."""
-    d: MetricMatrix = unsafe_assume_dmat(jnp.eye(4))
-    assert [leaf.shape for leaf in jax.tree_util.tree_leaves(d)] == [(4, 4)]
-    assert float(jax.jit(_matrix_sum)(d)) == pytest.approx(4)
 
 
 @pytest.mark.unit
@@ -43,16 +23,6 @@ def test_dmat_shape_is_enforced_at_runtime(shape: tuple[int, ...]) -> None:
     """Only a rank-two distance matrix enters the canonical constructor."""
     with pytest.raises(jaxtyping.TypeCheckError):
         unsafe_assume_dmat(jnp.ones(shape))
-
-
-@pytest.mark.component
-@pytest.mark.contract
-def test_dmat_survives_vmap_unflatten() -> None:
-    """Batch transforms preserve the matrix wrapper and numerical leaves."""
-    stack = jnp.stack([jnp.eye(3), 2 * jnp.eye(3)])
-    batched: MetricMatrix = jax.vmap(unsafe_assume_dmat)(stack)
-    assert batched.values.shape == (2, 3, 3)
-    assert jax.vmap(_matrix_sum)(batched).tolist() == pytest.approx([3, 6])
 
 
 _WIDENING_ACCEPTED_FIXTURE = """

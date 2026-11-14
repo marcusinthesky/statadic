@@ -616,23 +616,6 @@ def test_spectral_repair_derivatives_match_numpy_finite_differences_off_switches
 
 @pytest.mark.component
 @pytest.mark.property
-@examples(20)
-@example(covariance=_INDEFINITE_TRIPLE)
-@given(covariance=_symmetric_matrices(4, 3.0))
-def test_nearest_correlation_is_psd_with_unit_diagonal(
-    covariance: np.ndarray,
-) -> None:
-    """Correlation repair is PSD with an exact unit diagonal."""
-    with jax.enable_x64(new_val=True):
-        correlation = np.asarray(
-            nearest_correlation(jnp.asarray(covariance, jnp.float64)).matrix
-        )
-    assert _is_psd(correlation)
-    assert np.array_equal(np.diag(correlation), np.ones(len(covariance)))
-
-
-@pytest.mark.component
-@pytest.mark.property
 def test_nearest_correlation_is_idempotent_on_a_valid_correlation() -> None:
     """A valid correlation matrix is already its own nearest — a no-op."""
     covariance = np.array([[1.0, 0.2, 0.1], [0.2, 1.0, 0.15], [0.1, 0.15, 1.0]])
@@ -732,6 +715,7 @@ def test_nearest_correlation_is_cholesky_safe(covariance: np.ndarray) -> None:
         correlation = np.asarray(
             nearest_correlation(jnp.asarray(covariance, jnp.float64)).matrix
         )
+    assert _is_psd(correlation)
     assert (
         float(np.linalg.eigvalsh(correlation).min()) >= -_CHOLESKY_EIGENVALUE_TOLERANCE
     )

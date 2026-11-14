@@ -104,6 +104,7 @@ class TestResultsSurviveAGrid:
     @pytest.mark.contract
     @examples(10)
     @example(seed=0, shifts=jnp.linspace(0.0, 3.0, _CELLS))
+    @example(seed=2, shifts=jnp.zeros(_CELLS))
     @given(seed=_SEEDS, shifts=_SHIFTS)
     def test_grid_returns_one_batched_test_result(
         self, seed: int, shifts: Array
@@ -123,51 +124,11 @@ class TestResultsSurviveAGrid:
         assert batched.statistic.shape == (_CELLS,)
         assert batched.pvalue.shape == (_CELLS,)
         assert batched.null_distribution.shape == (_CELLS, _RESAMPLES)
-
-    @pytest.mark.integration
-    @pytest.mark.contract
-    @examples(10)
-    @example(seed=1, shifts=jnp.linspace(0.0, 3.0, _CELLS))
-    @given(seed=_SEEDS, shifts=_SHIFTS)
-    def test_grid_leaf_shapes_carry_the_batch_axis(
-        self, seed: int, shifts: Array
-    ) -> None:
-        """``tree_leaves`` sees exactly three batched leaves, in field order.
-
-        Args:
-            seed: Seed for the per-cell keys.
-            shifts: Generated per-cell location offsets.
-
-        """
-        keys = random.split(random.PRNGKey(seed), _CELLS)
-
-        batched = jax.vmap(_energy_permutation_cell)(keys, shifts)
-
         assert [leaf.shape for leaf in jax.tree_util.tree_leaves(batched)] == [
             (_CELLS,),
             (_CELLS,),
             (_CELLS, _RESAMPLES),
         ]
-
-    @pytest.mark.integration
-    @pytest.mark.contract
-    @examples(10)
-    @example(seed=2, shifts=jnp.zeros(_CELLS))
-    @given(seed=_SEEDS, shifts=_SHIFTS)
-    def test_n_resamples_stays_static_across_the_grid(
-        self, seed: int, shifts: Array
-    ) -> None:
-        """The static field is a Python ``int``, never a batched leaf.
-
-        Args:
-            seed: Seed for the per-cell keys.
-            shifts: Generated per-cell location offsets.
-
-        """
-        keys = random.split(random.PRNGKey(seed), _CELLS)
-
-        batched = jax.vmap(_energy_permutation_cell)(keys, shifts)
-
         assert batched.n_resamples == _RESAMPLES
         assert isinstance(batched.n_resamples, int)
 

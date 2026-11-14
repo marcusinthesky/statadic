@@ -58,25 +58,15 @@ def hollow_dissimilarities(n: int) -> SearchStrategy[np.ndarray]:
 
 
 @pytest.mark.integration
-@examples(10)
-@example(seed=3)
-@given(seed=_SEEDS)
-def test_disco_permutation_composes_typed_result_and_null(seed: int) -> None:
-    """Preserve the statistic origin while adding calibration provenance.
-
-    Args:
-        seed: Monte Carlo seed of the permutation null.
-
-    """
+def test_disco_permutation_composes_typed_result_and_null() -> None:
+    """Preserve the statistic origin while adding calibration provenance."""
     matrix: DMat[
         EmpiricalDistribution,
         MatrixProvenance[HilbertianMetricLaw, RootEnergyMetric[VStatisticScheme]],
     ] = unsafe_assume_dmat(1.0 - jnp.eye(6))
     design = group_design(jnp.array([0, 0, 0, 1, 1, 1]))
     decomposition = disco_components(matrix, design)
-    draws = disco_permutation_null(
-        matrix.values, design.codes, design.n_groups, 19, seed
-    )
+    draws = disco_permutation_null(matrix.values, design.codes, design.n_groups, 19, 3)
     pvalue = add_one_p_kernel(decomposition.f_ratio.value, draws)
     assert draws.shape == (19,)
     assert 0.0 < float(pvalue) <= 1.0

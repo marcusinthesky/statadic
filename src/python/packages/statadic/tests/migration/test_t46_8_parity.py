@@ -158,20 +158,19 @@ def _retired_paired_sharpe_diffs(block: np.ndarray, bench: np.ndarray) -> np.nda
 
 @pytest.mark.component
 @pytest.mark.reference
-def test_sharpe_collapse_matches_numpy_on_seeded_series() -> None:
-    """The x64 JAX scalar stays within its measured reduction-order margin."""
-    for seed in range(200):
-        rng = np.random.default_rng(seed)
-        n = int(rng.integers(2, 500))
-        r = rng.standard_normal(n) * float(rng.uniform(1e-6, 3.0)) + float(
-            rng.uniform(-1.0, 1.0)
-        )
-        survivor, retired = sharpe_ratio(r), _retired_sharpe_ratio(r)
-        assert survivor == pytest.approx(
-            retired,
-            rel=_SHARPE_RTOL,
-            abs=_SHARPE_ATOL,
-        )
+@pytest.mark.parametrize("n_observations", [2, 8, 32])
+@pytest.mark.parametrize("scale", [1e-6, 1.0, 3.0])
+def test_sharpe_collapse_matches_numpy_on_seeded_series(
+    n_observations: int, scale: float
+) -> None:
+    """Match NumPy across short series and scales without compiling random shapes."""
+    rng = np.random.default_rng(7)
+    returns = rng.standard_normal(n_observations) * scale + 0.3
+    assert sharpe_ratio(returns) == pytest.approx(
+        _retired_sharpe_ratio(returns),
+        rel=_SHARPE_RTOL,
+        abs=_SHARPE_ATOL,
+    )
 
 
 @pytest.mark.component

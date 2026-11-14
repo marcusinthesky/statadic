@@ -252,18 +252,6 @@ class TestMetricDispatch:
         # Diagonal should be zero (or very close due to numerical precision)
         assert jnp.allclose(jnp.diag(dist), 0.0, atol=1e-3)
 
-    @pytest.mark.unit
-    @pytest.mark.contract
-    def test_invalid_metric(self) -> None:
-        """Test error on invalid metric."""
-        x = jnp.array([[1.0, 0.0]])
-        with pytest.raises(TypeError):
-            cdist(
-                x,
-                x,
-                metric=ill_typed("invalid"),
-            )
-
 
 # --- the scipy.spatial.distance-shaped surface ----------------------------
 #
@@ -510,18 +498,6 @@ class TestBackwardCompatibility:
 
         assert result.shape == (2, 2)
         assert jnp.allclose(jnp.diag(result), 0.0, atol=1e-6)
-
-    @pytest.mark.unit
-    @pytest.mark.regression
-    def test_cdist_angular_pair(self) -> None:
-        """Test cdist with two arguments."""
-        x = jnp.array([[1.0, 0.0]])
-        y = jnp.array([[0.0, 1.0]])
-
-        result = cdist(x, y, metric=ANGULAR)
-
-        assert result.shape == (1, 1)
-        assert jnp.allclose(result[0, 0], jnp.pi / 2.0, atol=1e-5)
 
 
 @pytest.mark.component

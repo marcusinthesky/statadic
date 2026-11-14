@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0a2] - 2026-11-14
+
+- Prepare artifact-locked release dependencies before running tests and promote
+  the exact package distributions validated on Linux x86-64 and ARM64.
+- Separate package publication from documentation and workspace qualification,
+  and retain compatible test evidence across partial workflow reruns.
 - Replace standalone teaching scripts and separate labs with self-contained
   marimo tutorials and how-to guides, rendered natively with figures, source
   downloads and optional server-mode molab links.

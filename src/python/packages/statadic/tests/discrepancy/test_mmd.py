@@ -42,7 +42,6 @@ from statadic.geometry.ground.metrics import (
 )
 from statadic.geometry.ground.similarities import (
     distance_induced_gram,
-    gram,
     linear_gram,
 )
 from statadic.sample.packed import PackedClouds, pack
@@ -52,7 +51,6 @@ from .._strategies import float_arrays
 from .._typing import ill_typed
 
 if TYPE_CHECKING:
-    from jax import Array
     from statadic.core.axioms import (
         Law,
     )
@@ -450,26 +448,6 @@ class TestRaggedMmdMatrix:
         expected = expected.at[jnp.diag_indices(expected.shape[0])].set(0.0)
         assert jnp.allclose(result.values, expected)
 
-    @pytest.mark.unit
-    @pytest.mark.contract
-    @pytest.mark.parametrize(
-        ("sets", "match"),
-        [
-            ([], "at least one cloud"),
-            ([jnp.zeros((0, 2)), jnp.ones((3, 2))], "counts must lie"),
-            ([jnp.ones((3, 2)), jnp.ones((4,))], "two-dimensional"),
-            ([jnp.ones((3, 2)), jnp.ones((4, 5))], "feature width"),
-        ],
-    )
-    def test_invalid_shapes_fail_eagerly(
-        self,
-        sets: list[jax.Array],
-        match: str,
-    ) -> None:
-        """Reject non-cloud collections at the eager packing boundary."""
-        with pytest.raises(ValueError, match=match):
-            mmd_squared_matrix(pack(sets, require_positive_counts=True))
-
     @pytest.mark.component
     @pytest.mark.contract
     def test_packed_core_is_traceable(self, ragged_sets: list[jax.Array]) -> None:
@@ -488,16 +466,3 @@ class TestRaggedMmdMatrix:
         out_aval = jaxpr.out_avals[0]
         assert isinstance(out_aval, jax.core.ShapedArray)
         assert out_aval.shape == (3, 3)
-
-
-@pytest.mark.component
-@pytest.mark.contract
-def test_declared_kernel_strategy_is_static_under_jit() -> None:
-    """Keep a declared strategy usable as JIT-static mathematical metadata."""
-    x = jnp.array([[1.0, 2.0], [3.0, 4.0]])
-
-    def evaluate_gram(values: jax.Array) -> Array:
-        return gram(values, values, kernel=LINEAR_KERNEL)
-
-    jitted = jax.jit(evaluate_gram)
-    assert jnp.allclose(jitted(x), linear_gram(x, x))

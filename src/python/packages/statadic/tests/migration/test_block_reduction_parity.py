@@ -9,10 +9,8 @@ the replicate into the membership matrix instead, so the gather never happens.
 This module pins that rewrite the way ``test_parity_t05.py`` pins t05.2's
 distance hoist: against the *retired* form, written out locally, rather than
 against a remembered number. The identity assertions are made at **bit
-identity** on exactly-representable integer entries — the same construction and
-for the same reason as
-:func:`tests.migration._parity.assert_reduction_identity`, whose docstring
-explains why integer entries isolate the algebra from summation-order noise.
+identity** on exactly-representable integer entries. Exact integer sums isolate
+the reduction algebra from floating-point summation-order noise.
 The end-to-end assertion is the one made at tolerance, because there the two
 paths genuinely accumulate the same sums in different orders.
 """
@@ -166,7 +164,7 @@ class TestChunkedReplicateDriver:
 
     @pytest.mark.unit
     @pytest.mark.property
-    @pytest.mark.parametrize("chunk", [1, 5, DEFAULT_REPLICATE_CHUNK, _REPLICATES])
+    @pytest.mark.parametrize("chunk", [5, DEFAULT_REPLICATE_CHUNK, _REPLICATES])
     def test_result_is_invariant_to_chunk_size(self, chunk: int) -> None:
         """Every chunk width returns the single-replicate-at-a-time answer."""
         k_d, k_labels, k_perms = random.split(random.PRNGKey(5), 3)

@@ -80,15 +80,13 @@ def test_sample_covariance_rejects_invalid_divisor_controls(ddof: object) -> Non
 
 @pytest.mark.integration
 def test_ledoit_wolf_equals_native_and_kernel() -> None:
-    """Ledoit-Wolf matches the eager owner and its pure kernel."""
+    """The host door preserves the numerical owner's arrays and shrinkage."""
     returns = _panel()
     estimate = Estimand(Covariance(), estimator=LedoitWolf()).estimate(returns)
     native = ledoit_wolf_sample_kernel(jnp.asarray(returns))
     np.testing.assert_array_equal(estimate.sigma, native.sigma)
     np.testing.assert_array_equal(estimate.target, native.target)
     assert estimate.shrinkage == native.shrinkage
-    kernel = ledoit_wolf_sample_kernel(jnp.asarray(returns))
-    np.testing.assert_array_equal(estimate.sigma, kernel.sigma)
     assert estimate.shrinkage is not None
     assert 0.0 < estimate.shrinkage < 1.0
 

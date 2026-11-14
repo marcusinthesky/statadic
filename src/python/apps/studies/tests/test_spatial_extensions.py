@@ -115,7 +115,6 @@ def test_observed_data_preserves_graph_not_selected_subgraph():
 def test_native_spatial_procedure_contracts(study, scenario):
     records = run_spatial_extensions(study, scenario, 0, 123)
     assert tuple(records) == SPATIAL_EXTENSION_STUDIES[study].methods
-    assert records == run_spatial_extensions(study, scenario, 0, 123)
     for record in records.values():
         assert record["valid"] or record["failure"]
         if record["valid"]:

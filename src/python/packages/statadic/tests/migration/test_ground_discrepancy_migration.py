@@ -43,9 +43,6 @@ from statadic.core.axioms import (
 )
 from statadic.discrepancy import metrize
 from statadic.discrepancy.mmd import energy
-from statadic.discrepancy.mmd.components import (
-    candidate_energy_components,
-)
 from statadic.sample.packed import PackedClouds, pack
 
 if TYPE_CHECKING:
@@ -392,18 +389,3 @@ def test_retired_shim_path_no_longer_imports(dotted: str) -> None:
     """
     with pytest.raises(ModuleNotFoundError):
         importlib.import_module(dotted)
-
-
-@pytest.mark.integration
-@pytest.mark.contract
-def test_private_energy_component_names_live_on_the_migrated_module() -> None:
-    """Resolve the packed helpers on ``discrepancy/_mmd/components.py`` alone.
-
-    Wave B asserted this through two shims; the shims are gone, so the check is
-    now that the migrated module is the single owner. The private accesses are
-    the subject of the test, not incidental -- SLF001 is suppressed for exactly
-    that reason.
-    """
-    from statadic.discrepancy.mmd import components as _components  # noqa: PLC0415
-
-    assert _components.candidate_energy_components is candidate_energy_components

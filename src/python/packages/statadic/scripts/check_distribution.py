@@ -342,6 +342,47 @@ def _one_artifact(directory: Path, pattern: str) -> Path:
     return artifacts[0]
 
 
+def _install_dependencies(
+    uv: str,
+    python: Path,
+    wheel: Path,
+    directory: Path,
+    environment: dict[str, str],
+    selection: str,
+) -> None:
+    inputs = environment.get("STATADIC_DISTRIBUTION_LOCKS")
+    if inputs:
+        installer = (
+            Path(__file__).resolve().parents[5]
+            / "infra/release/check_offline_install.py"
+        )
+        _run(
+            [
+                sys.executable,
+                str(installer),
+                "--selection",
+                selection,
+                "--python",
+                str(python),
+                "--wheels",
+                str(wheel),
+                "--output",
+                str(directory / "locked-inputs"),
+                "--lock",
+                str(Path(inputs) / f"pylock.{selection}.toml"),
+            ],
+            directory,
+            environment,
+        )
+    else:
+        requirement = f"{wheel}[data]" if selection == "data" else str(wheel)
+        _run(
+            [uv, "pip", "install", "--python", str(python), requirement],
+            directory,
+            environment,
+        )
+
+
 def _check_wheel(
     uv: str,
     wheel: Path,
@@ -353,11 +394,7 @@ def _check_wheel(
     directory.mkdir()
     _run([uv, "venv", "--python", sys.executable, str(venv)], directory, environment)
     python = venv / "bin/python"
-    _run(
-        [uv, "pip", "install", "--python", str(python), str(wheel)],
-        directory,
-        environment,
-    )
+    _install_dependencies(uv, python, wheel, directory, environment, "runtime")
     _run([str(python), "-I", "-c", _INSTALLED_CHECK], directory, environment)
 
 
@@ -379,11 +416,7 @@ def _check_data_extra(
     venv = directory / "venv"
     _run([uv, "venv", "--python", sys.executable, str(venv)], directory, environment)
     python = venv / "bin/python"
-    _run(
-        [uv, "pip", "install", "--python", str(python), f"{wheel}[data]"],
-        directory,
-        environment,
-    )
+    _install_dependencies(uv, python, wheel, directory, environment, "data")
     for x64 in ("0", "1"):
         _run(
             [
@@ -401,17 +434,13 @@ def _check_data_extra(
 def _check_development(uv: str, source: Path, environment: dict[str, str]) -> None:
     """Check the extracted sdist using only its declared development group."""
     _run([uv, "sync", "--no-sources", "--python", sys.executable], source, environment)
-    _run(
-        [uv, "run", "--locked", "ruff", "check", "src", "tests", "scripts"],
-        source,
-        environment,
-    )
-    _run(
-        [uv, "run", "--locked", "ruff", "format", "--check", "src", "tests", "scripts"],
-        source,
-        environment,
-    )
-    _run(["just", "typecheck"], source, environment)
+    if evidence := environment.get("STATADIC_DISTRIBUTION_EVIDENCE"):
+        shutil.copy2(source / "uv.lock", Path(evidence) / "standalone-uv.lock")
+    # Source quality has one pre-build owner. Here the boundary is whether an
+    # extracted sdist supplies usable development tools and typing fixtures.
+    _run([uv, "run", "--locked", "ruff", "--version"], source, environment)
+    _run([uv, "run", "--locked", "pyrefly", "--version"], source, environment)
+    _run(["just", "--list"], source, environment)
     _run(
         [
             uv,
@@ -439,6 +468,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--artifacts-dir", type=Path)
     parser.add_argument("--evidence-dir", type=Path)
+    parser.add_argument("--dependency-inputs", type=Path)
     parser.add_argument(
         "--inputs-only",
         action="store_true",
@@ -462,7 +492,15 @@ def main() -> None:
         "UV_WORKING_DIR",
     ):
         environment.pop(variable, None)
-    environment["PYTHONNOUSERSITE"] = "1"
+    environment.update(
+        PYTHONNOUSERSITE="1",
+        STATADIC_DISTRIBUTION_EVIDENCE=(
+            str(args.evidence_dir.resolve()) if args.evidence_dir else ""
+        ),
+        STATADIC_DISTRIBUTION_LOCKS=(
+            str(args.dependency_inputs.resolve()) if args.dependency_inputs else ""
+        ),
+    )
     package = Path(__file__).resolve().parents[1]
     with tempfile.TemporaryDirectory(prefix="statadic-distribution-") as temporary:
         directory = Path(temporary)

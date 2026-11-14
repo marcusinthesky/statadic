@@ -4,15 +4,15 @@
 This supports the energy/permutation vectorization campaign.
 
 Later lanes (t05.2-t05.5, t05.8) import ``load_oracle`` /
-``assert_decision_invariant`` / ``assert_reduction_identity`` and add their own
+``assert_decision_invariant`` and add their own
 ``-k``-selectable parity tests against the same frozen oracle — keep this module
 generic (no lane-specific numerics) so it stays a stable contract across lanes.
 
 Correctness-contract summary (see the t05 README "Correctness contract"):
 
-- Bit-exact class: only the ``B = M^T D M`` reduction identity on a *fixed* ``D``
-  (``assert_reduction_identity``) — this licenses t05.2 but is never compared
-  against the oracle.
+- Bit-exact class: production block reductions are compared with independent
+  gathered sums on exactly representable integer inputs in
+  ``test_block_reduction_parity.py``.
 - Tolerance + decision-invariant class: every optimization vs the oracle
   (``assert_decision_invariant``) — ``allclose`` at an empirically-set ``atol``
   plus an identical permutation p-value / equivalence verdict, because the
@@ -23,12 +23,13 @@ Correctness-contract summary (see the t05 README "Correctness contract"):
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
 
-import jax
 import jax.numpy as jnp
 import numpy as np
-from jax import random
+
+if TYPE_CHECKING:
+    import jax
 
 _FIXTURE_PATH = Path(__file__).parent / "fixtures" / "t05_energy_oracle.npz"
 
@@ -155,56 +156,4 @@ def assert_decision_invariant(
     result_equivalence = getattr(result, "equivalence", None)
     assert result_equivalence == oracle_equivalence, (
         f"equivalence verdict changed: {result_equivalence} != {oracle_equivalence}"
-    )
-
-
-def assert_reduction_identity(
-    key: jax.Array,
-    *,
-    n_pooled: int = 37,
-    n_groups: int = 4,
-) -> None:
-    """Assert the ONE bit-exact identity that licenses t05.2.
-
-    Given a fixed distance array ``D`` and one-hot group membership ``M``, the
-    block-sum reduction ``B = M^T D M`` is invariant under a joint (row,
-    label) permutation — i.e. permuting the rows of ``D`` (and the columns
-    identically) together with the group labels leaves ``B`` unchanged. This
-    is self-contained (no oracle, no statadic call beyond the reduction itself)
-    and is the only assertion in this module made at bit-identity rather than
-    tolerance.
-
-    Args:
-        key: A ``jax.random.PRNGKey`` used to draw ``D``, group labels, and
-            the joint permutation.
-        n_pooled: Number of pooled points (rows/cols of ``D``).
-        n_groups: Number of groups (``K+1`` in the mixture-test sense).
-
-    Fails with ``AssertionError`` if the permuted-vs-original block sums are not
-    bit-identical.
-
-    """
-    k_d, k_labels, k_perm = random.split(key, 3)
-    # Integer-valued (exactly float64-representable) entries: matmul sums of
-    # small exact integers stay exact in float64, so this isolates the
-    # *algebraic* permutation-invariance identity from unrelated
-    # summation-order floating-point noise (~1e-15, itself a milder instance
-    # of the XLA-tiling effect this identity is meant to be exempt from).
-    raw = random.randint(k_d, (n_pooled, n_pooled), 0, 50).astype(jnp.float64)
-    d = raw + raw.T  # symmetric, arbitrary "distance-like" array
-    group_ids = random.randint(k_labels, (n_pooled,), 0, n_groups)
-    membership = jax.nn.one_hot(group_ids, n_groups, dtype=d.dtype)
-
-    def block_sums(dist: jnp.ndarray, member: jnp.ndarray) -> jnp.ndarray:
-        return member.T @ dist @ member
-
-    b_original = block_sums(d, membership)
-
-    perm = random.permutation(k_perm, n_pooled)
-    d_perm = d[perm][:, perm]
-    membership_perm = membership[perm]
-    b_permuted = block_sums(d_perm, membership_perm)
-
-    assert bool(jnp.all(b_original == b_permuted)), (
-        "B = M^T D M is not bit-identical under a joint (row, label) permutation"
     )

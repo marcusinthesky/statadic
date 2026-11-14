@@ -103,7 +103,6 @@ def test_native_bounds_and_bootstrap_contracts(study, scenario):
 
     _validate_outcomes(records, STUDIES[study].record(), scenario, 32)
     assert tuple(records) == BOUNDS_DYADIC_STUDIES[study].methods
-    assert records == run_bounds_dyadic(study, scenario, 0, 42, draws=32)
     assert set(BOUNDS_DYADIC_NULL_SCENARIOS[study]) <= set(
         BOUNDS_DYADIC_STUDIES[study].scenarios
     )

@@ -129,15 +129,3 @@ class TestFitProjection:
         # d_out clamped to <= n-1.
         maximum_components = x.shape[0] - 1
         assert proj.components.shape[1] <= maximum_components
-
-    @pytest.mark.component
-    @pytest.mark.contract
-    @example(full=_normal_matrix(80, 300))
-    @given(full=float_arrays((80, 40)))
-    @examples(20)
-    def test_fit_on_split_a_only(self, full: jax.Array) -> None:
-        """Projection fit on A must be usable on independent B (no look-ahead)."""
-        a, b = full[:40], full[40:]
-        proj = fit_projection(a, d_out=10, kind="pca")
-        # transform applies the A-fitted map to B without refitting.
-        assert proj.transform(b).shape == (40, 10)

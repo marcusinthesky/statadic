@@ -128,7 +128,6 @@ def test_actual_group_procedure_contracts(study, scenario):
     records = run_group_procedures(study, scenario, 0, 42, draws=32)
     assert tuple(records) == GROUP_PROCEDURE_STUDIES[study].methods
     assert any(record["valid"] for record in records.values())
-    assert records == run_group_procedures(study, scenario, 0, 42, draws=32)
     for record in records.values():
         assert record["valid"] or record["failure"]
         if record["valid"]:

@@ -101,11 +101,12 @@ from statadic.geometry.ground.similarities import LINEAR_KERNEL
 rtol, atol = (3e-5, 3e-5) if not jax.config.x64_enabled else (2e-11, 2e-11)
 # Root sensitivity near zero is not an unbiasedness claim; bounded fixtures use
 # exact axis directions so arccos self-pairs do not amplify norm rounding.
+outcomes = {}
 for study, design in DISCREPANCY_VARIANT_STUDIES.items():
     for scenario in design.scenarios:
         observed = run_discrepancy_variants(study, scenario, 0, 187)
+        outcomes[study, scenario] = observed
         assert tuple(observed) == design.methods
-        assert observed == run_discrepancy_variants(study, scenario, 0, 187)
         for record in observed.values():
             assert record["valid"], (study, scenario, record)
             assert np.isfinite([record["estimate"], record["truth"]]).all()
@@ -124,7 +125,7 @@ u = (
     - 2 * c.mean()
 )
 v = a.mean() + b.mean() - 2 * c.mean()
-actual = run_discrepancy_variants(study, scenario, 0, 187)
+actual = outcomes[study, scenario]
 np.testing.assert_allclose(actual["linear-U"]["estimate"], u, rtol=rtol, atol=atol)
 np.testing.assert_allclose(actual["linear-V"]["estimate"], v, rtol=rtol, atol=atol)
 np.testing.assert_allclose(
@@ -173,7 +174,7 @@ for kernel in ("linear", "RBF", "cosine", "distance-induced"):
 study = "energy.ground-estimation"
 ix, iy, support, p, q = sample_pair(study, scenario, 0, 187)
 xx, yy = support[ix], support[iy]
-observed_energy = run_discrepancy_variants(study, scenario, 0, 187)
+observed_energy = outcomes[study, scenario]
 for power in (0.5, 1.0, 1.5):
 
     def distance_power(a, b):

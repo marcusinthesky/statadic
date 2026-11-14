@@ -77,6 +77,14 @@ def test_bandwidth_recovery_and_frozen_validation(tmp_path: Path) -> None:
         "shape": (),
         "value": float(result.graph_parameters["smooth"]),
     }
+    # Three mean coefficients, one learned bandwidth and the Gaussian scale.
+    metrics = {m.name: m.value for m in result.report().metrics}
+    assert metrics["n_parameters"] == 5  # noqa: PLR2004
+    ll = float(result.core.log_likelihood)
+    assert metrics["log_likelihood"] == pytest.approx(ll)
+    assert metrics["aic"] == pytest.approx(-2 * ll + 10)
+    assert metrics["bic"] == pytest.approx(-2 * ll + 5 * np.log(35))
+    assert metrics["hqic"] == pytest.approx(-2 * ll + 10 * np.log(np.log(35)))
     save_graph_predictor(tmp_path, result)
     frozen = load_graph_predictor(tmp_path)
     realized = frozen.predict(train.nodes)
@@ -189,6 +197,11 @@ def test_joint_projection_improves_spatial_mean() -> None:
         },
     )
     fitted = result.graph_parameters["map"]
+    assert fitted.size == 2  # noqa: PLR2004
+    # An unconstrained 2-by-1 projection contributes two free coordinates.
+    metrics = {m.name: m.value for m in result.report().metrics}
+    assert metrics["n_parameters"] == 3 + 2 + 1
+    assert metrics["n_observations"] == 35  # noqa: PLR2004
     truth = np.array([[0.7], [0.3]])
     assert np.linalg.norm(np.asarray(fitted) - truth) < np.linalg.norm(
         np.asarray(spec.initial) - truth
@@ -279,31 +292,7 @@ def test_graph_bindings_precede_joint_scale_ambiguity() -> None:
 
 
 @pytest.mark.component
-def test_learned_bandwidth_is_counted_in_the_information_criteria() -> None:
-    """K counts mean coefficients, the learned bandwidth coordinate and the scale."""
-    d = np.abs(np.subtract.outer(np.arange(7), np.arange(7)))
-    graph = DistanceGraph.from_distances(d, unit_ids=_IDS, weighting=RBFWeights(_H))
-    train = _sample(graph, seed=8, start=0, count=5)
-    terms = Intercept() + Linear("x") + SpatialX("x", "information")
-    result = Regression(
-        "y", terms, estimator=GraphML(bandwidths={_H: LearnBandwidth(1.0)})
-    ).estimate(train)
-    assert isinstance(result, GraphRegressionResult)
-    metrics = {m.name: m.value for m in result.report().metrics}
-    # Three mean coefficients, one bandwidth and the Gaussian scale; n = 35 rows.
-    assert metrics["n_parameters"] == 5  # noqa: PLR2004
-    ll = float(result.core.log_likelihood)
-    assert metrics["log_likelihood"] == pytest.approx(ll)
-    assert metrics["aic"] == pytest.approx(-2 * ll + 10)
-    assert metrics["bic"] == pytest.approx(-2 * ll + 5 * np.log(35))
-    assert metrics["hqic"] == pytest.approx(-2 * ll + 10 * np.log(np.log(35)))
-
-
-@pytest.mark.component
-@pytest.mark.parametrize(("norm", "free"), [(None, 2), (0.76, 1)])
-def test_learned_projection_counts_its_free_dimension(
-    norm: float | None, free: int
-) -> None:
+def test_learned_projection_counts_its_free_dimension() -> None:
     """A fixed Frobenius norm removes one dimension from the projection count."""
     cloud = PackedClouds.from_clouds(
         [jnp.array([[float(i), (-1.0) ** i], [float(i) + 0.3, 0.5]]) for i in _IDS]
@@ -316,7 +305,7 @@ def test_learned_projection_counts_its_free_dimension(
         weighting=RBFWeights(1.3),
     )
     train = _sample(graph, seed=16, start=0, count=5)
-    spec = LearnLinear(1, initial=jnp.array([[0.8], [0.15]]), norm=norm)
+    spec = LearnLinear(1, initial=jnp.array([[0.8], [0.15]]), norm=0.76)
     result = Regression(
         "y",
         Intercept() + Linear("x") + SpatialX("x", "information"),
@@ -326,5 +315,5 @@ def test_learned_projection_counts_its_free_dimension(
     assert result.graph_parameters["map"].size == 2  # noqa: PLR2004
     # Three mean coefficients, the projection's free dimension and the scale.
     metrics = {m.name: m.value for m in result.report().metrics}
-    assert metrics["n_parameters"] == 3 + free + 1
+    assert metrics["n_parameters"] == 3 + 1 + 1
     assert metrics["n_observations"] == 35  # noqa: PLR2004

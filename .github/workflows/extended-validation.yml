@@ -1,0 +1,45 @@
+name: Extended validation
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: extended-validation-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  explore:
+    name: Notebook modes and generated exploration (${{ matrix.runner }})
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/python-ci-setup
+      - name: Exercise notebook script precision and cell tests
+        run: bash infra/nix/ci-capacity.sh run notebook-modes devenv shell --profile python-ci -- just python::docs::check-notebooks-extended
+      - name: Explore independent numerical references
+        run: >-
+          bash infra/nix/ci-capacity.sh run generated-exploration devenv shell --profile python-ci --
+          just python::statadic::test-fresh
+          tests/estimation/test_linear.py::test_generated_complete_linear_state_matches_independent_qr
+          tests/estimation/test_linear.py::test_generated_precision_scaling_and_named_permutations_preserve_inference
+          tests/estimation/test_glm.py::test_generated_interior_glm_matches_independent_fit_scores_and_information
+          --hypothesis-profile=statadic-explore --durations=25
+      - name: Retain extended diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: extended-diagnostics-${{ matrix.runner }}
+          path: build/ci/
+          overwrite: true
+          retention-days: 7
