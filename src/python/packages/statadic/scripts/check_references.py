@@ -168,6 +168,57 @@ def load_reference_mappings(path: Path) -> list[ReferenceClaim]:
     return result
 
 
+def check_collection(package: Path, mappings: list[ReferenceClaim]) -> None:
+    """Reject stale declared node IDs before executing live comparisons."""
+    import pytest  # noqa: PLC0415 -- retained-report reconciliation is stdlib-only
+
+    nodes: set[str] = set()
+
+    class Collection:
+        @staticmethod
+        def pytest_collection_finish(session: pytest.Session) -> None:
+            nodes.update(item.nodeid for item in session.items)
+
+    status = pytest.main(
+        [
+            "--collect-only",
+            "-qq",
+            "-p",
+            "no:monitor",
+            "-p",
+            "no:tach",
+            "-p",
+            "no:layout-enforcer",
+            "-n",
+            "0",
+            "--no-testmon",
+            "-m",
+            "external_reference",
+            "-c",
+            str(package / "pyproject.toml"),
+            str(package / "tests"),
+        ],
+        plugins=[Collection()],
+    )
+    if status != pytest.ExitCode.OK:
+        message = "External reference test collection failed"
+        raise ValueError(message)
+    declared = {
+        node
+        for entry in mappings
+        if entry["mapping"]["lanes"]
+        for node in entry["mapping"]["nodeids"]
+    }
+    missing = sorted(declared - nodes)
+    if missing:
+        message = "Declared reference nodes were not collected: " + ", ".join(missing)
+        raise ValueError(message)
+    sys.stdout.write(
+        f"Reference collection: {len(declared)} declared exact nodes matched "
+        f"{len(nodes)} collected external nodes.\n"
+    )
+
+
 def reconcile_reference_mappings(
     mappings: list[ReferenceClaim], name: str, results: ReferenceResults
 ) -> dict[str, object]:
@@ -288,11 +339,25 @@ def main() -> None:
         type=Path,
         help="Reconcile one already executed installed-wheel JUnit report.",
     )
+    parser.add_argument(
+        "--check-collection",
+        action="store_true",
+        help="Check declared exact external node IDs without executing tests.",
+    )
     parser.add_argument("--lane", choices=_LANES)
     arguments = parser.parse_args()
     output = arguments.output.resolve()
     catalogue = arguments.catalogue.resolve() if arguments.catalogue else None
     mappings = load_reference_mappings(catalogue) if catalogue else []
+    if arguments.check_collection:
+        if (
+            catalogue is None
+            or arguments.reconcile_report is not None
+            or arguments.lane is not None
+        ):
+            parser.error("Collection checking requires only --catalogue")
+        check_collection(Path(__file__).resolve().parents[1], mappings)
+        return
     if arguments.reconcile_report is not None or arguments.lane is not None:
         if (
             arguments.reconcile_report is None

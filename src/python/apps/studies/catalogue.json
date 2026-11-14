@@ -19045,12 +19045,9 @@
                 "statadic.estimation.covariance.ledoit_wolf_sample_kernel"
               ],
               "nodeids": [
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[shrinkage-interior]",
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[shrinkage-wide]",
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[shrinkage-repeated]",
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[sigma-interior]",
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[sigma-wide]",
-                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[sigma-repeated]"
+                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[interior]",
+                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[wide]",
+                "tests/estimation/test_covariance.py::test_ledoit_wolf_matches_pyportfolioopt_with_aligned_t_divisor[repeated]"
               ],
               "oracle_kind": "external",
               "distribution": "PyPortfolioOpt",

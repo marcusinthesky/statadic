@@ -110,8 +110,18 @@ def build(output: Path) -> None:
     """Prepare installation prerequisites before the expensive package matrix."""
     if output.exists():
         raise ValueError("Use a new candidate output directory")
-    output.mkdir(parents=True)
     env = environment()
+    run(
+        [
+            sys.executable,
+            str(PACKAGE / "scripts/check_references.py"),
+            "--catalogue",
+            str(CATALOGUE),
+            "--check-collection",
+        ],
+        env=env,
+    )
+    output.mkdir(parents=True)
     uv = shutil.which("uv")
     assert uv is not None
     for selection in ("runtime", "data", "tests"):

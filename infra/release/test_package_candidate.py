@@ -4,6 +4,8 @@ import io
 import json
 import os
 import runpy
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -103,6 +105,22 @@ class CandidateTests(unittest.TestCase):
         path.write_text("<testsuite><testcase/></testsuite>")
         candidate.verify_junit(path)
 
+    def test_stale_reference_collection_stops_before_build_preparation(self):
+        output = self.directory / "build"
+        with (
+            patch.object(
+                candidate,
+                "run",
+                side_effect=subprocess.CalledProcessError(1, "collection"),
+            ) as run,
+            patch.object(candidate, "export_lock") as export,
+            self.assertRaises(subprocess.CalledProcessError),
+        ):
+            candidate.build(output)
+        self.assertIn("--check-collection", run.call_args.args[0])
+        export.assert_not_called()
+        self.assertFalse(output.exists())
+
     def test_only_trusted_exact_commit_producers_are_eligible(self):
         with patch.dict(os.environ, GITHUB_REPOSITORY="owner/repo"):
             record = {
@@ -181,6 +199,86 @@ class CandidateTests(unittest.TestCase):
             candidate.prepare_publication(
                 self.directory / "artifacts", self.directory / "rejected"
             )
+
+
+class ReferenceCollectionTests(unittest.TestCase):
+    def test_exact_external_parameters_include_slow_tests_without_execution(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary)
+            scripts = package / "scripts"
+            scripts.mkdir()
+            runner = scripts / "check_references.py"
+            shutil.copy2(candidate.PACKAGE / "scripts/check_references.py", runner)
+            tests = package / "tests"
+            tests.mkdir()
+            (tests / "test_reference.py").write_text(
+                "import pytest\n"
+                "@pytest.mark.slow\n"
+                "@pytest.mark.external_reference\n"
+                "@pytest.mark.parametrize('case', ['current'])\n"
+                "def test_fit(case):\n"
+                "    raise AssertionError('collection must not execute comparisons')\n"
+                "def test_unmarked():\n"
+                "    pass\n"
+            )
+            (package / "pyproject.toml").write_text(
+                '[tool.pytest.ini_options]\naddopts = ["-m", "not slow"]\n'
+                'markers = ["slow", "external_reference"]\n'
+            )
+            catalogue = package / "catalogue.json"
+            for node, accepted in (
+                ("test_fit[current]", True),
+                ("test_fit[obsolete-current]", False),
+                ("test_unmarked", False),
+            ):
+                with self.subTest(node=node):
+                    catalogue.write_text(
+                        json.dumps(
+                            {
+                                "methods": [
+                                    {
+                                        "id": "method",
+                                        "reference_mappings": [
+                                            {
+                                                "nodeids": [
+                                                    f"tests/test_reference.py::{node}"
+                                                ],
+                                                "oracle_kind": "external",
+                                                "distribution": "statsmodels",
+                                                "lanes": ["external-float64"],
+                                            }
+                                        ],
+                                    }
+                                ]
+                            }
+                        )
+                    )
+                    result = subprocess.run(
+                        [
+                            sys.executable,
+                            str(runner),
+                            "--catalogue",
+                            str(catalogue),
+                            "--check-collection",
+                        ],
+                        cwd=package,
+                        env=candidate.environment(),
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    if accepted:
+                        self.assertEqual(
+                            result.returncode, 0, result.stdout + result.stderr
+                        )
+                    else:
+                        self.assertNotEqual(result.returncode, 0)
+                        self.assertIn(
+                            f"Declared reference nodes were not collected: "
+                            f"tests/test_reference.py::{node}",
+                            result.stderr,
+                        )
+            self.assertFalse((package / "build").exists())
 
 
 class EvidenceTests(unittest.TestCase):

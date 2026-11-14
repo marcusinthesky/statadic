@@ -111,6 +111,19 @@ UV_PROJECT_ENVIRONMENT="$PWD/build/package-smoke-venv" devenv shell --profile py
 
 Use new environment and output paths for each clean reproduction.
 
+The candidate build checks declared exact reference node IDs before preparing
+dependencies or building distributions. This collection includes slow external
+tests without executing their bodies. Run the identity check independently with:
+
+```bash
+devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference \
+  python src/python/packages/statadic/scripts/check_references.py \
+  --catalogue src/python/apps/studies/catalogue.json --check-collection
+```
+
+Installed-wheel receipts still verify successful execution and comparator metadata
+against those exact declarations.
+
 Before the expensive validation jobs, prepare and check the source-free publishing
 environment with the pinned Python runner:
 
