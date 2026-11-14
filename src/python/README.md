@@ -25,7 +25,7 @@ tests Testmon selects as affected; with `CI` set it runs the complete fast suite
 as does `just python::test-fresh`. CI may explicitly set `STATADIC_TEST_MODE` to
 `record` to run all fast tests while recording dependencies, or `affected` to
 select tests from a compatible Testmon database. `fresh` disables selection and
-recording; standalone release checks force it. A missing database makes `affected`
+recording; legacy standalone qualification forces it. A missing database makes `affected`
 run the full fast suite.
 Hosted checks run four complete fast-test shards per architecture, independently
 of Testmon. A collected inventory and canonical execution reports establish that
@@ -74,10 +74,12 @@ development, and [ARCHITECTURE.md](ARCHITECTURE.md) for workspace ownership.
 `just release-check` adds retained-artifact, installed-wheel reference,
 float32/float64 reference and dedicated float64 qualification lanes outside the
 checkout. It records their distinct scopes in `build/release/manifest.json`.
-It is deliberately separate from fast pull-request checks. Hosted releases run
-`just release-preflight`, which omits long statistical qualification and archives
-its evidence before uploading. A preflight archive is not a scientifically
-qualified release. Run full qualification on a persistent local machine and
+It is deliberately separate from fast pull-request checks. Hosted publication
+promotes the exact package files validated by CI for the tagged commit, without
+rerunning root checks or importing the docs app. The separate legacy
+`just release-preflight` omits long statistical qualification and archives its
+evidence. A preflight archive is not a scientifically qualified release.
+Run full qualification on a persistent local machine and
 retain its complete evidence before making that claim.
 
 ## Repository scripts

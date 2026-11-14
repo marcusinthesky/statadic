@@ -228,7 +228,10 @@ def test_failed_command_still_writes_manifest_and_log(tmp_path, monkeypatch):
     manifest = json.loads((tmp_path / "bundle/manifest.json").read_text())
     assert manifest["status"] == "failed"
     assert manifest["lanes"][0]["returncode"] == 7
-    assert "check.log" in manifest["files"]
+    assert manifest["lanes"][0]["name"] == "prepare-dependencies"
+    assert "prepare-dependencies.log" in manifest["files"]
+    assert "check.log" not in manifest["files"]
+    assert len(environments) == 1
     assert environments[0]["SOURCE_DATE_EPOCH"] == "315532800"
     assert "PYTEST_ADDOPTS" not in environments[0]
     assert "PYTEST_PLUGINS" not in environments[0]

@@ -36,11 +36,16 @@ The site itself requires neither browser-WASM nor a hosted kernel.
 to native document nodes. `statadic_docs_labs` retains formal, release and
 scientific evidence tooling. These packages remain internal workspace consumers.
 
-The release runner owns retained build artifacts and an isolated installed-wheel
+The scientific qualification runner owns retained evidence and an isolated installed-wheel
 test environment. It exports reference dependencies from the workspace lock,
 never installs editable STATADIC into that environment, and records source/artifact
 hashes and per-study dispositions. Its verification rejects changed evidence or
 source trees. Human source-fidelity review remains separate from compilation.
+
+Package publication belongs to `infra/release` and the reusable package-validation
+workflow. Its standard-library promotion driver verifies complete package evidence
+and publishes the exact tested distributions without importing this application.
+Documentation builds and scientific qualification remain separate from that gate.
 
 An explicit release scope retains every required variant's canonical campaign
 cells and selects additional statistical tests by exact parameterized node.

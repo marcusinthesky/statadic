@@ -1,0 +1,383 @@
+name: Package validation
+'on':
+  workflow_call: null
+permissions:
+  contents: read
+env:
+  JAX_ENABLE_COMPILATION_CACHE: 'false'
+  JAX_PLATFORMS: cpu
+  JAX_ENABLE_X64: '1'
+  STATADIC_CI_MEMORY_BOUNDED: '1'
+  STATADIC_CI_SEED: ${{ github.sha }}
+jobs:
+  build:
+    name: Package prerequisites and build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - name: Prove dependency availability before tests
+        run: devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference
+          python infra/release/package_candidate.py build --output build/package-inputs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-inputs
+          path: build/package-inputs/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+      - name: Retain package diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-build-diagnostics-${{ runner.arch }}
+          path: |-
+            build/ci/
+            build/package-installed/
+          overwrite: true
+          retention-days: 7
+  regressions:
+    name: Early regressions (${{ matrix.runner }})
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - name: Prove offline install on this architecture
+        run: devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference
+          python infra/release/check_offline_install.py --selection tests --prepare --output build/ci/package-dependencies
+      - name: Replay current numerical regressions
+        run: bash infra/nix/ci-capacity.sh run regressions devenv shell --profile python-ci -- uv run --project src/python --offline
+          --frozen --package statadic --group reference python infra/nix/ci_shards.py regressions
+      - name: Retain early diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: regression-diagnostics-${{ matrix.runner }}
+          path: build/ci/
+          retention-days: 7
+          overwrite: true
+    needs: build
+  plan:
+    name: Python test inventory (${{ matrix.runner }})
+    timeout-minutes: 20
+    needs: regressions
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - name: Restore test timings
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py')
+            }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-
+      - run: devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference
+          python infra/nix/ci_shards.py plan --durations build/ci/timing/durations.json --output build/ci/plan
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/plan/
+          if-no-files-found: error
+          overwrite: true
+  shard:
+    name: Python tests (${{ matrix.runner }}, shard ${{ matrix.shard }})
+    timeout-minutes: 90
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+        shard:
+          - 0
+          - 1
+          - 2
+          - 3
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_MEMORY_BOUNDED: '1'
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/plan
+      - name: Execute shard
+        run: bash infra/nix/ci-capacity.sh run shard-${{ matrix.shard }} devenv shell --profile python-ci -- uv run --project src/python
+          --offline --frozen --package statadic --group reference python infra/nix/ci_shards.py shard --plan build/ci/plan --shard ${{
+          matrix.shard }} --output build/ci/shard-${{ matrix.shard }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: shard-${{ matrix.runner }}-${{ matrix.shard }}
+          path: build/ci/shard-${{ matrix.shard }}/
+          if-no-files-found: error
+          overwrite: true
+      - name: Retain shard diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: shard-diagnostics-${{ matrix.runner }}-${{ matrix.shard }}
+          path: build/ci/
+          retention-days: 7
+          overwrite: true
+  timings:
+    continue-on-error: true
+    name: Retain test timings (${{ matrix.runner }})
+    if: ${{ always() && !cancelled() && needs.plan.result == 'success' }}
+    needs:
+      - plan
+      - shard
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - name: Restore previous test timings
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py')
+            }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py') }}-
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/timing-inputs/plan
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: shard-${{ matrix.runner }}-[0-3]
+          path: build/ci/timing-shards
+      - name: Retain completed measurements independently of validation status
+        shell: bash
+        run: |
+          for index in 0 1 2 3; do
+            source="build/ci/timing-shards/shard-${{ matrix.runner }}-${index}"
+            if [[ -d "$source" ]]; then
+              mv "$source" "build/ci/timing-inputs/shard-${index}"
+            fi
+          done
+          python3 infra/nix/ci_shards.py timings --inputs build/ci/timing-inputs --previous build/ci/timing/durations.json --output build/ci/timing/durations.json
+      - name: Save test timings
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: build/ci/timing/durations.json
+          key: timings-v2-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/python/uv.lock', 'infra/nix/ci_shards.py', 'infra/nix/ci_shard_plugin.py')
+            }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Retain timing diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: timings-${{ matrix.runner }}
+          path: build/ci/timing/
+          retention-days: 7
+          overwrite: true
+  quality:
+    name: Package quality (${{ matrix.runner }})
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - run: bash infra/nix/ci-capacity.sh run package-quality devenv shell --profile python-ci -- just python::check-package
+      - run: |-
+          mkdir -p build/ci/package-quality
+          cp build/ci/package-quality.log build/ci/package-quality/component.log
+          devenv shell --profile python-ci -- uv run --project src/python --offline --frozen --package statadic --group reference python infra/nix/ci_shards.py component --scope package --output build/ci/package-quality
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-quality-${{ matrix.runner }}
+          path: build/ci/package-quality/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+      - name: Retain package diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-quality-diagnostics-${{ runner.arch }}
+          path: |-
+            build/ci/
+            build/package-installed/
+          overwrite: true
+          retention-days: 7
+  installed:
+    name: Installed package (${{ matrix.runner }})
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: package-inputs
+          path: build/package-inputs
+      - run: bash infra/nix/ci-capacity.sh run package-installed devenv shell --profile python-ci -- uv run --project src/python --offline
+          --frozen --package statadic --group reference python infra/release/package_candidate.py qualify --candidate build/package-inputs
+          --output build/package-installed
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-installed-${{ runner.arch == 'X64' && 'x86_64' || 'aarch64' }}
+          path: build/package-installed/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+      - name: Retain package diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-installed-diagnostics-${{ runner.arch }}
+          path: |-
+            build/ci/
+            build/package-installed/
+          overwrite: true
+          retention-days: 7
+  aggregate:
+    name: Package evidence (${{ matrix.runner }})
+    timeout-minutes: 30
+    if: always()
+    needs:
+      - quality
+      - plan
+      - shard
+      - installed
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      STATADIC_CI_SEED: ${{ github.sha }}
+    steps:
+      - name: Require every validation component
+        env:
+          DEPENDENCY_RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          read -ra results <<< "$DEPENDENCY_RESULTS"
+          for result in "${results[@]}"; do
+            if [[ "$result" != success ]]; then
+              echo "A required validation component did not pass: $result" >&2
+              exit 1
+            fi
+          done
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: ./.github/actions/package-ci-setup
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: plan-${{ matrix.runner }}
+          path: build/ci/inputs/plan
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: package-quality-${{ matrix.runner }}
+          path: build/ci/inputs/component
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: shard-${{ matrix.runner }}-[0-3]
+          path: build/ci/downloaded-shards
+      - name: Verify complete and disjoint test execution
+        shell: bash
+        run: |
+          for index in 0 1 2 3; do
+            mv "build/ci/downloaded-shards/shard-${{ matrix.runner }}-${index}" "build/ci/inputs/shard-${index}"
+          done
+          devenv shell --profile python-ci -- env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --project src/python --offline --frozen --package statadic --group reference python infra/nix/ci_shards.py aggregate --scope package --inputs build/ci/inputs --output build/ci/receipt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-check-${{ runner.arch == 'X64' && 'x86_64' || 'aarch64' }}
+          path: build/ci/receipt/
+          if-no-files-found: error
+          overwrite: true
+  candidate:
+    name: Package candidate
+    needs: aggregate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          lfs: true
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: package-inputs
+          path: build/package-inputs
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: package-check-*
+          path: build/package-evidence
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: package-installed-*
+          path: build/package-evidence
+      - run: python3 infra/release/package_candidate.py seal --candidate build/package-inputs --inputs build/package-evidence --output
+          build/package-candidate
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: package-candidate
+          path: build/package-candidate/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30

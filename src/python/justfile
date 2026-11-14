@@ -73,6 +73,12 @@ check: architecture test-layout lint typecheck test-check build check-apps
 # The complete package tests execute separately in the hosted shard jobs.
 check-ci-nontest: architecture test-layout lint typecheck build check-apps
 
+# Additive package gate; repository checks continue to cover every workspace app.
+check-package: test-layout lint typecheck
+    just statadic::doctest
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen --package statadic --group reference python -m unittest discover -s ../../infra/nix -p 'test_*.py'
+    env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen --package statadic --group reference python -m unittest discover -s ../../infra/release -p 'test_*.py'
+
 fmt:
     just architecture-fmt
     env -u PYTHONPATH -u PYTHONHOME -u VIRTUAL_ENV uv run --offline --frozen ruff format packages/statadic/src packages/statadic/tests packages/statadic/scripts

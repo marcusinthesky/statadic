@@ -23,32 +23,58 @@ For each release:
    matching `statadic` version in `src/python/uv.lock`. Use the locked uv tooling
    to refresh the lock. Review and refresh the Lean public API inventory with
    `just lean::inventory-refresh` so its package version agrees.
-2. Open a pull request. CI runs the complete preflight as a dry run, without
-   publishing. Its checkout gate consumes the verified results of that same
-   run's four Python shards and remaining repository checks.
-3. After merging, push an exact package-version tag, for example `v0.5.0a1`.
+2. Open a pull request. CI validates a canonical wheel and sdist on x86-64 and
+   ARM64, with four complete package-test shards per architecture. Dependency
+   preparation runs before expensive tests. Repository and documentation checks
+   retain their separate scopes.
+3. After merging, wait for **Package candidate** for the exact `main` commit,
+   then push an exact package-version tag, for example `v0.5.0a2`.
    Supported prerelease suffixes are `aN`, `bN` and `rcN`; they are marked as
    prereleases on GitHub. Versions are explicit; commits do not trigger bumps.
 
 The version job rejects mismatched package, lock, registry and tag versions.
-The reusable [preflight](../../.github/workflows/release-validation.yml) runs
-on Linux x86-64 and ARM64 and verifies its retained archive. Both runners must
-succeed before publication. PyPI receives the exact x86-64 preflight wheel and
-sdist, already exercised by the installed-distribution checks. The wheel is
-platform independent; dependencies such as JAX supply their own platform wheels.
+The reusable package workflow checks both supported architectures. The tag
+workflow selects its exact-commit `package-candidate` artifact and verifies
+producer metadata, package quality, complete shard coverage, installed comparison
+reports, source/lock identities and distribution hashes. PR candidates cannot be
+published. PyPI receives those exact files without rebuilding or repeating tests.
+The wheel is platform independent; dependencies such as JAX supply platform wheels.
 
-PR preflight follows the complete CI aggregate rather than repeating its checkout
-suite. `--preflight-check-receipt PATH` accepts only a completed receipt from the
-same source revision, architecture, GitHub run and attempt. Its retained node
-reports must prove complete, non-overlapping execution and successful repository
-checks. The release archive contains this receipt and verifies it again. Wheel
-and sdist builds, installed-distribution checks, live references and both precision
-lanes still execute separately. The Release workflow keeps the PR version check;
-PR preflight statuses now belong to CI. Update any required status selection to
-the new CI preflight names when adopting this workflow.
+Candidates remain available for 30 days. An absent or expired candidate stops
+publication early. Dispatch CI at the tagged commit, wait for its package
+candidate, then retry Release with that producer run ID:
 
-Tag and manually dispatched releases, and local `just release-preflight`, run
-fresh checkout checks by default. Qualification rejects imported CI receipts.
+```bash
+gh workflow run ci.yml --ref v0.5.0a2
+gh workflow run release.yml --ref v0.5.0a2 -f producer_run_id=RUN_ID
+```
+
+Dispatched commits must be reachable from `main`. To create the next release:
+
+```bash
+git tag -a v0.5.0a2 VALIDATED_MAIN_SHA -m "STATADIC 0.5.0a2"
+git push origin refs/tags/v0.5.0a2
+```
+
+Retries require existing PyPI and GitHub files to match the validated bytes and
+upload only missing files. Conflicting published files stop publication.
+Leave `v0.5.0a1` unchanged: its failed pipeline skipped PyPI publication and the
+existing GitHub prerelease had no distribution assets when reviewed. Check the
+current publication state independently before retrying any version.
+
+The package candidate does not depend on docs or workspace application checks.
+Repository CI still reports those checks separately and its aggregate requires
+both scopes. Scientific qualification remains a separate command and claim.
+
+The legacy documentation/scientific preflight can consume a complete repository
+receipt through `--preflight-check-receipt PATH`. Its retained reports must prove
+complete, non-overlapping execution and successful repository checks. The release
+archive verifies that evidence again. This command remains separate from package
+publication; a package-only receipt cannot replace a full repository receipt.
+
+The legacy manual preflight and local `just release-preflight` run fresh checkout
+checks by default. They are separate from publication. Qualification rejects
+imported CI receipts.
 
 After PyPI succeeds, the workflow creates a GitHub release with those same
 distributions and `SHA256SUMS`. Detailed preflight evidence remains in each
@@ -59,7 +85,7 @@ retain the separate `just release-check` evidence before making that claim.
 Run the lightweight version gates locally in the prepared environment:
 
 ```bash
-uv run --project src/python --offline --frozen --package statadic-docs python infra/release/check_version.py --tag v0.5.0a1
+uv run --project src/python --offline --frozen --package statadic-docs python infra/release/check_version.py --tag v0.5.0a2
 uv run --project src/python --offline --frozen --package statadic-docs python -m unittest discover -s infra/release -p 'test_*.py' -v
 ```
 
@@ -99,7 +125,7 @@ build routes, exercises Polars and Arrow through the wheel's `[data]` extra in
 float32 and float64, and checks standalone sdist development. Its smoke driver
 ships in the sdist; documentation notebooks have their own execution lane.
 
-The manual and tag workflow runs a bounded artifact preflight. A complete release
+The legacy manual workflow runs a bounded artifact preflight. A complete release
 qualification additionally needs the exact installed-wheel studies, source reviews,
 consumer acceptance and resource measurements selected by its frozen scope.
 Neither a successful site build nor a preflight qualifies the release.
@@ -128,7 +154,7 @@ and a fixed archive epoch (`315532800`). Qualification compares exact wheel
 archives, so equal implementation payloads with different ZIP timestamps are not
 treated as the same release artifact.
 
-The manual and tag workflow runs `just release-preflight` on both supported CPU
+The legacy manual workflow runs `just release-preflight` on both supported CPU
 architectures, retains a complete tar archive and verifies its transport. This
 bounded preflight does not claim scientific qualification. Verify a full bundle
 with the locked app runner:

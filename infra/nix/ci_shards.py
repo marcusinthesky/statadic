@@ -48,6 +48,24 @@ def source_snapshot(root: Path) -> dict[str, str]:
     }
 
 
+def same_execution(recorded: dict, current: dict, *, partial: bool = False) -> bool:
+    """Match stable inputs while retaining compatible attempts as provenance."""
+    if not partial:
+        return recorded == current
+    if recorded.get("run_id") != current.get("run_id"):
+        return False
+    try:
+        if not 0 < int(recorded["run_attempt"]) <= int(current["run_attempt"]):
+            return False
+    except (KeyError, TypeError, ValueError):
+        return recorded == current
+    return all(
+        current.get(key) == value
+        for key, value in recorded.items()
+        if key != "run_attempt"
+    )
+
+
 def assign(universe: list[str], durations: dict[str, float]) -> dict[str, int]:
     """Deterministically balance whole files using measured or per-node cost."""
     counts = Counter(node.split("::", 1)[0] for node in universe)
@@ -168,9 +186,13 @@ def _timing_identity() -> dict:
 def _timing_plan(plan: dict, identity: dict) -> None:
     recorded = plan.get("identity", {})
     if (
-        plan.get("schema_version") != 1
+        plan.get("schema_version") not in (1, 2)
         or not isinstance(recorded, dict)
-        or any(recorded.get(key) != value for key, value in identity.items())
+        or not same_execution(
+            {key: recorded.get(key) for key in identity},
+            identity,
+            partial=plan.get("schema_version") == 2,
+        )
         or not all(
             isinstance(recorded.get(key), str) and recorded[key]
             for key in ("seed", "python", "interpreter", "jax", "jaxlib")
@@ -360,9 +382,10 @@ def _verify_receipt(
     architecture: str,
     run_id: str | None = None,
     run_attempt: str | None = None,
+    scope: str = "repository",
 ) -> dict:
     receipt = _load(directory / "receipt.json")
-    if receipt.get("schema_version") != 1:
+    if receipt.get("schema_version") not in (1, 2):
         raise ValueError("Unsupported CI receipt schema")
     identity = receipt["identity"]
     expected = {
@@ -385,7 +408,11 @@ def _verify_receipt(
             for key in ("seed", "python", "interpreter", "jax", "jaxlib")
         )
         or not isinstance(identity.get("xla_flags"), str)
-        or any(identity.get(key) != value for key, value in expected.items())
+        or not same_execution(
+            {key: identity.get(key) for key in expected},
+            expected,
+            partial=receipt.get("schema_version") == 2,
+        )
     ):
         raise ValueError("CI receipt identity differs from current source or execution")
     universe = receipt["universe"]
@@ -429,11 +456,17 @@ def _verify_receipt(
         record = _load(directory / component)
         if (
             record.get("schema_version") != 1
-            or record["identity"] != identity
+            or not same_execution(
+                record["identity"],
+                identity | {"run_attempt": run_attempt or identity.get("run_attempt")},
+                partial=receipt.get("schema_version") == 2,
+            )
             or record["exitstatus"] != 0
         ):
             raise ValueError(f"CI component failed or differs: {component}")
         if component == "component.json":
+            if record.get("scope", "repository") != scope:
+                raise ValueError("CI receipt scope differs from the required checks")
             continue
         shard = int(component[len("shard-") : -len(".json")])
         if record["universe"] != universe:
@@ -496,6 +529,7 @@ def verify_receipt(
     architecture: str,
     run_id: str | None = None,
     run_attempt: str | None = None,
+    scope: str = "repository",
 ) -> dict:
     """Reject malformed or inconsistent checkout check evidence."""
     try:
@@ -506,6 +540,7 @@ def verify_receipt(
             architecture=architecture,
             run_id=run_id,
             run_attempt=run_attempt,
+            scope=scope,
         )
     except (OSError, KeyError, TypeError, ET.ParseError) as error:
         raise ValueError(f"Invalid CI receipt: {error}") from error
@@ -530,8 +565,14 @@ def main() -> int:
     replay.add_argument("--workers", type=int, choices=(1, 2), default=2)
     replay.add_argument("--dist", choices=("load", "loadfile"), default="load")
     component = subs.add_parser("component")
+    component.add_argument(
+        "--scope", choices=("repository", "package"), default="repository"
+    )
     component.add_argument("--output", type=Path, required=True)
     aggregate = subs.add_parser("aggregate")
+    aggregate.add_argument(
+        "--scope", choices=("repository", "package"), default="repository"
+    )
     aggregate.add_argument("--inputs", type=Path, required=True)
     aggregate.add_argument("--output", type=Path, required=True)
     regressions = subs.add_parser("regressions")
@@ -584,7 +625,12 @@ def main() -> int:
             raise ValueError("Successful non-test check log is required")
         _write(
             args.output / "component.json",
-            {"schema_version": 1, "identity": identity, "exitstatus": 0},
+            {
+                "schema_version": 1,
+                "identity": identity,
+                "exitstatus": 0,
+                "scope": args.scope,
+            },
         )
         return 0
     if args.action == "plan":
@@ -598,7 +644,7 @@ def main() -> int:
         _write(
             args.output / "plan.json",
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "identity": identity,
                 "universe": universe,
                 "assignment": assign(universe, durations),
@@ -607,7 +653,9 @@ def main() -> int:
         return 0
     if args.action in ("shard", "replay"):
         plan = _load(args.plan / "plan.json")
-        if plan["identity"] != identity:
+        if not same_execution(
+            plan["identity"], identity, partial=plan.get("schema_version") == 2
+        ):
             raise ValueError("CI test plan identity changed")
         args.output.mkdir(parents=True, exist_ok=True)
         result_path = args.output / "pytest.json"
@@ -650,7 +698,9 @@ def main() -> int:
         return status
     args.output.mkdir(parents=True, exist_ok=True)
     plan = _load(args.inputs / "plan/plan.json")
-    if plan["identity"] != identity:
+    if not same_execution(
+        plan["identity"], identity, partial=plan.get("schema_version") == 2
+    ):
         raise ValueError("Aggregate identity differs from plan")
     shutil.copy2(
         args.inputs / "component/component.json", args.output / "component.json"
@@ -674,7 +724,7 @@ def main() -> int:
         for path in args.output.iterdir()
         if path.is_file() and path.name != "receipt.json"
     }
-    _write(args.output / "receipt.json", plan | {"files": files})
+    _write(args.output / "receipt.json", plan | {"files": files, "identity": identity})
     verify_receipt(
         args.output,
         source_files=identity["source_files"],
@@ -682,6 +732,7 @@ def main() -> int:
         architecture=identity["architecture"],
         run_id=identity["run_id"],
         run_attempt=identity["run_attempt"],
+        scope=args.scope,
     )
     return 0
 

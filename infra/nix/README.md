@@ -51,8 +51,9 @@ same inputs for its independent publishing replication check.
 `ci_shards.py` plans four complete Python shards, retains canonical node outcomes
 and verifies their disjoint, exhaustive coverage alongside the remaining root
 checks. A passing aggregate is bound to the checked-out sources, environment and
-workflow run. PR release preflight can consume that same-run receipt; standalone
-release checks still execute the full checkout gate.
+workflow run. The legacy scientific/documentation preflight can consume a
+same-run repository receipt; standalone qualification still executes the full
+checkout gate. Hosted package publication uses the separate package candidate.
 
 Timing history is a scheduling hint, independent of a passing check receipt.
 The pytest plugin checkpoints on completed tests when at least 15 seconds have
@@ -77,8 +78,18 @@ python3 infra/nix/ci_shards.py timings \
 The input directory contains `plan/plan.json` and `shard-N/timings.json`.
 The previous and output paths may be identical. The hosted workflow keeps
 architecture-specific artifact names and cache namespaces.
-The checkout, architecture, `GITHUB_RUN_ID`, `GITHUB_RUN_ATTEMPT` and
-`STATADIC_CI_SEED` must match the producing run.
+The checkout, architecture, `GITHUB_RUN_ID`, environment and `STATADIC_CI_SEED`
+must match the producing run. Version 2 plans retain `GITHUB_RUN_ATTEMPT` as
+provenance and accept compatible earlier attempts within that same run. Future
+attempts and changed inputs remain invalid. Legacy version 1 receipts retain
+strict attempt matching. Partial reruns replace their own same-run artifacts;
+missing shard outputs cannot create passing receipts.
+
+The reusable package workflow owns package quality, fast-test shards, installed
+reference/precision checks and canonical distributions. It has read-only
+repository permissions. Repository checks still cover every workspace application
+and consume the same shard reports. Publication independently verifies a retained
+candidate for the exact tagged commit. Testmon is not a publication authority.
 
 Shards retain the 25 slowest durations and a traceback after 180 seconds without
 test completion. `last-started.json` and streamed node-start messages identify

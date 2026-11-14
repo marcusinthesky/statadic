@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "package_version": "0.5.0a1",
+  "package_version": "0.5.0a2",
   "source_manifest": {
     "__init__.py": "13c339f5f79aa317e316dd0e1b2c8f89b8f74e2154bc8435e4b1491d27ea30f3",
     "api/__init__.py": "42dc73f2a957d3cc609ee4d37a6e99788084a35024427f0eefa4c03f2f3bc8d0",

@@ -3426,7 +3426,7 @@ wheels = [
 
 [[package]]
 name = "statadic"
-version = "0.5.0a1"
+version = "0.5.0a2"
 source = { editable = "packages/statadic" }
 dependencies = [
     { name = "jax" },
