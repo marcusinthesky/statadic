@@ -2,8 +2,11 @@
 
 import jax
 import numpy as np
-from statadic.estimation.dyadic import DyadicComputationError, DyadicEstimator
-from statadic.model.dyadic import DyadicInputError, DyadicModel, DyadicSample
+from statadic.estimation.least_squares.dyadic import (
+    DyadicComputationError,
+    DyadicEstimator,
+)
+from statadic.law.dyadic import DyadicInputError, DyadicModel, DyadicSample
 
 from statadic_studies.adapters._random import rng
 

@@ -10,28 +10,28 @@ it contains independently useful components, not when it crosses a line count.
 | Area | Owns |
 | --- | --- |
 | `core` | Shared semantic, equation, matrix and result contracts |
-| `optimize` | Numerical algorithms, solver adapters and numerical evidence |
-| `sample` | Empirical sample representation and preparation |
-| `geometry` | Ground geometry and derived embeddings, medians and barycentres |
-| `discrepancy` | Comparisons between measures; energy specializes MMD |
+| `numerics` | Solvers, structured linear-algebra operators, quadrature and numerical evidence |
+| `measure` | Empirical measure representation and preparation |
+| `geometry` | Ground geometry and graphs, discrepancies between measures (energy specializes MMD), medians and Fréchet means |
 | `association` | Pure association, decomposition and group-comparison statistics |
-| `operators` | Reusable structured numerical operations |
-| `model` | Statistical specifications and family equations |
-| `estimation` | Point estimation and retained fitted state |
-| `inference` | Sampling uncertainty, hypothesis tests, diagnostics and resampling |
+| `law` | Statistical specifications and family equations |
+| `estimation` | Point estimation and retained fitted state, grouped by the criterion optimized |
+| `inference` | Sampling uncertainty, grouped by what it answers: covariance, restriction, inequality, specification, homogeneity, independence, multiplicity and resampling |
 | `testing` | Explicitly loaded reusable contract batteries and fixtures |
-| `api` | Host workflows composing aligned inputs, existing scientific owners, reports and prediction artifacts |
+| `report`, `model`, `observation`, `prediction` | Host contracts shared by every workflow: reports, the Model/Result lifecycle, aligned inputs and designs, prediction preparation and artifacts |
+| `ordination`, `hypothesis`, `estimand`, `regression`, `structure` | The user workflows, and the dependence and censoring structures that `regression` dispatches to |
 
 A model describes a statistical family; an estimator computes a fitted state;
 a numerical algorithm solves its mathematical problem; inference attaches a
 sampling interpretation. IV identification, 2SLS estimation, numerical QR and
-an overidentification test therefore have different owners.
+an overidentification test therefore have different owners. Shared long-run
+arithmetic (`numerics.linalg.longrun`) sits below fitting because GMM needs it too.
 
 ## Dependency direction
 
 Dependency order is an explicit module DAG, not a numeric rank assigned to each
-root directory. In particular, discrepancy consumes `geometry.ground`, while
-`geometry.barycentre` consumes discrepancy. Both relationships are necessary.
+root directory. In particular, `geometry.discrepancy` consumes `geometry.ground`, while
+`geometry.frechet` consumes discrepancy. Both relationships are necessary.
 The workspace's `tach.toml` records this DAG, including type-only and string-import
 edges. `just python::architecture` checks it alongside cross-package import
 directions and public interfaces. Tach checks within distributions; the repository
@@ -62,20 +62,20 @@ exhaustive union of concrete fit families.
 
 ### Composable public workflows
 
-`api` is an additive orchestration layer above the scientific owners. Its five
-workflow entry points are Regression, Ordination, Estimand, Hypothesis and Report.
-It does
-not move fitting into `model`, replace native fit carriers, or redirect pure
-numerical consumers through host preparation. Its family modules expose the
-user lifecycle; its initializer remains a navigation map. Scientific
-implementations must never import `api`; Tach enforces this dependency direction.
+The workflow packages (`report`, `model`, `observation`, `prediction`, `ordination`,
+`hypothesis`, `estimand`, `regression` and `structure`) are an additive orchestration
+layer above the scientific owners. Their five entry points are Regression, Ordination,
+Estimand, Hypothesis and Report. They do not move fitting into `law`, replace native
+fit carriers, or redirect pure numerical consumers through host preparation. Their
+family modules expose the user lifecycle. Scientific implementations must never
+import them; Tach enforces this dependency direction.
 
-`api.regression.Regression` is the single outcome-model constructor. It owns
+`regression.Regression` is the single outcome-model constructor. It owns
 predictor terms, response, law, structure and estimation choices; pure response
 laws do not own another predictor grammar. Its family package dispatches into
 the existing linear, GLM, IV, panel, dyadic, survival and geometric owners.
 Shared covariance requests and result conveniences belong to
-`api.inference`; relative precision is an input role in `api.data`. Spatial
+`hypothesis.uncertainty`; relative precision is an input role in `observation.data`. Spatial
 and panel workflows own their method-specific requests and results. This keeps
 shared contracts independent of any particular regression family.
 
@@ -96,16 +96,16 @@ BG, DW and HAC require an explicit ordering choice. Ordering gathers aligned
 numerical contributions without refitting or replacing the retained fit;
 reported lag units are observation positions, not calendar intervals.
 
-`api.roles` owns named input roles and conflict-aware composition. Designs and
+`observation.roles` owns named input roles and conflict-aware composition. Designs and
 model specifications declare their `input_columns` directly; adapters never
 discover scientific roles through attribute-name conventions. `Observations`
 normalizes raw numeric columns once and exposes immutable array state.
-`api.prediction` owns host prediction preparation shared by live workflows and
+`prediction.options` owns host prediction preparation shared by live workflows and
 artifact persistence. Plotting consumes prediction callables; binding a scale is
 ordinary callable composition rather than a second predictor hierarchy.
 
-`api.data` owns graph-independent panel layout and node/outcome input carriers.
-The `api.spatial` compound namespace is a navigation map; result owners are its
+`observation.data` owns graph-independent panel layout and node/outcome input carriers.
+The `structure.spatial` compound namespace is a navigation map; result owners are its
 public `cross_section`, `panel`, `observed` and `graph_regression` modules.
 This lets ordinary panel prediction consume named graph inputs without loading
 every spatial result or creating an import cycle. Live `PanelData` prediction
@@ -115,22 +115,22 @@ conflicting duplicated predictor columns; an omitted outcome-side copy is allowe
 `Model[InputT, PreparedT, ResultT]` shares preparation and fitting without
 assuming every input is a regression table. `Ordination` constructs a
 representation and implements the same internal term-preparation hook as scalar
-predictors. Fitted coordinate maps live in `api.ordination_terms`, below live
+predictors. Fitted coordinate maps live in `observation.coordinates`, below live
 models and artifact codecs, so direct composition and frozen predictors share
 one implementation. The linear-Gram path keeps feature SVD; kernel, distance and
 shortest-path paths retain their own centered-Gram and query state.
-`api.estimand.Estimand` composes a closed `Covariance` or `MomentConditions`
+`estimand.core.Estimand` composes a closed `Covariance` or `MomentConditions`
 quantity with an explicit numerical estimator, without inventing a response
 model. Covariance bricks live in `estimation.covariance`; moment results retain
 their GMM/GEL owners. Preparation belongs to one model instance.
 `Result[FitT, ContextT]` retains actual numerical evidence and host identity;
 prediction and inference belong to the scientific family that supports them.
-`api.fit_statistics` owns `LikelihoodSummary`, `FitStatistics` and the information
+`model.fit_statistics` owns `LikelihoodSummary`, `FitStatistics` and the information
 and least-squares R-squared metrics; a family supplies a summary through
 `likelihood_summary()` and `Result.fit_statistics()` derives the metrics once.
-`api.capabilities` states `SummarizesLikelihood` and `ReportsFitStatistics`.
+`model.capabilities` states `SummarizesLikelihood` and `ReportsFitStatistics`.
 `core.statistics.PopulationEstimand` is the population-estimand root, separate
-from the `api.estimand.Estimand` workflow; `api.design.LinearPredictorContrast`
+from the `estimand.core.Estimand` workflow; `observation.design.LinearPredictorContrast`
 is the estimand of a predictor contrast.
 
 Compatible estimator bricks implement the narrow `Estimator[ProblemT, FitT]`
@@ -158,19 +158,11 @@ inferential validity. New methods require their own mathematical contracts and
 qualification before acquiring public capabilities.
 
 Geometric Regression has an explicit full design and reduced-column hypothesis.
-`association.geometric` owns projection sums of squares; `inference.geometric`
+`association.geometric` owns projection sums of squares; `inference.restriction.geometric`
 owns supplied response and Freedman–Lane schedules. No automatic ANOVA type or
 learned-outcome-geometry calibration is implied. Spectral positive-subspace
 approximation is explicit and retains the signed spectrum. Frozen Isomap queries
 attach to the training graph; disconnected training graphs fail preparation.
-
-## Covariance has three distinct targets
-
-`operators.covariance` constructs a matrix from supplied distances and marginal
-variances. `estimation.covariance` estimates the covariance of random observations,
-including shrinkage and tuning. Inference covariance estimates uncertainty of
-retained fitted parameters. PSD feasibility repairs belong to `optimize.psd`.
-Shared long-run arithmetic remains below fitting because GMM needs it too.
 
 ## Axes, carriers and estimating equations
 
@@ -321,9 +313,6 @@ contracts. Fit convergence, identification and inferential validity remain
 separate evidence. Preview status is documented at the real owning feature;
 empty future taxonomy directories are not shipped.
 
-The [module guide](docs/reference/upgrading.md) records canonical imports and the
-intentional namespace break, including historical Python qualified names.
-
 Dense least-squares adapters compose JAX's reduced QR and triangular solve,
 with separate rank and first-order-residual diagnostics. Explicit Q keeps the
 triangular factor independent of the raw Householder buffer: the pinned CPU
@@ -403,7 +392,7 @@ first-order converged GEL envelope rule have explicit mathematical limits.
 
 Measure-level methods should support different empirical support counts through
 the shared sample representation and explicit masses where needed. Preserve true
-counts independently of storage capacity. `sample.packed.PackedClouds` is the
+counts independently of storage capacity. `measure.clouds.PackedClouds` is the
 single empirical-distribution carrier, including atom probabilities. Its dynamic
 pytree leaves are data `(*cloud_axes, capacity, D)`, integer counts
 `(*cloud_axes)` and masses `(*cloud_axes, capacity)`. Numerical construction
@@ -442,10 +431,10 @@ unbalanced panels and absent risk-set members must not be conflated or encoded
 as observed zeros.
 
 `estimation.spatial` owns Gaussian observed-subvector panel likelihoods;
-`model.survival` owns AFT equations and dependence specifications;
-`estimation.survival` owns independent and joint Gaussian log-time fitted states.
+`law.survival` owns AFT equations and dependence specifications;
+`estimation.likelihood.survival` owns independent and joint Gaussian log-time fitted states.
 The shared Gaussian-tail numerical algorithm lives in `optimize.integration`.
-Host `api.survival` prepares censoring patterns and graph/effect alignment;
+Host `structure.survival` prepares censoring patterns and graph/effect alignment;
 `inference.survival` consumes the actual free-parameter information. Independent
 spell likelihoods and dependent spatial likelihoods do not share a fabricated
 rowwise-score contract. Fixed-draw kernels remain transformable; adaptive

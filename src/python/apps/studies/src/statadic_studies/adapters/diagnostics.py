@@ -5,8 +5,8 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.linear_diagnostics import (
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.specification.linear import (
     breusch_godfrey,
     breusch_pagan,
     jarque_bera,

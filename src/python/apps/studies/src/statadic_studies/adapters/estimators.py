@@ -14,22 +14,22 @@ import jax.numpy as jnp
 import numpy as np
 from scipy.stats import norm
 from statadic.core.equations import MeanCenteredLongRun
-from statadic.estimation.gel import FixedGEL
-from statadic.estimation.glm import (
+from statadic.estimation.empirical_likelihood import FixedGEL
+from statadic.estimation.likelihood.glm import (
     BinomialLogitMLE,
     BinomialProblem,
     PoissonMLE,
     PoissonProblem,
 )
-from statadic.estimation.gmm import FixedWeightGMM, IteratedGMM
-from statadic.estimation.moments import AffineMomentProblem, FixedMomentProblem
-from statadic.estimation.survival import SurvivalML, SurvivalProblem
-from statadic.inference.gel import gel_test
-from statadic.inference.glm_covariance import glm_covariance
-from statadic.inference.gmm import hansen_j_from_fit
-from statadic.inference.gmm.covariance import gmm_covariance
-from statadic.inference.survival import observed_information
-from statadic.model.survival import LogNormalAFT, WeibullAFT
+from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+from statadic.estimation.moments.gmm import FixedWeightGMM, IteratedGMM
+from statadic.estimation.moments.problem import AffineMomentProblem, FixedMomentProblem
+from statadic.inference.covariance.glm import glm_covariance
+from statadic.inference.covariance.moments import gmm_covariance
+from statadic.inference.covariance.survival import observed_information
+from statadic.inference.restriction.empirical_likelihood import gel_test
+from statadic.inference.restriction.moments import hansen_j_from_fit
+from statadic.law.survival import LogNormalAFT, WeibullAFT
 
 from statadic_studies.adapters._random import rng
 

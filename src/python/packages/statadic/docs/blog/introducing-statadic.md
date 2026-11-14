@@ -43,9 +43,9 @@ uncertainty is estimated.
 ```python
 from pathlib import Path
 
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.regression import Regression
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression import Regression
 
 data = {
     "x": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
@@ -91,12 +91,12 @@ the same `Regression` interface. Given prepared `panel_data` and
 `integration_designs`, the specification is:
 
 ```python
-from statadic.api.design import CyclicSpline, Linear
-from statadic.api.regression import Regression
-from statadic.api.spatial.graphs import SpatialLag
-from statadic.api.survival import RightCensored, SpatialSurvivalData
-from statadic.estimation.survival import SpatialSurvivalML
-from statadic.model.survival import LogNormalAFT
+from statadic.observation.design import CyclicSpline, Linear
+from statadic.regression import Regression
+from statadic.observation.graph import SpatialLag
+from statadic.structure.survival import RightCensored, SpatialSurvivalData
+from statadic.estimation.likelihood.survival import SpatialSurvivalML
+from statadic.law.survival import LogNormalAFT
 
 model = Regression(
     RightCensored("duration", "event"),

@@ -4,15 +4,15 @@ import jax
 import numpy as np
 import pytest
 from scipy.stats import norm
-from statadic.estimation.dyadic import DyadicEstimator
+from statadic.estimation.least_squares.dyadic import DyadicEstimator
 from statadic.inference.dyadic import (
     DyadicInference,
     NodeCountSchedule,
     node_bootstrap_report,
 )
-from statadic.inference.kappa import boundary_robust_pvalue
-from statadic.inference.wolak import wolak_statistic
-from statadic.model.dyadic import DyadicModel, DyadicSample
+from statadic.inference.inequality.kappa import boundary_robust_pvalue
+from statadic.inference.inequality.wolak import wolak_statistic
+from statadic.law.dyadic import DyadicModel, DyadicSample
 from statadic_studies.adapters.bounds import inequality_data, run_bounds_dyadic
 from statadic_studies.adapters.dependence.dyadic import dyadic_data
 from statadic_studies.definitions.bounds import (

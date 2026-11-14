@@ -10,12 +10,15 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.linear import (
+from statadic.estimation.least_squares.linear import (
     LeastSquares,
     LinearProblem,
 )
-from statadic.inference.linear_covariance import classical_covariance
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.inference.covariance.linear import classical_covariance
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 
 from .._validation.calibration import (
     DEFAULT_TRIALS,

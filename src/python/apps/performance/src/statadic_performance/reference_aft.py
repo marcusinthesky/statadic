@@ -70,8 +70,8 @@ def prepare_aft(case: str, side: str, inputs: tuple) -> tuple[Callable, tuple]:
     if side == "statadic":
         import jax
         import jax.numpy as jnp
-        from statadic.estimation.survival import SurvivalML, SurvivalProblem
-        from statadic.model.survival import LogNormalAFT, WeibullAFT
+        from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+        from statadic.law.survival import LogNormalAFT, WeibullAFT
 
         specification = WeibullAFT() if family == "weibull" else LogNormalAFT()
 

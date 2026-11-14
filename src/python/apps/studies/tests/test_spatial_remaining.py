@@ -7,9 +7,9 @@ import numpy as np
 import pytest
 from _spatial_diagnostic import run_with_diagnostic
 from scipy.stats import chi2, norm
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.geometry.graph import prepare_spatial_weights
 from statadic.inference.spatial import spatial_diagnostics
-from statadic.operators.spatial import prepare_spatial_weights
 from statadic_studies.adapters import run_trial as run_spatial_remaining
 from statadic_studies.adapters.dependence.spatial_durbin import durbin_data
 from statadic_studies.adapters.dependence.spatial_impacts import exact_impacts
@@ -203,7 +203,7 @@ import jax.numpy as jnp
 import numpy as np
 from statadic.estimation.spatial import PanelML, SAR, SpatialPanelProblem
 from statadic.inference.spatial import spatial_covariance
-from statadic.operators.spatial import prepare_spatial_panel_weights
+from statadic.geometry.graph import prepare_spatial_panel_weights
 from statadic_studies.adapters import run_trial
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence.spatial_panel import varying_panel_data

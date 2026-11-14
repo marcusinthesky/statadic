@@ -18,8 +18,10 @@ from jax import random
 from statadic.core.axioms import (
     Law,  # runtime annotations  # noqa: TC001
 )
-from statadic.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
-from statadic.discrepancy.mmd.energy.balancing import inverse_variance_m_eff
+from statadic.geometry.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
+from statadic.geometry.discrepancy.mmd.energy.balance_effective_size import (
+    inverse_variance_m_eff,
+)
 from statadic.geometry.ground.metrics import (  # noqa: TC001
     GroundDistance,
     cdist,
@@ -39,7 +41,7 @@ from statadic.inference.studentized import (
 )
 
 if TYPE_CHECKING:
-    from statadic.geometry.barycentre.mmd.energy import EnergyBarycentreDiagnostics
+    from statadic.geometry.frechet.energy import EnergyBarycentreDiagnostics
 
 
 class _PooledGeometry(NamedTuple):

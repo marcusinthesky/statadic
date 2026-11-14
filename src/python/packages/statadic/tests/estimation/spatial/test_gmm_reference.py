@@ -12,8 +12,8 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from statadic.estimation.spatial import SAC, SEM, SpatialGMM, SpatialProblem
+from statadic.geometry.graph import prepare_spatial_weights
 from statadic.inference.spatial.covariance import spatial_covariance
-from statadic.operators.spatial import prepare_spatial_weights
 
 from ..._budgets import examples
 

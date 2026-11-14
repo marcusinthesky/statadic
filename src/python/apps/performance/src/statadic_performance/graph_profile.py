@@ -4,7 +4,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from statadic.estimation.spatial.graph_likelihood import graph_profile
-from statadic.operators.spatial.distance import rbf_weights
+from statadic.geometry.graph.distance import rbf_weights
 
 
 def prepare_graph_profile(rng, dtype, smoke):

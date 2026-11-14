@@ -10,12 +10,12 @@ description: Fit parametric accelerated failure time models to right-censored du
 ```python
 import jax.numpy as jnp
 
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import ModelBased
-from statadic.api.regression import Regression
-from statadic.api.survival import RightCensored
-from statadic.model.survival import LogNormalAFT
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import ModelBased
+from statadic.regression import Regression
+from statadic.structure.survival import RightCensored
+from statadic.law.survival import LogNormalAFT
 
 spells = Observations(
     {
@@ -38,7 +38,7 @@ inference = result.infer(covariance=ModelBased())
 
 ## Description
 
-Passing a {py:class}`~statadic.api.survival.RightCensored` response to
+Passing a {py:class}`~statadic.structure.survival.RightCensored` response to
 `Regression` fits elapsed durations with an accelerated failure time (AFT)
 law, in which the logarithm of the duration is linear in the predictors plus a
 scaled error. Each row is one spell, where `event=1` marks an observed event
@@ -59,12 +59,12 @@ survival curves or restricted means without refitting.
 | `LogLogisticAFT()` | Log shape | Finite mean needs shape above one |
 
 Delayed entry uses `RightCensored("duration", "event", entry="entry")`, and a
-substituted estimator must match the chosen law. Repeated spells add a panel
+substituted estimator must match its law. Repeated spells add panel
 structure and fixed effects:
 
 ```python
-from statadic.api.data import PanelLayout
-from statadic.model.survival import WeibullAFT
+from statadic.observation.data import PanelLayout
+from statadic.law.survival import WeibullAFT
 
 panel_spells = Observations(
     {
@@ -128,7 +128,7 @@ two predictor settings on the scale of the linear predictor, using the basis
 learned from the training rows:
 
 ```python
-from statadic.api.design import CyclicSpline
+from statadic.observation.design import CyclicSpline
 
 season = CyclicSpline("phase", df=3, period=1.0)
 seasonal = Regression(

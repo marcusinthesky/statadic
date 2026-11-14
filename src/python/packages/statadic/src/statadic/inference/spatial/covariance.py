@@ -26,8 +26,8 @@ from statadic.estimation.spatial import (
 from statadic.estimation.spatial.gmm import SpatialGMMFit
 from statadic.estimation.spatial.observed_panel import ObservedSpatialPanelFit
 from statadic.estimation.spatial.panel import SpatialPanelFit
-from statadic.inference.gmm.covariance import gmm_covariance
-from statadic.operators.spatial.moments import spatial_moment_variability
+from statadic.geometry.graph.moments import spatial_moment_variability
+from statadic.inference.covariance.moments import gmm_covariance
 
 __all__ = [
     "SpatialEquation",

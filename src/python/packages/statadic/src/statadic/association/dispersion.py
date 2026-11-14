@@ -21,11 +21,13 @@ The ``g_alpha(A, A)`` above is a **V-statistic**: the zero diagonal is included
 and the ordered sum is divided by :math:`n_g^2`, not :math:`n_g(n_g-1)`.
 
 The PERMDISP companion consumes coordinates and summarizes distances to group
-spatial medians from :mod:`statadic.geometry.median` (Anderson 2006). Its
-full-model residual-permutation null lives in :mod:`statadic.inference.dispersion`.
+spatial medians from :mod:`statadic.geometry.frechet.median` (Anderson 2006). Its
+full-model residual-permutation null lives in
+:mod:`statadic.inference.homogeneity.dispersion`.
 
 This module owns the pure statistic kernels. DISCO label resampling and
-add-one calibration live in :mod:`statadic.inference.disco`; keeping them here
+add-one calibration live in :mod:`statadic.inference.homogeneity.disco`; keeping them
+here
 would let an association-layer result bypass the hypothesis and calibration
 axes of the typed inference API.
 """
@@ -37,7 +39,7 @@ from functools import partial
 import jax
 import jax.numpy as jnp
 
-from statadic.geometry.median import weiszfeld_medians
+from statadic.geometry.frechet.median import weiszfeld_medians
 
 _DISTANCE_EPSILON = 1e-12
 
@@ -135,7 +137,7 @@ def dispersion_radii(
         coords: Coordinate cloud, shape ``(n, k)``.
         group_codes: Contiguous integer group code per row, shape ``(n,)``.
         medians: Group centres, shape ``(n_groups, k)``, for example from
-            :func:`statadic.geometry.median.spatial_medians`.
+            :func:`statadic.geometry.frechet.median.spatial_medians`.
         bias_adjust: Multiply radii by ``sqrt(n_g / (n_g - 1))``, vegan's
             ``betadisper(bias.adjust = TRUE)`` small-group correction. Every
             group then needs at least two points.

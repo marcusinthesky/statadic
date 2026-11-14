@@ -5,12 +5,15 @@ import math
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.dyadic import DyadicComputationError, DyadicEstimator
+from statadic.estimation.least_squares.dyadic import (
+    DyadicComputationError,
+    DyadicEstimator,
+)
 from statadic.inference.dyadic import DyadicInference, node_bootstrap_report
-from statadic.inference.gms import ProjectionUnavailableError, indicator_gms
-from statadic.inference.kappa import boundary_robust_pvalue
-from statadic.inference.wolak import wolak_test_kernel
-from statadic.model.dyadic import DyadicInputError, DyadicModel, DyadicSample
+from statadic.inference.inequality.gms import ProjectionUnavailableError, indicator_gms
+from statadic.inference.inequality.kappa import boundary_robust_pvalue
+from statadic.inference.inequality.wolak import wolak_test_kernel
+from statadic.law.dyadic import DyadicInputError, DyadicModel, DyadicSample
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence.dyadic import dyadic_data

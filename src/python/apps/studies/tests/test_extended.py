@@ -104,7 +104,7 @@ def test_first_draw_failure_remains_in_coverage_denominator(monkeypatch):
 
 def test_iterated_study_excludes_unconverged_weight_sequence(monkeypatch):
     """A valid finite criterion solve cannot masquerade as converged iteration."""
-    from statadic.estimation import iv
+    import statadic.estimation.moments.instrumental as iv
 
     class Unconverged:
         def __init__(self, *_args):

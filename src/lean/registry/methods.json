@@ -20,7 +20,15 @@
       "id": "api",
       "title": "Public model workflows",
       "module_prefixes": [
-        "statadic.api"
+        "statadic.model",
+        "statadic.observation",
+        "statadic.report",
+        "statadic.prediction",
+        "statadic.ordination",
+        "statadic.hypothesis",
+        "statadic.estimand",
+        "statadic.regression",
+        "statadic.structure"
       ],
       "obligations": [
         {
@@ -79,7 +87,7 @@
       "id": "discrepancy",
       "title": "Energy, kernel and transport discrepancies",
       "module_prefixes": [
-        "statadic.discrepancy"
+        "statadic.geometry.discrepancy"
       ],
       "obligations": [
         {
@@ -187,7 +195,7 @@
       "id": "model",
       "title": "Statistical model specifications",
       "module_prefixes": [
-        "statadic.model"
+        "statadic.law"
       ],
       "obligations": [
         {
@@ -205,7 +213,8 @@
       "id": "operators",
       "title": "Numerical and algebraic operators",
       "module_prefixes": [
-        "statadic.operators"
+        "statadic.numerics.linalg",
+        "statadic.geometry.ground.covariance"
       ],
       "obligations": [
         {
@@ -223,7 +232,7 @@
       "id": "optimize",
       "title": "Optimization algorithms",
       "module_prefixes": [
-        "statadic.optimize"
+        "statadic.numerics.optimize"
       ],
       "obligations": [
         {
@@ -241,7 +250,7 @@
       "id": "sample",
       "title": "Samples and observations",
       "module_prefixes": [
-        "statadic.sample"
+        "statadic.measure"
       ],
       "obligations": [
         {
@@ -277,7 +286,7 @@
       "id": "linear",
       "title": "Linear OLS and WLS",
       "module_prefixes": [
-        "statadic.estimation.linear"
+        "statadic.estimation.least_squares.linear"
       ],
       "obligations": [
         {
@@ -309,11 +318,11 @@
       "id": "glm",
       "title": "Generalized linear models",
       "module_prefixes": [
-        "statadic.estimation.glm",
-        "statadic.model.glm",
-        "statadic.estimation.likelihood",
-        "statadic.model.likelihood",
-        "statadic.optimize.glm"
+        "statadic.estimation.likelihood.glm",
+        "statadic.law.glm",
+        "statadic.estimation.likelihood.conditional",
+        "statadic.law.likelihood",
+        "statadic.numerics.optimize.glm"
       ],
       "obligations": [
         {
@@ -334,12 +343,13 @@
       "id": "gmm",
       "title": "Generalized method of moments",
       "module_prefixes": [
-        "statadic.estimation.gmm",
-        "statadic.inference.gmm",
-        "statadic.estimation.iv",
-        "statadic.inference.iv",
-        "statadic.estimation.moments",
-        "statadic.api.moments"
+        "statadic.estimation.moments.gmm",
+        "statadic.inference.covariance.moments",
+        "statadic.inference.restriction.moments",
+        "statadic.estimation.moments.instrumental",
+        "statadic.inference.covariance.instrumental",
+        "statadic.estimation.moments.problem",
+        "statadic.estimand.moments"
       ],
       "obligations": [
         {
@@ -369,8 +379,8 @@
       "id": "gel",
       "title": "Generalized empirical likelihood",
       "module_prefixes": [
-        "statadic.estimation.gel",
-        "statadic.inference.gel"
+        "statadic.estimation.empirical_likelihood",
+        "statadic.inference.restriction.empirical_likelihood"
       ],
       "obligations": [
         {
@@ -388,8 +398,8 @@
       "id": "panel",
       "title": "Panel estimation",
       "module_prefixes": [
-        "statadic.estimation.panel",
-        "statadic.api.panel"
+        "statadic.estimation.least_squares.panel",
+        "statadic.structure.panel"
       ],
       "obligations": [
         {
@@ -408,8 +418,8 @@
       "title": "Spatial estimation",
       "module_prefixes": [
         "statadic.estimation.spatial",
-        "statadic.api.spatial",
-        "statadic.model.survival.spatial"
+        "statadic.structure.spatial",
+        "statadic.law.survival.spatial"
       ],
       "obligations": [
         {
@@ -438,10 +448,10 @@
       "id": "survival",
       "title": "Survival and AFT models",
       "module_prefixes": [
-        "statadic.estimation.survival",
-        "statadic.model.survival",
-        "statadic.api.survival",
-        "statadic.inference.survival"
+        "statadic.estimation.likelihood.survival",
+        "statadic.law.survival",
+        "statadic.structure.survival",
+        "statadic.inference.covariance.survival"
       ],
       "obligations": [
         {
@@ -465,10 +475,10 @@
       "id": "dyadic",
       "title": "Dyadic models",
       "module_prefixes": [
-        "statadic.estimation.dyadic",
-        "statadic.model.dyadic",
+        "statadic.estimation.least_squares.dyadic",
+        "statadic.law.dyadic",
         "statadic.inference.dyadic",
-        "statadic.api.dyadic"
+        "statadic.structure.dyadic"
       ],
       "obligations": [
         {
@@ -487,7 +497,7 @@
       "title": "Covariance estimation and shrinkage",
       "module_prefixes": [
         "statadic.estimation.covariance",
-        "statadic.api.covariance"
+        "statadic.estimand.covariance"
       ],
       "obligations": [
         {
@@ -505,7 +515,7 @@
       "id": "sharpe",
       "title": "Sharpe ratio estimation and inference",
       "module_prefixes": [
-        "statadic.estimation.sharpe",
+        "statadic.estimation.moments.sharpe",
         "statadic.inference.sharpe"
       ],
       "obligations": [
@@ -543,10 +553,10 @@
       "title": "Principal-coordinate and feature embeddings",
       "module_prefixes": [
         "statadic.geometry.embedding",
-        "statadic.api.embedding",
-        "statadic.api.ordination",
-        "statadic.api.ordination_terms",
-        "statadic.geometry.shortest_paths"
+        "statadic.ordination.spectrum",
+        "statadic.ordination.fit",
+        "statadic.observation.coordinates",
+        "statadic.geometry.graph.shortest_paths"
       ],
       "obligations": [
         {
@@ -589,7 +599,7 @@
       "id": "median",
       "title": "Geometric median",
       "module_prefixes": [
-        "statadic.geometry.median"
+        "statadic.geometry.frechet.median"
       ],
       "obligations": [
         {
@@ -613,7 +623,7 @@
       "id": "barycentre",
       "title": "Distribution barycentres",
       "module_prefixes": [
-        "statadic.geometry.barycentre"
+        "statadic.geometry.frechet"
       ],
       "obligations": [
         {
@@ -638,7 +648,7 @@
       "id": "energy",
       "title": "Energy discrepancy",
       "module_prefixes": [
-        "statadic.discrepancy.mmd.energy"
+        "statadic.geometry.discrepancy.mmd.energy"
       ],
       "obligations": [
         {
@@ -672,7 +682,7 @@
       "id": "mmd",
       "title": "Kernel maximum mean discrepancy",
       "module_prefixes": [
-        "statadic.discrepancy.mmd"
+        "statadic.geometry.discrepancy.mmd"
       ],
       "obligations": [
         {
@@ -692,7 +702,7 @@
       "id": "transport",
       "title": "Optimal transport discrepancies",
       "module_prefixes": [
-        "statadic.discrepancy.transport"
+        "statadic.geometry.discrepancy.transport"
       ],
       "obligations": [
         {
@@ -714,7 +724,8 @@
       "id": "permutation",
       "title": "Permutation inference",
       "module_prefixes": [
-        "statadic.inference.resampling.permutation"
+        "statadic.inference.resampling.permutation_kernel",
+        "statadic.inference.resampling.permutation_test"
       ],
       "obligations": [
         {
@@ -790,7 +801,7 @@
       "id": "multiplicity",
       "title": "Multiple testing",
       "module_prefixes": [
-        "statadic.inference.multiplicity"
+        "statadic.inference.multiplicity.familywise"
       ],
       "obligations": [
         {
@@ -810,7 +821,7 @@
       "id": "equivalence",
       "title": "Equivalence inference",
       "module_prefixes": [
-        "statadic.inference.equivalence"
+        "statadic.inference.inequality.equivalence"
       ],
       "obligations": [
         {
@@ -830,8 +841,8 @@
       "id": "moment-inequalities",
       "title": "Moment inequality inference",
       "module_prefixes": [
-        "statadic.inference.gms",
-        "statadic.inference.wolak"
+        "statadic.inference.inequality.gms",
+        "statadic.inference.inequality.wolak"
       ],
       "obligations": [
         {
@@ -849,7 +860,7 @@
       "id": "linear-covariance",
       "title": "Linear-model inference covariances",
       "module_prefixes": [
-        "statadic.inference.linear_covariance"
+        "statadic.inference.covariance.linear"
       ],
       "obligations": [
         {
@@ -893,8 +904,8 @@
       "id": "glm-covariance",
       "title": "GLM inference covariances",
       "module_prefixes": [
-        "statadic.inference.glm_covariance",
-        "statadic.inference.likelihood"
+        "statadic.inference.covariance.glm",
+        "statadic.inference.covariance.likelihood"
       ],
       "obligations": [
         {
@@ -918,7 +929,7 @@
       "id": "panel-covariance",
       "title": "Panel inference covariances",
       "module_prefixes": [
-        "statadic.inference.panel_covariance"
+        "statadic.inference.covariance.panel"
       ],
       "obligations": [
         {
@@ -961,7 +972,7 @@
       "id": "operators-panel",
       "title": "Panel operators",
       "module_prefixes": [
-        "statadic.operators.panel"
+        "statadic.numerics.linalg.absorption"
       ],
       "obligations": [
         {
@@ -986,7 +997,7 @@
       "id": "operators-spatial",
       "title": "Spatial operators",
       "module_prefixes": [
-        "statadic.operators.spatial"
+        "statadic.geometry.graph"
       ],
       "obligations": [
         {
@@ -1001,7 +1012,7 @@
       "id": "operators-longrun",
       "title": "Long-run covariance operators",
       "module_prefixes": [
-        "statadic.operators.longrun"
+        "statadic.numerics.linalg.longrun"
       ],
       "obligations": [
         {
@@ -1028,7 +1039,7 @@
       "id": "optimize-integration",
       "title": "Gaussian numerical integration",
       "module_prefixes": [
-        "statadic.optimize.integration"
+        "statadic.numerics.quadrature"
       ],
       "obligations": [
         {
@@ -1047,7 +1058,7 @@
       "id": "optimize-psd",
       "title": "Positive-semidefinite optimization",
       "module_prefixes": [
-        "statadic.optimize.psd"
+        "statadic.numerics.optimize.psd"
       ],
       "obligations": [
         {
@@ -1071,7 +1082,7 @@
       "id": "optimize-simplex",
       "title": "Simplex optimization",
       "module_prefixes": [
-        "statadic.optimize.simplex"
+        "statadic.numerics.optimize.simplex"
       ],
       "obligations": [
         {
@@ -1093,8 +1104,8 @@
       "id": "linear-diagnostics",
       "title": "OLS residual and influence diagnostics",
       "module_prefixes": [
-        "statadic.inference.linear_diagnostics",
-        "statadic.api.diagnostics"
+        "statadic.inference.specification.linear",
+        "statadic.hypothesis.specification"
       ],
       "obligations": [
         {

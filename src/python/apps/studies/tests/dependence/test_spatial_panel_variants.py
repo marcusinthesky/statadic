@@ -14,7 +14,7 @@ from statadic.estimation.spatial import (
 )
 from statadic.estimation.spatial.observed_panel import observed_panel_profile
 from statadic.estimation.spatial.panel import spatial_panel_profile
-from statadic.operators.spatial import (
+from statadic.geometry.graph import (
     ObservedSpatialPeriod,
     prepare_spatial_panel_weights,
     prepare_spatial_weights,

@@ -2,11 +2,11 @@
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
-from statadic.api.spatial.graphs import SpatialData, SpatialX
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, Linear
+from statadic.observation.graph import SpatialData, SpatialX
+from statadic.regression import Regression
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.definitions.dependence.composition import SLX

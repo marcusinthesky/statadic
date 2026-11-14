@@ -25,7 +25,7 @@ from statadic.estimation.spatial import (
     SpatialProblem,
 )
 from statadic.estimation.spatial.likelihood import _spatial_ml_search
-from statadic.operators.spatial import (
+from statadic.geometry.graph import (
     prepare_spatial_panel_weights,
     prepare_spatial_weights,
 )

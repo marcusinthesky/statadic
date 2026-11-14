@@ -15,7 +15,7 @@ from __future__ import annotations
 import jax.numpy as jnp
 import pytest
 from jax import random
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     UNIT_EXPONENT,
     energy_geometry,
     energy_test_statistic,
@@ -23,9 +23,7 @@ from statadic.discrepancy.mmd.energy import (
 from statadic.geometry.ground.metrics import (
     EUCLIDEAN,
 )
-from statadic.inference.resampling.permutation import (
-    energy_permutation_test,
-)
+from statadic.inference.resampling.permutation_test import energy_permutation_test
 
 from .._permutation import host_permutation_test
 

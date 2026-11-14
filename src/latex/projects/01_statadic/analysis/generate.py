@@ -40,20 +40,20 @@ import lifelines
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC, ModelBased
-from statadic.api.regression import Observed, Poisson, Regression
-from statadic.api.reporting import PlotSpec, ReferenceLine
-from statadic.discrepancy.mmd import mmd_squared
-from statadic.discrepancy.mmd.energy import energy_distance
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.estimation.survival import SurvivalML, SurvivalProblem
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC, ModelBased
+from statadic.regression import Observed, Poisson, Regression
+from statadic.report.core import PlotSpec, ReferenceLine
+from statadic.geometry.discrepancy.mmd import mmd_squared
+from statadic.geometry.discrepancy.mmd.energy import energy_distance
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
 from statadic.geometry.ground.similarities import LINEAR_KERNEL, linear_gram
-from statadic.inference.linear_covariance import hc_covariance
-from statadic.inference.parameters import coefficient_intervals
-from statadic.model.survival import WeibullAFT
-from statadic.sample.packed import PackedClouds
+from statadic.inference.covariance.linear import hc_covariance
+from statadic.inference.restriction.linear import coefficient_intervals
+from statadic.law.survival import WeibullAFT
+from statadic.measure.clouds import PackedClouds
 
 PROJECT = Path(__file__).resolve().parents[1]
 ROOT = PROJECT.parents[3]

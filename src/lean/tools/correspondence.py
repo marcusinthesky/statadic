@@ -16,12 +16,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 PINS = ROOT / "src/lean/registry/implementation-pins.json"
 SUBJECTS = {
-    "masked_sum": ("sample/packed.py", "masked_sum"),
-    "pair_chunks": ("sample/packed.py", "pair_chunks"),
-    "mmd_squared_matrix": ("discrepancy/mmd/matrix.py", "mmd_squared_matrix"),
-    "empirical_mmd": ("discrepancy/mmd/scalar.py", "_mmd_squared_core"),
-    "shared_reference": ("discrepancy/mmd/scalar.py", "_shared_reference"),
-    "linear_mmd_cross": ("discrepancy/mmd/weighted.py", "_linear_mmd_cross"),
+    "masked_sum": ("measure/clouds.py", "masked_sum"),
+    "pair_chunks": ("measure/clouds.py", "pair_chunks"),
+    "mmd_squared_matrix": ("geometry/discrepancy/mmd/matrix.py", "mmd_squared_matrix"),
+    "empirical_mmd": ("geometry/discrepancy/mmd/scalar.py", "_mmd_squared_core"),
+    "shared_reference": ("geometry/discrepancy/mmd/scalar.py", "_shared_reference"),
+    "linear_mmd_cross": ("geometry/discrepancy/mmd/weighted.py", "_linear_mmd_cross"),
 }
 GATES = [
     "source-operation semantics and array broadcasting",

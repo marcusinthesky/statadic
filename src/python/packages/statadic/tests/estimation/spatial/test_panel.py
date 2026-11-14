@@ -22,7 +22,7 @@ from statadic.estimation.spatial import (
     panel,
 )
 from statadic.estimation.spatial.panel import spatial_panel_profile
-from statadic.operators.spatial import prepare_spatial_panel_weights
+from statadic.geometry.graph import prepare_spatial_panel_weights
 
 from ..._budgets import examples
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
     from statadic.estimation.spatial.panel import SpatialPanelFit
-    from statadic.operators.spatial import SpatialPanelWeights
+    from statadic.geometry.graph import SpatialPanelWeights
 
 
 def _sample() -> tuple[np.ndarray, np.ndarray, np.ndarray]:

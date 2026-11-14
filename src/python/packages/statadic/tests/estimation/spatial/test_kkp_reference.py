@@ -15,8 +15,8 @@ from hypothesis import strategies as st
 from scipy import optimize
 from statadic.estimation.spatial import KKP, SEM, SpatialPanelProblem
 from statadic.estimation.spatial.kkp import _full_weight_tau
-from statadic.inference.linear_covariance import classical_covariance
-from statadic.operators.spatial import prepare_spatial_panel_weights
+from statadic.geometry.graph import prepare_spatial_panel_weights
+from statadic.inference.covariance.linear import classical_covariance
 
 from ..._budgets import examples
 

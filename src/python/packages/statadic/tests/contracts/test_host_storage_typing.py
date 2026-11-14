@@ -25,9 +25,9 @@ import jax.numpy as jnp
 from jax import Array
 from jax.experimental.sparse import BCOO
 from statadic.inference.dyadic import NodeCountSchedule
-from statadic.model.dyadic import DyadicSample
-from statadic.operators.design import NodeIndex
-from statadic.operators.spatial import SpatialWeights, prepare_spatial_weights
+from statadic.law.dyadic import DyadicSample
+from statadic.numerics.linalg.dyadic import NodeIndex
+from statadic.geometry.graph import SpatialWeights, prepare_spatial_weights
 
 def preserve_ids[T: Hashable](left: Sequence[T], right: Sequence[T]) -> NodeIndex[T]:
     sample = DyadicSample(jnp.ones(2), left, right)

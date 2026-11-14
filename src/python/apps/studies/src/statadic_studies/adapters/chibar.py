@@ -5,7 +5,7 @@ from __future__ import annotations
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.inference.wolak import chi_bar_squared_weights_mc_kernel
+from statadic.inference.inequality.wolak import chi_bar_squared_weights_mc_kernel
 
 from statadic_studies.adapters._outcomes import _record
 from statadic_studies.adapters._random import rng

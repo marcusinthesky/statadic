@@ -246,11 +246,11 @@ extend-ignore-names = ["_prepare_term"]
 # removal was measured with `ruff check --isolated --select F722 <file>` rather
 # than reasoned about:
 #
-#   * `src/statadic/wasserstein.py` and `src/statadic/optimize.py` — the paths no longer
+#   * `src/statadic/wasserstein.py` and `src/statadic/numerics/optimize.py` — the paths no longer
 #     exist. The first was a re-export shim t46.10 deleted; the second became
 #     the `statadic/optimize/` package, so its entry is re-keyed to the two members
 #     that carry the shape strings (`simplex.py` 15 hits, `psd.py` 2).
-#   * `src/statadic/discrepancy/transport/exact.py` and `src/statadic/geometry/neighbour.py` —
+#   * `src/statadic/geometry/discrepancy/transport/exact.py` and `src/statadic/geometry/graph/neighbour.py` —
 #     0 hits each. t46.5 pre-landed them on the expectation that t46.9 would
 #     convert those two modules to `Float[np.ndarray, ...]`; t46.9 did not, so
 #     the modules still carry `NDArray[np.float64]` / bare `np.ndarray` and the
@@ -273,29 +273,29 @@ extend-ignore-names = ["_prepare_term"]
 # the broader tool: it would also suppress a genuinely broken forward annotation
 # elsewhere in those files, which is the failure the note above about unused
 # ignores is guarding against.
-"src/statadic/discrepancy/mmd/components.py" = ["F722"]
-"src/statadic/discrepancy/mmd/energy/mixture.py" = ["F722"]
-"src/statadic/discrepancy/mmd/energy/matrix.py" = ["F722"]
-"src/statadic/discrepancy/mmd/energy/scalar.py" = ["F722"]
-"src/statadic/discrepancy/mmd/energy/statistics.py" = ["F722"]
-"src/statadic/discrepancy/mmd/branded.py" = ["F722"]
-"src/statadic/discrepancy/mmd/functional.py" = ["F722"]
-"src/statadic/discrepancy/mmd/matrix.py" = ["F722"]
-"src/statadic/discrepancy/mmd/scalar.py" = ["F722"]
-"src/statadic/discrepancy/metrize.py" = ["F722"]
-"src/statadic/discrepancy/transport/exact.py" = ["F722"]
-"src/statadic/discrepancy/transport/sliced.py" = ["F722"]
-"src/statadic/discrepancy/transport/univariate.py" = ["F722"]
-"src/statadic/geometry/barycentre/wasserstein/measure.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/components.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/energy/mixture.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/energy/matrix.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/energy/scalar.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/energy/statistics.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/branded.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/functional.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/matrix.py" = ["F722"]
+"src/statadic/geometry/discrepancy/mmd/scalar.py" = ["F722"]
+"src/statadic/geometry/discrepancy/metrize.py" = ["F722"]
+"src/statadic/geometry/discrepancy/transport/exact.py" = ["F722"]
+"src/statadic/geometry/discrepancy/transport/sliced.py" = ["F722"]
+"src/statadic/geometry/discrepancy/transport/univariate.py" = ["F722"]
+"src/statadic/geometry/frechet/wasserstein/measure.py" = ["F722"]
 "src/statadic/geometry/ground/metrics.py" = ["F722"]
 "src/statadic/geometry/ground/_strategy.py" = ["F722"]
 "src/statadic/geometry/ground/similarities.py" = ["F722"]
-"src/statadic/optimize/psd.py" = ["F722"]
-"src/statadic/optimize/simplex.py" = ["F722"]
+"src/statadic/numerics/optimize/psd.py" = ["F722"]
+"src/statadic/numerics/optimize/simplex.py" = ["F722"]
 # jaxtyping evaluates these annotations without PEP 695 function locals.
 # Keep quoted native dimensions so the runtime shape adapter can erase them.
-"src/statadic/sample/alternatives.py" = ["F722", "UP037"]
-"src/statadic/sample/reduction.py" = ["F722", "UP037"]
+"src/statadic/measure/alternatives.py" = ["F722", "UP037"]
+"src/statadic/measure/reduction.py" = ["F722", "UP037"]
 "src/statadic/core/transforms.py" = ["UP037"]
 "src/statadic/core/matrices.py" = ["UP037"]
 # Test-local helpers use relative imports under pytest's importlib mode.

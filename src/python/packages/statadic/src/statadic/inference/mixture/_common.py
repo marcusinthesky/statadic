@@ -2,7 +2,7 @@
 """Selection objectives and contiguous train/test splits for mixture inference.
 
 These are local implementation choices of :mod:`statadic.inference.mixture`.
-Grouped discrepancy evaluation belongs to ``statadic.discrepancy.mmd.energy``;
+Grouped discrepancy evaluation belongs to ``statadic.geometry.discrepancy.mmd.energy``;
 replicate execution belongs to ``statadic.inference.resampling``.
 """
 
@@ -15,15 +15,17 @@ import jax.numpy as jnp
 from statadic.core.axioms import (
     Law,  # runtime annotations  # noqa: TC001
 )
-from statadic.discrepancy.mmd.energy.balancing import kernel_balancing_weights
-from statadic.geometry.barycentre.mmd.energy import energy_barycentre_weights
+from statadic.geometry.discrepancy.mmd.energy.balance_weights import (
+    kernel_balancing_weights,
+)
+from statadic.geometry.frechet.energy import energy_barycentre_weights
 from statadic.geometry.ground.metrics import (  # noqa: TC001
     GroundDistance,
 )
-from statadic.sample.packed import PackedClouds, pack
+from statadic.measure.clouds import PackedClouds, pack
 
 if TYPE_CHECKING:
-    from statadic.geometry.barycentre.mmd.energy import EnergyBarycentreDiagnostics
+    from statadic.geometry.frechet.energy import EnergyBarycentreDiagnostics
 
 
 def _optimal_weights(

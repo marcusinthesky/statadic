@@ -6,12 +6,15 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
 from statadic.estimation.spatial import (
     ML,
     SAR,
     SpatialIV,
     SpatialProblem,
+)
+from statadic.geometry.graph import (
+    prepare_spatial_weights,
 )
 from statadic.inference.spatial import (
     spatial_ak_test,
@@ -19,9 +22,6 @@ from statadic.inference.spatial import (
     spatial_covariance,
     spatial_diagnostics,
     spatial_likelihood_ratio,
-)
-from statadic.operators.spatial import (
-    prepare_spatial_weights,
 )
 
 from statadic_studies.adapters._random import rng

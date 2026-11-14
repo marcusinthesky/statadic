@@ -16,7 +16,7 @@ from jax.scipy.linalg import solve_triangular
 
 from statadic.core.results import SolverResult, SolverStatus
 from statadic.core.typing import Array  # noqa: TC001 -- runtime annotation
-from statadic.optimize.backends import minimise_bfgs_result_args
+from statadic.numerics.optimize.backends import minimise_bfgs_result_args
 
 __all__ = [
     "GraphMLFit",

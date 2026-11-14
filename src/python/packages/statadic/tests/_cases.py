@@ -44,7 +44,7 @@ from statadic.core.axioms import (
     Premetric,
     Semimetric,
 )
-from statadic.discrepancy.mmd import (
+from statadic.geometry.discrepancy.mmd import (
     COSINE_KERNEL,
     LINEAR_KERNEL,
     cosine_mean_mmd,
@@ -55,12 +55,13 @@ from statadic.discrepancy.mmd import (
     rbf_kernel,
 )
 
-# Imported from the submodule, not the package: ``statadic.discrepancy.__init__``
+# Imported from the submodule, not the package:
+# ``statadic.geometry.discrepancy.__init__``
 # re-exports the ``mmd`` *function*, which shadows the module of the same name.
-from statadic.discrepancy.mmd import DECLARED_AXIOMS as MMD_DECLARED_AXIOMS
-from statadic.discrepancy.transport import sliced as transport
+from statadic.geometry.discrepancy.mmd import DECLARED_AXIOMS as MMD_DECLARED_AXIOMS
+from statadic.geometry.discrepancy.transport import sliced as transport
 from statadic.geometry.ground import metrics
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -507,7 +508,7 @@ CASES: tuple[Case, ...] = (
         witnesses=(_FINITE_PROJECTION,),
     ),
     # --- S3 discrepancy: MMD, keyed on (kernel, ground metric) (t50) ---
-    # Every key in `statadic.discrepancy.mmd.DECLARED_AXIOMS` appears here, so
+    # Every key in `statadic.geometry.discrepancy.mmd.DECLARED_AXIOMS` appears here, so
     # `tests/migration` can cross-check the shipped table against a measurement
     # rather than against itself. `generic` is what the fixed reference objects
     # actually produce under float64 — measured, not assumed; each `mmd` row

@@ -8,7 +8,7 @@ spectrum. Signed eigenvalues remain available even when that condition fails.
 
 ``pcoa_kernel`` and ``gram_coordinates`` retain fixed-width arrays under JIT and
 batching. Positive coordinate columns and the Euclidean-validity diagnostic are
-separate evidence. The host :class:`statadic.api.ordination.Ordination` applies its
+separate evidence. The host :class:`statadic.ordination.fit.Ordination` applies its
 explicit strict or positive-subspace policy and chooses presentation dimensions.
 ``CrossGramMap`` applies training centering to new rows without another solve.
 Repeated eigenvalues, rank changes and selected-axis changes have no general

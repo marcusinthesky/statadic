@@ -9,16 +9,16 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
 from statadic.inference._row_order import _validated_row_order
-from statadic.inference.linear_covariance import hac_covariance
-from statadic.inference.linear_diagnostics import breusch_godfrey, durbin_watson
+from statadic.inference.covariance.linear import hac_covariance
+from statadic.inference.specification.linear import breusch_godfrey, durbin_watson
 
 if TYPE_CHECKING:
     from statadic.core.equations import PlainLongRun
-    from statadic.estimation.linear import LinearFit
-    from statadic.inference.linear_covariance import LinearUncertainty
-    from statadic.inference.linear_diagnostics import ResidualTest
+    from statadic.estimation.least_squares.linear import LinearFit
+    from statadic.inference.covariance.linear import LinearUncertainty
+    from statadic.inference.specification.linear import ResidualTest
 
 pytestmark = pytest.mark.unit
 

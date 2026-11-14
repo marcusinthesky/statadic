@@ -4,7 +4,7 @@
 ``mantel_correlation_kernel`` computes Pearson or tie-aware Spearman correlation
 of supplied pair vectors. For distance matrices, pass matching strict upper
 triangles. Permutation calibration and node-bootstrap intervals belong to
-:mod:`statadic.inference.mantel`; the coefficient alone establishes no null law.
+:mod:`statadic.inference.independence`; the coefficient alone establishes no null law.
 """
 
 # jaxtyping shape strings are runtime contracts.

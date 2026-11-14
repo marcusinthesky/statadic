@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.discrepancy.transport import (
+from statadic.geometry.discrepancy.transport import (
     w1_1d,
     w2_1d,
 )
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 if TYPE_CHECKING:
     from collections.abc import (

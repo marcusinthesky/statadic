@@ -10,16 +10,18 @@ import numpy as np
 import pytest
 from statadic.association.mantel import mantel_correlation_kernel
 from statadic.core.equations import PlainLongRun
-from statadic.discrepancy.mmd.energy.weighted import weighted_energy_cross
-from statadic.discrepancy.transport.exact import balanced_wasserstein_from_cost_result
-from statadic.estimation.glm import PoissonMLE, PoissonProblem
-from statadic.estimation.gmm import FixedWeightGMM
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.estimation.moments import AffineMomentProblem
-from statadic.inference.gmm.covariance import gmm_covariance
-from statadic.inference.linear_covariance import classical_covariance, hc_covariance
-from statadic.inference.parameters import coefficient_intervals
-from statadic.sample.packed import PackedClouds
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.estimation.likelihood.glm import PoissonMLE, PoissonProblem
+from statadic.estimation.moments.gmm import FixedWeightGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
+from statadic.geometry.discrepancy.mmd.energy.weighted import weighted_energy_cross
+from statadic.geometry.discrepancy.transport.exact import (
+    balanced_wasserstein_from_cost_result,
+)
+from statadic.inference.covariance.linear import classical_covariance, hc_covariance
+from statadic.inference.covariance.moments import gmm_covariance
+from statadic.inference.restriction.linear import coefficient_intervals
+from statadic.measure.clouds import PackedClouds
 
 from .._validation.precision import bfloat16_qr_error
 

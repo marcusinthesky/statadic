@@ -44,13 +44,13 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from statadic.estimation.sharpe import sharpe_ratio, sharpe_ratio_axis
+from statadic.estimation.moments.sharpe import sharpe_ratio, sharpe_ratio_axis
 from statadic.inference.resampling.block_length import (
     heuristic_block_length,
     optimal_block_length_numpy,
 )
 from statadic.inference.sharpe import multiple_sharpe_test, sharpe_difference_test
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     bartlett_weights,
     circular_block_bootstrap_indices,
     hall_centered_hac,

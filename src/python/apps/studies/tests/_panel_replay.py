@@ -73,8 +73,8 @@ def replay(path):
     import jax.numpy as jnp
     from statadic.estimation.spatial import SAR, PanelML, SpatialPanelProblem
     from statadic.estimation.spatial.panel import spatial_panel_profile
+    from statadic.geometry.graph import prepare_spatial_panel_weights
     from statadic.inference.spatial import spatial_covariance
-    from statadic.operators.spatial import prepare_spatial_panel_weights
 
     x, y, graphs = precision_inputs(load_inputs(path), jax.config.x64_enabled)
     metadata = path.with_name("diagnostic.json")

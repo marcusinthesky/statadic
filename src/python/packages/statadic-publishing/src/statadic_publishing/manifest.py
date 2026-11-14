@@ -6,7 +6,7 @@ from dataclasses import dataclass, fields, is_dataclass
 from pathlib import Path
 from typing import Literal, NoReturn
 
-from statadic.api.reporting import (
+from statadic.report.core import (
     FrozenMetadataValue,
     MetadataValue,
     freeze_metadata,

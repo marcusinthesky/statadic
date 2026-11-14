@@ -21,9 +21,9 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.data import RelativePrecision
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.regression import Regression
+    from statadic.observation.data import RelativePrecision
+    from statadic.observation.design import Intercept, Linear
+    from statadic.regression import Regression
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#9bbaff" if DARK else "#1d3f8f"

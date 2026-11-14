@@ -22,7 +22,7 @@ from statadic.estimation._validation import validate_parameter_names
 from statadic.estimation.spatial._design import graph_parameter_names
 from statadic.estimation.spatial.likelihood import SAR, SEM
 from statadic.estimation.spatial.panel import _panel_search
-from statadic.operators.spatial import ObservedSpatialPeriod  # noqa: TC001
+from statadic.geometry.graph import ObservedSpatialPeriod  # noqa: TC001
 
 __all__ = [
     "ObservedPanelML",

@@ -6,15 +6,15 @@ from pathlib import Path
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.design import DistanceToLandmarks, Intercept, Linear
-from statadic.api.inference import HC, ModelBased
-from statadic.api.ordination import DistanceGram, Ordination, PrincipalCoordinates
-from statadic.api.regression import Regression
-from statadic.api.representation import MMD, Energy, Wasserstein1D
-from statadic.discrepancy.mmd.energy import energy_distance
+from statadic.geometry.discrepancy.mmd.energy import energy_distance
 from statadic.geometry.ground.metrics import angular_distance
 from statadic.geometry.ground.similarities import RBFKernel
-from statadic.sample.packed import pack
+from statadic.hypothesis.uncertainty import HC, ModelBased
+from statadic.measure.clouds import pack
+from statadic.observation.design import DistanceToLandmarks, Intercept, Linear
+from statadic.observation.geometry import MMD, Energy, Wasserstein1D
+from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
+from statadic.regression import Regression
 
 DOCS = Path(__file__).resolve().parents[3] / "packages/statadic/docs"
 pytestmark = pytest.mark.native

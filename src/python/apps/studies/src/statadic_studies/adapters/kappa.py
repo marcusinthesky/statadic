@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import numpy as np
-from statadic.inference.kappa import kappa_delta_method, moment_jacobian_concentration
-from statadic.operators.covariance import sigma_dist_hetero_kappa
+from statadic.geometry.ground.covariance import sigma_dist_hetero_kappa
+from statadic.inference.inequality.kappa import (
+    kappa_delta_method,
+    moment_jacobian_concentration,
+)
 
 from statadic_studies.adapters._random import rng
 

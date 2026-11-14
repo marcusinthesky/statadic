@@ -10,13 +10,9 @@ import numpy as np
 import pytest
 from scipy.integrate import quad
 from scipy.stats import norm
-from statadic.api.data import Observations, PanelLayout
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
-from statadic.api.survival import RightCensored
-from statadic.estimation.survival import SurvivalML
-from statadic.inference.survival import observed_information
-from statadic.model.survival import (
+from statadic.estimation.likelihood.survival import SurvivalML
+from statadic.inference.covariance.survival import observed_information
+from statadic.law.survival import (
     LogLogisticAFT,
     LogNormalAFT,
     WeibullAFT,
@@ -25,6 +21,10 @@ from statadic.model.survival import (
     survival_probability,
     survival_quantile,
 )
+from statadic.observation.data import Observations, PanelLayout
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Regression
+from statadic.structure.survival import RightCensored
 
 if TYPE_CHECKING:
     from collections.abc import Callable

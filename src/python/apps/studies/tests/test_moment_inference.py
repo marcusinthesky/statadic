@@ -5,11 +5,11 @@ import numpy as np
 import pytest
 from scipy.stats import chi2
 from statadic.core.equations import MeanCenteredLongRun, PlainLongRun
-from statadic.estimation.gel import AffineGEL, FixedGEL
-from statadic.estimation.gmm import FixedWeightGMM
-from statadic.estimation.moments import AffineMomentProblem, FixedMomentProblem
-from statadic.inference.gel import gel_test
-from statadic.inference.gmm import hansen_j_from_fit
+from statadic.estimation.empirical_likelihood import AffineGEL, FixedGEL
+from statadic.estimation.moments.gmm import FixedWeightGMM
+from statadic.estimation.moments.problem import AffineMomentProblem, FixedMomentProblem
+from statadic.inference.restriction.empirical_likelihood import gel_test
+from statadic.inference.restriction.moments import hansen_j_from_fit
 from statadic_studies.adapters.moments import affine_moments, run_moment_inference
 from statadic_studies.definitions.moments import (
     MOMENT_INFERENCE_STUDIES,

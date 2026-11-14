@@ -12,7 +12,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
-from statadic.api.estimand import Covariance, Estimand
+from statadic.estimand.core import Covariance, Estimand
 from statadic.estimation.covariance import (
     CovarianceProblem,
     LedoitWolf,
@@ -32,7 +32,7 @@ from statadic.estimation.covariance import (
 )
 from statadic.estimation.covariance import _validation as validation_module
 from statadic.estimation.covariance import cross_validation as cv_module
-from statadic.operators.covariance import (
+from statadic.geometry.ground.covariance import (
     sigma_dist,
     sigma_dist_hetero_kappa,
 )

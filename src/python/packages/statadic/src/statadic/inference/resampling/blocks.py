@@ -3,7 +3,8 @@
 
 Three loops in this package re-index a pooled distance matrix once per
 replicate — ``distances[perm][:, perm]`` in
-:func:`statadic.inference.resampling.permutation.energy_permutation_test_result` and
+:func:`statadic.inference.resampling.permutation_test.energy_permutation_test_result`
+and
 :func:`statadic.inference.mixture._split_runner`'s null driver, and
 ``distances[idx][:, idx]`` in
 :func:`statadic.inference.resampling.bootstrap.bootstrap_mixture_energy_estimate`.
@@ -50,7 +51,7 @@ original loops were deliberately written for, while still handing XLA a
 ``batch_size``-wide slab to vectorise. Do not replace it with a bare ``vmap``:
 that reinstates the peak-memory blowup those loops avoid.
 
-einsum policy (see :mod:`statadic.sample.packed`): the two reductions here are
+einsum policy (see :mod:`statadic.measure.clouds`): the two reductions here are
 two-operand matmuls and stay as ``@``, not ``einsum``.
 """
 
@@ -73,7 +74,7 @@ __all__ = [
 ]
 
 #: Replicates per :func:`jax.lax.map` step. Mirrors the role of
-#: ``statadic.sample.packed.DEFAULT_PAIR_CHUNK``: large enough that XLA sees a
+#: ``statadic.measure.clouds.DEFAULT_PAIR_CHUNK``: large enough that XLA sees a
 #: worthwhile GEMM, small enough that the ``(chunk, groups, pooled)`` counts
 #: buffer stays far below the ``(pooled, pooled)`` distance matrix it replaces.
 #: Callers may override via the ``chunk`` argument.

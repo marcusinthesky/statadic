@@ -6,10 +6,10 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.core.equations import PlainLongRun
-from statadic.estimation.gmm import FixedWeightGMM
-from statadic.estimation.moments import AffineMomentProblem
+from statadic.estimation.moments.gmm import FixedWeightGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
 from statadic.estimation.spatial import SAR, SpatialIV, SpatialProblem
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.geometry.graph import prepare_spatial_weights
 
 
 def _case() -> tuple[np.ndarray, np.ndarray, np.ndarray]:

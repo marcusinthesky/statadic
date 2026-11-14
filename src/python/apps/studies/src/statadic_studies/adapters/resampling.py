@@ -10,17 +10,19 @@ from itertools import product
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.association import Mantel, MantelInput
-from statadic.discrepancy.mmd.energy.balancing.weights import kernel_balancing_weights
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.geometry.barycentre.mmd.energy import energy_barycentre_weights_batched
-from statadic.inference.mantel import (
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.geometry.discrepancy.mmd.energy.balance_weights import (
+    kernel_balancing_weights,
+)
+from statadic.geometry.frechet.energy import energy_barycentre_weights_batched
+from statadic.hypothesis.independence import Mantel, MantelInput
+from statadic.inference.independence import (
     mantel_bootstrap_ci,
     mantel_bootstrap_kernel,
     paired_mantel_bootstrap,
 )
 from statadic.inference.mixture import corrected_mixture_test
-from statadic.inference.resampling.permutation.test import permutation_test_result
+from statadic.inference.resampling.permutation_test import permutation_test_result
 from statadic.inference.resampling.schedule import (
     ReplicateResult,
     linear_pairs_replicates,

@@ -23,7 +23,7 @@ import jax
 import jax.numpy as jnp
 import pytest
 from jax import random, vmap
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     UNIT_EXPONENT,
     energy_geometry,
     energy_test_statistic_from_distances,
@@ -38,7 +38,7 @@ from statadic.inference.resampling.blocks import (
     map_replicates,
     replicate_counts,
 )
-from statadic.inference.resampling.permutation import (
+from statadic.inference.resampling.permutation_test import (
     energy_permutation_test_result,
 )
 

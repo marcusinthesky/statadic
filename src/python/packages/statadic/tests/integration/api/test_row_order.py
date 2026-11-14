@@ -8,13 +8,13 @@ import json
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.design import Intercept, Linear
-from statadic.api.diagnostics import BreuschGodfrey, DurbinWatson
-from statadic.api.hypotheses import TestOutcome
-from statadic.api.inference import HAC
-from statadic.api.regression import LinearResult, Regression
-from statadic.inference.linear_covariance import hac_covariance
-from statadic.inference.linear_diagnostics import breusch_godfrey, durbin_watson
+from statadic.hypothesis.core import TestOutcome
+from statadic.hypothesis.specification import BreuschGodfrey, DurbinWatson
+from statadic.hypothesis.uncertainty import HAC
+from statadic.inference.covariance.linear import hac_covariance
+from statadic.inference.specification.linear import breusch_godfrey, durbin_watson
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import LinearResult, Regression
 
 pytestmark = pytest.mark.integration
 

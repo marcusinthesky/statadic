@@ -7,18 +7,18 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy.geometry import resolve_energy_geometry
-from statadic.discrepancy.mmd.energy.kernel import distance_induced_kernel
-from statadic.discrepancy.mmd.energy.scalar import energy_distance
-from statadic.discrepancy.mmd.energy.weighted import weighted_energy_cross
-from statadic.discrepancy.mmd.scalar import cosine_mean_mmd, mmd, mmd_squared
-from statadic.discrepancy.mmd.weighted import weighted_mmd_cross
+from statadic.geometry.discrepancy.mmd.energy.geometry import resolve_energy_geometry
+from statadic.geometry.discrepancy.mmd.energy.kernel import distance_induced_kernel
+from statadic.geometry.discrepancy.mmd.energy.scalar import energy_distance
+from statadic.geometry.discrepancy.mmd.energy.weighted import weighted_energy_cross
+from statadic.geometry.discrepancy.mmd.scalar import cosine_mean_mmd, mmd, mmd_squared
+from statadic.geometry.discrepancy.mmd.weighted import weighted_mmd_cross
 from statadic.geometry.ground.similarities import (
     COSINE_KERNEL,
     LINEAR_KERNEL,
     RBFKernel,
 )
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 from statadic_studies.definitions.discrepancy.variants import (
     DISCREPANCY_VARIANT_STUDIES,

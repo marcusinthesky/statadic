@@ -25,12 +25,15 @@ from statadic.core.typing import (  # noqa: TC001
     Array,
     ArrayLike,
 )
-from statadic.operators.spatial import (  # noqa: TC001
+from statadic.geometry.graph import (  # noqa: TC001
     SpatialWeights,
     spatial_lag,
     spatial_solve,
 )
-from statadic.optimize.backends import bounded_scalar_minimise, minimise_bfgs_result
+from statadic.numerics.optimize.backends import (
+    bounded_scalar_minimise,
+    minimise_bfgs_result,
+)
 
 __all__ = [
     "ML",
@@ -43,7 +46,7 @@ __all__ = [
     "SpatialProblem",
 ]
 
-from statadic.estimation.linear import (  # noqa: TC001
+from statadic.estimation.least_squares.linear import (  # noqa: TC001
     LeastSquares,
     LinearFit,
     LinearProblem,

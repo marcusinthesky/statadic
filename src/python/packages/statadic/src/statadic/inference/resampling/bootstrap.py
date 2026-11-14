@@ -33,7 +33,7 @@ from statadic.core.typing import (  # noqa: TC001
     Static,
     static_jaxtyping,
 )
-from statadic.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
+from statadic.geometry.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
 from statadic.inference.resampling.blocks import (
     grouped_block_reduction,
     map_replicates,

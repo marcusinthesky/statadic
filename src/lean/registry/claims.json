@@ -33,7 +33,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "Exact-real identity behind the linear weighted-mean route; Python/JAX implementation refinement is not verified."
       },
@@ -92,8 +92,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.mmd_squared",
-          "statadic.discrepancy.mmd.mmd_squared_matrix"
+          "statadic.geometry.discrepancy.mmd.mmd_squared",
+          "statadic.geometry.discrepancy.mmd.mmd_squared_matrix"
         ],
         "relationship": "Conditional exact-real reduction correspondence for separate sample groups and a common symmetric kernel; sampling-to-moment and implementation refinement unverified"
       },
@@ -187,7 +187,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "conceptual correspondence; implementation refinement unverified"
       },
@@ -242,7 +242,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "conceptual correspondence; implementation refinement unverified"
       },
@@ -291,7 +291,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "conceptual correspondence; implementation refinement unverified"
       },
@@ -342,7 +342,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "conceptual correspondence; implementation refinement unverified"
       },
@@ -394,7 +394,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.dispersion.dispersion_permutation_null"
+          "statadic.inference.homogeneity.dispersion.dispersion_permutation_null"
         ],
         "relationship": "conceptual correspondence; implementation refinement unverified"
       },
@@ -446,7 +446,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.resampling.permutation.permutation_test_kernel"
+          "statadic.inference.resampling.permutation_kernel.permutation_test_kernel"
         ],
         "relationship": "The kernel computes the add-one formula from draws supplied by the caller; how those draws are generated is not verified, nor is floating-point implementation refinement."
       },
@@ -488,7 +488,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "Exact-real property of the linear weighted-mean route under equal mass; Python refinement is unverified."
       },
@@ -544,7 +544,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "Exact-real V-expression sign under the stated finite PSD and symmetry assumptions; floating-point behavior and kernel-law implementation are unverified."
       },
@@ -589,8 +589,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.mmd_squared",
-          "statadic.discrepancy.mmd.mmd_squared_matrix"
+          "statadic.geometry.discrepancy.mmd.mmd_squared",
+          "statadic.geometry.discrepancy.mmd.mmd_squared_matrix"
         ],
         "relationship": "Illustrates why the U route is signed and contracts._require_v_distance refuses rooting; no implementation refinement is proved."
       },
@@ -631,7 +631,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "Exact-real analogue of excluding zero-mass padding, conditional on finite kernel values; implementation refinement is unverified."
       },
@@ -690,7 +690,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "conceptual correspondence to positive precision weights; numerical refinement unverified"
       },
@@ -739,7 +739,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "the exact variance is the population analogue of the row-influence sandwich; estimator and numerical refinement unverified"
       },
@@ -790,7 +790,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "the HC2 row correction corresponds in exact arithmetic; numerical refinement unverified"
       },
@@ -842,7 +842,7 @@
       "python": {
         "symbols": [
           "statadic.geometry.ground.metrics.EuclideanLaw",
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "Exact-real conceptual correspondence for metric=euclidean and exponent=1; implementation refinement unverified."
       },
@@ -883,7 +883,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.api.design.CyclicSpline.transform"
+          "statadic.observation.design.CyclicSpline.transform"
         ],
         "relationship": "The four local cardinal polynomials match the implementation. Reduction of floating-point phases and indexing in JAX are tested separately."
       },
@@ -928,7 +928,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.spatial.distance.rbf_weights"
+          "statadic.geometry.graph.distance.rbf_weights"
         ],
         "relationship": "The implementation stabilizes the exponential ratios by subtracting each off-diagonal row minimum before softmax."
       },
@@ -974,7 +974,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.spatial.distance.rbf_weights"
+          "statadic.geometry.graph.distance.rbf_weights"
         ],
         "relationship": "The identity applies to the exponent cost supplied to rbf_weights."
       },
@@ -1074,8 +1074,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.panel_group_mean",
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.panel_group_mean",
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "Per group and per column, exact-real counterpart of the weighted mean and a single selected entity or time sweep."
       },
@@ -1124,8 +1124,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.glm.BinomialLogitMLE",
-          "statadic.estimation.glm.PoissonMLE"
+          "statadic.estimation.likelihood.glm.BinomialLogitMLE",
+          "statadic.estimation.likelihood.glm.PoissonMLE"
         ],
         "relationship": "Mathematical interpretation of the canonical scores when the supplied mean derivative equals the row variance, at unit dispersion. STATADIC computes row scores from its log-likelihood by automatic differentiation."
       },
@@ -1172,7 +1172,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "Exact-arithmetic full-rank unweighted point estimate. Heteroskedasticity changes the variance, not this expectation, under the stated model."
       },
@@ -1224,7 +1224,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "Unweighted, fixed full-rank model. The bound is an exact-real sampling-law comparison."
       },
@@ -1276,7 +1276,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.linear.LeastSquares"
+          "statadic.estimation.least_squares.linear.LeastSquares"
         ],
         "relationship": "Exact-real fixed-weight model for STATADIC's positive diagonal relative precisions and full-rank point estimate."
       },
@@ -1412,7 +1412,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate"
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate"
         ],
         "relationship": "With a equal to the transformed mean moments and B equal to the transformed derivative, the identity describes the least-squares problem formed by _solve."
       },
@@ -1646,7 +1646,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.multiplicity.equivalence_multiplicity_control"
+          "statadic.inference.multiplicity.familywise.equivalence_multiplicity_control"
         ],
         "relationship": "The single-step branch rejects every entry at or below alpha divided by the total family size."
       },
@@ -1695,7 +1695,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.multiplicity.equivalence_multiplicity_control"
+          "statadic.inference.multiplicity.familywise.equivalence_multiplicity_control"
         ],
         "relationship": "The cumulative product in the Holm branch requires every sorted threshold comparison through the candidate rank to pass. The proof permits any outcome-dependent permutation, including ascending order and any ordering of ties."
       },
@@ -1746,7 +1746,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.resampling.permutation.kernel.permutation_test_kernel"
+          "statadic.inference.resampling.permutation_kernel.permutation_test_kernel"
         ],
         "relationship": "For the greater alternative and finite statistics, supplying every nonidentity transformation once makes the kernel’s one-plus exceedance numerator equal to the full inclusive rank (rank_eq_one_add_nonidentity). The one-plus denominator is then the group size."
       },
@@ -1889,8 +1889,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance",
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance",
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "The raw V-energy and V-kernel reductions specialize the population pair expectations to discrete laws on the packed clouds when the supplied ground and kernel satisfy the generating relation."
       },
@@ -1939,8 +1939,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance",
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance",
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "The population pair formulas correspond to the V-statistic routes on discrete laws, with exact weights and a compatible kernel/ground pair."
       },
@@ -1990,7 +1990,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.equivalence.equivalence_pvalue_from_bootstrap"
+          "statadic.inference.inequality.equivalence.equivalence_pvalue_from_bootstrap"
         ],
         "relationship": "The scalar helper accepts supplied replicate energies and uses the same inclusive count and add-one denominator."
       },
@@ -2039,7 +2039,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "For full-rank OLS, kind=\"HC0\" and unit finite-sample correction, the coefficient-map row Gram computes the unnormalized coefficient covariance. N times that matrix is the normalized sandwich formalized here."
       },
@@ -2086,7 +2086,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
+          "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross"
         ],
         "relationship": "The V-statistic is the kernel pair formula for empirical laws with normalized nonnegative masses. The theorem concerns population probability laws and supplies no positivity certificate for the signed U-statistic."
       },
@@ -2134,8 +2134,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.geometry.neighbour.neighbour_order",
-          "statadic.geometry.neighbour.cross_encoder_neighbour_stability"
+          "statadic.geometry.graph.neighbour.neighbour_order",
+          "statadic.geometry.graph.neighbour.cross_encoder_neighbour_stability"
         ],
         "relationship": "Explains when the comparator preserves all baseline top-k edges for a given anchor."
       },
@@ -2232,7 +2232,7 @@
           "statadic.geometry.embedding.center_gram",
           "statadic.geometry.embedding.gram_coordinates",
           "statadic.geometry.embedding.pcoa_kernel",
-          "statadic.api.ordination.Ordination"
+          "statadic.ordination.fit.Ordination"
         ],
         "relationship": "Exact-real full-factor reconstruction target of pcoa_kernel and gram_coordinates(-0.5 * distances**2). The canonical host bridge is restricted to Ordination(DistanceGram(), PrincipalCoordinates(dim=None, negative_inertia=\"raise\", tolerance=0)) on supplied finite symmetric hollow distances under the stated PSD hypotheses. A positive cutoff or additional dimension reduction generally changes distances. This relationship excludes feature/kernel constructions, ShortestPathDistances/Isomap, query extensions and geometric Regression; it is not a floating-point refinement or a source-fidelity approval."
       },
@@ -2282,7 +2282,7 @@
           "statadic.geometry.embedding.center_gram",
           "statadic.geometry.embedding.gram_coordinates",
           "statadic.geometry.embedding.pcoa_kernel",
-          "statadic.api.ordination.Ordination"
+          "statadic.ordination.fit.Ordination"
         ],
         "relationship": "The exact PSD diagnostic corresponds to double centering in center_gram/gram_coordinates and pcoa_kernel. The canonical host bridge is restricted to the supplied-distance branch Ordination(DistanceGram(), PrincipalCoordinates(dim=None, negative_inertia=\"raise\", tolerance=0)), without ShortestPathDistances or additional rank truncation. A nonzero numerical cutoff only approximates the exact criterion. This theorem grants no population geometry law and does not establish kernel PCA, Isomap, query-extension or adjusted-regression validity."
       },
@@ -2333,7 +2333,7 @@
           "statadic.geometry.embedding.center_gram",
           "statadic.geometry.embedding.gram_coordinates",
           "statadic.geometry.embedding.pcoa_kernel",
-          "statadic.api.ordination.Ordination"
+          "statadic.ordination.fit.Ordination"
         ],
         "relationship": "Relates spectral cutoff activity to squared-distance distortion only under the stated exact supplied-spectrum hypotheses. pcoa_kernel/gram_coordinates use t=tolerance * max(max(abs(eigenvalues)), 1); the supplied-distance Ordination(DistanceGram(), PrincipalCoordinates(dim=None, negative_inertia=\"raise\", tolerance=relative)) branch instead retains its actual t=relative * max(abs(eigenvalues)). Apply the bound using the threshold retained by that producer, with every eigenvalue at least -t and every eigenvalue above t retained. Additional dim truncation, positive-subspace approximation with material negative inertia, eigensolver rounding, feature/kernel/path constructions, query extension and geometric Regression are outside this relationship."
       },
@@ -2381,7 +2381,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.geometry.median.spatial_medians"
+          "statadic.geometry.frechet.median.spatial_medians"
         ],
         "relationship": "Connects the two quantities compared in the spatial_medians stationarity check to a lower bound on the exact target objective."
       },
@@ -2427,7 +2427,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.geometry.median.spatial_medians"
+          "statadic.geometry.frechet.median.spatial_medians"
         ],
         "relationship": "Supplies existence of the optimization target for each nonempty group of finite Euclidean coordinates."
       },
@@ -2477,7 +2477,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.geometry.median.spatial_medians"
+          "statadic.geometry.frechet.median.spatial_medians"
         ],
         "relationship": "Characterizes the ideal stationarity target, including an optimum at a repeated sample location."
       },
@@ -2525,7 +2525,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.wasserstein.measure.solve_wasserstein_free_support_barycentre"
+          "statadic.geometry.frechet.wasserstein.measure.solve_wasserstein_free_support_barycentre"
         ],
         "relationship": "Matches the weighted sum of matched source atoms used in each p=2 Euclidean support update."
       },
@@ -2573,7 +2573,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.discrepancy.transport.exact.balanced_wasserstein_from_cost"
+          "statadic.geometry.discrepancy.transport.exact.balanced_wasserstein_from_cost"
         ],
         "relationship": "For the equal-mass Hungarian route take plan entries 1/n on the assignment and cost equal to the powered ground cost. The theorem concerns the objective before the positive pth root."
       },
@@ -2618,8 +2618,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.sample.packed.PackedClouds.affine",
-          "statadic.sample.packed.PackedClouds.mean"
+          "statadic.measure.clouds.PackedClouds.affine",
+          "statadic.measure.clouds.PackedClouds.mean"
         ],
         "relationship": "Explains how PackedClouds.affine and mean compose and why checking the retained total mass matters for translations."
       },
@@ -2712,7 +2712,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gel.fit.FixedGEL.estimate"
+          "statadic.estimation.empirical_likelihood.fit.FixedGEL.estimate"
         ],
         "relationship": "The EL and ET fixed-moment paths use normalized positive weights and a rank-sensitive probability correction to guard a reported solution."
       },
@@ -2758,8 +2758,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.model.survival.aft.log_likelihood_rows",
-          "statadic.estimation.survival.fit.SurvivalML.estimate"
+          "statadic.law.survival.aft.log_likelihood_rows",
+          "statadic.estimation.likelihood.survival.fit.SurvivalML.estimate"
         ],
         "relationship": "The failure-model term matches the event/censor branch of log_likelihood_rows and its subtraction of log survival at entry."
       },
@@ -2806,8 +2806,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.model.survival.aft.log_density",
-          "statadic.model.survival.aft.log_survival"
+          "statadic.law.survival.aft.log_density",
+          "statadic.law.survival.aft.log_survival"
         ],
         "relationship": "Explains the duration Jacobian for the lognormal, Weibull and log-logistic AFT families. For the latter two STATADIC uses log shape, so the corresponding log-time scale is its negative exponential transform, σ=exp(−ancillary)."
       },
@@ -2855,8 +2855,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.dyadic.fit.build_dyadic_design",
-          "statadic.operators.design.symmetric_dyadic_effects"
+          "statadic.estimation.least_squares.dyadic.fit.build_dyadic_design",
+          "statadic.numerics.linalg.dyadic.symmetric_dyadic_effects"
         ],
         "relationship": "STATADIC uses an undirected incidence row and drops the first node effect. The equality establishes why the omitted column is redundant given an intercept."
       },
@@ -2901,8 +2901,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.sharpe.sharpe_ratio",
-          "statadic.estimation.sharpe.sharpe_ratio_axis"
+          "statadic.estimation.moments.sharpe.sharpe_ratio",
+          "statadic.estimation.moments.sharpe.sharpe_ratio_axis"
         ],
         "relationship": "Matches STATADIC’s per-observation ratio with ddof=1. Lean totalizes division at zero; the scientific ratio requires positive volatility."
       },
@@ -2948,7 +2948,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gms.indicator_gms"
+          "statadic.inference.inequality.gms.indicator_gms"
         ],
         "relationship": "Matches indicator_gms with statistic=\"mmm\". The observed statistic uses all coordinates; the selected near-binding set is used for calibration."
       },
@@ -3002,8 +3002,8 @@
         "symbols": [
           "statadic.estimation.covariance.estimators.ledoit_wolf_sample_kernel",
           "statadic.estimation.covariance.estimators.LedoitWolf.estimate",
-          "statadic.api.estimand.Estimand.prepare",
-          "statadic.api.covariance.PreparedCovariance"
+          "statadic.estimand.core.Estimand.prepare",
+          "statadic.estimand.covariance.PreparedCovariance"
         ],
         "relationship": "LedoitWolf uses the ddof=0 sample, a common off-diagonal correlation target, and a clipped target weight. The theorem treats the target formula and the blend."
       }
@@ -3051,7 +3051,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.glm_covariance.glm_covariance"
+          "statadic.inference.covariance.glm.glm_covariance"
         ],
         "relationship": "The HC0 and HC1 branches use the actual fitted score Gram. This theorem takes the coefficient-response map as given."
       }
@@ -3100,7 +3100,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "In cluster-two-way mode STATADIC uses row-level intersection clusters because its prepared entity/time keys are unique."
       }
@@ -3148,7 +3148,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "Supplies the population pair restriction behind the unadjusted two-way covariance. Applying it to a projected influence contrast identifies precisely which population terms must vanish."
       }
@@ -3197,8 +3197,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.newey_west",
-          "statadic.operators.longrun.hall_centered_hac"
+          "statadic.numerics.linalg.longrun.newey_west",
+          "statadic.numerics.linalg.longrun.hall_centered_hac"
         ],
         "relationship": "For a pair separated by h positions the code gives weight 1−h/(b+1) for h≤b. Both orientations share the denominator n; the exact-real matrix is already symmetric."
       }
@@ -3246,7 +3246,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.newey_west"
+          "statadic.numerics.linalg.longrun.newey_west"
         ],
         "relationship": "Describes the raw, uncentered lag products in the Bartlett operator before weighting or symmetrizing."
       }
@@ -3341,7 +3341,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.simplex.simplex_qp_result"
+          "statadic.numerics.optimize.simplex.simplex_qp_result"
         ],
         "relationship": "The native solver checks curvature on the equality tangent and recomputes primal, dual and complementarity residuals at the returned iterate."
       }
@@ -3388,7 +3388,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.simplex.simplex_qp_result"
+          "statadic.numerics.optimize.simplex.simplex_qp_result"
         ],
         "relationship": "STATADIC obtains the linear minimum by filling weights in ascending gradient order, respecting the cap."
       }
@@ -3434,7 +3434,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.simplex.simplex_qp_result"
+          "statadic.numerics.optimize.simplex.simplex_qp_result"
         ],
         "relationship": "The native input-validity check compares the maximum weight with the reciprocal of the dimension."
       }
@@ -3481,8 +3481,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.psd.eig_clip",
-          "statadic.optimize.psd.repair_diagnostics"
+          "statadic.numerics.optimize.psd.eig_clip",
+          "statadic.numerics.optimize.psd.repair_diagnostics"
         ],
         "relationship": "Trace is the total variance reported for the raw and repaired covariance matrices."
       }
@@ -3528,7 +3528,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.psd.eig_clip"
+          "statadic.numerics.optimize.psd.eig_clip"
         ],
         "relationship": "Explains the eigenvalue clipping step before returning to data coordinates."
       }
@@ -3575,8 +3575,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.optimize.psd.eig_clip",
-          "statadic.optimize.psd.repair_diagnostics"
+          "statadic.numerics.optimize.psd.eig_clip",
+          "statadic.numerics.optimize.psd.repair_diagnostics"
         ],
         "relationship": "Matches eig_clip’s eigendecomposition, absolute floor and reconstruction."
       }
@@ -3620,7 +3620,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.optimize.backends.least_squares_result"
+          "statadic.numerics.optimize.backends.least_squares_result"
         ],
         "relationship": "Applies to least-squares solutions regardless of the chosen QR route."
       }
@@ -3665,8 +3665,8 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.operators.design.fwl_residualize",
-          "statadic.operators.design.fwl_coefficient"
+          "statadic.numerics.linalg.dyadic.fwl_residualize",
+          "statadic.numerics.linalg.dyadic.fwl_coefficient"
         ],
         "relationship": "Matches the separate residual arrays and their scalar slope."
       }
@@ -3710,7 +3710,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.optimize.integration.gaussian_log_survival"
+          "statadic.numerics.quadrature.gaussian_log_survival"
         ],
         "relationship": "GaussianIntegrationResult.effective_counts is the log-stabilized version of this ratio for each replicate."
       }
@@ -3756,7 +3756,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.optimize.integration.gaussian_log_survival"
+          "statadic.numerics.quadrature.gaussian_log_survival"
         ],
         "relationship": "STATADIC averages probabilities before taking the logarithm. Its relative standard error compares probability-scale replicates."
       }
@@ -3802,8 +3802,8 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.model.glm.glm_log_likelihood",
-          "statadic.model.glm.poisson_prediction"
+          "statadic.law.glm.glm_log_likelihood",
+          "statadic.law.glm.poisson_prediction"
         ],
         "relationship": "The exposure enters as a log offset; log-factorial terms cancel in likelihood differences."
       }
@@ -3935,7 +3935,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.optimize.psd.nearest_correlation"
+          "statadic.numerics.optimize.psd.nearest_correlation"
         ],
         "relationship": "The norm of the diagonal defect at this positive-part matrix is the residual computed by nearest_correlation, before the final spectral floor and scaling."
       },
@@ -3984,8 +3984,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.optimize.psd.nearest_correlation",
-          "statadic.optimize.psd.nearest_covariance"
+          "statadic.numerics.optimize.psd.nearest_correlation",
+          "statadic.numerics.optimize.psd.nearest_covariance"
         ],
         "relationship": "The unit-variance choice describes the final normalization in nearest_correlation. Composing it with the original standard deviations describes nearest_covariance in exact arithmetic."
       },
@@ -4038,7 +4038,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.resampling.permutation.kernel.permutation_test_kernel"
+          "statadic.inference.resampling.permutation_kernel.permutation_test_kernel"
         ],
         "relationship": "The upper-tail kernel counts values at least as large as the observed statistic. Its caller supplies the transformation schedule."
       }
@@ -4083,7 +4083,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.resampling.permutation.kernel.permutation_test_kernel"
+          "statadic.inference.resampling.permutation_kernel.permutation_test_kernel"
         ],
         "relationship": "Boundary witness for the inclusive add-one kernel."
       }
@@ -4130,7 +4130,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.resampling.permutation.kernel.permutation_test_kernel"
+          "statadic.inference.resampling.permutation_kernel.permutation_test_kernel"
         ],
         "relationship": "Full enumeration supplies a benchmark for the tail convention used by the sampled kernel."
       }
@@ -4174,8 +4174,8 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.model.glm.glm_log_likelihood",
-          "statadic.estimation.glm.BinomialLogitMLE.estimate"
+          "statadic.law.glm.glm_log_likelihood",
+          "statadic.estimation.likelihood.glm.BinomialLogitMLE.estimate"
         ],
         "relationship": "Matches the stable two-tail formula and the grouped binomial score used in estimation."
       }
@@ -4219,8 +4219,8 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.model.glm.glm_log_likelihood",
-          "statadic.estimation.glm.PoissonMLE.estimate"
+          "statadic.law.glm.glm_log_likelihood",
+          "statadic.estimation.likelihood.glm.PoissonMLE.estimate"
         ],
         "relationship": "Matches native log likelihood, score and information with the exposure already included in the predictor."
       }
@@ -4265,7 +4265,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.glm_covariance.glm_covariance"
+          "statadic.inference.covariance.glm.glm_covariance"
         ],
         "relationship": "This identifies where a working GLM variance enters the model-based covariance."
       }
@@ -4310,7 +4310,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.glm_covariance.glm_covariance"
+          "statadic.inference.covariance.glm.glm_covariance"
         ],
         "relationship": "Gives the coefficient limit underlying model and sandwich covariance for a regular fitted root."
       }
@@ -4355,7 +4355,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.glm_covariance.glm_covariance"
+          "statadic.inference.covariance.glm.glm_covariance"
         ],
         "relationship": "Matches model, HC0 and HC1 scaling for regular finite-dimensional fits."
       }
@@ -4400,7 +4400,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.glm_covariance.glm_covariance"
+          "statadic.inference.covariance.glm.glm_covariance"
         ],
         "relationship": "Connects the GLM root limit to the same covariance targeted by the fitted sandwich."
       }
@@ -4445,8 +4445,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.model.survival.aft.log_likelihood_rows",
-          "statadic.estimation.survival.fit.SurvivalML.estimate"
+          "statadic.law.survival.aft.log_likelihood_rows",
+          "statadic.estimation.likelihood.survival.fit.SurvivalML.estimate"
         ],
         "relationship": "Justifies discarding parameter-independent censoring contributions in the conditional AFT likelihood when combined with the baseline and Jacobian results."
       }
@@ -4706,7 +4706,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.inference.parameters.coefficient_intervals"
+          "statadic.inference.restriction.linear.coefficient_intervals"
         ],
         "relationship": "The confidence interval has nominal asymptotic coverage when its reference critical value encloses the claimed mass of Z."
       }
@@ -4748,7 +4748,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
           "statadic.estimation.spatial.iv.SpatialIV.estimate"
         ],
         "relationship": "FixedWeightGMM uses an affine derivative. SpatialIV forms instrument × outcome and negative instrument × regressor moment rows, so the same identity applies."
@@ -4798,7 +4798,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gmm.covariance.gmm_covariance"
+          "statadic.inference.covariance.moments.gmm_covariance"
         ],
         "relationship": "Matches gmm_covariance’s moment_map × variability × moment_map transpose on the square-root-sample-size scale."
       },
@@ -4847,8 +4847,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
-          "statadic.estimation.gmm.IteratedGMM.estimate"
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.IteratedGMM.estimate"
         ],
         "relationship": "Covers a supplied fixed weight or a data-dependent final weight with the stated joint limit. No convergence of the iterative update is implicit."
       },
@@ -4897,9 +4897,9 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
-          "statadic.estimation.gmm.IteratedGMM.estimate",
-          "statadic.inference.gmm.covariance.gmm_covariance"
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.IteratedGMM.estimate",
+          "statadic.inference.covariance.moments.gmm_covariance"
         ],
         "relationship": "Provides the stochastic step behind conventional covariance-based inference for affine GMM coefficients."
       },
@@ -4946,7 +4946,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gmm.covariance.gmm_covariance"
+          "statadic.inference.covariance.moments.gmm_covariance"
         ],
         "relationship": "Gives the covariance of the limit from the preceding distributional theorem and matches the point at which gmm_covariance composes its matrix sandwich."
       },
@@ -4993,8 +4993,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.IteratedGMM.estimate",
-          "statadic.inference.gmm.covariance.gmm_covariance"
+          "statadic.estimation.moments.gmm.IteratedGMM.estimate",
+          "statadic.inference.covariance.moments.gmm_covariance"
         ],
         "relationship": "Explains the efficient-weight target of IteratedGMM and why validity of an arbitrary fixed-weight covariance does not imply efficiency."
       },
@@ -5042,8 +5042,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
-          "statadic.estimation.gmm.IteratedGMM.estimate"
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.IteratedGMM.estimate"
         ],
         "relationship": "Applies to native rowwise affine problems, including a common deterministic derivative broadcast across rows, when the sampling and weight hypotheses hold."
       },
@@ -5090,7 +5090,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
           "statadic.estimation.spatial.iv.SpatialIV.estimate"
         ],
         "relationship": "Shows why a vanishing residual moment or a small overidentification statistic cannot establish instrument validity."
@@ -5137,7 +5137,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
           "statadic.estimation.spatial.iv.SpatialIV.estimate"
         ],
         "relationship": "Interprets why a first-stage or weighted-design rank flag is insufficient to justify strong-identification inference."
@@ -5184,7 +5184,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gmm.hypothesis.hansen_j_from_fit"
+          "statadic.inference.restriction.moments.hansen_j_from_fit"
         ],
         "relationship": "Matches count times gbarᵀ W gbar. It preserves the actual retained weight instead of granting every weight the same chi-square calibration."
       },
@@ -5230,7 +5230,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gmm.hypothesis.hansen_j_from_fit"
+          "statadic.inference.restriction.moments.hansen_j_from_fit"
         ],
         "relationship": "Identifies the reference law used by hansen_j_from_fit when the residual quadratic is an orthogonal projection in efficient whitened coordinates."
       },
@@ -5277,7 +5277,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.gmm.hypothesis.hansen_j_from_fit"
+          "statadic.inference.restriction.moments.hansen_j_from_fit"
         ],
         "relationship": "Proves the calibration of the retained-weight fitted-moment criterion when its actual weight whitens the true score covariance."
       },
@@ -5324,9 +5324,9 @@
       },
       "python": {
         "symbols": [
-          "statadic.estimation.gmm.FixedWeightGMM.estimate",
-          "statadic.estimation.gmm.IteratedGMM.estimate",
-          "statadic.inference.gmm.covariance.gmm_covariance"
+          "statadic.estimation.moments.gmm.FixedWeightGMM.estimate",
+          "statadic.estimation.moments.gmm.IteratedGMM.estimate",
+          "statadic.inference.covariance.moments.gmm_covariance"
         ],
         "relationship": "Provides the score-limit hypothesis of affine GMM inference for iid rows, while allowing arbitrary dependence among moments within a row."
       },
@@ -5372,9 +5372,9 @@
       },
       "python": {
         "symbols": [
-          "statadic.model.survival.aft.log_survival",
-          "statadic.model.survival.aft.log_density",
-          "statadic.model.survival.aft.log_likelihood_rows"
+          "statadic.law.survival.aft.log_survival",
+          "statadic.law.survival.aft.log_density",
+          "statadic.law.survival.aft.log_likelihood_rows"
         ],
         "relationship": "Identifies the Weibull inputs to the event and censor branches in the native AFT row likelihood."
       },
@@ -5421,9 +5421,9 @@
       },
       "python": {
         "symbols": [
-          "statadic.model.survival.aft.log_survival",
-          "statadic.model.survival.aft.log_density",
-          "statadic.model.survival.aft.log_likelihood_rows"
+          "statadic.law.survival.aft.log_survival",
+          "statadic.law.survival.aft.log_density",
+          "statadic.law.survival.aft.log_likelihood_rows"
         ],
         "relationship": "Identifies the lognormal inputs to the event and censor branches in the native AFT row likelihood."
       },
@@ -5479,8 +5479,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.newey_west",
-          "statadic.inference.linear_covariance.hac_covariance"
+          "statadic.numerics.linalg.longrun.newey_west",
+          "statadic.inference.covariance.linear.hac_covariance"
         ],
         "relationship": "The second taper counts available pairs after STATADIC divides all lags by N."
       }
@@ -5530,8 +5530,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.newey_west",
-          "statadic.inference.linear_covariance.hac_covariance"
+          "statadic.numerics.linalg.longrun.newey_west",
+          "statadic.inference.covariance.linear.hac_covariance"
         ],
         "relationship": "A sufficient fourth-order dependence restriction bounds fluctuations in the complete growing lag window."
       }
@@ -5582,8 +5582,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.newey_west",
-          "statadic.inference.linear_covariance.hac_covariance"
+          "statadic.numerics.linalg.longrun.newey_west",
+          "statadic.inference.covariance.linear.hac_covariance"
         ],
         "relationship": "All weights and the N denominator match the raw-score kernel. The sufficient fourth-order assumptions differ from the mixing assumptions in Newey and West’s Theorem 2."
       }
@@ -5632,8 +5632,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.hall_centered_hac",
-          "statadic.operators.longrun.newey_west"
+          "statadic.numerics.linalg.longrun.hall_centered_hac",
+          "statadic.numerics.linalg.longrun.newey_west"
         ],
         "relationship": "Quantifies the effect of Hall centering for an individual score contrast."
       }
@@ -5683,7 +5683,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.operators.longrun.hall_centered_hac"
+          "statadic.numerics.linalg.longrun.hall_centered_hac"
         ],
         "relationship": "Hall subtracts the sample mean before constructing all lag products. For a fixed vector, entrywise covariance is recovered from contrasts by polarization."
       }
@@ -5730,7 +5730,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "For an exact symmetric idempotent hat matrix the squared norm of each row is its diagonal. This step justifies residual replacement in the low-leverage regime."
       }
@@ -5777,7 +5777,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "The fitted result uses squared whitened residuals with the actual contrast coefficients. Under row independence the cross-moment conditions follow when the stated moments exist."
       }
@@ -5824,7 +5824,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "Matches the squared-influence scaling of STATADIC’s uncentered HC variants with no additional finite-sample multiplier."
       }
@@ -5872,7 +5872,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hc_covariance"
+          "statadic.inference.covariance.linear.hc_covariance"
         ],
         "relationship": "HC0 uses exponent zero; HC1, HC2 and HC3 use the corresponding constant or leverage-based correction. Fixed-dimensional covariance entries follow by applying the result to contrasts and their sums."
       }
@@ -5921,8 +5921,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.cluster_covariance",
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.linear.cluster_covariance",
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "One-way clustering retains within-cluster pairs; two-way clustering retains pairs sharing either label once under unique intersection rows."
       }
@@ -5971,8 +5971,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.cluster_covariance",
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.linear.cluster_covariance",
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "Applies to the unadjusted one-way and two-way cluster pair sums under the specified dependence pattern. Fitted-score substitution and finite multipliers require their own checks."
       }
@@ -6018,7 +6018,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "Driscoll–Kraay pools by actual period. The autocorrelation branch groups on entity and period and uses a within-entity block window."
       }
@@ -6069,9 +6069,9 @@
       ],
       "python": {
         "symbols": [
-          "statadic.inference.linear_covariance.hac_covariance",
-          "statadic.inference.linear_covariance.cluster_covariance",
-          "statadic.inference.panel_covariance.panel_covariance"
+          "statadic.inference.covariance.linear.hac_covariance",
+          "statadic.inference.covariance.linear.cluster_covariance",
+          "statadic.inference.covariance.panel.panel_covariance"
         ],
         "relationship": "Supports passing the true-score cluster and Bartlett covariance limits to fitted score contrasts under explicit row perturbation rates. For a b-lag time window, at most N(2b+1) ordered pairs contribute."
       }
@@ -6120,7 +6120,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.median.spatial_medians"
+          "statadic.geometry.frechet.median.spatial_medians"
         ],
         "relationship": "Applies separately to each unweighted group entering spatial_medians."
       }
@@ -6166,7 +6166,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.median.spatial_medians"
+          "statadic.geometry.frechet.median.spatial_medians"
         ],
         "relationship": "Explains how distinct fitted centers can have equal geometric-median objective."
       }
@@ -6212,8 +6212,8 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.discrepancy.transport.exact.balanced_wasserstein_from_cost_result",
-          "statadic.discrepancy.transport.exact.balanced_wasserstein_from_cost"
+          "statadic.geometry.discrepancy.transport.exact.balanced_wasserstein_from_cost_result",
+          "statadic.geometry.discrepancy.transport.exact.balanced_wasserstein_from_cost"
         ],
         "relationship": "The native route runs Hungarian assignment on a scaled powered cost, then roots the mean selected original cost."
       }
@@ -6259,7 +6259,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.discrepancy.transport.univariate.wasserstein_1d_power"
+          "statadic.geometry.discrepancy.transport.univariate.wasserstein_1d_power"
         ],
         "relationship": "On equal-mass real-line inputs at p=2 the integrated quantile cost reduces to this rank-matched sum divided by the common count."
       }
@@ -6305,7 +6305,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.discrepancy.transport.sliced.sliced_wasserstein_power_under_design"
+          "statadic.geometry.discrepancy.transport.sliced.sliced_wasserstein_power_under_design"
         ],
         "relationship": "Applies to equal-mass samples under a shared finite design, before taking the p-th root."
       }
@@ -6352,7 +6352,7 @@
       "obligations": [],
       "python": {
         "symbols": [
-          "statadic.discrepancy.transport.univariate.wasserstein_1d_power"
+          "statadic.geometry.discrepancy.transport.univariate.wasserstein_1d_power"
         ],
         "relationship": "The quantile implementation targets the weighted real-line primal problem; this result supplies a reference optimization and dual certificate on the same atoms."
       }
@@ -6401,7 +6401,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "The nonnegativity statement concerns the population or empirical full-pair energy for a suitable ground."
       }
@@ -6448,7 +6448,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "Identifies the integrability requirement that a finite empirical sample cannot establish by itself."
       }
@@ -6496,7 +6496,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.discrepancy.mmd.energy.energy_distance"
+          "statadic.geometry.discrepancy.mmd.energy.energy_distance"
         ],
         "relationship": "Applies when the selected native ground has the declared kernel-generating relation."
       }
@@ -6545,7 +6545,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.wasserstein.solve_wasserstein_free_support_barycentre"
+          "statadic.geometry.frechet.wasserstein.solve_wasserstein_free_support_barycentre"
         ],
         "relationship": "Identifies the native W2 target and a finite comparison class for auditing global optimality on small inputs."
       }
@@ -6594,8 +6594,8 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.mmd.kernel_barycentre_weights",
-          "statadic.geometry.barycentre.mmd.energy.energy_barycentre_weights"
+          "statadic.geometry.frechet.mmd.kernel_barycentre_weights",
+          "statadic.geometry.frechet.energy.energy_barycentre_weights"
         ],
         "relationship": "With the declared Hessian, cross term and constant this is the target-directed objective evaluated by the native kernel and distance-induced solvers."
       }
@@ -6643,7 +6643,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.wasserstein.solve_wasserstein_measure_barycentre"
+          "statadic.geometry.frechet.wasserstein.solve_wasserstein_measure_barycentre"
         ],
         "relationship": "Explains the exact-equal-weight guard on the native two-source route when p differs from two."
       }
@@ -6691,7 +6691,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.wasserstein.solve_wasserstein_measure_barycentre"
+          "statadic.geometry.frechet.wasserstein.solve_wasserstein_measure_barycentre"
         ],
         "relationship": "This identifies the returned support when the Hungarian permutation minimizes the stated powered costs in exact arithmetic."
       }
@@ -6740,7 +6740,7 @@
       ],
       "python": {
         "symbols": [
-          "statadic.geometry.barycentre.wasserstein.solve_wasserstein_measure_barycentre"
+          "statadic.geometry.frechet.wasserstein.solve_wasserstein_measure_barycentre"
         ],
         "relationship": "Covers the native equal-weight interpolation path, including real noninteger p and p=1."
       }
@@ -6966,7 +6966,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "A posteriori exact-real check of PanelProjection.values and its removed effects for arbitrary observed rosters."
       },
@@ -7013,7 +7013,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "A closed-form reference for complete panels, including the ordinary unweighted balanced case."
       },
@@ -7061,7 +7061,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "Identifies the exact mathematical interpretation of zero change in the native entity-then-time order."
       },
@@ -7107,7 +7107,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "Counterexample to applying the balanced one-pass rule to a prepared unbalanced panel."
       },
@@ -7156,7 +7156,7 @@
       },
       "python": {
         "symbols": [
-          "statadic.operators.panel.absorb_panel_effects"
+          "statadic.numerics.linalg.absorption.absorb_panel_effects"
         ],
         "relationship": "Connects finite iterations of the exact-real native sweep to its intended joint weighted least-squares target."
       },
@@ -7202,8 +7202,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_diagnostics.durbin_watson",
-          "statadic.api.diagnostics.DurbinWatson"
+          "statadic.inference.specification.linear.durbin_watson",
+          "statadic.hypothesis.specification.DurbinWatson"
         ],
         "relationship": "durbin_watson computes this ratio over the actual OLS residuals in retained row order and reports it without a p-value."
       },
@@ -7250,9 +7250,9 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_diagnostics.jarque_bera",
-          "statadic.inference.linear_diagnostics.residual_moments",
-          "statadic.api.diagnostics.JarqueBera"
+          "statadic.inference.specification.linear.jarque_bera",
+          "statadic.inference.specification.linear.residual_moments",
+          "statadic.hypothesis.specification.JarqueBera"
         ],
         "relationship": "jarque_bera evaluates n/6 (S^2 + (K-3)^2/4) with biased moments of the actual OLS residuals."
       },
@@ -7300,8 +7300,8 @@
       },
       "python": {
         "symbols": [
-          "statadic.inference.linear_diagnostics.ols_influence",
-          "statadic.api.diagnostics.Influence"
+          "statadic.inference.specification.linear.ols_influence",
+          "statadic.hypothesis.specification.Influence"
         ],
         "relationship": "ols_influence forms the deleted-row variance from the full fit's residual sum of squares, residual and leverage, and studentizes each residual with it."
       },

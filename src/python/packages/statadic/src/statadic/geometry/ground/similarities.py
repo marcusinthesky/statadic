@@ -35,7 +35,8 @@ reference on the sphere, it is not in the space at all.
 The **Gram** moves with ``z0``; the MMD built from it does not, because the
 ``z0`` terms cancel against a total mass of zero (measured: relative deviation
 ``< 9e-13`` across ``z0`` in ``{0, 5, -20}``). That cancellation is why
-:mod:`statadic.discrepancy.mmd` may pick the reference for the caller — **and why it
+:mod:`statadic.geometry.discrepancy.mmd` may pick the reference for the caller — **and
+why it
 must pick the same one for all three blocks**. Writing
 ``mean(K_xx) + mean(K_yy) - 2 mean(K_xy)`` with references ``a``, ``b``, ``c``
 leaves ``2(A_a - A_c) + 2(B_b - B_c)`` behind, which vanishes only when
@@ -45,7 +46,7 @@ statistic resolves its own shared reference before calling in.
 
 Note the **unhalved** convention: the manuscript's ``(1/2)(d + d - d)`` kernel is
 this one scaled by ``1/2``, which is where its ``sqrt(2)`` comes from. See
-:mod:`statadic.discrepancy.mmd` for the constant that pairs with each.
+:mod:`statadic.geometry.discrepancy.mmd` for the constant that pairs with each.
 """
 
 from __future__ import annotations
@@ -162,7 +163,8 @@ def cosine_gram(
 
     Note that this normalizes **per row**, before any pooling. It is therefore
     *not* the prototype chord in
-    :func:`statadic.discrepancy.mmd.cosine_mean_mmd`; that function consumes one
+    :func:`statadic.geometry.discrepancy.mmd.cosine_mean_mmd`; that function consumes
+    one
     already-normalized prototype per object and performs no normalization. On
     already-unit-norm rows this function coincides with :func:`linear_gram`.
 
@@ -199,7 +201,7 @@ def rbf_gram(
 
     PSD: unconditionally, and characteristic on ``R^d`` for any positive
     bandwidth — which is why
-    :data:`statadic.discrepancy.mmd.DECLARED_BRANDS` gives ``mmd[rbf]`` the
+    :data:`statadic.geometry.discrepancy.mmd.DECLARED_BRANDS` gives ``mmd[rbf]`` the
     ``NegativeType`` brand.
 
     ``bandwidth`` is **required**. Bandwidth selection, the median heuristic and
@@ -287,7 +289,7 @@ def distance_induced_gram(
             (static). Its negative-type domain depends on ``metric``; this raw
             helper does not check the pairing because the precondition belongs
             to the statistic — see
-            :func:`statadic.discrepancy.mmd.energy.energy_distance`.
+            :func:`statadic.geometry.discrepancy.mmd.energy.energy_distance`.
         reference: The point ``z0``, shape (d,). Defaults to the origin, which
             is correct for ``metric="euclidean"`` (it is then exactly the Lean
             kernel) and **invalid** for ``metric="angular"``, whose

@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-import importlib
 import inspect
-import pkgutil
 from typing import TYPE_CHECKING, Final
 
 import pytest
-import statadic.api
-from statadic.api import capabilities
-from statadic.api.base import Model
+from statadic.model import capabilities
+from statadic.model.lifecycle import Model
+
+from ..._workflow import WORKFLOW_PACKAGES, walk_workflow_modules
+
+_WORKFLOW_PREFIXES = tuple(f"statadic.{name}" for name in WORKFLOW_PACKAGES)
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -121,14 +122,13 @@ def audit(cls: type) -> list[str]:
 
 
 def concrete_api_classes() -> list[type]:
-    """Every concrete class defined in ``statadic.api``, private modules included."""
+    """Every concrete class defined in the workflow packages, privates included."""
     found: dict[type, None] = {}
-    for info in pkgutil.walk_packages(statadic.api.__path__, "statadic.api."):
-        module = importlib.import_module(info.name)
+    for module in walk_workflow_modules():
         for value in vars(module).values():
             if (
                 inspect.isclass(value)
-                and value.__module__.startswith("statadic.api")
+                and value.__module__.startswith(_WORKFLOW_PREFIXES)
                 and not getattr(value, "_is_protocol", False)
                 and value.__module__ != capabilities.__name__
             ):

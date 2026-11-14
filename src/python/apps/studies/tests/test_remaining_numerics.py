@@ -6,13 +6,13 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.discrepancy.mmd.energy.balancing.mixture import (
+from statadic.estimation.moments.sharpe import sample_skew_kurtosis
+from statadic.geometry.discrepancy.mmd.energy.balance_mixture import (
     energy_distance_kernel_mixture,
 )
-from statadic.estimation.sharpe import sample_skew_kurtosis
-from statadic.inference.wolak import chi_bar_squared_weights_mc_kernel
-from statadic.operators.longrun import hall_centered_hac, newey_west
-from statadic.sample.packed import PackedClouds, pack
+from statadic.inference.inequality.wolak import chi_bar_squared_weights_mc_kernel
+from statadic.measure.clouds import PackedClouds, pack
+from statadic.numerics.linalg.longrun import hall_centered_hac, newey_west
 from statadic_studies.adapters import rng
 from statadic_studies.adapters import run_trial as run_remaining_numerics
 from statadic_studies.adapters.discrepancy.fixed_mixture import (

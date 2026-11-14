@@ -143,13 +143,13 @@ def prepare_estimator(case: str, side: str, inputs: tuple) -> tuple[Callable, tu
         import jax.numpy as jnp
 
         if case in {"binomial-logit", "poisson-offset"}:
-            from statadic.estimation.glm import (
+            from statadic.estimation.likelihood.glm import (
                 BinomialLogitMLE,
                 BinomialProblem,
                 PoissonMLE,
                 PoissonProblem,
             )
-            from statadic.inference.glm_covariance import glm_covariance
+            from statadic.inference.covariance.glm import glm_covariance
 
             def execute(design, outcome, offset, role):
                 fit = (
@@ -173,7 +173,7 @@ def prepare_estimator(case: str, side: str, inputs: tuple) -> tuple[Callable, tu
                 }
 
         elif case in {"gamma-estimated", "nb2-estimated"}:
-            from statadic.estimation.likelihood import (
+            from statadic.estimation.likelihood.conditional import (
                 EstimatedDispersion,
                 GammaMLE,
                 LikelihoodProblem,
@@ -215,9 +215,9 @@ def prepare_estimator(case: str, side: str, inputs: tuple) -> tuple[Callable, tu
 
         elif case in {"affine-gmm-actual-weight", "affine-gmm-iterated-hac"}:
             from statadic.core.equations import MeanCenteredLongRun, PlainLongRun
-            from statadic.estimation.gmm import FixedWeightGMM, IteratedGMM
-            from statadic.estimation.moments import AffineMomentProblem
-            from statadic.inference.gmm import gmm_covariance
+            from statadic.estimation.moments.gmm import FixedWeightGMM, IteratedGMM
+            from statadic.estimation.moments.problem import AffineMomentProblem
+            from statadic.inference.covariance.moments import gmm_covariance
 
             def execute(moments, derivative, weight):
                 fit = (

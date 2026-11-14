@@ -115,17 +115,19 @@ DISCREPANCY_VARIANT_STUDIES = {
 }
 DISCREPANCY_VARIANT_SYMBOLS = {
     "mmd.kernel-estimation": [
-        "statadic.discrepancy.mmd.scalar.mmd_squared",
-        "statadic.discrepancy.mmd.scalar.mmd",
+        "statadic.geometry.discrepancy.mmd.scalar.mmd_squared",
+        "statadic.geometry.discrepancy.mmd.scalar.mmd",
     ],
     "energy.ground-estimation": [
-        "statadic.discrepancy.mmd.energy.scalar.energy_distance",
-        "statadic.discrepancy.mmd.energy.weighted.weighted_energy_cross",
+        "statadic.geometry.discrepancy.mmd.energy.scalar.energy_distance",
+        "statadic.geometry.discrepancy.mmd.energy.weighted.weighted_energy_cross",
     ],
     "discrepancy.atom-mass-estimation": [
-        "statadic.discrepancy.mmd.weighted.weighted_mmd_cross",
-        "statadic.discrepancy.mmd.energy.weighted.weighted_energy_cross",
-        "statadic.sample.packed.PackedClouds.from_clouds",
+        "statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_cross",
+        "statadic.geometry.discrepancy.mmd.energy.weighted.weighted_energy_cross",
+        "statadic.measure.clouds.PackedClouds.from_clouds",
     ],
-    "mmd.prototype-direction": ["statadic.discrepancy.mmd.scalar.cosine_mean_mmd"],
+    "mmd.prototype-direction": [
+        "statadic.geometry.discrepancy.mmd.scalar.cosine_mean_mmd"
+    ],
 }

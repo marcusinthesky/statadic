@@ -20,7 +20,7 @@ from jax.typing import DTypeLike  # noqa: TC002
 from jaxtyping import Float, Int
 
 from statadic.core.typing import Array, ArrayLike, PRNGKey  # noqa: TC001
-from statadic.estimation.sharpe import sharpe_ratio_axis
+from statadic.estimation.moments.sharpe import sharpe_ratio_axis
 from statadic.inference.resampling.block_length import (
     optimal_block_length,
     optimal_block_length_result,
@@ -29,7 +29,7 @@ from statadic.inference.sharpe.difference import (  # noqa: TC001 -- runtime ann
     FloatScalar,
     ReturnVector,
 )
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     circular_block_bootstrap_indices,
     circular_block_bootstrap_indices_kernel,
 )

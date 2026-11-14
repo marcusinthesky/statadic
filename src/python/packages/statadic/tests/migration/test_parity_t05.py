@@ -22,10 +22,10 @@ from typing import TYPE_CHECKING, cast
 import jax.numpy as jnp
 import pytest
 from jax import random
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     mixture_energy_distance,
 )
-from statadic.discrepancy.mmd.energy.mixture import _energy_terms
+from statadic.geometry.discrepancy.mmd.energy.mixture import _energy_terms
 from statadic.geometry.ground.metrics import (
     EUCLIDEAN,
     cdist,
@@ -33,7 +33,7 @@ from statadic.geometry.ground.metrics import (
 from statadic.inference.mixture import (
     corrected_mixture_test,
 )
-from statadic.sample.packed import PackedClouds, pack
+from statadic.measure.clouds import PackedClouds, pack
 
 if TYPE_CHECKING:
     from statadic.geometry.ground.config import (

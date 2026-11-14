@@ -65,12 +65,12 @@ dead-code:
 
 # Check package source/tests without depending on workspace Pyrefly discovery.
 typecheck *args:
-    env -u VIRTUAL_ENV uv run --locked python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "--project-excludes", "src/statadic/sample/alternatives.py", "--project-excludes", "src/statadic/sample/reduction.py", "--project-excludes", "src/statadic/core/matrices.py", "--project-excludes", "src/statadic/core/transforms.py", "src", "tests", "scripts", *sys.argv[1:]], check=True)' "$@"
+    env -u VIRTUAL_ENV uv run --locked python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "--project-excludes", "src/statadic/measure/alternatives.py", "--project-excludes", "src/statadic/measure/reduction.py", "--project-excludes", "src/statadic/core/matrices.py", "--project-excludes", "src/statadic/core/transforms.py", "src", "tests", "scripts", *sys.argv[1:]], check=True)' "$@"
     just typecheck-shapes
 
 # Check native shape owners and reject invalid compositions in an isolated environment.
 typecheck-shapes *args:
-    env -u VIRTUAL_ENV uv run --locked --isolated --group shapes python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "src/statadic/core/matrices.py", "src/statadic/core/transforms.py", "src/statadic/sample/alternatives.py", "src/statadic/sample/reduction.py", "tests/shapes", *sys.argv[1:]], check=True)' "$@"
+    env -u VIRTUAL_ENV uv run --locked --isolated --group shapes python -c 'import subprocess, sys; subprocess.run(["pyrefly", "check", "-c", "/dev/null", "--preset", "strict", "--threads", "2", "--python-version", "3.13", "--python-interpreter-path", sys.executable, "--search-path", ".", "src/statadic/core/matrices.py", "src/statadic/core/transforms.py", "src/statadic/measure/alternatives.py", "src/statadic/measure/reduction.py", "tests/shapes", *sys.argv[1:]], check=True)' "$@"
     env -u VIRTUAL_ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 uv run --locked --isolated --group shapes pytest -q -p no:monitor -p no:tach -n 0 --no-testmon tests/shapes
 
 # Report which declared return shapes Pyrefly actually checks.

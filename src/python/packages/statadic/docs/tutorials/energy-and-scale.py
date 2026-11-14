@@ -21,9 +21,9 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.representation import Energy
-    from statadic.discrepancy.mmd.energy import energy_distance
-    from statadic.sample.packed import pack
+    from statadic.observation.geometry import Energy
+    from statadic.geometry.discrepancy.mmd.energy import energy_distance
+    from statadic.measure.clouds import pack
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#9bbaff" if DARK else "#1d3f8f"
@@ -262,7 +262,7 @@ def _():
     ## Next steps
 
     - [Compare distribution-valued observations](distributions.py).
-    - [Review distance properties](../reference/catalogue-metrics.md).
+    - [Review distance properties](../reference/energy.md#distance-laws).
     """)
     return
 

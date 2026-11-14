@@ -22,16 +22,16 @@ from scipy.integrate import quad
 from scipy.optimize import minimize_scalar
 from scipy.special import log_ndtr
 from scipy.stats import multivariate_normal, norm, qmc
-from statadic.estimation.survival import (
+from statadic.estimation.likelihood.survival import (
     SpatialSurvivalML,
     SpatialSurvivalProblem,
     prepare_spatial_survival_period,
     spatial_survival_log_likelihood,
 )
-from statadic.estimation.survival.spatial import _blocks, _evaluate
-from statadic.model.survival import LaggedLogTime
-from statadic.operators.spatial import ObservedSpatialPeriod, prepare_spatial_weights
-from statadic.optimize.integration import (
+from statadic.estimation.likelihood.survival.spatial import _blocks, _evaluate
+from statadic.geometry.graph import ObservedSpatialPeriod, prepare_spatial_weights
+from statadic.law.survival import LaggedLogTime
+from statadic.numerics.quadrature import (
     GaussianIntegration,
     IntegrationDesign,
     gaussian_log_survival,

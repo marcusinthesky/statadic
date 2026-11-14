@@ -6,7 +6,8 @@ The similarity-side sibling of ``test_metrics.py``: four kernel callables
 dispatcher that applies them.
 
 What is **not** here: the energy/MMD parity identity, which is a property of the
-statistic rather than of the Gram and lives in ``tests/discrepancy/test_mmd.py``.
+statistic rather than of the Gram and lives in
+``tests/geometry/discrepancy/test_mmd.py``.
 PSD-ness is checked here, because
 :data:`statadic.geometry.ground.similarities.DECLARED_PSD`
 is this module's declaration to keep.

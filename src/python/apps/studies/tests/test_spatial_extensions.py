@@ -12,7 +12,7 @@ from statadic.estimation.spatial import (
     SpatialPanelProblem,
     SpatialProblem,
 )
-from statadic.operators.spatial import (
+from statadic.geometry.graph import (
     prepare_spatial_panel_weights,
     prepare_spatial_weights,
 )

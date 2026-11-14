@@ -18,8 +18,8 @@ from jax.typing import (
 )
 
 from statadic.core.random import cell_key
-from statadic.estimation.dyadic.contracts import DyadicComputationError
-from statadic.estimation.dyadic.solve import _least_squares_host
+from statadic.estimation.least_squares.dyadic.contracts import DyadicComputationError
+from statadic.estimation.least_squares.dyadic.solve import _least_squares_host
 from statadic.inference.dyadic._validation import (
     validate_bootstrap_design,
     validate_inference,
@@ -32,9 +32,9 @@ from statadic.inference.dyadic.contracts import (
     DyadicBootstrapResult,
     NodeCountSchedule,
 )
-from statadic.model.dyadic import DyadicInputError
-from statadic.model.dyadic.validation import _validate_sample
-from statadic.operators.design import (  # noqa: TC001
+from statadic.law.dyadic import DyadicInputError
+from statadic.law.dyadic.validation import _validate_sample
+from statadic.numerics.linalg.dyadic import (  # noqa: TC001
     ArrayView,
     NodeIndex,
     drop_collinear_columns,
@@ -49,7 +49,7 @@ __all__ = [
 
 if TYPE_CHECKING:
     from statadic.inference.dyadic.contracts import DyadicInference
-    from statadic.model.dyadic import DyadicSample
+    from statadic.law.dyadic import DyadicSample
 
 _MATRIX_DIMENSIONS = 2
 _INTEGER_TYPES = (int, jnp.integer)

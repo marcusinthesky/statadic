@@ -442,8 +442,11 @@ def prepare(
         import jax.numpy as jnp
 
         if case in {"ols-hc3", "wls-hc3"}:
-            from statadic.estimation.linear import LeastSquares, LinearProblem
-            from statadic.inference.linear_covariance import hc_covariance
+            from statadic.estimation.least_squares.linear import (
+                LeastSquares,
+                LinearProblem,
+            )
+            from statadic.inference.covariance.linear import hc_covariance
 
             def execute(x, y, *roles):
                 problem = (
@@ -459,9 +462,9 @@ def prepare(
                 }
 
         elif case == "weighted-rbf-value-gradient":
-            from statadic.discrepancy.mmd import mmd_squared
+            from statadic.geometry.discrepancy.mmd import mmd_squared
             from statadic.geometry.ground.similarities import RBFKernel
-            from statadic.sample.packed import PackedClouds
+            from statadic.measure.clouds import PackedClouds
 
             # Checked factories belong to preparation. Both carriers retain
             # coordinates and masses as dynamic leaves of the measured call.
@@ -487,7 +490,7 @@ def prepare(
             return description, jax.jit(execute), (left, right)
 
         else:
-            from statadic.optimize.simplex import simplex_qp_result
+            from statadic.numerics.optimize.simplex import simplex_qp_result
 
             def execute(quadratic, linear):
                 fit = simplex_qp_result(

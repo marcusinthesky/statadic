@@ -7,14 +7,22 @@ from typing import TYPE_CHECKING
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.artifacts import load_predictor
-from statadic.api.comparison import PermutationPlan
-from statadic.api.data import MeasureColumn, Observations
-from statadic.api.design import Categorical, DistanceToLandmarks, Intercept, Linear
-from statadic.api.hypotheses import Hypothesis
-from statadic.api.inference import HC
-from statadic.api.ordination import DistanceGram, Ordination, PrincipalCoordinates
-from statadic.api.regression import (
+from statadic.geometry.ground.similarities import RBFKernel
+from statadic.hypothesis.core import Hypothesis
+from statadic.hypothesis.homogeneity import PermutationPlan
+from statadic.hypothesis.uncertainty import HC
+from statadic.measure.clouds import PackedClouds
+from statadic.observation.data import MeasureColumn, Observations
+from statadic.observation.design import (
+    Categorical,
+    DistanceToLandmarks,
+    Intercept,
+    Linear,
+)
+from statadic.observation.geometry import MMD, Energy, Wasserstein1D
+from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
+from statadic.prediction.artifacts import load_predictor
+from statadic.regression import (
     GeometricResponse,
     Observed,
     Poisson,
@@ -23,16 +31,13 @@ from statadic.api.regression import (
     Regression,
     ResponsePermutation,
 )
-from statadic.api.reporting import PlotSpec, _render_pgfplots
-from statadic.api.representation import MMD, Energy, Wasserstein1D
-from statadic.geometry.ground.similarities import RBFKernel
-from statadic.sample.packed import PackedClouds
+from statadic.report.core import PlotSpec, _render_pgfplots
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from statadic.api.regression import GeometricResult, GeometricTestEvidence
-    from statadic.api.representation import GeometrySpec
+    from statadic.observation.geometry import GeometrySpec
+    from statadic.regression import GeometricResult, GeometricTestEvidence
 
 
 def _geometric_evidence(

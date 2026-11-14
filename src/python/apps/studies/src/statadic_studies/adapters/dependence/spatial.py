@@ -6,9 +6,9 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from statadic.estimation.spatial import ML, SAR, SLXLeastSquares, SpatialProblem
-from statadic.inference.linear_covariance import classical_covariance, hc_covariance
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.inference.covariance.linear import classical_covariance, hc_covariance
 from statadic.inference.spatial import spatial_covariance
-from statadic.operators.spatial import prepare_spatial_weights
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence._common import _inference, _record

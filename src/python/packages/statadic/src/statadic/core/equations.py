@@ -22,15 +22,15 @@ Shared contracts, separate producers
 -------------------------------------
 The contracts name equations and variability without importing a concrete
 statistical family. Estimation retains fitted contributions and derivatives;
-:mod:`statadic.operators.longrun` constructs variability; inference composes them
+:mod:`statadic.numerics.linalg.longrun` constructs variability; inference composes them
 under explicit assumptions. Shared contracts let those producers depend on the
 same vocabulary without reversing the dependency DAG. The analogous matrix
 boundary joins :mod:`statadic.geometry.ground` to discrepancy and geometry consumers.
 
 Omega's scheme is a soundness fact, not a label
 ------------------------------------------------
-:mod:`statadic.estimation.gmm` retains the selected variability scheme. Legacy
-fixed-moment tests in :mod:`statadic.inference.gmm.hypothesis` also expose a
+:mod:`statadic.estimation.moments.gmm` retains the selected variability scheme. Legacy
+fixed-moment tests in :mod:`statadic.inference.restriction.moments` also expose a
 ``centered: Static[bool]`` option. Plain Newey-West retains the raw moment
 cross-products; Hall's (1987) mean-centered form subtracts the sample moment
 mean first. A boolean cannot express that a particular consumer requires one
@@ -152,7 +152,7 @@ class PlainLongRun(VariabilityScheme):
 
     Correct where the estimating function is mean-zero by construction — a Wald
     statistic on a correctly specified moment condition. Produced by
-    :func:`statadic.operators.longrun.newey_west_variability`.
+    :func:`statadic.numerics.linalg.longrun.newey_west_variability`.
     """
 
 
@@ -166,7 +166,7 @@ class MeanCenteredLongRun(VariabilityScheme):
     The brand records that mean centering occurred; it does not certify a
     profiled Hansen ``J`` or universal misspecification-robust GMM inference.
     Produced by
-    :func:`statadic.operators.longrun.hall_centered_variability`.
+    :func:`statadic.numerics.linalg.longrun.hall_centered_variability`.
     """
 
 
@@ -262,7 +262,7 @@ class EstimatingFunction(Generic[EquationT]):  # noqa: UP046  # PEP 695 loses va
             ``(observations, moments)`` — or ``(*batch, observations, moments)``
             once a transform has batched it. Rows are observations and columns
             are equation components, matching the ``g`` argument
-            :mod:`statadic.inference.gmm` already takes.
+            :mod:`statadic.inference.restriction.moments` already takes.
 
     Examples:
         >>> import jax.numpy as jnp
@@ -420,7 +420,7 @@ def _variability_matrix[
     """Construct ``Omega`` from a producer that knows which scheme it formed.
 
     The private door in-package meat producers use, so a producer writes its
-    scheme once, in its return type. :mod:`statadic.operators.longrun` is the only
+    scheme once, in its return type. :mod:`statadic.numerics.linalg.longrun` is the only
     caller today.
 
     Args:
@@ -789,7 +789,7 @@ def parameter_covariance[
 
     ``Omega`` must estimate the variability of the square-root-count scaled
     mean equation. For row contributions and the HAC producers in
-    :mod:`statadic.operators.longrun`, this is the long-run covariance of one row,
+    :mod:`statadic.numerics.linalg.longrun`, this is the long-run covariance of one row,
     formed with denominator ``T`` at every lag. The result is
     ``sandwich_covariance(...).values / T * finite_sample_correction``.
 
@@ -803,8 +803,9 @@ def parameter_covariance[
     count. Aggregate producers must establish retained-row alignment, parameter
     order and a common evaluation parameter themselves; matching dimensions or
     a static descriptor cannot establish those facts. The fit-aware providers
-    in :mod:`statadic.inference.linear_covariance` consume the actual
-    :class:`statadic.estimation.linear.LinearFit` that owns its complete retained
+    in :mod:`statadic.inference.covariance.linear` consume the actual
+    :class:`statadic.estimation.least_squares.linear.LinearFit` that owns its complete
+    retained
     arrays. Do not pair newly prepared scores with stale masks.
 
     Shape/layout errors raise ``ValueError``. Invalid numeric inputs (including

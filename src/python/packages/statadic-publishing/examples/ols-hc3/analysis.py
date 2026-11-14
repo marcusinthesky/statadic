@@ -7,11 +7,11 @@ from pathlib import Path
 
 import jax
 import polars as pl
-from statadic.api.artifacts import save_analysis
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.plots import residual_plot
-from statadic.api.regression import Regression
+from statadic.hypothesis.uncertainty import HC
+from statadic.observation.design import Intercept, Linear
+from statadic.prediction.artifacts import save_analysis
+from statadic.regression import Regression
+from statadic.regression.plots import residual_plot
 from statadic_evidence import write_json
 
 

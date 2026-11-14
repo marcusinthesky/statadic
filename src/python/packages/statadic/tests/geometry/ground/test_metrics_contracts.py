@@ -32,10 +32,10 @@ from statadic.geometry.ground.metrics import (
     sphere_angular_distance,
     sphere_chord_distance,
 )
-from statadic.sample.evidence import checked_unit_norm_clouds
-from statadic.sample.packed import (
+from statadic.measure.clouds import (
     pack,
 )
+from statadic.measure.evidence import checked_unit_norm_clouds
 
 from ..._typing import check_types
 
@@ -105,7 +105,7 @@ from statadic.geometry.ground.metrics import (  # noqa: TC001
     GroundDistance,
     checked_cloud_pdist,
 )
-from statadic.sample.evidence import CheckedClouds, Unchecked
+from statadic.measure.evidence import CheckedClouds, Unchecked
 
 type SphereDirect = TransformContract[
     L2UnitSphereSpace,

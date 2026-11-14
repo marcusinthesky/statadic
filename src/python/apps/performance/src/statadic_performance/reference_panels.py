@@ -155,7 +155,7 @@ def prepare_panel(case: str, side: str, inputs: tuple) -> tuple[Callable, tuple]
 
         if case == "spatial-panel-sar-within":
             from statadic.estimation.spatial.panel import PanelML, SpatialPanelProblem
-            from statadic.operators.spatial import prepare_spatial_panel_weights
+            from statadic.geometry.graph import prepare_spatial_panel_weights
 
             weights = prepare_spatial_panel_weights(
                 inputs[2], period_ids=np.arange(len(inputs[0]))
@@ -194,7 +194,7 @@ def prepare_panel(case: str, side: str, inputs: tuple) -> tuple[Callable, tuple]
             ObservedPanelML,
             ObservedSpatialPanelProblem,
         )
-        from statadic.operators.spatial import (
+        from statadic.geometry.graph import (
             ObservedSpatialPeriod,
             prepare_spatial_weights,
         )
