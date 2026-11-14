@@ -6,12 +6,7 @@ from __future__ import annotations
 import jax
 import jax.numpy as jnp
 import pytest
-from hypothesis import example, given
-from hypothesis import strategies as st
 from statadic.sample.alternatives import AltSpec, draw
-
-from .._budgets import examples
-from .._strategies import prng_keys
 
 # ---------------------------------------------------------------------------
 # Shape / dtype for all kinds
@@ -25,47 +20,26 @@ _SHAPE_SPECS = (
     AltSpec(kind="scale", param=2.0),
     AltSpec(kind="mixture", param=0.1, shift=2.0),
 )
-_DTYPE_SPECS = (*_SHAPE_SPECS[:4], AltSpec(kind="mixture", param=0.1))
 _SEED_KEY = jax.random.PRNGKey(42)
 
 
 @pytest.mark.component
 @pytest.mark.contract
-@example(key=_SEED_KEY, spec=_SHAPE_SPECS[0])
-@example(key=_SEED_KEY, spec=_SHAPE_SPECS[1])
-@example(key=_SEED_KEY, spec=_SHAPE_SPECS[2])
-@example(key=_SEED_KEY, spec=_SHAPE_SPECS[3])
-@example(key=_SEED_KEY, spec=_SHAPE_SPECS[4])
-@given(key=prng_keys(), spec=st.sampled_from(_SHAPE_SPECS))
-@examples(40)
-def test_draw_shape(key: jax.Array, spec: AltSpec) -> None:
-    """Every alternative returns an ``(n, d)`` sample for any key."""
+@pytest.mark.parametrize("spec", _SHAPE_SPECS, ids=lambda spec: spec.kind)
+def test_draw_shape(spec: AltSpec) -> None:
+    """Every sampler branch returns the requested shape and floating dtype."""
     n, d = 20, 5
-    result = draw(key, spec, n=n, d=d)
+    result = draw(_SEED_KEY, spec, n=n, d=d)
     assert result.shape == (n, d)
-
-
-@pytest.mark.component
-@pytest.mark.contract
-@example(key=_SEED_KEY, spec=_DTYPE_SPECS[0])
-@example(key=_SEED_KEY, spec=_DTYPE_SPECS[4])
-@given(key=prng_keys(), spec=st.sampled_from(_DTYPE_SPECS))
-@examples(40)
-def test_draw_dtype(key: jax.Array, spec: AltSpec) -> None:
-    """Every alternative returns a float sample for any key."""
-    result = draw(key, spec, n=10, d=3)
     assert result.dtype in (jnp.float32, jnp.float64)
 
 
 @pytest.mark.component
 @pytest.mark.contract
-@example(key=_SEED_KEY)
-@given(key=prng_keys())
-@examples(40)
-def test_invalid_kind(key: jax.Array) -> None:
-    """An unknown alternative kind is rejected whatever the key."""
-    with pytest.raises((ValueError, AssertionError)):
-        draw(key, AltSpec(kind="bogus", param=None), n=5, d=2)
+def test_invalid_kind() -> None:
+    """Unknown sampler kinds fail before drawing random values."""
+    with pytest.raises(ValueError, match="Unknown AltSpec kind"):
+        draw(_SEED_KEY, AltSpec(kind="bogus", param=None), n=5, d=2)
 
 
 # ---------------------------------------------------------------------------

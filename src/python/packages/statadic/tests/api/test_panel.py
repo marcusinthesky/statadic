@@ -566,15 +566,12 @@ def test_panel_prepare_checks_entity_and_integer_time_roles() -> None:
     )
     panel = PanelLayout("entity", "time")
     terms = Linear("x")
-    for model in (
-        Regression("y", terms, effects="unit", structure=panel),
-        Regression("y", terms, effects="unit", structure=panel),
-    ):
-        with pytest.raises(ValueError, match="integer key distances"):
-            model.prepare(float_time)
-        with pytest.raises(KeyError):
-            model.prepare(no_entity)
-        assert model.prepare(data).context.observations is data
+    model = Regression("y", terms, effects="unit", structure=panel)
+    with pytest.raises(ValueError, match="integer key distances"):
+        model.prepare(float_time)
+    with pytest.raises(KeyError):
+        model.prepare(no_entity)
+    assert model.prepare(data).context.observations is data
 
 
 @pytest.mark.integration

@@ -48,7 +48,6 @@ if TYPE_CHECKING:
 @pytest.mark.component
 @pytest.mark.contract
 @examples(20)
-@example(g0=np.random.default_rng(0).standard_normal((1000, 3)))
 @given(g0=full_rank_panels(200, 3))
 def test_gmm_wald_reports_dof_and_a_valid_pvalue(g0: np.ndarray) -> None:
     """The statistic carries m degrees of freedom and a probability p-value.

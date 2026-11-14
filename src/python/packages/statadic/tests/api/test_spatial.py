@@ -122,6 +122,12 @@ def test_spatial_panel_facade_equals_native(
     np.testing.assert_array_equal(result.core.parameters, native.parameters)
     np.testing.assert_array_equal(result.core.log_likelihood, native.log_likelihood)
     assert abs(float(result.core.parameters[-1]) - 0.35) < TOLERANCE_RHO
+    if effects == "unit":
+        # Within projection profiles out one estimated effect per entity.
+        assert (
+            _statistics(result)["n_parameters"]
+            == len(result.core.parameters) + 1 + UNITS
+        )
     report = result.report()
     assert report.parameters[-1].name == "rho"
     assert {m.name for m in report.metrics} >= {"log_likelihood", "sigma2"}
@@ -243,6 +249,9 @@ def test_kkp_panel_result_reports_only_beta_and_exposes_plugin_covariance(
     assert metadata["lambda_solver_status"] == int(result.core.lambda_solver.status)
     assert "solver_status" not in metadata
     assert result.core.valid
+    # KKP is a moment/GLS estimator, so component estimates grant no likelihood.
+    assert result.fit_statistics().metrics == ()
+    assert result.likelihood_summary() is None
     assert result.infer(
         covariance=ModelBased()
     ).uncertainty.covariance.values.shape == (2, 2)
@@ -838,47 +847,6 @@ def test_panel_fit_statistics_count_variance_ratio_and_use_time_by_unit_rows(
     assert names.count("log_likelihood") == 1
     inference = result.infer(covariance=SpatialInformation())
     assert inference.fit_statistics == result.fit_statistics()
-
-
-@pytest.mark.component
-@pytest.mark.reference
-def test_unit_effect_panel_counts_effects_profiled_out_by_the_within_projection() -> (
-    None
-):
-    """Unit effects eliminated by the within projection are still parameters."""
-    data, graph, _, _ = _panel()
-    result = _SpatialPanelBackend(
-        "y",
-        Linear("x"),
-        graph,
-        PanelLayout("unit", "period"),
-        PanelML(),
-        SAR(),
-        "unit",
-    ).estimate(data)
-    assert bool(result.core.valid)
-    # Coefficients, rho, the scale and one unit effect per entity.
-    assert (
-        _statistics(result)["n_parameters"] == len(result.core.parameters) + 1 + UNITS
-    )
-
-
-@pytest.mark.component
-def test_kkp_panel_reports_no_likelihood_statistics() -> None:
-    """KKP is a moment and GLS estimator, so it has no information criteria."""
-    data, graph, _, _ = _panel()
-    result = _SpatialPanelBackend(
-        "y",
-        Intercept() + Linear("x"),
-        graph,
-        PanelLayout("unit", "period"),
-        KKP(),
-        SEM(),
-        "random",
-    ).estimate(data)
-    assert isinstance(result, KKPPanelResult)
-    assert result.fit_statistics().metrics == ()
-    assert result.likelihood_summary() is None
 
 
 @pytest.mark.integration

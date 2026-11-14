@@ -228,13 +228,16 @@ class ReceiptTests(unittest.TestCase):
                     verify(self.root, self.identity)
 
     def test_retained_junit_tampering_and_missing_file(self):
-        path = self.root / "shard-0.xml"
-        path.write_text("<testsuites><tampered/></testsuites>")
-        with self.assertRaises(ValueError):
-            verify(self.root, self.identity)
-        path.unlink()
-        with self.assertRaises((ValueError, OSError)):
-            verify(self.root, self.identity)
+        for filename in ("shard-0.xml", "shard-0.log"):
+            with self.subTest(filename=filename):
+                make_receipt(self.root)
+                path = self.root / filename
+                path.write_text("tampered")
+                with self.assertRaisesRegex(ValueError, "file changed"):
+                    verify(self.root, self.identity)
+                path.unlink()
+                with self.assertRaises(ValueError):
+                    verify(self.root, self.identity)
 
 
 if __name__ == "__main__":

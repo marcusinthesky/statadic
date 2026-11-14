@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import jax.numpy as jnp
 import numpy as np
 import pytest
@@ -20,11 +22,19 @@ from statadic.api.design import (
     level_codes,
 )
 from statadic.api.inference import HC
-from statadic.api.regression import Observed, Poisson, PoissonResult, Regression
+from statadic.api.regression import (
+    Observed,
+    Poisson,
+    PoissonResult,
+    Regression,
+)
 from statadic.api.representation import Energy
 from statadic.sample.packed import PackedClouds
 
 from .._budgets import examples
+
+if TYPE_CHECKING:
+    from statadic.api.regression import LinearResult
 
 
 @pytest.mark.component
@@ -230,6 +240,15 @@ def test_term_contrast_estimand_and_report_title() -> None:
     assert result.report().title == estimand.describe()
 
 
+@pytest.fixture(scope="module")
+def contrast_fit() -> LinearResult:
+    """Retain the fixed fit while the property varies only its contrasts."""
+    x = jnp.arange(10.0)
+    return Regression.ols("y", Intercept() + Linear("x")).estimate(
+        {"x": x, "y": x + jnp.sin(x)}
+    )
+
+
 @pytest.mark.component
 @pytest.mark.property
 @examples(15)
@@ -239,13 +258,10 @@ def test_term_contrast_estimand_and_report_title() -> None:
     scale=st.sampled_from([-2, -1, 2, 4]),
 )
 def test_contrasts_are_design_differences_and_linear(
-    at: int, versus: int, scale: int
+    contrast_fit: LinearResult, at: int, versus: int, scale: int
 ) -> None:
     """The public contrast targets the same linear predictor as prediction."""
-    x = jnp.arange(10.0)
-    fit = Regression.ols("y", Intercept() + Linear("x")).estimate(
-        {"x": x, "y": x + jnp.sin(x)}
-    )
+    fit = contrast_fit
     inference = fit.infer(covariance=HC("HC1"))
     result = inference.contrast(
         RowDifference(at={"x": at}, versus={"x": versus}), reference="normal"

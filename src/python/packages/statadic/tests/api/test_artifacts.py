@@ -602,12 +602,19 @@ def test_analysis_roundtrip_restores_only_rendering_capabilities(
     """Analysis snapshots restore computed reports with explicitly limited powers."""
     report = Report(
         "snapshot",
-        parameters=(ParameterRow("slope", 0.123456789),),
+        parameters=(
+            ParameterRow("slope", 0.123456789),
+            ParameterRow(
+                "unavailable", None, valid=False, unavailable_reason="rank deficient"
+            ),
+        ),
         metrics=(
             Metric("AIC", None, available=False, unavailable_reason="not supported"),
         ),
         metadata={"sample": [1, "1"]},
         plots=(PlotSpec("line", (0.0, 1.0), (1.0, 2.0)),),
+        warnings=("inference unavailable",),
+        notes=("researcher note",),
     )
     path = tmp_path / "analysis"
 
@@ -615,6 +622,7 @@ def test_analysis_roundtrip_restores_only_rendering_capabilities(
     restored = load_analysis(path)
 
     assert restored.capabilities == ("report", "render")
+    assert restored.report == report
     assert restored.report.to_text() == report.to_text()
     assert restored.report.to_html() == report.to_html()
     assert restored.report.to_latex() == report.to_latex()

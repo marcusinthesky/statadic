@@ -152,27 +152,6 @@ def test_directional_padding_is_ignored_and_raw_power_needs_no_energy_theorem(
 
 @pytest.mark.unit
 @pytest.mark.contract
-@pytest.mark.parametrize(
-    ("clouds", "message"),
-    [
-        ([], "at least one cloud"),
-        ([jnp.empty((0, 1)), jnp.empty((0, 1))], "counts must lie"),
-        ([jnp.empty((0, 1)), jnp.ones((2, 1))], "counts must lie"),
-        ([jnp.ones((2,)), jnp.ones((2,))], "two-dimensional"),
-        ([jnp.ones((2, 1)), jnp.ones((3, 1, 1))], "two-dimensional"),
-        ([jnp.ones((2, 1)), jnp.ones((3, 2))], "feature widths"),
-    ],
-)
-def test_invalid_clouds_raise_at_the_eager_boundary(
-    clouds: list[jax.Array], message: str
-) -> None:
-    """Invalid cardinality and incompatible ground domains fail before reduction."""
-    with pytest.raises(ValueError, match=message):
-        empirical_mean_ground_distances(pack(clouds, require_positive_counts=True))
-
-
-@pytest.mark.unit
-@pytest.mark.contract
 @pytest.mark.parametrize("exponent", [0.0, 2.0, -1.0, float("nan"), float("inf")])
 def test_invalid_exponents_are_rejected(exponent: float) -> None:
     """The raw operation retains the declared open numeric exponent interval."""

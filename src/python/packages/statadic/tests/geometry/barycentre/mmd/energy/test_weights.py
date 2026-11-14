@@ -19,6 +19,7 @@ from statadic.discrepancy.mmd.energy.balancing import (
 from statadic.geometry.barycentre.mmd.energy import (
     energy_barycentre_weights,
     energy_barycentre_weights_batched,
+    energy_barycentre_weights_pairwise,
 )
 from statadic.geometry.barycentre.mmd.energy.weights import (
     _energy_barycentre_weights_batched_core,
@@ -146,6 +147,14 @@ class TestEnergyBarycentreWeights:
         assert diagnostics.simplex_sum_error <= _SIMPLEX_SUM_TOLERANCE
         assert diagnostics.tangent_curvature_min > 1.0
 
+        pairwise = energy_barycentre_weights_pairwise(
+            pack(jnp.array([[[-1.0]], [[0.0]], [[1.0]]])),
+        )
+        assert pairwise.shape == (3, 2)
+        assert jnp.allclose(
+            pairwise, jnp.array([[1.0, 0.0], [0.5, 0.5], [0.0, 1.0]]), atol=1e-6
+        )
+
     @pytest.mark.component
     @pytest.mark.numerical
     def test_single_candidate(self) -> None:
@@ -241,7 +250,7 @@ class TestEnergyBarycentreWeights:
     @pytest.mark.component
     @pytest.mark.reference
     def test_matches_dense_two_candidate_grid(self) -> None:
-        """Verify matches dense two candidate grid."""
+        """Match the exact interval minimizer previously approximated by a grid."""
         target = jnp.array([[0.0], [0.25], [0.5]])
         candidates = [
             jnp.array([[-1.0], [-0.5]]),
@@ -252,21 +261,12 @@ class TestEnergyBarycentreWeights:
             pack(candidates, require_positive_counts=True),
         )
 
-        grid = jnp.linspace(0.0, 1.0, 10_001)
-        target_cloud, candidate_clouds = (
-            PackedClouds.from_array(target),
-            pack(candidates),
+        expected, _ = _two_cloud_scalar_oracle(
+            np.asarray(target),
+            [np.asarray(cloud) for cloud in candidates],
+            np.asarray(weights),
         )
-
-        def objective(weight: jax.Array) -> jax.Array:
-            return energy_distance_kernel_mixture(
-                target_cloud, candidate_clouds, jnp.stack([weight, 1.0 - weight])
-            )
-
-        values = jax.jit(jax.vmap(objective))(grid)
-        oracle = grid[jnp.argmin(values)]
-
-        assert jnp.allclose(weights[0], oracle, atol=2e-4)
+        np.testing.assert_allclose(weights, expected, rtol=0, atol=2e-4)
 
     @pytest.mark.component
     @pytest.mark.property

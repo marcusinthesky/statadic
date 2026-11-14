@@ -1,8 +1,9 @@
 # standalone package-maintenance entry point
 """Check the t05.1 frozen-oracle parity harness.
 
-This covers the current ``corrected_mixture_test`` code and the isolated
-bit-exact reduction identity that licenses t05.2.
+This covers the current ``corrected_mixture_test`` code. Production block
+reductions are checked against independent gathered calculations in
+``test_block_reduction_parity.py``.
 
 Later lanes (t05.2-t05.5, t05.8) add their own ``-k``-selectable parity tests
 here (or in sibling modules) that import :mod:`statadic.tests._parity` and run
@@ -19,7 +20,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import jax.numpy as jnp
-import numpy as np
 import pytest
 from jax import random
 from statadic.discrepancy.mmd.energy import (
@@ -44,7 +44,6 @@ from ._parity import (
     DEFAULT_ATOL,
     MEASURED_REBATCH_MAX_ABS_DIFF,
     assert_decision_invariant,
-    assert_reduction_identity,
     load_oracle,
 )
 
@@ -101,30 +100,7 @@ def test_parity_t05_self_consistency_against_current_code() -> None:
         weight_method=str(oracle["weight_method"]),
     )
 
-    # pvalue is a rank statistic over the null distribution, so it stays
-    # exactly bit-identical even after t05.4's Gram/cross rebatching (the
-    # ordering it depends on is unaffected by ~1e-10-scale float drift).
-    np.testing.assert_equal(float(result.pvalue), float(oracle["pvalue"]))
-    # energy_point_estimate and weights route through the now-batched
-    # _energy_terms/_compute_energy_components kernel (t05.4): a single
-    # stacked matmul vs K^2 separate cdist calls is a rebatched-metric
-    # reduction, so only allclose at DEFAULT_ATOL (not bit-identity) is
-    # claimed here -- see the module docstring / t05.4 correctness class.
-    assert jnp.allclose(
-        jnp.asarray(result.energy_point_estimate),
-        jnp.asarray(oracle["energy_point_estimate"]),
-        atol=DEFAULT_ATOL,
-    )
-    assert bool(
-        jnp.allclose(
-            jnp.asarray(result.weights),
-            jnp.asarray(oracle["weights"]),
-            atol=DEFAULT_ATOL,
-        )
-    )
-
-    # And the tolerance + decision-invariance comparator (the one every later
-    # lane will actually use) must also pass, trivially, at atol=0-adjacent.
+    # Continuous fields use the retained rebatching tolerance; decisions stay exact.
     assert_decision_invariant(result, oracle, atol=DEFAULT_ATOL)
 
 
@@ -212,18 +188,3 @@ def test_measured_rebatch_drift() -> None:
         f"({DEFAULT_ATOL}); re-derive the atol (captured baseline: "
         f"{MEASURED_REBATCH_MAX_ABS_DIFF})"
     )
-
-
-@pytest.mark.unit
-@pytest.mark.regression
-def test_assert_reduction_identity_bit_exact() -> None:
-    """The B = M^T D M reduction is bit-identical under a joint permutation.
-
-    This is the one bit-exact assertion in the whole harness -- it licenses
-    t05.2's hoist-the-distance-matrix rewrite -- and is entirely
-    self-contained (no oracle, no corrected_mixture_test call).
-    """
-    assert_reduction_identity(random.PRNGKey(7))
-    # Re-check with a different seed/shape to confirm it isn't a fluke of one
-    # draw.
-    assert_reduction_identity(random.PRNGKey(99), n_pooled=53, n_groups=5)

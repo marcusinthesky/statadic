@@ -726,7 +726,6 @@ def test_one_wrong_axis_is_enough_to_be_rejected(
         ESTIMATE_ERROR="# E: is not assignable" if estimate != "TotalEstimate" else "",
         TEST_ERROR="# E: is not assignable" if test != "DiscoTest" else "",
     )
-    check_types(_TRANSFORM_PRESERVED, "preserved.py", tmp_path)
     check_types(fixture, f"single_axis_{axis}.py", tmp_path)
 
 

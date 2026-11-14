@@ -1035,10 +1035,16 @@ def test_to_values_rejects_duplicate_keys(report: Report) -> None:
 @pytest.mark.unit
 @pytest.mark.parametrize("prefix", ["", "Ols", "1a", "a_b"])
 def test_to_values_rejects_bad_options(prefix: str) -> None:
-    """Prefix, digits, decimals and empty slugs raise."""
+    """Malformed prefixes raise independently of other formatting options."""
     report = Report("t", parameters=(ParameterRow("x", 1.0),))
     with pytest.raises(ValueError, match="prefix"):
         report.to_values(prefix=prefix)
+
+
+@pytest.mark.unit
+def test_to_values_rejects_bad_numeric_options_and_empty_slugs() -> None:
+    """Digits, decimals and empty slugs fail with their specific diagnostics."""
+    report = Report("t", parameters=(ParameterRow("x", 1.0),))
     with pytest.raises(ValueError, match="digits"):
         report.to_values(prefix="m", digits=0)
     with pytest.raises(ValueError, match="decimals"):

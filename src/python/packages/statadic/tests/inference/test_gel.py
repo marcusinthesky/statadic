@@ -88,21 +88,10 @@ def test_gel_wald_uses_the_same_reduced_row_space_as_its_dof() -> None:
             base + 1e-4 * rng.standard_normal(500) + 1e-4,
         ]
     )
-    lr = gel_test(
-        FixedGEL(criterion="cue").estimate(FixedMomentProblem(moments)),
-        kind="lr",
-        assume_iid=True,
-    )
-    wald = gel_test(
-        FixedGEL(criterion="cue").estimate(FixedMomentProblem(moments)),
-        kind="wald",
-        assume_iid=True,
-    )
-    lm = gel_test(
-        FixedGEL(criterion="cue").estimate(FixedMomentProblem(moments)),
-        kind="lm",
-        assume_iid=True,
-    )
+    fit = FixedGEL(criterion="cue").estimate(FixedMomentProblem(moments))
+    lr = gel_test(fit, kind="lr", assume_iid=True)
+    wald = gel_test(fit, kind="wald", assume_iid=True)
+    lm = gel_test(fit, kind="lm", assume_iid=True)
     assert lr.dof == wald.dof == lm.dof == 1
     assert np.isclose(wald.stat, lr.stat, rtol=1e-6, atol=1e-8)
     assert np.isclose(lm.stat, lr.stat, rtol=1e-6, atol=1e-8)
@@ -250,12 +239,9 @@ def test_gel_lm_equals_wald(g: np.ndarray) -> None:
     """
     # With pre-formed moments and no profiled structural parameter the GEL LM
     # and Wald forms coincide exactly (both are n_observations*gbar' Omega^-1 gbar).
-    lm = gel_test(
-        FixedGEL(criterion="cue").estimate(FixedMomentProblem(g)), kind="lm"
-    ).stat
-    wald = gel_test(
-        FixedGEL(criterion="cue").estimate(FixedMomentProblem(g)), kind="wald"
-    ).stat
+    fit = FixedGEL(criterion="cue").estimate(FixedMomentProblem(g))
+    lm = gel_test(fit, kind="lm").stat
+    wald = gel_test(fit, kind="wald").stat
     assert np.isclose(lm, wald, rtol=1e-12)
 
 
@@ -477,16 +463,9 @@ def test_gel_cue_inner_sup_is_the_closed_form_quadratic() -> None:
             (800, 9)
         )
         del seed
-        likelihood_ratio = gel_test(
-            FixedGEL(criterion="cue").estimate(FixedMomentProblem(panel)),
-            kind="lr",
-            assume_iid=True,
-        )
-        wald = gel_test(
-            FixedGEL(criterion="cue").estimate(FixedMomentProblem(panel)),
-            kind="wald",
-            assume_iid=True,
-        )
+        fit = FixedGEL(criterion="cue").estimate(FixedMomentProblem(panel))
+        likelihood_ratio = gel_test(fit, kind="lr", assume_iid=True)
+        wald = gel_test(fit, kind="wald", assume_iid=True)
         assert likelihood_ratio.converged
         np.testing.assert_allclose(
             likelihood_ratio.stat, wald.stat, rtol=1e-10, atol=0.0

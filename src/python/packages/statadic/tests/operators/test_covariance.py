@@ -19,7 +19,7 @@ and ``energyDistanceSq_eq_energyEmbed_covariance_form``
 (``Connections/EnergyStatistics.lean``, paper3/t25) at measures; this is its
 NumPy witness.
 
-The PSD consequence is the second test and it is the one Paper 3 leans on: when
+The PSD consequence is checked alongside inversion and is what Paper 3 leans on: when
 ``D2`` really is a squared Euclidean distance matrix, ``sigma_dist`` at
 ``kappa = 1`` *is* a Gram matrix, hence PSD by construction. The module docstring
 says "not necessarily PSD" and that is right — for arbitrary ``(D2, sigma_sq)``
@@ -118,27 +118,7 @@ def test_sigma_dist_recovers_the_gram_it_was_built_from(points: np.ndarray) -> N
     recovered = sigma_dist(d2, sigma_sq, kappa=1.0)
 
     np.testing.assert_allclose(recovered, gram, rtol=0.0, atol=_EXACTNESS_TOLERANCE)
-
-
-@pytest.mark.unit
-@pytest.mark.property
-@examples(100)
-@example(points=_ORIGINAL_POINTS)
-@given(points=_POINTS)
-def test_sigma_dist_is_psd_when_the_distances_are_genuinely_euclidean(
-    points: np.ndarray,
-) -> None:
-    """A consistent ``(D2, sigma_sq)`` pair yields a Gram matrix, hence PSD.
-
-    Paper 3's PSD story in one assertion: the population object needs no repair.
-    Higham repair exists for finite-sample ``D2``, which is not exactly
-    Euclidean — not because the formula can emit an indefinite matrix from
-    consistent inputs.
-    """
-    _, d2, sigma_sq = _from_points(points)
-
-    eigenvalues = np.linalg.eigvalsh(sigma_dist(d2, sigma_sq, kappa=1.0))
-
+    eigenvalues = np.linalg.eigvalsh(recovered)
     assert float(eigenvalues.min()) >= _PSD_TOLERANCE
 
 

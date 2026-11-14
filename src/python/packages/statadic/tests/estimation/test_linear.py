@@ -202,17 +202,18 @@ def test_linear_fitting_preserves_caller_dtypes_and_configuration(
     # The well-conditioned fixture uses a small QR solve and matrix products.
     # 100 eps allows float32 rounding while preserving rank and fitted behavior.
     tolerance = 100 * np.finfo(dtype).eps
-    for fit in (
+    fits = (
         LeastSquares().estimate(LinearProblem(design, outcome)),
         LeastSquares().estimate(LinearProblem(design, outcome, weights)),
-    ):
+    )
+    for fit in fits:
         assert fit.parameters.dtype == dtype
         assert fit.design.dtype == dtype
         assert fit.normalized_covariance.dtype == dtype
         assert fit.valid
         assert fit.predict(design).dtype == dtype
     np.testing.assert_allclose(
-        LeastSquares().estimate(LinearProblem(design, outcome, weights)).parameters,
+        fits[1].parameters,
         expected,
         rtol=tolerance,
         atol=tolerance,

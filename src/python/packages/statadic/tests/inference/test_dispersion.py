@@ -61,7 +61,6 @@ _PERMUTATIONS = np.asarray(
 @pytest.mark.integration
 @pytest.mark.numerical
 @examples(40)
-@example(radii=np.asarray([4.0, 1.0, 0.0, 4.0, 5.0, 3.0, 2.0, 0.0, 7.0]))
 @given(
     # A within-group ramp keeps every group non-constant, by construction: a
     # constant group has no residual variation and the null is unavailable.

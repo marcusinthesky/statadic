@@ -143,12 +143,13 @@ def test_deliberately_non_efficient_weight_matches_linearmodels_covariance(
         center=False,
     )
     assert observed.valid
-    assert gmm_covariance(observed).valid
+    uncertainty = gmm_covariance(observed)
+    assert uncertainty.valid
     np.testing.assert_allclose(
         observed.parameters, reference_parameters[:, 0], rtol=1e-11
     )
     np.testing.assert_allclose(
-        gmm_covariance(observed).covariance.values,
+        uncertainty.covariance.values,
         reference_covariance.cov,
         rtol=1e-10,
     )

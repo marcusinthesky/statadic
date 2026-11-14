@@ -15,18 +15,6 @@ if TYPE_CHECKING:
     import jax
 
 
-@pytest.mark.integration
-def test_explicit_plugin_supplies_prng_key(prng_key: jax.Array) -> None:
-    """The package conftest loads the fixture module explicitly.
-
-    Args:
-        prng_key: The fixture under test.
-
-    """
-    assert prng_key.shape == (2,)
-    assert jnp.array_equal(prng_key, jnp.asarray(prng_key))
-
-
 @pytest.mark.unit
 def test_prng_key_is_the_declared_seed(prng_key: jax.Array) -> None:
     """It is ``PRNGKey(SEED)``, so a failure is reproducible from the constant.
