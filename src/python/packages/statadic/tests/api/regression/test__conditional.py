@@ -36,6 +36,7 @@ from ..._typing import ill_typed
 if TYPE_CHECKING:
     from collections.abc import Callable
     from types import ModuleType
+    from typing import Never
 
     from statadic.api.capabilities import SummarizesLikelihood
 
@@ -203,22 +204,65 @@ def test_hurdle_validates_specification_and_observation_separately() -> None:
         model.prepare({"y": [0, 2], "e": [0, 1]})
 
 
-@pytest.mark.integration
+@pytest.mark.component
 @pytest.mark.contract
 @pytest.mark.parametrize("link", ["logit", "probit"])
 @pytest.mark.parametrize("categorical", [False, True])
 @pytest.mark.parametrize("dtype", ["float32", "float64"])
-def test_hurdle_generated_gate_preserves_response_precision(
+def test_hurdle_generated_gate_problem_preserves_response_precision(
     link: Literal["logit", "probit"],
+    monkeypatch: pytest.MonkeyPatch,
     *,
     categorical: bool,
     dtype: Literal["float32", "float64"],
 ) -> None:
-    """Boolean-only gate designs must not select the process default dtype."""
+    """Boolean gates pass response precision to either estimator without fitting."""
+
+    class GateProblemCapturedError(Exception):
+        """Stop at the numerical estimator after checking its real input problem."""
+
+    def capture_gate_problem(
+        _estimator: object, problem: BinomialProblem | LikelihoodProblem
+    ) -> Never:
+        assert jnp.asarray(problem.design).dtype == jnp.dtype(dtype)
+        outcome = (
+            problem.successes
+            if isinstance(problem, BinomialProblem)
+            else problem.outcome
+        )
+        assert jnp.asarray(outcome).dtype == jnp.dtype(dtype)
+        np.testing.assert_array_equal(outcome, [1, 0, 0, 1, 0, 0])
+        raise GateProblemCapturedError
+
+    estimator = BinomialLogitMLE if link == "logit" else ProbitMLE
+    monkeypatch.setattr(estimator, "estimate", capture_gate_problem)
     terms = Intercept() + Categorical("group") if categorical else Intercept()
     model = Regression(
         Observed("y"),
         {"zero_probability": terms, "count": Intercept()},
+        law=HurdlePoisson(zero_link=link),
+    )
+    with jax.enable_x64(new_val=True), pytest.raises(GateProblemCapturedError):
+        model.estimate(
+            {
+                "y": jnp.asarray([0, 1, 2, 0, 1, 3], dtype=dtype),
+                "group": [0, 0, 0, 1, 1, 1],
+            }
+        )
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+@pytest.mark.parametrize("link", ["logit", "probit"])
+@pytest.mark.parametrize("dtype", ["float32", "float64"])
+def test_hurdle_generated_gate_preserves_response_precision(
+    link: Literal["logit", "probit"],
+    dtype: Literal["float32", "float64"],
+) -> None:
+    """Real gate and count fits retain caller precision with categorical predictors."""
+    model = Regression(
+        Observed("y"),
+        {"zero_probability": Intercept() + Categorical("group"), "count": Intercept()},
         law=HurdlePoisson(zero_link=link),
     )
     with jax.enable_x64(new_val=True):

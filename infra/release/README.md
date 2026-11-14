@@ -72,8 +72,10 @@ The package candidate does not depend on docs or workspace application checks.
 Repository CI still reports those checks separately and its aggregate requires
 both scopes. Scientific qualification remains a separate command and claim.
 
-The legacy documentation/scientific preflight can consume a complete repository
-receipt through `--preflight-check-receipt PATH`. Its retained reports must prove
+The legacy documentation/scientific preflight can consume a separately produced
+complete repository receipt through `--preflight-check-receipt PATH`. Routine CI
+combines shared workspace status with package evidence and does not produce full
+repository receipts. A supplied receipt's retained reports must prove
 complete, non-overlapping execution and successful repository checks. The release
 archive verifies that evidence again. This command remains separate from package
 publication; a package-only receipt cannot replace a full repository receipt.
@@ -140,7 +142,10 @@ Run that bounded check in the pinned workspace with
 `just python::statadic::test-artifacts --inputs-only`. It does not qualify wheels.
 The complete `just python::statadic::test-artifacts` check installs both wheel
 build routes, exercises Polars and Arrow through the wheel's `[data]` extra in
-float32 and float64, and checks standalone sdist development. Its smoke driver
+float32 and float64, and checks standalone sdist development. Development checks
+resolve the declared group, retain its lock, verify Ruff/Pyrefly/Just availability
+and execute shipped typing fixtures. Package quality owns the full source lint
+and type checks before building. Its smoke driver
 ships in the sdist; documentation notebooks have their own execution lane.
 
 The legacy manual workflow runs a bounded artifact preflight. A complete release
@@ -320,9 +325,16 @@ skipping it. Precision jobs report separate selected-node counts. The full locke
 reference lane still runs with its legacy x64 default, and precision runs do not
 replace it.
 
-The required CI reference jobs use the same locked dependencies in an isolated
-environment, independently of the ordinary fast gate. Run the complete local
-equivalent from the repository root:
+The required CI reference statuses consume installed-wheel comparisons from the
+package workflow on both architectures, using the same locked dependencies.
+The installed full float64 run supplies both the external and float64 precision
+catalogue mappings; only the float32 subset executes separately. Its retained
+`reference-index.json` binds exact nodes and comparators to the catalogue and
+JUnit bytes, and candidate sealing reconstructs these claims. Routine CI does
+not repeat these comparisons against the editable source.
+
+The standalone source-reference diagnostic remains available from the repository
+root:
 
 ```bash
 just setup-references
@@ -343,7 +355,10 @@ run. Independent-formula mappings outside these lanes stay unexecuted by this
 command. These are live parity checks, not statistical qualification.
 
 Branch protection should require both `Reference validation (ubuntu-24.04)` and
-`Reference validation (ubuntu-24.04-arm)` CI statuses. The generated
+`Reference validation (ubuntu-24.04-arm)` CI statuses, both package architecture
+gates, and the Pages build. The reference names are dependency checks, so a
+missing, skipped or failed package gate cannot report successful references.
+The generated
 [reference index](../../src/python/packages/statadic/docs/validation/references.md)
 is the configuration-to-test map for constructors and explicit compositions.
 
@@ -389,11 +404,13 @@ qualification. Bounds apply per scenario. JUnit properties retain requested, val
 and failed counts, conditional rejection, failure-inclusive bounds and
 qualification status.
 
-Pull requests run the complete fast suite, locked external comparisons and the
-separate float32 and float64 precision-reference processes. Weekly and manually
-dispatched Actions runs execute the non-dyadic statistical studies in the locked
-environment. Current-reference exploration runs in an isolated package copy,
-records its environment and does not rewrite the reviewed workspace lock.
+Pull requests run the complete fast suite, installed locked external comparisons
+in float64 and the separate float32 precision subset. Weekly and manually
+dispatched `Extended validation` runs exercise notebook script modes in both
+precisions and the selected generated linear/GLM references with the exploration
+profile on x86 and ARM. These bounded searches are not statistical qualification.
+The non-dyadic qualification command above remains explicit and may take hours;
+ordinary PR and extended validation do not execute it.
 
 Replay the original adverse cells separately. An assertion failure from these
 commands is a statistical qualification failure and must not be converted to a skip

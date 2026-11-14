@@ -504,6 +504,7 @@ def test_finite_qr_output_cannot_certify_overflowing_original_scale_state() -> N
 
 @pytest.mark.component
 @pytest.mark.reference
+@examples(20)
 @pytest.mark.parametrize(("n", "p"), [(8, 2), (12, 3), (7, 5)])
 @pytest.mark.parametrize("weighted", [False, True])
 @given(data=st.data())
@@ -552,6 +553,7 @@ def test_generated_complete_linear_state_matches_independent_qr(
 
 @pytest.mark.component
 @pytest.mark.property
+@examples(20)
 @given(data=st.data(), multiplier=st.sampled_from([0.25, 3.0, 16.0]))
 def test_generated_precision_scaling_and_named_permutations_preserve_inference(
     data: st.DataObject, multiplier: float

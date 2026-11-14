@@ -436,17 +436,11 @@ def _check_development(uv: str, source: Path, environment: dict[str, str]) -> No
     _run([uv, "sync", "--no-sources", "--python", sys.executable], source, environment)
     if evidence := environment.get("STATADIC_DISTRIBUTION_EVIDENCE"):
         shutil.copy2(source / "uv.lock", Path(evidence) / "standalone-uv.lock")
-    _run(
-        [uv, "run", "--locked", "ruff", "check", "src", "tests", "scripts"],
-        source,
-        environment,
-    )
-    _run(
-        [uv, "run", "--locked", "ruff", "format", "--check", "src", "tests", "scripts"],
-        source,
-        environment,
-    )
-    _run(["just", "typecheck"], source, environment)
+    # Source quality has one pre-build owner. Here the boundary is whether an
+    # extracted sdist supplies usable development tools and typing fixtures.
+    _run([uv, "run", "--locked", "ruff", "--version"], source, environment)
+    _run([uv, "run", "--locked", "pyrefly", "--version"], source, environment)
+    _run(["just", "--list"], source, environment)
     _run(
         [
             uv,

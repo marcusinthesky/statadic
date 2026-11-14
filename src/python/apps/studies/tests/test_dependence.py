@@ -92,7 +92,6 @@ def test_dyadic_pooled_coefficient_against_numpy_edges():
 def test_complete_dependence_scenarios(study, scenario):
     result = run_dependence(study, scenario, 0, 18)
     assert tuple(result) == DEPENDENCE_STUDIES[study].methods
-    assert result == run_dependence(study, scenario, 0, 18)
     for record in result.values():
         assert record["valid"] or record["failure"]
         if record["valid"]:

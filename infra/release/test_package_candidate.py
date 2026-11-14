@@ -200,6 +200,33 @@ class EvidenceTests(unittest.TestCase):
             "artifacts": {"wheel.whl": "hash"},
         }
         identity = builder["make_receipt"](self.root / "template")
+        catalogue = self.root / "catalogue.json"
+        catalogue.write_text(
+            json.dumps(
+                {
+                    "methods": [
+                        {
+                            "id": "method",
+                            "reference_mappings": [
+                                {
+                                    "nodeids": ["tests/test_reference.py::test_fit"],
+                                    "oracle_kind": "external",
+                                    "distribution": "statsmodels",
+                                    "lanes": [
+                                        "external-float64",
+                                        "precision-float32",
+                                        "precision-float64",
+                                    ],
+                                }
+                            ],
+                        }
+                    ]
+                }
+            )
+        )
+        catalogue_patch = patch.object(candidate, "CATALOGUE", catalogue)
+        catalogue_patch.start()
+        self.addCleanup(catalogue_patch.stop)
         for architecture in candidate.ARCHITECTURES:
             receipt = self.root / f"package-check-{architecture}"
             builder["make_receipt"](receipt, identity | {"architecture": architecture})
@@ -217,22 +244,33 @@ class EvidenceTests(unittest.TestCase):
                     "run_attempt": "2",
                 },
             )
-            for lane in ("external", "precision-float32", "precision-float64"):
+            # Float64 precision evidence is provided by the full external run.
+            for lane in ("external", "precision-float32"):
                 (installed / f"{lane}.xml").write_text(
-                    "<testsuite><testcase/></testsuite>"
+                    "<testsuite><testcase><properties><property "
+                    'name="reference_nodeid" '
+                    'value="tests/test_reference.py::test_fit"/>'
+                    '<property name="reference_dependencies" '
+                    'value=\'["spreg", "statsmodels", "linearmodels", "lifelines"]\'/>'
+                    "</properties></testcase></testsuite>"
                 )
             (installed / "distribution").mkdir()
             (installed / "distribution/distribution.log").write_text(
                 "Both wheel routes and standalone sdist development passed."
             )
         revision = patch.object(candidate, "revision", return_value="revision")
+        original_run_path = runpy.run_path
         verification = patch.object(
             candidate.runpy,
             "run_path",
-            return_value={
-                "source_snapshot": lambda root: identity["source_files"],
-                "verify_receipt": builder["ci_shards"].verify_receipt,
-            },
+            side_effect=lambda path: (
+                {
+                    "source_snapshot": lambda root: identity["source_files"],
+                    "verify_receipt": builder["ci_shards"].verify_receipt,
+                }
+                if Path(path).name == "ci_shards.py"
+                else original_run_path(path)
+            ),
         )
         revision.start()
         verification.start()
@@ -257,6 +295,25 @@ class EvidenceTests(unittest.TestCase):
             self.root / "package-installed-aarch64/distribution/distribution.log"
         ).write_text("started")
         with self.assertRaises(ValueError):
+            candidate.verify_evidence(self.root, self.built, "123", "2")
+
+    def test_missing_catalogue_node_or_comparator_is_rejected(self):
+        report = self.root / "package-installed-aarch64/external.xml"
+        original = report.read_text()
+        for changed in (
+            original.replace("::test_fit", "::different_test"),
+            original.replace('"lifelines"', '"unrelated"'),
+            original.replace("<testcase>", "<testcase><skipped/>"),
+        ):
+            with self.subTest(report=changed):
+                report.write_text(changed)
+                with self.assertRaises(ValueError):
+                    candidate.verify_evidence(self.root, self.built, "123", "2")
+
+    def test_changed_retained_reference_index_is_rejected(self):
+        directory = self.root / "package-installed-aarch64"
+        candidate.write(directory / "reference-index.json", {})
+        with self.assertRaisesRegex(ValueError, "catalogue evidence changed"):
             candidate.verify_evidence(self.root, self.built, "123", "2")
 
 

@@ -23,6 +23,7 @@ from check_offline_install import export_lock, install_locked_environment, prepa
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "src/python"
 PACKAGE = PROJECT / "packages/statadic"
+CATALOGUE = PROJECT / "apps/studies/catalogue.json"
 ARCHITECTURES = ("x86_64", "aarch64")
 EPOCH = "315532800"
 
@@ -226,16 +227,6 @@ def qualify(directory: Path, output: Path) -> None:
                     "tests/testing/test_survival_references.py",
                 ],
             ),
-            (
-                "precision-float64",
-                "1",
-                [
-                    "-m",
-                    "external_reference",
-                    "tests/testing/test_precision_references.py",
-                    "tests/testing/test_survival_references.py",
-                ],
-            ),
         ):
             command = [
                 str(python),
@@ -262,6 +253,7 @@ def qualify(directory: Path, output: Path) -> None:
                 command.append(f"--hypothesis-seed={env['STATADIC_CI_SEED']}")
             run(command, cwd=harness, env=env | {"JAX_ENABLE_X64": x64})
             verify_junit(output / (name + ".xml"))
+    write(output / "reference-index.json", reference_indices(output))
     write(
         output / "qualification.json",
         built
@@ -284,6 +276,32 @@ def verify_junit(path: Path) -> None:
         for tag in ("failure", "error", "skipped")
     ):
         raise ValueError(f"Incomplete installed-package comparison: {path.name}")
+
+
+def reference_indices(directory: Path) -> dict:
+    """Reconcile exact catalogue nodes against installed-wheel reports.
+
+    The full float64 run already includes the precision subset. Older retained
+    candidates may still carry its separately executed report.
+    """
+    references = runpy.run_path(str(PACKAGE / "scripts/check_references.py"))
+    indices = {}
+    for lane, filename in (
+        ("external-float64", "external.xml"),
+        ("precision-float32", "precision-float32.xml"),
+        ("precision-float64", "precision-float64.xml"),
+    ):
+        report = directory / filename
+        if lane == "precision-float64" and not report.exists():
+            report = directory / "external.xml"
+        required = (
+            ("spreg", "statsmodels", "linearmodels", "lifelines")
+            if lane == "external-float64"
+            else ("statsmodels", "lifelines")
+        )
+        references["read_results"](report, required)
+        indices[lane] = references["reference_receipt"](CATALOGUE, report, lane)
+    return indices
 
 
 def verify_evidence(inputs: Path, built: dict, run_id: str, attempt: str) -> None:
@@ -315,8 +333,10 @@ def verify_evidence(inputs: Path, built: dict, run_id: str, attempt: str) -> Non
             or not 0 < int(report["run_attempt"]) <= int(attempt)
         ):
             raise ValueError("Installed-package evidence differs from candidate")
-        for name in ("external", "precision-float32", "precision-float64"):
-            verify_junit(qualification / (name + ".xml"))
+        indices = reference_indices(qualification)
+        index_path = qualification / "reference-index.json"
+        if index_path.exists() and read(index_path) != indices:
+            raise ValueError("Installed reference catalogue evidence changed")
         distribution_log = qualification / "distribution/distribution.log"
         if (
             "Both wheel routes and standalone sdist development passed."

@@ -117,8 +117,9 @@ register a pytest plugin.
 
 `just test-artifacts` builds a wheel and sdist from a temporary package snapshot,
 rebuilds a wheel from that sdist and checks both installed runtime closures in
-separate temporary environments outside the checkout. It also runs lint, types and
-the typing tests from the extracted sdist, and may download build, runtime and
+separate temporary environments outside the checkout. It also verifies development
+tool availability and runs typing fixtures from the extracted sdist; source lint
+and type checks belong to the package quality gate. It may download build, runtime and
 development dependencies. It leaves out the optional reference group and does not
 publish. License selection and publication policy remain maintainer decisions.
 

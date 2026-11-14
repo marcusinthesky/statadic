@@ -46,6 +46,55 @@ def test_missing_export_is_rejected_before_a_build(tmp_path):
         selection(["--study-export", str(tmp_path)])
 
 
+def test_publication_checks_the_existing_export():
+    session = {
+        "cells": [
+            {
+                "cell_type": "markdown",
+                "source": "# Lesson\n\n## Introduction\n\nUseful prose.",
+            },
+            {
+                "cell_type": "code",
+                "source": "result = 2",
+                "outputs": [
+                    {"output_type": "display_data", "data": {"text/plain": "2"}}
+                ],
+            },
+            {"cell_type": "markdown", "source": "## Appendix"},
+            {"cell_type": "code", "source": "def test_hidden(): pass"},
+        ]
+    }
+    build_module().validate_notebook_page(Path("lesson.py"), session)
+
+
+@pytest.mark.parametrize(
+    "markdown,code,output,problem",
+    [
+        ("# Lesson", "result = 2", "2", "Introduction"),
+        ("# Lesson\n\n## Introduction", "result = 2", "", "marimo-output"),
+        ("# Lesson\n\n## Introduction", "label = '## Appendix'", "2", "Appendix"),
+        ("# Lesson\n\n## Introduction", "def test_leaked(): pass", "2", "def test_"),
+    ],
+)
+def test_publication_rejects_missing_content_and_exposed_tests(
+    markdown, code, output, problem
+):
+    session = {
+        "cells": [
+            {"cell_type": "markdown", "source": markdown},
+            {
+                "cell_type": "code",
+                "source": code,
+                "outputs": [
+                    {"output_type": "display_data", "data": {"text/plain": output}}
+                ],
+            },
+        ]
+    }
+    with pytest.raises(ValueError, match=problem):
+        build_module().validate_notebook_page(Path("lesson.py"), session)
+
+
 def test_build_provenance_binds_exact_mapped_test_sources(tmp_path, monkeypatch):
     """Changed published tests enter the existing before/after input comparison."""
     module = build_module()

@@ -7,9 +7,8 @@ import numpy as np
 import pytest
 from statadic.sample.packed import masked_sum, pair_chunks
 
-pytestmark = pytest.mark.native
 
-
+@pytest.mark.native
 def test_masked_sum_matches_exact_rational_leading_blocks():
     # Integer values and these tiny sums are exactly representable in both
     # supported dtypes. NaNs deliberately poison only the discarded padding.

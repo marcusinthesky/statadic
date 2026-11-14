@@ -39,11 +39,32 @@ def validate(ci: dict, package: dict) -> None:
         "Full workspace gate must remain",
     )
     require(
-        any(
-            "just validate-references" in step.get("run", "")
-            for step in jobs["reference-validation"]["steps"]
+        jobs["check-nontest"]["strategy"]["matrix"]["runner"] == ["ubuntu-24.04"],
+        "Architecture-independent workspace checks have one owner",
+    )
+    workspace_alias = jobs["check-nontest-arm"]
+    require(
+        workspace_alias.get("needs") == "check-nontest"
+        and workspace_alias.get("if") == "always()"
+        and any(
+            '"$WORKSPACE_RESULT" != success' in step.get("run", "")
+            and step.get("env", {}).get("WORKSPACE_RESULT")
+            == "${{ needs.check-nontest.result }}"
+            for step in workspace_alias["steps"]
         ),
-        "Repository reference mappings must remain checked",
+        "The former ARM workspace status must require the shared gate",
+    )
+    references = jobs["reference-validation"]
+    require(
+        references.get("needs") == "package"
+        and references.get("if") == "always()"
+        and any(
+            '"$PACKAGE_RESULT" != success' in step.get("run", "")
+            and step.get("env", {}).get("PACKAGE_RESULT")
+            == "${{ needs.package.result }}"
+            for step in references["steps"]
+        ),
+        "Reference statuses must require installed package comparisons",
     )
     jobs = package["jobs"]
     require(

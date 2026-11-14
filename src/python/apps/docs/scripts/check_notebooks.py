@@ -1,4 +1,4 @@
-"""Gate marimo notebooks: lint, unparsable cells, both precisions, tests, doctests.
+"""Gate marimo notebooks: lint, unparsable cells, output tests and doctests.
 
 Checks validate without repair; ``marimo check --fix`` belongs to ``just fmt``.
 """
@@ -53,7 +53,7 @@ def run(
     return None if ok else output or f"command exited with status {result.returncode}"
 
 
-def gates(notebook: Path):
+def gates(notebook: Path, *, extended: bool = False):
     """Yield (name, thunk) in the order the plan lists them."""
     marimo = [sys.executable, "-m", "marimo"]
     pytest = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"]
@@ -72,7 +72,7 @@ def gates(notebook: Path):
             else None
         ),
     )
-    for x64 in ("0", "1"):
+    for x64 in ("0", "1") if extended else ():
         yield (
             f"x64={x64}",
             lambda x64=x64: run(
@@ -102,19 +102,32 @@ def gates(notebook: Path):
 
 def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--paths", nargs="+", type=Path, help="Notebooks to check")
+    parser.add_argument("paths", nargs="*", type=Path, help="Notebooks to check")
+    parser.add_argument(
+        "--paths",
+        nargs="+",
+        type=Path,
+        dest="selected_paths",
+        help="Notebooks to check",
+    )
+    parser.add_argument(
+        "--extended",
+        action="store_true",
+        help="Also execute every notebook as a script in float32 and float64",
+    )
     parser.add_argument(
         "--fix",
         action="store_true",
         help="Apply marimo's automatic lint fixes instead of running the gates",
     )
     selected = parser.parse_args(arguments)
-    notebooks = [p.resolve() for p in selected.paths] if selected.paths else discover()
+    paths = [*(selected.selected_paths or []), *selected.paths]
+    notebooks = [p.resolve() for p in paths] if paths else discover()
     if selected.fix:
         command = [sys.executable, "-m", "marimo", "check", "--fix"]
         return subprocess.run([*command, *map(str, notebooks)], check=False).returncode
     failures: dict[str, dict[str, str]] = {}
-    if not selected.paths:
+    if not paths:
         for path in sorted(DOCS.rglob("*.py")):
             if (
                 "__marimo__" not in path.parts
@@ -131,7 +144,7 @@ def main(arguments: list[str] | None = None) -> int:
             else str(notebook)
         )
         results = []
-        for name, gate in gates(notebook):
+        for name, gate in gates(notebook, extended=selected.extended):
             print(f"Checking {label}: {name}", flush=True)
             problem = gate()
             results.append((name, problem is None))

@@ -46,7 +46,6 @@ def test_missing_frozen_witness_cannot_be_treated_as_acceptance():
         acceptance.adapt_numerical_source("def numerical_qualification(n): return {}")
 
 
-@pytest.mark.native
 def test_covariance_adaptation_uses_estimand_without_rewriting_innovations():
     import numpy as np
     from statadic.api.estimand import Covariance, Estimand
@@ -106,7 +105,6 @@ def test_worker_rejects_changed_source_before_importing_any_consumer(
         fixtures.main(tmp_path / "candidate.whl")
 
 
-@pytest.mark.native
 @pytest.mark.parametrize(
     "fixture", [fixtures._dyadic_fixture, fixtures._frontier_fixture]
 )

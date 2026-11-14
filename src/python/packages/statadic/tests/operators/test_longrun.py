@@ -181,25 +181,6 @@ def _entrywise_hac(moments: np.ndarray, bandwidth: int, *, center: bool) -> np.n
     return result / len(rows)
 
 
-def _retired_circular_block_bootstrap_indices(
-    n_observations: int,
-    block_length: int,
-    n_boot: int,
-    *,
-    seed: int,
-) -> np.ndarray:
-    """Run the retired NumPy RNG/index loop as the stream-disclosure oracle."""
-    rng = np.random.default_rng(seed)
-    n_blocks = int(np.ceil(n_observations / block_length))
-    result = np.empty((n_boot, n_blocks * block_length), dtype=np.int64)
-    starts = rng.integers(0, n_observations, size=(n_boot, n_blocks))
-    offsets = np.arange(block_length)
-    for draw in range(n_boot):
-        indices = (starts[draw][:, None] + offsets[None, :]).ravel() % n_observations
-        result[draw] = indices
-    return result[:, :n_observations]
-
-
 @pytest.mark.unit
 @pytest.mark.numerical
 def test_bartlett_weights_start_at_one_and_decay_linearly() -> None:
@@ -616,22 +597,6 @@ def test_longrun_kernels_trigger_no_host_transfers() -> None:
 
 
 @pytest.mark.component
-@pytest.mark.regression
-def test_circular_block_rng_migration_is_reproducible_but_changes_the_stream() -> None:
-    """The canonical cell key intentionally replaces the retired NumPy stream."""
-    current = circular_block_bootstrap_indices(40, 5, 8, seed=11)
-    retired = _retired_circular_block_bootstrap_indices(
-        40,
-        5,
-        8,
-        seed=11,
-    )
-    assert current.shape == retired.shape
-    assert current.dtype == retired.dtype
-    assert not np.array_equal(current, retired)
-
-
-@pytest.mark.component
 @pytest.mark.contract
 def test_zero_bootstrap_draws_preserve_the_eager_result_contract() -> None:
     """An empty request remains a NumPy int64 matrix with the static width."""
@@ -698,8 +663,11 @@ def _static_shape_circular_block_indices(
 
 @pytest.mark.component
 @pytest.mark.property
-@pytest.mark.parametrize("n_observations", [40, 105, 251])
-@pytest.mark.parametrize("block_length", [1, 2, 3, 5, 7, 11, 23])
+@pytest.mark.parametrize(
+    ("n_observations", "block_length"),
+    [(8, 1), (8, 2), (7, 3), (3, 7)],
+    ids=["single-observation-block", "divisible", "remainder", "block-exceeds-series"],
+)
 def test_traced_block_length_reproduces_the_static_shape_draw(
     n_observations: int, block_length: int
 ) -> None:

@@ -63,6 +63,20 @@ class WorkflowContractTests(unittest.TestCase):
         changed["jobs"]["check"]["needs"] = ["package"]
         with self.assertRaises(ValueError):
             validate(changed, self.package)
+        changed = copy.deepcopy(self.ci)
+        changed["jobs"]["check-nontest-arm"]["needs"] = "package"
+        with self.assertRaises(ValueError):
+            validate(changed, self.package)
+
+    def test_reference_status_cannot_bypass_installed_comparisons(self):
+        changed = copy.deepcopy(self.ci)
+        changed["jobs"]["reference-validation"]["needs"] = "regressions"
+        with self.assertRaises(ValueError):
+            validate(changed, self.package)
+        changed = copy.deepcopy(self.ci)
+        changed["jobs"]["reference-validation"]["steps"] = []
+        with self.assertRaises(ValueError):
+            validate(changed, self.package)
 
     def test_architecture_or_shard_cannot_be_removed(self):
         changed = copy.deepcopy(self.package)

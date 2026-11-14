@@ -14,6 +14,7 @@ just python::docs::build-fast
 just python::docs::serve
 just python::docs::notebook tutorials/energy-and-scale.py
 just python::docs::check
+just python::docs::check-ci
 just python::docs::check-size
 just python::docs::check-browser
 ```
@@ -23,8 +24,10 @@ and notebook downloads under ignored `build/`. `build-fast` reuses the existing
 Lean certification and blueprint. Both execute canonical notebooks on cache
 misses. `serve` previews the result at `http://127.0.0.1:8000`.
 
-`check` validates word budgets, page schemas and prose, then checks app sources,
-notebook integrity, app tests and the complete build. Checks never repair source.
+`check-ci` validates word budgets, page schemas and prose, then checks app sources,
+notebook output tests and app tests. Hosted Pages owns the complete float64 site
+build and checks every executed notebook's publication content. Local `check`
+also builds the complete site. Checks never repair source.
 Use `just python::docs::fmt` to apply formatting explicitly. Root `just check`
 also runs the package's doctest command.
 
@@ -52,11 +55,15 @@ Tutorials and how-to guides are self-contained Marimo notebooks in `start/`,
 
 ```bash
 just python::docs::check-notebooks /absolute/path/to/notebook.py
+just python::docs::check-notebooks-extended /absolute/path/to/notebook.py
 ```
 
-The runner checks strict Marimo rules, unparsable cells, script execution in
-both JAX precisions, collected output tests and any doctests. Schema and prose
-checks run separately. Output tests and doctests share one pytest invocation;
+The default runner checks strict Marimo rules, unparsable cells, collected output
+tests and any doctests. The extended command additionally executes notebooks as
+scripts in both JAX precisions; without paths it selects every notebook. A small
+script fixture and selected numerical tests retain precision-sensitive coverage
+in ordinary CI. Schema and prose checks run separately. Output tests and doctests
+share one pytest invocation;
 published notebooks must collect an ordinary output test even when doctests pass.
 Notebook tests live in a hidden Appendix. Independent
 comparison tests belong in `tests/` and import the notebook's top-level helpers.

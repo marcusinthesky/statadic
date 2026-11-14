@@ -17,14 +17,14 @@ from pathlib import Path
 from typing import NotRequired, TypedDict
 from xml.etree import ElementTree as ET
 
-import statadic
-
 _REQUIRED = ("spreg", "statsmodels", "linearmodels", "lifelines")
 _LANES = ("external-float64", "precision-float32", "precision-float64")
 
 
 def input_identity(package: Path, catalogue: Path | None = None) -> dict[str, object]:
     """Bind reference evidence to the imported implementation and locked tests."""
+    import statadic  # noqa: PLC0415 -- report reconciliation needs only the stdlib
+
     imported = Path(statadic.__file__).resolve().parent
     files = set(imported.rglob("*.py"))
     for directory in ("tests", "scripts"):

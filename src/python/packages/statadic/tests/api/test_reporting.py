@@ -587,7 +587,6 @@ def test_metrics_select_and_order_footer_rows(tmp_path: Path) -> None:
     assert ordered.index("r2 &") < ordered.index("n &")
     assert "AIC" not in ordered
     assert r"\begin{tabular}" not in only.to_latex(metrics=())
-    assert only.to_text() == only.to_text()
     target = tmp_path / "t.tex"
     report.save_latex(target, metrics=("n",), notes=False)
     assert target.read_text(encoding="utf-8") == report.to_latex(

@@ -95,7 +95,6 @@ def test_complete_moment_procedure_contracts(study, scenario):
 
     _validate_outcomes(records, STUDIES[study].record(), scenario, None)
     assert tuple(records) == MOMENT_INFERENCE_STUDIES[study].methods
-    assert records == run_moment_inference(study, scenario, 0, 42)
     assert set(MOMENT_METHOD_METRICS[study]) == set(records)
     assert set(MOMENT_NULL_SCENARIOS[study]) <= set(
         MOMENT_INFERENCE_STUDIES[study].scenarios

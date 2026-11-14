@@ -60,18 +60,22 @@ test-check:
     case "${STATADIC_TEST_MODE:-}" in affected) just statadic::test ;; record) just statadic::test-record ;; fresh) just statadic::test-fresh ;; '') if [ -n "${CI:-}" ]; then just statadic::test-fresh; else just statadic::test; fi ;; *) echo "Invalid STATADIC_TEST_MODE" >&2; exit 2 ;; esac; if [[ "${STATADIC_TEST_MODE:-}" = affected || "${STATADIC_TEST_MODE:-}" = record ]] && [[ -n "${GITHUB_OUTPUT:-}" ]]; then printf '%s\n' 'fast-tests-passed=true' >> "$GITHUB_OUTPUT"; fi
 
 # Application checks are shared by the local gate and the hosted shard aggregate.
-check-apps:
-    just statadic::doctest
+check-app-tests:
     just evidence::check
     just publishing::check
     just studies::check
     just performance::check
+
+check-apps:
+    just statadic::doctest
+    just check-app-tests
     just docs::check
 
 check: architecture test-layout lint typecheck test-check build check-apps
 
-# The complete package tests execute separately in the hosted shard jobs.
-check-ci-nontest: architecture test-layout lint typecheck build check-apps
+# Package validation owns package quality; Pages owns the strict site build.
+check-ci-nontest: architecture check-app-tests
+    just docs::check-ci
 
 # Additive package gate; repository checks continue to cover every workspace app.
 check-package: test-layout lint typecheck

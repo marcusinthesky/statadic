@@ -179,8 +179,8 @@ def _():
 
 
 @app.cell
-def _(trials):
-    _bias = bias_study(trials=trials.value, seed=123)
+def _(bias, trials):
+    _bias = bias if trials.value == 20 else bias_study(trials=trials.value, seed=123)
     _fig, _ax = plt.subplots()
     _ax.plot(range(4), _bias[:, 0], "o-", label="U")
     _ax.plot(range(4), _bias[:, 1], "o-", label="V")

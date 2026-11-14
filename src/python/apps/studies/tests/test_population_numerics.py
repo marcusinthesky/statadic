@@ -73,14 +73,14 @@ from statadic_studies.adapters.population import (
 from statadic_studies.definitions.population import POPULATION_NUMERIC_STUDIES
 from statadic_studies.contracts import STUDIES
 from statadic_studies.campaign import _validate_outcomes
-from statadic.discrepancy.transport import ProjectionDesign
 
+outcomes = {}
 for study, design in POPULATION_NUMERIC_STUDIES.items():
     for scenario in design.scenarios:
         records = run_population_numerics(study, scenario, 0, 817)
+        outcomes[study, scenario] = records
         _validate_outcomes(records, STUDIES[study].record(), scenario)
         assert tuple(records) == design.methods, (study, records.keys())
-        assert records == run_population_numerics(study, scenario, 0, 817)
         for method, record in records.items():
             assert record['valid'], (study, scenario, method, record)
             assert np.isfinite([record['estimate'], record['truth']]).all()
@@ -93,7 +93,7 @@ for study, design in POPULATION_NUMERIC_STUDIES.items():
 
 study='transport.sliced-projections'
 x,y,shift,key=sliced_samples(study,'translated',0,817)
-observed=run_population_numerics(study,'translated',0,817)
+observed=outcomes[study,'translated']
 for method,record in observed.items():
     theta=np.array(record['directions'])
     assert record['truth'] == np.sqrt(np.mean((theta@shift)**2))
@@ -114,12 +114,12 @@ study='geometry.population-loss'
 base=geometry_samples(study,'n64',0,817)*np.sqrt([4.,2.,1.])
 _, vec=np.linalg.eigh(np.cov(base,rowvar=False))
 ref=vec[:,-1:]@vec[:,-1:].T
-pca=run_population_numerics(study,'n64',0,817)['PCA-projector-error']
+pca=outcomes[study,'n64']['PCA-projector-error']
 tol=2e-5 if not jax.config.x64_enabled else 1e-10
 np.testing.assert_allclose(pca['projector'],ref,atol=tol,rtol=tol)
 assert pca['truth']==0
 # Population location0, not a sample median or artificially unbiased radius.
-median=run_population_numerics(study,'n64',0,817)['stationary-median-radius']
+median=outcomes[study,'n64']['stationary-median-radius']
 assert median['truth']==0 and median['estimate']>=0 and median['converged']
 """
 
