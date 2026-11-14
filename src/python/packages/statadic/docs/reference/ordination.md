@@ -8,8 +8,8 @@ description: Represent observations by coordinates from feature, kernel, distanc
 ## Usage
 
 ```python
-from statadic.api.data import Observations
-from statadic.api.ordination import Ordination
+from statadic.observation.data import Observations
+from statadic.ordination.fit import Ordination
 
 training = Observations(
     {
@@ -28,7 +28,7 @@ print(coordinates, result.loadings)
 
 ## Description
 
-{py:class}`~statadic.api.ordination.Ordination` pairs a geometric construction
+{py:class}`~statadic.ordination.fit.Ordination` pairs a geometric construction
 with a coordinate criterion. The construction says how similarity between
 observations is defined, and `PrincipalCoordinates` turns the centred geometry
 into a small number of axes. The fitted result keeps everything needed for the placement of
@@ -51,7 +51,7 @@ formed.
 | `DistanceGram(ShortestPathDistances(...))` | Graph paths, then classical scaling | Training paths and neighbour rule |
 
 ```python
-from statadic.api.ordination import (
+from statadic.ordination.fit import (
     DistanceGram,
     KernelGram,
     PrincipalCoordinates,
@@ -78,7 +78,7 @@ supplies the rooted distances between the measures. The column is a
 `MeasureColumn` passed to `Observations(..., measures={"distribution": column})`.
 For an observed square matrix of distances, wrap it with
 `ObservedDissimilarity.from_array(distances, row_ids=ids)` from
-`statadic.api.representation` and fit `Ordination.pcoa(dim=...)`.
+`statadic.observation.geometry` and fit `Ordination.pcoa(dim=...)`.
 
 By default, material negative inertia raises an error, and setting
 `negative_inertia="positive-subspace"` keeps the full signed spectrum and
@@ -105,8 +105,8 @@ own, which keeps the coordinates of every other query fixed.
 An ordination term composes directly into a regression:
 
 ```python
-from statadic.api.design import Intercept
-from statadic.api.regression import Regression
+from statadic.observation.design import Intercept
+from statadic.regression import Regression
 
 fit = Regression("y", Intercept() + components).estimate(training)
 predictions = fit.predict(query)
@@ -152,10 +152,10 @@ are placed by the out-of-sample extension {cite:p}`bengio-etal-2003`.
 - Mathematical results: {ref}`full-factor reconstruction <formal-STATADIC-EMBEDDING-001>`,
   {ref}`Euclidean realisation <formal-STATADIC-EMBEDDING-002>` and the
   {ref}`spectral cutoff bound <formal-STATADIC-EMBEDDING-003>`.
-- Reference comparisons: the {download}`ordination controls <../../tests/api/test_ordination.py>`
+- Reference comparisons: the {download}`ordination controls <../../tests/ordination/test_fit.py>`
   compare covariance, centred kernels, independent shortest paths and held-out
   projections.
-- Artifacts: the {download}`artifact controls <../../tests/api/test_ordination_artifacts.py>`
+- Artifacts: the {download}`artifact controls <../../tests/ordination/test_fit_artifacts.py>`
   exercise standalone and nested frozen maps.
 
 ## See also

@@ -9,7 +9,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.core.random import cell_key
-from statadic.estimation.sharpe import sharpe_ratio
+from statadic.estimation.moments.sharpe import sharpe_ratio
 from statadic.inference.resampling.block_length import optimal_block_length_result
 from statadic.inference.resampling.schedule import stationary_row_schedule
 from statadic.inference.sharpe import sharpe_ratio_ci

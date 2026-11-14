@@ -3,7 +3,7 @@
 
 A plain module rather than fixtures (t49 C3): these are pure functions of a
 seed, with no state to set up or tear down. ``tests/geometry/test_embedding.py``,
-``tests/geometry/test_median.py`` and ``tests/association/test_dispersion.py``
+``tests/geometry/frechet/test_median.py`` and ``tests/association/test_dispersion.py``
 each need the same clustered cloud, and a fixture would only add indirection —
 plus a fixture is scoped to the directory its ``conftest.py`` sits in, and these
 three consumers span two.

@@ -14,13 +14,13 @@ EXAMPLE = (
 
 
 def test_spatial_composition_keeps_baseline_and_inference_contracts():
-    from statadic.api.design import Linear
-    from statadic.api.inference import ModelBased
-    from statadic.api.regression import Regression
-    from statadic.api.spatial.graphs import SpatialLag
-    from statadic.api.survival import RightCensored, SpatialSurvivalData
-    from statadic.estimation.survival import SpatialSurvivalML
-    from statadic.model.survival import LogNormalAFT
+    from statadic.estimation.likelihood.survival import SpatialSurvivalML
+    from statadic.hypothesis.uncertainty import ModelBased
+    from statadic.law.survival import LogNormalAFT
+    from statadic.observation.design import Linear
+    from statadic.observation.graph import SpatialLag
+    from statadic.regression import Regression
+    from statadic.structure.survival import RightCensored, SpatialSurvivalData
 
     _, values = runpy.run_path(str(EXAMPLE))["app"].run()
     pooled, panel = values["pooled"], values["time_fit"]

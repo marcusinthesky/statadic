@@ -10,12 +10,12 @@ description: Fit models from moment conditions with GMM, generalized empirical l
 ```python
 import jax.numpy as jnp
 
-from statadic.api.diagnostics import HansenJ
-from statadic.api.estimand import Estimand, MomentConditions
-from statadic.api.moments import GMMSandwich, MomentData
+from statadic.hypothesis.specification import HansenJ
+from statadic.estimand.core import Estimand, MomentConditions
+from statadic.estimand.moments import GMMSandwich, MomentData
 from statadic.core.equations import MeanCenteredLongRun
-from statadic.estimation.gmm import IteratedGMM
-from statadic.estimation.moments import AffineMomentProblem
+from statadic.estimation.moments.gmm import IteratedGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
 
 time = jnp.arange(40.0)
 derivative = jnp.asarray([[1.0], [0.5], [-0.25]])
@@ -48,15 +48,15 @@ numerical classes below take arrays directly and support `jax.jit` and `jax.vmap
 
 ## Options
 
-| Estimator | Module | Notes |
+| Estimator | Module in `statadic.estimation` | Notes |
 | --- | --- | --- |
-| `IteratedGMM(variability, bandwidth, max_iter=25, tolerance=1e-10)` | `statadic.estimation.gmm` | Starts from the identity weight, with up to `max_iter` updates. `max_iter=1` is two-step GMM |
-| `FixedWeightGMM(variability, bandwidth)` | `statadic.estimation.gmm` | One solve with the weight `W` from the problem |
-| `FixedGEL(criterion)` | `statadic.estimation.gel` | Multiplier for moment rows |
-| `AffineGEL(criterion)` | `statadic.estimation.gel` | Parameters and multiplier, with criterion `"cue"`, `"el"` or `"et"` |
-| `TwoStageLeastSquares()` | `statadic.estimation.iv` | Starts from a projection onto the instruments |
-| `TwoStepIVGMM(variability, bandwidth)` | `statadic.estimation.iv` | One weight update from 2SLS residuals |
-| `IteratedIVGMM(variability, bandwidth, max_iter=256)` | `statadic.estimation.iv` | Updates the weight until a stopping rule |
+| `IteratedGMM(variability, bandwidth, max_iter=25, tolerance=1e-10)` | `moments.gmm` | Starts from the identity weight, with up to `max_iter` updates. `max_iter=1` is two-step GMM |
+| `FixedWeightGMM(variability, bandwidth)` | `moments.gmm` | One solve with the weight `W` from the problem |
+| `FixedGEL(criterion)` | `empirical_likelihood` | Multiplier for moment rows |
+| `AffineGEL(criterion)` | `empirical_likelihood` | Parameters and multiplier, with criterion `"cue"`, `"el"` or `"et"` |
+| `TwoStageLeastSquares()` | `moments.instrumental` | Starts from a projection onto the instruments |
+| `TwoStepIVGMM(variability, bandwidth)` | `moments.instrumental` | One weight update from 2SLS residuals |
+| `IteratedIVGMM(variability, bandwidth, max_iter=256)` | `moments.instrumental` | Updates the weight until a stopping rule |
 
 The `variability` argument is `PlainLongRun` for raw cross-products, or
 `MeanCenteredLongRun` to subtract the sample mean of the moments first. Both apply
@@ -68,10 +68,10 @@ The other exogenous terms enter both the structural and the instrument matrices,
 `instruments` names the excluded instruments:
 
 ```python
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Regression
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Regression
 from statadic.core.equations import PlainLongRun
-from statadic.estimation.iv import TwoStageLeastSquares, TwoStepIVGMM
+from statadic.estimation.moments.instrumental import TwoStageLeastSquares, TwoStepIVGMM
 
 terms = Intercept() + Linear("control") + Linear("treatment")
 roles = {"endogenous": ("treatment",), "instruments": ("assignment", "encouragement")}
@@ -106,7 +106,7 @@ validity nor strong population identification.
 Hansen J is requested once, the same way for GMM and IV results:
 
 ```python
-from statadic.api.diagnostics import HansenJ
+from statadic.hypothesis.specification import HansenJ
 
 diagnostics = result.diagnose(HansenJ(assume_correct_specification=True))
 print(diagnostics.report().to_text())
@@ -117,7 +117,7 @@ when the test is unavailable. Exactly identified fits, 2SLS fits, arbitrary fixe
 and a missing acknowledgement all leave the p-value unavailable. For GEL, call
 `result.infer(calibration=GELCalibration(...)).test(Hypothesis(OveridentifyingRestrictions(moment_count=m, parameter_count=p)))`.
 Fixed fits support LR, LM and Wald statistics, while affine fits support the profiled LR
-statistic. The [hypotheses reference](hypotheses.md) describes the outcome object in detail.
+statistic. The [hypotheses reference](hypothesis.md) describes the outcome object in detail.
 
 ## Methods and formulas
 
@@ -167,6 +167,6 @@ rank of the moments.
 
 ## See also
 
-- [Estimand](estimand.md) and [hypotheses](hypotheses.md)
+- [Estimand](estimand.md) and [hypotheses](hypothesis.md)
 - [Regression](regression.md) and [transformation support](transformation-support.md)
 - [Known limitations](../validation/known-limitations.md)

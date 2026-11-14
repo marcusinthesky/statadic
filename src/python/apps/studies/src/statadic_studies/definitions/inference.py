@@ -107,9 +107,9 @@ INFERENCE_STUDIES = {
 
 INFERENCE_SYMBOLS = {
     "permutation.bernoulli-size-power": [
-        "statadic.inference.resampling.permutation.test.permutation_test_result",
-        "statadic.discrepancy.mmd.scalar.mmd_squared",
-        "statadic.discrepancy.mmd.energy.scalar.energy_distance",
+        "statadic.inference.resampling.permutation_test.permutation_test_result",
+        "statadic.geometry.discrepancy.mmd.scalar.mmd_squared",
+        "statadic.geometry.discrepancy.mmd.energy.scalar.energy_distance",
     ],
     "bootstrap.mean-coverage": [
         "statadic.inference.resampling.bootstrap.bootstrap_estimate",
@@ -117,9 +117,11 @@ INFERENCE_SYMBOLS = {
         "statadic.inference.resampling.block_length.optimal_block_length_result",
         "statadic.inference.resampling.block_length.heuristic_block_length_result",
     ],
-    "equivalence.bernoulli-margin": ["statadic.inference.equivalence.equivalence_test"],
+    "equivalence.bernoulli-margin": [
+        "statadic.inference.inequality.equivalence.equivalence_test"
+    ],
     "multiplicity.equivalence-family": [
-        "statadic.inference.multiplicity.equivalence_multiplicity_control"
+        "statadic.inference.multiplicity.familywise.equivalence_multiplicity_control"
     ],
 }
 

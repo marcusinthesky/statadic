@@ -31,9 +31,9 @@ jobs:
         run: >-
           bash infra/nix/ci-capacity.sh run generated-exploration devenv shell --profile python-ci --
           just python::statadic::test-fresh
-          tests/estimation/test_linear.py::test_generated_complete_linear_state_matches_independent_qr
-          tests/estimation/test_linear.py::test_generated_precision_scaling_and_named_permutations_preserve_inference
-          tests/estimation/test_glm.py::test_generated_interior_glm_matches_independent_fit_scores_and_information
+          tests/estimation/least_squares/test_linear.py::test_generated_complete_linear_state_matches_independent_qr
+          tests/estimation/least_squares/test_linear.py::test_generated_precision_scaling_and_named_permutations_preserve_inference
+          tests/estimation/likelihood/test_glm.py::test_generated_interior_glm_matches_independent_fit_scores_and_information
           --hypothesis-profile=statadic-explore --durations=25
       - name: Retain extended diagnostics
         if: always()

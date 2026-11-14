@@ -16,8 +16,8 @@ import jax  # runtime dataclass hint  # noqa: TC002
 import jax.numpy as jnp
 
 from statadic.core.typing import ArrayLike  # noqa: TC001
-from statadic.model.dyadic import DyadicModel, DyadicSample  # noqa: TC001
-from statadic.operators.design import (  # noqa: TC001
+from statadic.law.dyadic import DyadicModel, DyadicSample  # noqa: TC001
+from statadic.numerics.linalg.dyadic import (  # noqa: TC001
     ArrayView,
     NodeIndex,
 )

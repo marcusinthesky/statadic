@@ -15,7 +15,7 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from jax import random
-from statadic.estimation.linear import (
+from statadic.estimation.least_squares.linear import (
     LeastSquares,
     LinearProblem,
 )
@@ -40,7 +40,7 @@ from .._strategies import float_arrays, xps
 
 if TYPE_CHECKING:
     from jax import Array
-    from statadic.estimation.linear import LinearFit
+    from statadic.estimation.least_squares.linear import LinearFit
     from statadic.inference.resampling.schedule import (
         PercentileSummary,
         ReplicateResult,

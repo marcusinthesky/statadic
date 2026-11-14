@@ -151,7 +151,7 @@ def adapt_spatial_covariance_source(source: str) -> tuple[str, list[int]]:
     module = ast.parse(
         "from __future__ import annotations\nfrom dataclasses import dataclass\n"
         "from typing import cast\nimport jax\nimport numpy as np\n"
-        "from statadic.api.estimand import Covariance, Estimand\n"
+        "from statadic.estimand.core import Covariance, Estimand\n"
         "from statadic.estimation.covariance import LedoitWolf\n"
         "_MATRIX_DIMENSIONS = 2\n"
     )

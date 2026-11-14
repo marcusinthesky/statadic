@@ -5,6 +5,8 @@ import json
 import pytest
 from statadic_studies.catalogue import check_catalogue
 
+_ESTIMATOR = "statadic.estimation.least_squares.linear.Estimator"
+
 
 def fixture_repository(root):
     registry = root / "src/lean/registry"
@@ -15,12 +17,12 @@ def fixture_repository(root):
             {
                 "modules": [
                     {
-                        "name": "statadic.estimation.linear",
+                        "name": "statadic.estimation.least_squares.linear",
                         "method_id": "linear",
                         "exports": [
                             {
                                 "name": "Estimator",
-                                "target": "statadic.estimation.linear.Estimator",
+                                "target": _ESTIMATOR,
                                 "kind": "class",
                             }
                         ],
@@ -44,12 +46,12 @@ def fixture_repository(root):
         json.dumps(
             {
                 "schema_version": 1,
-                "public_symbols": {"statadic.estimation.linear.Estimator": "linear"},
+                "public_symbols": {_ESTIMATOR: "linear"},
                 "methods": [
                     {
                         "id": "linear",
                         "family": "linear",
-                        "python_symbols": ["statadic.estimation.linear.Estimator"],
+                        "python_symbols": [_ESTIMATOR],
                         "studies": [],
                         "benchmarks": ["ols/full-fit"],
                         "tutorials": [],
@@ -91,13 +93,13 @@ def scientific_fixture(root):
             "id": "linear-point",
             "family": "linear",
             "rationale": "Concrete point estimator",
-            "python_symbols": ["statadic.estimation.linear.Estimator"],
+            "python_symbols": [_ESTIMATOR],
             "variants": [
                 {
                     "id": "linear-point.ols",
                     "title": "OLS",
                     "selectors": {"weights": "unit"},
-                    "python_symbols": ["statadic.estimation.linear.Estimator"],
+                    "python_symbols": [_ESTIMATOR],
                     "adapter_status": "uncovered",
                     "source_review": "source-unresolved",
                     "study_mappings": [],
@@ -254,8 +256,8 @@ def reference_mapping(root):
         "import pytest\n@pytest.mark.reference\ndef test_fit(case):\n    pass\n"
     )
     return {
-        "python_symbols": ["statadic.estimation.linear.Estimator"],
-        "construction_paths": ["statadic.estimation.linear.Estimator"],
+        "python_symbols": [_ESTIMATOR],
+        "construction_paths": [_ESTIMATOR],
         "nodeids": ["tests/test_reference.py::test_fit[ordinary]"],
         "oracle_kind": "external",
         "distribution": "statsmodels",

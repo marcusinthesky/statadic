@@ -10,8 +10,8 @@ description: Test the assumptions behind an ordinary least squares fit and measu
 ```python
 import random
 
-from statadic.api.design import Intercept, Linear
-from statadic.api.diagnostics import (
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.specification import (
     RESET,
     BreuschGodfrey,
     BreuschPagan,
@@ -20,8 +20,8 @@ from statadic.api.diagnostics import (
     JarqueBera,
     White,
 )
-from statadic.api.inference import HC
-from statadic.api.regression import Regression
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression import Regression
 
 rng = random.Random(7)
 x = [i / 10 for i in range(60)]
@@ -53,11 +53,11 @@ Every request names one procedure, with its options and its null hypothesis.
 There is no request that runs everything, and each result family accepts only the
 requests it supports. Outcomes keep the order of the request and carry unique
 names, so pass `name=` to ask for the same procedure twice. Tests return a
-`TestOutcome` holding a structured [Hypothesis](hypotheses.md), a reference
+`TestOutcome` holding a structured [Hypothesis](hypothesis.md), a reference
 distribution, its assumptions and a record of how it was built, while influence
 returns descriptive quantities instead of a test.
 
-The JAX kernels live in `statadic.inference.linear_diagnostics`, where they take
+The JAX kernels live in `statadic.inference.specification.linear`, where they take
 a `LinearFit` and support `jit` and `vmap`.
 
 ## Options
@@ -86,7 +86,7 @@ order.
 
 `fit.diagnose(...)` returns a `Diagnostics` collection that you can index by
 name, iterate over in request order or summarise with `report()` as a combined
-[report](reporting.md). Unavailable outcomes stay in the collection and appear in
+[report](report.md). Unavailable outcomes stay in the collection and appear in
 the report with a reason. A `TestOutcome` exposes `statistic`, `pvalue`,
 `reference`, `available`, `assumptions` and `sources` for further use.
 
@@ -178,5 +178,5 @@ Reading the results needs the same care.
 ## See also
 
 - [Diagnose an OLS fit](../tutorials/ols/diagnose.py) and the reference for
-  [hypotheses and tests](hypotheses.md)
-- [Regression](regression.md) and [reports](reporting.md) for the surrounding workflow
+  [hypotheses and tests](hypothesis.md)
+- [Regression](regression.md) and [reports](report.md) for the surrounding workflow

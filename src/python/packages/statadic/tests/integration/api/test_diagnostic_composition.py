@@ -6,11 +6,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.design import Intercept, Linear
-from statadic.api.diagnostics import RESET, BreuschGodfrey, BreuschPagan
-from statadic.api.hypotheses import Hypothesis, LinearRestriction, TestOutcome
-from statadic.api.inference import ModelBased
-from statadic.api.regression import Regression
+from statadic.hypothesis.core import Hypothesis, LinearRestriction, TestOutcome
+from statadic.hypothesis.specification import RESET, BreuschGodfrey, BreuschPagan
+from statadic.hypothesis.uncertainty import ModelBased
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Regression
 
 pytestmark = pytest.mark.integration
 

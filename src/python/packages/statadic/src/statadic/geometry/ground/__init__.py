@@ -7,7 +7,8 @@ serialized-name boundary. Inputs are point arrays; outputs are pairwise arrays
 or checked distance carriers without distributional or inferential claims.
 
 Choose a ground explicitly when its identifying power matters. Pass these
-strategies to ``statadic.discrepancy.mmd`` or transport, rather than inferring a
+strategies to ``statadic.geometry.discrepancy.mmd`` or transport, rather than inferring
+a
 measure-distance law from the raw pointwise array.
 """
 

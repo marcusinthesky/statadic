@@ -18,7 +18,7 @@ def _result(params, covariance):
 
 
 def _ols(side, n=18, compiled=False):
-    # tests/estimation/test_linear_reference.py::_sample and test_public_linear_workflow...
+    # tests/estimation/least_squares/test_linear_reference.py::_sample and test_public_linear_workflow...
     time = np.arange(n, dtype=float)
     if n != 18:
         time *= 17 / (n - 1)  # Preserve the design scale of the 18-row fixture.
@@ -26,8 +26,8 @@ def _ols(side, n=18, compiled=False):
     y = x @ np.array([0.7, 1.3, -0.4]) + (0.2 + time / 30) * np.sin(time * 1.9)
     if side == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.linear import LeastSquares, LinearProblem
-        from statadic.inference.linear_covariance import hc_covariance
+        from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+        from statadic.inference.covariance.linear import hc_covariance
 
         x, y = jnp.asarray(x), jnp.asarray(y)
 
@@ -55,14 +55,14 @@ def _ols(side, n=18, compiled=False):
 
 
 def _poisson(side):
-    # tests/estimation/test_glm.py::_data and test_full_fit_and_covariance_match_statsmodels
+    # tests/estimation/likelihood/test_glm.py::_data and test_full_fit_and_covariance_match_statsmodels
     x = np.column_stack((np.ones(12), np.linspace(-1.5, 1.5, 12)))
     counts = np.array([0, 1, 2, 1, 3, 2, 4, 3, 6, 4, 5, 7], dtype=float)
     offset, exposure = np.linspace(-0.15, 0.2, 12), np.linspace(0.75, 1.75, 12)
     if side == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.glm import PoissonMLE, PoissonProblem
-        from statadic.inference.glm_covariance import glm_covariance
+        from statadic.estimation.likelihood.glm import PoissonMLE, PoissonProblem
+        from statadic.inference.covariance.glm import glm_covariance
 
         x, counts, offset, exposure = map(jnp.asarray, (x, counts, offset, exposure))
 
@@ -91,7 +91,7 @@ def _poisson(side):
 
 
 def _panel(side, driscoll_kraay, entities=20, periods=10):
-    # tests/inference/test_panel_covariance_reference.py::test_panel_covariance_matches_linearmodels
+    # tests/inference/covariance/test_panel_reference.py::test_panel_covariance_matches_linearmodels
     rng = np.random.default_rng(126)
     entity = np.repeat(np.arange(entities), periods)
     time = np.tile(np.arange(periods), entities)
@@ -105,9 +105,9 @@ def _panel(side, driscoll_kraay, entities=20, periods=10):
     weights = np.ones(n)
     if side == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.panel import PanelProblem, Within
-        from statadic.inference.panel_covariance import panel_covariance
-        from statadic.operators.panel import prepare_panel_index
+        from statadic.estimation.least_squares.panel import PanelProblem, Within
+        from statadic.inference.covariance.panel import panel_covariance
+        from statadic.numerics.linalg.absorption import prepare_panel_index
 
         index = prepare_panel_index(entity, time)
         x, y, weights = map(jnp.asarray, (x, y, weights))
@@ -139,7 +139,7 @@ def _panel(side, driscoll_kraay, entities=20, periods=10):
 
 
 def _unbalanced_panel(side, method):
-    # tests/estimation/test_panel_reference.py explicit seed 126, unit weights.
+    # tests/estimation/least_squares/test_panel_reference.py explicit seed 126, unit weights.
     rng = np.random.default_rng(126)
     e = np.repeat(np.arange(16), 8)
     t = np.tile(np.arange(8), 16)
@@ -156,7 +156,7 @@ def _unbalanced_panel(side, method):
         x = x[:, 1:]  # First differences remove the explicit constant.
     if side == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.panel import (
+        from statadic.estimation.least_squares.panel import (
             Between,
             FamaMacBeth,
             FirstDifference,
@@ -165,11 +165,11 @@ def _unbalanced_panel(side, method):
             RandomEffects,
             Within,
         )
-        from statadic.inference.panel_covariance import (
+        from statadic.inference.covariance.panel import (
             fama_macbeth_covariance,
             panel_covariance,
         )
-        from statadic.operators.panel import prepare_panel_index
+        from statadic.numerics.linalg.absorption import prepare_panel_index
 
         index = prepare_panel_index(e, t)
         x, y, w = map(jnp.asarray, (x, y, w))
@@ -217,7 +217,7 @@ def _unbalanced_panel(side, method):
 
 
 def _iv(side):
-    # tests/estimation/test_gmm_reference.py::_sample and test_affine_iv_fit_and_sampling_covariance...
+    # tests/estimation/moments/test_gmm_reference.py::_sample and test_affine_iv_fit_and_sampling_covariance...
     rng = np.random.default_rng(942)
     z = rng.normal(size=(120, 4))
     shocks = rng.normal(size=(120, 3))
@@ -230,9 +230,9 @@ def _iv(side):
     if side == "statadic":
         import jax.numpy as jnp
         from statadic.core.equations import PlainLongRun
-        from statadic.estimation.gmm import IteratedGMM
-        from statadic.estimation.moments import AffineMomentProblem
-        from statadic.inference.gmm.covariance import gmm_covariance
+        from statadic.estimation.moments.gmm import IteratedGMM
+        from statadic.estimation.moments.problem import AffineMomentProblem
+        from statadic.inference.covariance.moments import gmm_covariance
 
         z, x, y = map(jnp.asarray, (z, x, y))
 

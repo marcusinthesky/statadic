@@ -10,7 +10,7 @@ description: Check JAX transformation, precision and backend support for numeric
 ```python
 import jax
 import jax.numpy as jnp
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
 
 x = jnp.array([[1., 0.], [1., 1.], [1., 2.]])
 y = jnp.array([1., 2., 3.])
@@ -66,4 +66,3 @@ describe the CPU configurations used for measurements.
 ## See also
 
 - [Installation](../start/installation.md)
-- [Method catalogue](method-catalogue.md)

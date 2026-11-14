@@ -36,13 +36,13 @@ PAGES = (
     "tutorials/ols/diagnose.html",
     "tutorials/ols/infer.html",
     "tutorials/ols/report.html",
-    "reference/reporting.html",
+    "reference/report.html",
     "reference/ordination.html",
     "reference/estimand.html",
-    "reference/composition.html",
+    "reference/model.html",
     "reference/conditional-laws.html",
     "reference/regression.html",
-    "reference/hypotheses.html",
+    "reference/hypothesis.html",
     "validation/references.html",
     "reference/regression.html",
     "formal/claims/STATADIC-LINEAR-004.html",
@@ -312,7 +312,7 @@ async def inspect_text_resize(browser, url, errors):
     page.on("pageerror", lambda error: errors.append(str(error)))
     observations = []
     try:
-        for target in ("tutorials/ols/report.html", "reference/reporting.html"):
+        for target in ("tutorials/ols/report.html", "reference/report.html"):
             await page.goto(url + "/" + target, wait_until="load")
             original = await page.evaluate(
                 "parseFloat(getComputedStyle(document.documentElement).fontSize)"

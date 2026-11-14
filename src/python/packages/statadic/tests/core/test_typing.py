@@ -144,8 +144,8 @@ _MMD_BRAND_ACCEPTED_FIXTURE = '''\
 from __future__ import annotations
 
 import jax.numpy as jnp
-from statadic.discrepancy.mmd.energy import UNIT_EXPONENT, energy_geometry
-from statadic.discrepancy.mmd import (
+from statadic.geometry.discrepancy.mmd.energy import UNIT_EXPONENT, energy_geometry
+from statadic.geometry.discrepancy.mmd import (
     LINEAR_KERNEL,
     distance_induced_kernel,
     mmd_matrix,
@@ -157,7 +157,7 @@ from statadic.core.matrices import (
 )
 from statadic.geometry.ground.metrics import ANGULAR
 from statadic.geometry.ground.similarities import RBFKernel
-from statadic.sample.packed import pack
+from statadic.measure.clouds import pack
 
 
 def squared_negative_type_sink[D: ObjectDomain, O: ConstructionOrigin](
@@ -204,7 +204,7 @@ import jax.numpy as jnp
 from statadic.core.axioms import METRIC, Axioms, LawProperties
 from statadic.core.domains import FiniteValues
 from statadic.core.typing import LawfulCallable
-from statadic.discrepancy.mmd.energy import (  # noqa: E402
+from statadic.geometry.discrepancy.mmd.energy import (  # noqa: E402
     ANOVA_EXPONENT,
     UNIT_EXPONENT,
     DistributionEnergyLaw,

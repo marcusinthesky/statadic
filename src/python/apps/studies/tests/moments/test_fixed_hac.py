@@ -4,7 +4,7 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from scipy.stats import chi2
-from statadic.inference.gmm import gmm_wald
+from statadic.inference.restriction.moments import gmm_wald
 from statadic_studies.adapters import run_trial
 from statadic_studies.adapters.moments import stationary_moments
 from statadic_studies.definitions import STUDIES

@@ -133,8 +133,8 @@ def test_reference_nodes_require_exact_pytest_metadata(
 
 def _mapping() -> dict[str, object]:
     return {
-        "python_symbols": ["statadic.estimation.linear.LeastSquares"],
-        "construction_paths": ["statadic.estimation.linear.LeastSquares"],
+        "python_symbols": ["statadic.estimation.least_squares.linear.LeastSquares"],
+        "construction_paths": ["statadic.estimation.least_squares.linear.LeastSquares"],
         "nodeids": ["tests/reference.py::test_fit[one]"],
         "oracle_kind": "external",
         "distribution": "spreg",

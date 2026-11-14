@@ -3,7 +3,7 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
+from statadic.geometry.discrepancy.mmd.energy import mixture_energy_distance_from_blocks
 from statadic.inference.resampling.bootstrap import bootstrap_mixture_energy_interval
 
 from statadic_studies.adapters._random import rng

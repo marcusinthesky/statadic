@@ -10,17 +10,20 @@ from scipy import stats
 from statadic.core.equations import (
     PlainLongRun,
 )
-from statadic.estimation.glm import (
+from statadic.estimation.likelihood.glm import (
     BinomialLogitMLE,
     BinomialProblem,
     PoissonMLE,
     PoissonProblem,
 )
-from statadic.estimation.gmm import FixedWeightGMM
-from statadic.estimation.moments import AffineMomentProblem
-from statadic.inference.glm_covariance import glm_covariance
-from statadic.inference.gmm.covariance import gmm_covariance
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.estimation.moments.gmm import FixedWeightGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
+from statadic.inference.covariance.glm import glm_covariance
+from statadic.inference.covariance.moments import gmm_covariance
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 
 if TYPE_CHECKING:
     from statadic.inference.contracts import FittedUncertainty

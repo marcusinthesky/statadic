@@ -7,19 +7,19 @@ from functools import cache, partial
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy.scalar import energy_distance
-from statadic.discrepancy.mmd.scalar import mmd_squared
+from statadic.geometry.discrepancy.mmd.energy.scalar import energy_distance
+from statadic.geometry.discrepancy.mmd.scalar import mmd_squared
 from statadic.geometry.ground.similarities import rbf_kernel
-from statadic.inference.equivalence import equivalence_test
-from statadic.inference.multiplicity import equivalence_multiplicity_control
+from statadic.inference.inequality.equivalence import equivalence_test
+from statadic.inference.multiplicity.familywise import equivalence_multiplicity_control
 from statadic.inference.resampling.block_length import (
     heuristic_block_length_result,
     optimal_block_length_result,
     stationary_bootstrap_estimate,
 )
 from statadic.inference.resampling.bootstrap import bootstrap_estimate
-from statadic.inference.resampling.permutation.test import permutation_test_result
-from statadic.sample.packed import PackedClouds
+from statadic.inference.resampling.permutation_test import permutation_test_result
+from statadic.measure.clouds import PackedClouds
 
 from statadic_studies.definitions.inference import (
     BOOTSTRAP_METHODS,

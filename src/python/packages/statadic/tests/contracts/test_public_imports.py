@@ -21,14 +21,14 @@ def test_root_and_ground_imports_do_not_load_downstream_families() -> None:
 import sys
 import types
 import statadic
-import statadic.api
+import statadic.hypothesis
 assert statadic.__version__
 assert not {'jax', 'numpy', 'scipy', 'polars'} & sys.modules.keys()
 from statadic.geometry import ground
 assert callable(ground.cdist)
-assert 'statadic.geometry.barycentre' not in sys.modules
+assert 'statadic.geometry.frechet' not in sys.modules
 assert 'statadic.inference' not in sys.modules
-from statadic.discrepancy import mmd
+from statadic.geometry.discrepancy import mmd
 assert isinstance(mmd, types.ModuleType)
 assert callable(mmd.mmd)
 """,
@@ -46,8 +46,8 @@ def test_removed_alpha_regression_names_are_not_importable() -> None:
             sys.executable,
             "-c",
             """
-import statadic.api.regression as regression
-import statadic.api.ordination as ordination
+import statadic.regression as regression
+import statadic.ordination.fit as ordination
 for name in (
     "PoissonRegression",
     "LogisticRegression",
@@ -68,7 +68,7 @@ assert callable(ordination.Ordination)
 assert not hasattr(ordination, "PCA")
 assert not hasattr(ordination, "PCoA")
 try:
-    import statadic.api.composition
+    import statadic.regression.composition
 except ModuleNotFoundError:
     pass
 else:

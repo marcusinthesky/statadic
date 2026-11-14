@@ -98,10 +98,10 @@ def prepare(case, side):
         import jax.numpy as jnp
 
         if name in ("energy", "w1"):
-            from statadic.sample.packed import PackedClouds
+            from statadic.measure.clouds import PackedClouds
 
             if name == "energy":
-                from statadic.discrepancy.mmd.energy import energy_distance
+                from statadic.geometry.discrepancy.mmd.energy import energy_distance
 
                 def evaluate():
                     a, b = (
@@ -112,7 +112,7 @@ def prepare(case, side):
                         energy_distance(a, b, metric="euclidean", exponent=1.0)
                     )
             else:
-                from statadic.discrepancy.transport import w1_1d
+                from statadic.geometry.discrepancy.transport import w1_1d
 
                 def evaluate():
                     a = PackedClouds.from_array(jnp.asarray(x[:, None]))

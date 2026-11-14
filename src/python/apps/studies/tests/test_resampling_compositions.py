@@ -3,8 +3,8 @@
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.mantel import mantel_bootstrap_kernel
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.independence import mantel_bootstrap_kernel
 from statadic.inference.resampling.schedule import (
     linear_pairs_replicates,
     row_resample_schedule,
@@ -104,7 +104,7 @@ def test_exact_population_mixture_optimum_matches_dense_independent_grid():
 
 
 def test_batched_native_optimizer_refits_each_empirical_distribution():
-    from statadic.geometry.barycentre.mmd.energy import (
+    from statadic.geometry.frechet.energy import (
         energy_barycentre_weights_batched,
     )
 
@@ -127,7 +127,7 @@ def test_batched_native_optimizer_refits_each_empirical_distribution():
 @pytest.mark.parametrize("tail", ["less", "greater", "two-sided"])
 def test_native_tail_selector_matches_independent_add_one_count(tail):
     import jax
-    from statadic.inference.resampling.permutation.test import permutation_test_result
+    from statadic.inference.resampling.permutation_test import permutation_test_result
 
     x, y = jnp.array([[-2.0], [-1.0], [0.0]]), jnp.array([[0.5], [1.0], [3.0], [4.0]])
     result = permutation_test_result(

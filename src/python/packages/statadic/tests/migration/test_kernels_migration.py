@@ -11,8 +11,10 @@ Independent analytic assertions avoid comparing identical solver paths.
 import jax.numpy as jnp
 import pytest
 from jax import config, random
-from statadic.discrepancy.mmd.energy.balancing import kernel_balancing_weights
-from statadic.optimize.simplex import pgd_simplex_affine as _pgd_simplex
+from statadic.geometry.discrepancy.mmd.energy.balance_weights import (
+    kernel_balancing_weights,
+)
+from statadic.numerics.optimize.simplex import pgd_simplex_affine as _pgd_simplex
 
 config.update("jax_enable_x64", val=True)
 

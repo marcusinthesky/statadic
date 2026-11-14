@@ -20,7 +20,7 @@ from statadic.core.results import (
     TestResult,
 )
 from statadic.core.typing import Array  # noqa: TC001
-from statadic.estimation.linear import (
+from statadic.estimation.least_squares.linear import (
     LinearFit,  # noqa: TC001
 )
 from statadic.estimation.spatial.iv import (
@@ -28,13 +28,13 @@ from statadic.estimation.spatial.iv import (
 )
 from statadic.estimation.spatial.likelihood import SpatialFit
 from statadic.estimation.spatial.panel import SpatialPanelFit
+from statadic.geometry.graph import (
+    SpatialWeights,  # noqa: TC001
+)
+from statadic.geometry.graph.moments import iv_response_map
 from statadic.inference.spatial.covariance import (
     SpatialUncertainty,  # noqa: TC001
 )
-from statadic.operators.spatial import (
-    SpatialWeights,  # noqa: TC001
-)
-from statadic.operators.spatial.moments import iv_response_map
 
 __all__ = [
     "SpatialDiagnostics",

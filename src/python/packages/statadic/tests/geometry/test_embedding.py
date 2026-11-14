@@ -26,9 +26,9 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
-from statadic.api.ordination import DistanceGram, Ordination, PrincipalCoordinates
-from statadic.api.representation import ObservedDissimilarity
 from statadic.geometry.embedding import NonEuclideanEmbeddingError, pcoa_kernel
+from statadic.observation.geometry import ObservedDissimilarity
+from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
 
 from .._budgets import examples
 from .._clouds import euclidean

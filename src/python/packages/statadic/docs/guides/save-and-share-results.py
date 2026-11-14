@@ -23,10 +23,10 @@ with app.setup:
     import matplotlib.pyplot as plt
     from pathlib import Path
     from tempfile import TemporaryDirectory
-    from statadic.api.artifacts import load_analysis, load_predictor, save_analysis
-    from statadic.api.design import Intercept, Linear
-    from statadic.api.inference import HC
-    from statadic.api.regression import Regression
+    from statadic.prediction.artifacts import load_analysis, load_predictor, save_analysis
+    from statadic.observation.design import Intercept, Linear
+    from statadic.hypothesis.uncertainty import HC
+    from statadic.regression import Regression
     DARK = mo.app_meta().theme == "dark"
     INK = "#f2f2f2" if DARK else "#000000"
     BLUE = "#9bbaff" if DARK else "#1d3f8f"
@@ -153,7 +153,7 @@ def _():
 
     The restored report can render the same computed values together with their interpretation, even after the original Python session has ended. A predictor restores prediction separately from inference, while the snapshot does not refit the model. Retain the original data and analysis code to repeat the computation.
 
-    Include the table and named values in a manuscript using `booktabs` and `siunitx`. For a wide table, adjust the font size or column spacing in the manuscript that includes it. The [reporting reference](../reference/reporting.md) covers test tables and formatting options.
+    Include the table and named values in a manuscript using `booktabs` and `siunitx`. For a wide table, adjust the font size or column spacing in the manuscript that includes it. The [reporting reference](../reference/report.md) covers test tables and formatting options.
     """)
     return
 
@@ -168,7 +168,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.callout(mo.md('Inspect the loading and trust boundaries before sharing artifacts. See the [assumptions and limits](../reference/artifacts.md#assumptions-and-limits) and [evidence](../reference/artifacts.md#evidence).'), kind="info")
+    mo.callout(mo.md('Inspect the loading and trust boundaries before sharing artifacts. See the [assumptions and limits](../reference/prediction.md#assumptions-and-limits) and [evidence](../reference/prediction.md#evidence).'), kind="info")
     return
 
 

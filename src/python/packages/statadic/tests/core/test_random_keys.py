@@ -10,7 +10,7 @@ import pytest
 from jaxtyping import TypeCheckError
 from statadic.core.random import cell_key, permutation_batch
 from statadic.inference.resampling.bootstrap import bootstrap_estimate
-from statadic.operators.longrun import (
+from statadic.numerics.linalg.longrun import (
     circular_block_bootstrap_indices_kernel,
 )
 

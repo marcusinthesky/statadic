@@ -9,7 +9,7 @@ assumptions.
 All measures are per observation unless the caller explicitly annualizes.
 
 The point sample ratio and reusable sample-moment reductions belong to
-:mod:`statadic.estimation.sharpe`. These eager reporting adapters preserve their
+:mod:`statadic.estimation.moments.sharpe`. These eager reporting adapters preserve their
 caller-owned precision and key-driven bootstrap contracts.
 """
 

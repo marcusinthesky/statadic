@@ -8,8 +8,8 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from statadic.estimation.spatial import ML, SAR, SpatialProblem
+from statadic.geometry.graph import prepare_spatial_weights
 from statadic.inference.spatial import spatial_covariance
-from statadic.operators.spatial import prepare_spatial_weights
 
 
 @pytest.mark.component

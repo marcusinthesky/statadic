@@ -11,8 +11,8 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 from scipy.stats import binomtest
-from statadic.inference.equivalence import equivalence_test
-from statadic.inference.multiplicity import equivalence_multiplicity_control
+from statadic.inference.inequality.equivalence import equivalence_test
+from statadic.inference.multiplicity.familywise import equivalence_multiplicity_control
 from statadic.inference.sharpe import sharpe_ratio_ci
 
 from .._validation.calibration import (

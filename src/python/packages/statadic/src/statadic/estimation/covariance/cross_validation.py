@@ -18,7 +18,7 @@ from statadic.estimation.covariance._validation import (
     validate_observation_panel,
 )
 from statadic.estimation.covariance.estimators import sample_covariance
-from statadic.optimize.psd import ridge_psd
+from statadic.numerics.optimize.psd import ridge_psd
 
 __all__ = ["cv_lambda_grid"]
 

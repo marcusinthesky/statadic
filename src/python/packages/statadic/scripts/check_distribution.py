@@ -29,39 +29,39 @@ import subprocess
 import sys
 
 import statadic
-import statadic.api
+import statadic.hypothesis
 assert not {"jax", "numpy", "scipy", "polars"} & sys.modules.keys()
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     energy_distance, empirical_mean_ground_distances,
 )
 from statadic.geometry.ground.metrics import EUCLIDEAN
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.linear_covariance import classical_covariance
-from statadic.inference.parameters import coefficient_intervals
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.covariance.linear import classical_covariance
+from statadic.inference.restriction.linear import coefficient_intervals
 from statadic.estimation.spatial import SLXLeastSquares, SpatialProblem
-from statadic.operators.spatial import prepare_spatial_weights
-from statadic.api.data import Observations, RelativePrecision
-from statadic.api.estimand import Covariance, Estimand
-from statadic.api.design import Intercept, Linear
-from statadic.api.diagnostics import BreuschGodfrey, DurbinWatson
-from statadic.api.hypotheses import ChiSquare, Hypothesis, LinearRestriction
-from statadic.api.inference import HAC, HC
-from statadic.api.ordination import KernelGram, Ordination, PrincipalCoordinates
-from statadic.api.regression import Regression, Observed
-from statadic.api.survival import RightCensored
-from statadic.api.artifacts import (
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.observation.data import Observations, RelativePrecision
+from statadic.estimand.core import Covariance, Estimand
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.specification import BreuschGodfrey, DurbinWatson
+from statadic.hypothesis.core import ChiSquare, Hypothesis, LinearRestriction
+from statadic.hypothesis.uncertainty import HAC, HC
+from statadic.ordination.fit import KernelGram, Ordination, PrincipalCoordinates
+from statadic.regression import Regression, Observed
+from statadic.structure.survival import RightCensored
+from statadic.prediction.artifacts import (
     ArtifactError, load_predictor, load_analysis, load_ordination_predictor,
     save_analysis,
 )
-from statadic.api.reporting import PlotSpec, Report
-from statadic.estimation.survival import SurvivalML, SurvivalProblem
+from statadic.report.core import PlotSpec, Report
+from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
 from statadic.estimation.covariance import SampleCovariance
-from statadic.model.survival import LogNormalAFT
-from statadic.api.representation import MMD
+from statadic.law.survival import LogNormalAFT
+from statadic.observation.geometry import MMD
 from statadic.geometry.ground.similarities import RBFKernel
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 import tempfile
 
 dist = distribution("statadic")
@@ -274,7 +274,7 @@ with tempfile.TemporaryDirectory() as folder:
     env = {**os.environ, "JAX_ENABLE_X64": "0"}
     subprocess.run([sys.executable, "-I", "-c", '''
 import sys
-from statadic.api.artifacts import ArtifactError, load_predictor
+from statadic.prediction.artifacts import ArtifactError, load_predictor
 try:
     load_predictor(sys.argv[1])
 except ArtifactError:

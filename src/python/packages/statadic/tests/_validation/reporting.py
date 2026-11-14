@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from hypothesis import strategies as st
-from statadic.api.reporting import Metric, ParameterRow, Report, TestRow
+from statadic.report.core import Metric, ParameterRow, Report, TestRow
 
 
 def report_numbers() -> st.SearchStrategy[int | float]:

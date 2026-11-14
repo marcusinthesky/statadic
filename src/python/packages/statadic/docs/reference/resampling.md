@@ -91,7 +91,7 @@ Refitting a least-squares model over a stationary schedule shows how the pieces
 of the workflow fit together:
 
 ```python
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
 from statadic.inference.resampling.schedule import (
     linear_pairs_replicates,
     stationary_row_schedule,
@@ -162,6 +162,5 @@ assignment units move together and labels stay inside blocks.
 
 ## See also
 
-- [Resampling guide](../concepts/resampling-and-failures.md) and [hypotheses](hypotheses.md)
+- [Resampling guide](../concepts/resampling-and-failures.md) and [hypotheses](hypothesis.md)
 - [Graph resampling guide](../guides/resample-panel-graphs.py)
-- [Method catalogue](method-catalogue.md)

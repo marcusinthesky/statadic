@@ -11,21 +11,21 @@ import jax.numpy as jnp
 import numpy as np
 import pytest
 import statadic.inference._projection as projection_module
-import statadic.inference.gms as gms_module
-import statadic.inference.wolak as wolak_module
+import statadic.inference.inequality.gms as gms_module
+import statadic.inference.inequality.wolak as wolak_module
 from statadic.core.random import cell_key
-from statadic.inference.gms import (
+from statadic.inference.inequality.gms import (
     indicator_gms,
 )
-from statadic.inference.wolak import (
+from statadic.inference.inequality.wolak import (
     chi_bar_squared_weights_mc,
     wolak_statistic,
     wolak_test,
 )
-from statadic.optimize.simplex import batched_nonnegative_quadratic_program
+from statadic.numerics.optimize.simplex import batched_nonnegative_quadratic_program
 
 if TYPE_CHECKING:
-    from statadic.optimize.simplex import NonnegativeQPSolution
+    from statadic.numerics.optimize.simplex import NonnegativeQPSolution
 
 _GMS_KEY = (2871141828, 1470508057)
 _WOLAK_KEY = (2304444120, 1138204623)

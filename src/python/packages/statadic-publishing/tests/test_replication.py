@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from statadic.api.artifacts import load_analysis
+from statadic.prediction.artifacts import load_analysis
 from statadic_evidence import extract_archive, sha256
 from statadic_publishing import archive, build, verify
 from statadic_publishing.manifest import read_manifest

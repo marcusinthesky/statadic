@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING, Literal
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.association import Mantel, MantelInput
 from statadic.geometry.ground.metrics import pdist
+from statadic.hypothesis.independence import Mantel, MantelInput
 
 if TYPE_CHECKING:
     from collections.abc import (

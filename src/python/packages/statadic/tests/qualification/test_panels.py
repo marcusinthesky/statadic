@@ -11,16 +11,19 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.dyadic import DyadicComputationError
-from statadic.estimation.panel import PanelProblem, RandomEffects, Within
+from statadic.estimation.least_squares.dyadic import DyadicComputationError
+from statadic.estimation.least_squares.panel import PanelProblem, RandomEffects, Within
 from statadic.estimation.spatial import ML, SAR, SpatialProblem
+from statadic.geometry.graph import prepare_spatial_weights
+from statadic.inference.covariance.panel import panel_covariance
 from statadic.inference.dyadic import DyadicFitRequest, DyadicInference
-from statadic.inference.panel_covariance import panel_covariance
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 from statadic.inference.spatial import spatial_covariance
-from statadic.model.dyadic import DyadicInputError, DyadicModel, DyadicSample
-from statadic.operators.panel import prepare_panel_index
-from statadic.operators.spatial import prepare_spatial_weights
+from statadic.law.dyadic import DyadicInputError, DyadicModel, DyadicSample
+from statadic.numerics.linalg.absorption import prepare_panel_index
 
 from .._dyadic import fit_dyadic_report
 from .._validation.calibration import (

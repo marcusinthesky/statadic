@@ -42,7 +42,7 @@ zero-sum directions are established, the linearization gap bounds the objective
 improvement available over a candidate. The change in weights on the last iteration instead measures movement between iterates.
 
 ```python
-from statadic.optimize.simplex import simplex_qp_result
+from statadic.numerics.optimize.simplex import simplex_qp_result
 
 fit = simplex_qp_result(2 * jnp.eye(2), jnp.array([0., 1.]), maximum_weight=0.6)
 print(fit.solver.value, fit.feasible, fit.convex, fit.optimality_gap)

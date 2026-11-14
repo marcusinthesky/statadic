@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.operators.longrun import hall_centered_hac, newey_west
+from statadic.numerics.linalg.longrun import hall_centered_hac, newey_west
 
 from statadic_studies.adapters._outcomes import _record
 from statadic_studies.adapters._random import rng

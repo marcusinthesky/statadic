@@ -8,8 +8,8 @@ Model workflows use `model.estimate(data) -> result`, then family-specific
 `estimate` is the only estimation method; do not add `fit` aliases. Reusable specifications
 are frozen. Numerical estimator bricks live beside their existing scientific
 implementations and use typed problems; host preparation and reporting remain
-outside JAX transformations. See the README quick start and [composition reference](docs/reference/composition.md).
-Use `api.inference` for shared covariance requests, `api.data.RelativePrecision`
+outside JAX transformations. See the README quick start and [composition reference](docs/reference/model.md).
+Use `hypothesis.uncertainty` for shared covariance requests, `observation.data.RelativePrecision`
 for that input role, and each workflow family for its own model-specific types.
 
 ## Installation and development
@@ -26,8 +26,7 @@ statistical reference dependencies optional.
 Organize by scientific role, then cohesive family, and import from the owning public
 family rather than root aliases. The [architecture](ARCHITECTURE.md) defines roots and
 the dependency DAG, and [CONTRIBUTING.md](../../../../CONTRIBUTING.md#module-ownership)
-has the guards and conventions. The [module migration guide](docs/reference/upgrading.md)
-records canonical paths.
+has the guards and conventions.
 
 ## The contract layer
 
@@ -69,10 +68,11 @@ question** (independence, homogeneity, equivalence, estimation, calibration).
 > **Caveat.** `energy_distance` requires `metric`. `metric="angular"` normalises
 > before comparing and cannot see scale: `energy_distance(X, 3X) == 0` under it.
 > Pass `metric="euclidean"` wherever identification matters. The
-> [method catalogue](docs/reference/method-catalogue.md) has the full table.
+> [distance laws](docs/reference/energy.md#distance-laws) have the full table.
 
 Equivalence and mixture entry points (`equivalence_test`, `corrected_mixture_test`,
-`studentized_mixture_statistic`) are listed in the [method catalogue](docs/reference/method-catalogue.md).
+`studentized_mixture_statistic`) live in `statadic.inference.inequality.equivalence`
+and `statadic.inference.mixture`.
 
 ## Performance
 

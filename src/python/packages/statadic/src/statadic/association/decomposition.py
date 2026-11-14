@@ -10,7 +10,8 @@ What this module is for
 :mod:`statadic.association.dispersion` owns only the traceable five-scalar numerical
 kernel. This module is the public mathematical door: it validates the grouped
 design, requires a law- and origin-bearing matrix, and returns typed DISCO
-components. Calibration composes above it in :mod:`statadic.inference.disco`.
+components. Calibration composes above it in
+:mod:`statadic.inference.homogeneity.disco`.
 
 The three prohibitions, and where each is enforced
 --------------------------------------------------

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from statadic.api.reporting import FrozenMetadataValue, MetadataValue, freeze_metadata
+from statadic.report.core import FrozenMetadataValue, MetadataValue, freeze_metadata
 
 from ._schema import decode, relative_path
 

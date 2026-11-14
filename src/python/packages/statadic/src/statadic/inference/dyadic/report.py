@@ -24,10 +24,10 @@ from statadic.inference.dyadic.contracts import (
     DyadicBootstrapDesign,
     DyadicFitResult,
 )
-from statadic.model.dyadic import DyadicInputError
+from statadic.law.dyadic import DyadicInputError
 
 if TYPE_CHECKING:
-    from statadic.estimation.dyadic import DyadicFit
+    from statadic.estimation.least_squares.dyadic import DyadicFit
     from statadic.inference.dyadic.contracts import (
         BootstrapCoefficientSummary,
         DyadicInference,

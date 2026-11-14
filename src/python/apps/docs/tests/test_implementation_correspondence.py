@@ -5,7 +5,7 @@ from fractions import Fraction
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.sample.packed import masked_sum, pair_chunks
+from statadic.measure.clouds import masked_sum, pair_chunks
 
 
 @pytest.mark.native

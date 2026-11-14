@@ -3,11 +3,11 @@ from functools import partial
 from pathlib import Path
 
 import jax.numpy as jnp
-from statadic.api.artifacts import load_analysis, load_predictor, save_analysis
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC
-from statadic.api.plots import prediction_line
-from statadic.api.regression import Observed, Poisson, Regression
+from statadic.prediction.artifacts import load_analysis, load_predictor, save_analysis
+from statadic.observation.design import Intercept, Linear
+from statadic.hypothesis.uncertainty import HC
+from statadic.regression.plots import prediction_line
+from statadic.regression import Observed, Poisson, Regression
 
 model = Regression(
     Observed("incidents"),

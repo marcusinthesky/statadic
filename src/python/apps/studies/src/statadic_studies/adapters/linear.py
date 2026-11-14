@@ -7,9 +7,12 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.linear_covariance import classical_covariance, hc_covariance
-from statadic.inference.parameters import coefficient_intervals, linear_restriction_test
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.covariance.linear import classical_covariance, hc_covariance
+from statadic.inference.restriction.linear import (
+    coefficient_intervals,
+    linear_restriction_test,
+)
 
 from statadic_studies.adapters._random import rng
 

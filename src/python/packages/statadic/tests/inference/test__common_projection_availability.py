@@ -6,7 +6,7 @@ from statadic.inference._common import (
     ProjectionUnavailableError,
     _require_projection_solution,
 )
-from statadic.optimize.simplex import NonnegativeQPSolution
+from statadic.numerics.optimize.simplex import NonnegativeQPSolution
 
 
 @pytest.mark.unit

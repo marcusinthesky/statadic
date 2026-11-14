@@ -2,33 +2,32 @@
 
 from __future__ import annotations
 
-import importlib
-import pkgutil
 from typing import TYPE_CHECKING
 
 import jax
 import jax.numpy as jnp
 import pytest
-import statadic.api
-from statadic.api.association import Mantel, MantelInput
-from statadic.api.base import Result
-from statadic.api.data import Observations, PanelLayout
-from statadic.api.design import Categorical, Intercept, Linear
-from statadic.api.estimand import Estimand, MomentConditions
-from statadic.api.inference import ModelBased
-from statadic.api.moments import MomentData
-from statadic.api.regression import GeometricResponse, Regression
-from statadic.api.reporting import Report
-from statadic.api.survival import RightCensored
 from statadic.core.equations import PlainLongRun
-from statadic.estimation.gmm import IteratedGMM
-from statadic.estimation.moments import AffineMomentProblem
-from statadic.model.survival import WeibullAFT
+from statadic.estimand.core import Estimand, MomentConditions
+from statadic.estimand.moments import MomentData
+from statadic.estimation.moments.gmm import IteratedGMM
+from statadic.estimation.moments.problem import AffineMomentProblem
+from statadic.hypothesis.independence import Mantel, MantelInput
+from statadic.hypothesis.uncertainty import ModelBased
+from statadic.law.survival import WeibullAFT
+from statadic.model.lifecycle import Result
+from statadic.observation.data import Observations, PanelLayout
+from statadic.observation.design import Categorical, Intercept, Linear
+from statadic.regression import GeometricResponse, Regression
+from statadic.report.core import Report
+from statadic.structure.survival import RightCensored
+
+from ..._workflow import walk_workflow_modules
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from statadic.api.regression import LinearResult
+    from statadic.regression import LinearResult
 
 RESULT_SUBCLASSES = 22
 LARGE_N = 100_000
@@ -170,8 +169,7 @@ def test_gmm_repr_is_bounded() -> None:
 @pytest.mark.contract
 def test_every_result_has_rich_display() -> None:
     """Every Result subclass renders in notebooks."""
-    for module in pkgutil.walk_packages(statadic.api.__path__, "statadic.api."):
-        importlib.import_module(module.name)
+    walk_workflow_modules()
     subclasses = set(_walk(Result))
     assert len(subclasses) >= RESULT_SUBCLASSES
     assert all(callable(cls._repr_html_) for cls in subclasses)

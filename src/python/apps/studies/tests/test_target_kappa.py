@@ -8,7 +8,7 @@ from statadic.estimation.covariance.shrinkage import (
     optimal_lambda_dist,
     plug_in_lambda_dist,
 )
-from statadic.inference.kappa import kappa_delta_method
+from statadic.inference.inequality.kappa import kappa_delta_method
 from statadic_studies.adapters import rng
 from statadic_studies.adapters import run_trial as run_target_kappa
 from statadic_studies.adapters.covariance_tuning import SIGMA, covariance_rules

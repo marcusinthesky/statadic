@@ -47,8 +47,11 @@ def prepare_model(
         import jax.numpy as jnp
 
         if case == "lognormal-aft":
-            from statadic.estimation.survival import SurvivalML, SurvivalProblem
-            from statadic.model.survival import LogNormalAFT
+            from statadic.estimation.likelihood.survival import (
+                SurvivalML,
+                SurvivalProblem,
+            )
+            from statadic.law.survival import LogNormalAFT
 
             def execute(design, duration, event):
                 fit = SurvivalML(
@@ -67,9 +70,9 @@ def prepare_model(
 
             return jax.jit(execute), tuple(map(jax.device_put, inputs))
         from statadic.estimation.spatial import ML, SAR, SLXLeastSquares, SpatialProblem
-        from statadic.inference.linear_covariance import classical_covariance
+        from statadic.geometry.graph import prepare_spatial_weights
+        from statadic.inference.covariance.linear import classical_covariance
         from statadic.inference.spatial.covariance import spatial_covariance
-        from statadic.operators.spatial import prepare_spatial_weights
 
         prepared = prepare_spatial_weights(inputs[2])
         if case == "slx-classical":

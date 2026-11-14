@@ -124,7 +124,7 @@ package tests do not close those gates.
 - `statadic.api.regression.Regression` owns the response, top-level predictor terms,
   law, structure, dependence and estimator. Least squares remains the ordinary
   default and does not assert Gaussian errors. Covariance and reference laws
-  are explicit inference choices. See [composition](docs/reference/composition.md).
+  are explicit inference choices. See [composition](docs/reference/model.md).
 - `Regression.ols`, `.wls`, `.logit`, `.probit`, `.poisson` and `.aft` are narrow
   alternative constructors for the same canonical specifications, with no
   fitting, covariance selection or separate execution path.
@@ -156,8 +156,8 @@ package tests do not close those gates.
 - Remove Equation/Conditional, OLS/WLS and specialized regression constructors,
   separate PCA/PCoA constructors, `api.composition`, and
   `fit`/`fit_prepared`. No prerelease compatibility aliases remain. Numerical
-  estimators and scientific operations retain their canonical owners; see the
-  [migration guide](docs/reference/upgrading.md).
+  estimators and scientific operations retain their canonical owners; see
+  [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ### Added — retained workflows and artifacts
 
@@ -182,7 +182,7 @@ package tests do not close those gates.
   codec shared by standalone maps and nested designs. Duplicate PCA/PCoA artifact
   APIs are removed. Predictor artifacts restore declared prediction capabilities,
   not inference or refitting; analysis snapshots restore report values only.
-  Earlier schemas require re-saving the original analysis; see [artifacts](docs/reference/artifacts.md).
+  Earlier schemas require re-saving the original analysis; see [artifacts](docs/reference/prediction.md).
 - The reference index separates declared scientific mappings from retained
   executions and their exact scope; registration does not establish qualification.
 - Reports support text, HTML and LaTeX, retained coefficient/prediction plots and

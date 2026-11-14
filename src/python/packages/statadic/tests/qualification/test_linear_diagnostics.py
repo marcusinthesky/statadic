@@ -22,8 +22,8 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.linear_diagnostics import (
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.specification.linear import (
     breusch_godfrey,
     breusch_pagan,
     jarque_bera,
@@ -41,8 +41,8 @@ from .._validation.calibration import (
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from statadic.estimation.linear import LinearFit
-    from statadic.inference.linear_diagnostics import ResidualTest
+    from statadic.estimation.least_squares.linear import LinearFit
+    from statadic.inference.specification.linear import ResidualTest
 
 pytestmark = [pytest.mark.slow, pytest.mark.qualification]
 _ALPHA = 0.05

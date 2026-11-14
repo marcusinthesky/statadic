@@ -91,11 +91,11 @@ from statadic_studies.adapters.discrepancy.variants import (
 from statadic_studies.definitions.discrepancy.variants import (
     DISCREPANCY_VARIANT_STUDIES,
 )
-from statadic.discrepancy.mmd.scalar import mmd
-from statadic.sample.packed import PackedClouds
-from statadic.discrepancy.mmd.contracts import UnbiasedMmdDistanceError
-from statadic.discrepancy.mmd.weighted import weighted_mmd_matrix
-from statadic.discrepancy.mmd.energy.weighted import weighted_energy_matrix
+from statadic.geometry.discrepancy.mmd.scalar import mmd
+from statadic.measure.clouds import PackedClouds
+from statadic.geometry.discrepancy.mmd.contracts import UnbiasedMmdDistanceError
+from statadic.geometry.discrepancy.mmd.weighted import weighted_mmd_matrix
+from statadic.geometry.discrepancy.mmd.energy.weighted import weighted_energy_matrix
 from statadic.geometry.ground.similarities import LINEAR_KERNEL
 
 rtol, atol = (3e-5, 3e-5) if not jax.config.x64_enabled else (2e-11, 2e-11)

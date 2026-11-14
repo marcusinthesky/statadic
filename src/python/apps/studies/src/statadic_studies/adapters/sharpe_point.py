@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import jax.numpy as jnp
 import numpy as np
-from statadic.estimation.sharpe import sharpe_ratio
+from statadic.estimation.moments.sharpe import sharpe_ratio
 
 from statadic_studies.adapters._random import rng
 

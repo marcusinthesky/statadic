@@ -65,16 +65,16 @@ def prepare(case, backend):
 
     if backend == "statadic":
         import jax.numpy as jnp
-        from statadic.estimation.survival import SurvivalML, SurvivalProblem
-        from statadic.inference.survival import observed_information
-        from statadic.model.survival import WeibullAFT, LogNormalAFT
+        from statadic.estimation.likelihood.survival import SurvivalML, SurvivalProblem
+        from statadic.inference.covariance.survival import observed_information
+        from statadic.law.survival import LogNormalAFT, WeibullAFT
 
         estimator = SurvivalML(WeibullAFT() if family == "weibull" else LogNormalAFT())
         if panel:
-            from statadic.api.data import Observations
-            from statadic.api.design import Intercept, Linear
-            from statadic.api.panel import PanelLayout
-            from statadic.api.survival import RightCensored, SurvivalRegression
+            from statadic.observation.data import Observations
+            from statadic.observation.design import Intercept, Linear
+            from statadic.structure.panel import PanelLayout
+            from statadic.structure.survival import RightCensored, SurvivalRegression
 
             data = Observations(
                 dict(
@@ -121,7 +121,7 @@ def prepare(case, backend):
         return evaluate
 
     import pandas as pd
-    from lifelines import WeibullAFTFitter, LogNormalAFTFitter
+    from lifelines import LogNormalAFTFitter, WeibullAFTFitter
 
     if panel:
         # statadic's panel design sorts integer levels and drops the first with an intercept.

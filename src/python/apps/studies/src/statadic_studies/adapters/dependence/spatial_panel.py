@@ -13,11 +13,11 @@ from statadic.estimation.spatial import (
     PanelML,
     SpatialPanelProblem,
 )
+from statadic.geometry.graph import (
+    prepare_spatial_panel_weights,
+)
 from statadic.inference.spatial import (
     spatial_covariance,
-)
-from statadic.operators.spatial import (
-    prepare_spatial_panel_weights,
 )
 
 from statadic_studies.adapters._random import rng

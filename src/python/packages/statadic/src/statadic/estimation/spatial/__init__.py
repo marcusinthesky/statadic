@@ -11,7 +11,7 @@ model, which spatially filters the entity effect as well as its innovation.
 Inputs are aligned designs/outcomes and explicitly prepared spatial weights.
 Fits retain the graph, parameter schema, actual solve state and separate
 identification/availability evidence. General static panels belong to
-``statadic.estimation.panel``. Compose an actual spatial fit with
+``statadic.estimation.least_squares.panel``. Compose an actual spatial fit with
 ``statadic.inference.spatial`` for covariance, impacts and diagnostics; solver
 convergence alone does not authorize inference.
 """

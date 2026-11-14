@@ -7,8 +7,7 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.api.ordination import LinearGram, Ordination, PrincipalCoordinates
-from statadic.discrepancy.transport import (
+from statadic.geometry.discrepancy.transport import (
     ProjectionDesign,
     exact_balanced_wasserstein1,
     exact_balanced_wasserstein2,
@@ -17,10 +16,11 @@ from statadic.discrepancy.transport import (
     wasserstein_1d,
     wasserstein_1d_power,
 )
-from statadic.discrepancy.transport.matrix import transport_cross
-from statadic.geometry.median import spatial_medians, weiszfeld_medians
-from statadic.sample.alternatives import AltSpec, draw
-from statadic.sample.packed import PackedClouds
+from statadic.geometry.discrepancy.transport.matrix import transport_cross
+from statadic.geometry.frechet.median import spatial_medians, weiszfeld_medians
+from statadic.measure.alternatives import AltSpec, draw
+from statadic.measure.clouds import PackedClouds
+from statadic.ordination.fit import LinearGram, Ordination, PrincipalCoordinates
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.definitions.population import POPULATION_NUMERIC_STUDIES

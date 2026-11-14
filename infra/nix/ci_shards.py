@@ -23,15 +23,15 @@ INFRA = ROOT / "infra/nix"
 FLAGS = ["-p", "no:monitor", "-p", "no:tach", "--no-testmon", "-m", "not slow"]
 N_SHARDS = 4
 REGRESSIONS = [
-    "tests/api/regression/test__linear.py::test_constant_response_r_squared_is_unavailable",
+    "tests/regression/test__linear.py::test_constant_response_r_squared_is_unavailable",
     "tests/estimation/spatial/test_panel.py::test_pooled_fixed_graph_optimizer_parity",
     "tests/estimation/spatial/test_panel_recovery.py::test_float32_stalled_candidate_recovers_against_full_covariance",
     "tests/estimation/spatial/test_panel_recovery.py::test_witness_fit_is_valid_in_eager_and_jit[float32-0]",
     "tests/inference/test_resampling.py::test_rank_failed_refit_is_retained_and_invalidates_summary",
     "tests/integration/api/test_spatial_likelihood_references.py::test_random_effects_error_panel_matches_spreg_objective",
-    "tests/optimize/test_backends.py::test_qr_result_preserves_the_iterate_and_separates_rank",
-    "tests/operators/test_design_fwl.py::test_result_pytree_supports_nested_jit_and_batched_projections",
-    "tests/operators/test_design_fwl.py::test_transformed_projection_precision_boundaries",
+    "tests/numerics/optimize/test_backends.py::test_qr_result_preserves_the_iterate_and_separates_rank",
+    "tests/numerics/linalg/test_dyadic_fwl.py::test_result_pytree_supports_nested_jit_and_batched_projections",
+    "tests/numerics/linalg/test_dyadic_fwl.py::test_transformed_projection_precision_boundaries",
     "tests/estimation/test_spatial_reference.py::test_spatial_ml_state_and_information_match_spreg",
 ]
 

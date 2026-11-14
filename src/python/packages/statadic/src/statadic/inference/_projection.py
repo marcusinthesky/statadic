@@ -1,9 +1,11 @@
 # jaxtyping shape strings are runtime contracts.
 """Shared orthant-projection refinement for the Wolak and GMS solver boundaries.
 
-Both :mod:`statadic.inference.wolak` and :mod:`statadic.inference.gms` project onto the
+Both :mod:`statadic.inference.inequality.wolak` and
+:mod:`statadic.inference.inequality.gms` project onto the
 non-negative orthant in an inverse-covariance metric, and both consume
-:func:`statadic.optimize.simplex.batched_nonnegative_quadratic_program`. That shared
+:func:`statadic.numerics.optimize.simplex.batched_nonnegative_quadratic_program`. That
+shared
 solver runs a *fixed* number of cyclic coordinate sweeps under ``lax.fori_loop``,
 so its convergence is linear at rate ``~(1 - 1/cond(Q))`` per sweep with no early
 exit.
@@ -25,7 +27,8 @@ not re-attempt it.
 
 This module restores finite active-set termination as a *refinement* on top of
 the compiled iterate, at the eager inference boundary, leaving
-``statadic.optimize.simplex``'s traced contract untouched so other consumers are
+``statadic.numerics.optimize.simplex``'s traced contract untouched so other consumers
+are
 unaffected.
 
 The bounded refinement loop has a stable module-level JIT with a static round
@@ -48,10 +51,10 @@ from jax import lax
 from statadic.core.typing import (
     ArrayLike,  # public signature  # noqa: TC001
 )
-from statadic.optimize.simplex import quadratic_objective
+from statadic.numerics.optimize.simplex import quadratic_objective
 
 if TYPE_CHECKING:
-    from statadic.optimize.simplex import NonnegativeQPSolution
+    from statadic.numerics.optimize.simplex import NonnegativeQPSolution
 
 #: Relative projected-KKT tolerance requested from the shared solver.
 #:

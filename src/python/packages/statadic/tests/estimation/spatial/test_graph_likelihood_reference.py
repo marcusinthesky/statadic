@@ -16,7 +16,7 @@ from statadic.estimation.spatial.graph_likelihood import (
     graph_log_density,
     graph_profile,
 )
-from statadic.operators.spatial.distance import rbf_weights
+from statadic.geometry.graph.distance import rbf_weights
 
 if TYPE_CHECKING:
     from collections.abc import Callable

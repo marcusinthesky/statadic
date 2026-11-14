@@ -15,9 +15,9 @@ from statadic.core.equations import (
     unsafe_assume_mean_equation_jacobian,
     unsafe_assume_variability_matrix,
 )
-from statadic.estimation.linear import LeastSquares, LinearProblem
-from statadic.inference.linear_diagnostics import breusch_godfrey, ols_influence
-from statadic.inference.parameters import normal_critical_value
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.inference.restriction.linear import normal_critical_value
+from statadic.inference.specification.linear import breusch_godfrey, ols_influence
 
 if TYPE_CHECKING:
     from statadic.core.equations import MeanEquationJacobian, VariabilityMatrix

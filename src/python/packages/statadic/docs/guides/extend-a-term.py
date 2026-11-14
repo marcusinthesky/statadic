@@ -21,8 +21,8 @@ with app.setup:
     import jax.numpy as jnp
     import marimo as mo
     import matplotlib.pyplot as plt
-    from statadic.api.regression import Regression
-    from statadic.api.data import Observations
+    from statadic.regression import Regression
+    from statadic.observation.data import Observations
 
     DARK = mo.app_meta().theme == "dark"
     INK = "#eeeeee" if DARK else "#000000"
@@ -57,14 +57,14 @@ with app.setup:
 
     from dataclasses import dataclass
     from typing import override
-    from statadic.api.design import Intercept, Term
-    from statadic.api.representation import PreparedGeometry
-    from statadic.estimation.linear import LeastSquares
-    from statadic.api.roles import InputRole
-    from statadic.sample.packed import PackedClouds
+    from statadic.observation.design import Intercept, Term
+    from statadic.observation.geometry import PreparedGeometry
+    from statadic.estimation.least_squares.linear import LeastSquares
+    from statadic.observation.roles import InputRole
+    from statadic.measure.clouds import PackedClouds
     from collections.abc import Sequence
-    from statadic.api.representation import RowId
-    from statadic.estimation.linear import LinearFit, LinearProblem
+    from statadic.observation.geometry import RowId
+    from statadic.estimation.least_squares.linear import LinearFit, LinearProblem
     from jax import Array
 
 

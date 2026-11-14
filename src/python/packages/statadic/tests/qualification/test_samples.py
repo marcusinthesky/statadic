@@ -10,7 +10,7 @@ import jax
 import numpy as np
 import pytest
 from scipy import integrate, stats
-from statadic.sample.alternatives import AltSpec, draw
+from statadic.measure.alternatives import AltSpec, draw
 
 from .._validation.calibration import (
     DEFAULT_TRIALS,

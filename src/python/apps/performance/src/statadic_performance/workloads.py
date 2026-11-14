@@ -7,16 +7,16 @@ from __future__ import annotations
 
 import jax
 import numpy as np
-from statadic.discrepancy.mmd import mmd_squared
-from statadic.discrepancy.mmd.energy import energy_distance
-from statadic.estimation.linear import LeastSquares, LinearProblem
+from statadic.estimation.least_squares.linear import LeastSquares, LinearProblem
+from statadic.geometry.discrepancy.mmd import mmd_squared
+from statadic.geometry.discrepancy.mmd.energy import energy_distance
 from statadic.geometry.ground.similarities import RBFKernel
-from statadic.inference.linear_covariance import classical_covariance
+from statadic.inference.covariance.linear import classical_covariance
 from statadic.inference.resampling.schedule import (
     linear_pairs_replicates,
     row_resample_schedule,
 )
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 from statadic_performance.identities import variant_names
 

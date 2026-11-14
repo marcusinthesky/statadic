@@ -12,11 +12,11 @@ from statadic.estimation.spatial import (
     SEM,
     SpatialProblem,
 )
+from statadic.geometry.graph import (
+    prepare_spatial_weights,
+)
 from statadic.inference.spatial import (
     spatial_covariance,
-)
-from statadic.operators.spatial import (
-    prepare_spatial_weights,
 )
 
 from statadic_studies.adapters._random import rng

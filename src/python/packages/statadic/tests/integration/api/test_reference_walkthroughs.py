@@ -9,17 +9,17 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.data import RelativePrecision
-from statadic.api.design import Intercept, Linear
-from statadic.api.inference import HC, ModelBased
-from statadic.api.regression import Observed, Regression
+from statadic.hypothesis.uncertainty import HC, ModelBased
+from statadic.observation.data import RelativePrecision
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Observed, Regression
 
 if TYPE_CHECKING:
     from collections.abc import Callable
     from types import ModuleType
 
     from numpy.typing import NDArray
-    from statadic.api.reporting import Report
+    from statadic.report.core import Report
 
 MIN_PVALUE = 1e-3
 
@@ -220,7 +220,7 @@ def test_poisson_exposure_hc1_walkthrough_matches_statsmodels(
         exposure=np.asarray(exposure, dtype=np.float64),
     )
     reference = model.fit(maxiter=200, tol=1e-12, cov_type="HC0")
-    # HC1 rescales HC0 by n / (n - k), as tests/estimation/test_glm.py pins.
+    # HC1 rescales HC0 by n / (n - k), as tests/estimation/likelihood/test_glm.py pins.
     n, k = load.shape[0], 2
     std_errors = np.sqrt(np.diag(reference.cov_params()) * n / (n - k))
     z = NormalDist().inv_cdf(0.975)

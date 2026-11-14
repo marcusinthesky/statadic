@@ -16,7 +16,7 @@ from typing import (
     get_type_hints,
 )
 
-from statadic.api.reporting import FrozenMetadataValue, freeze_metadata
+from statadic.report.core import FrozenMetadataValue, freeze_metadata
 
 
 class _Dataclass(Protocol):

@@ -33,7 +33,7 @@ class MixtureTestResult:
             Tests H0: F_X = F_{Y_w} (one-sided, greater). SMALL p ⇒ the
             distributions DIFFER ⇒ NOT equivalent. This is NOT an equivalence
             p-value; do not feed it to
-            :func:`statadic.inference.multiplicity.equivalence_multiplicity_control`.
+            :func:`statadic.inference.multiplicity.familywise.equivalence_multiplicity_control`.
         equivalence_pvalue: **Equivalence / relevance** p-value for the relevance
             null H0: E(X, Y_w) ≥ δ vs H1: E(X, Y_w) < δ. Derived from the
             bootstrap distribution of Ê as ``(1 + #{Ê* ≥ δ}) / (1 + B)``. SMALL p

@@ -284,7 +284,7 @@ def test_reference_index_keeps_numerical_and_scientific_scope_separate():
         "oracle_kind": "external",
         "distribution": "statsmodels",
         "call": "statsmodels.api.OLS.fit",
-        "construction_paths": ["statadic.api.regression.Regression.ols"],
+        "construction_paths": ["statadic.regression.Regression.ols"],
         "nodeids": ["tests/example.py::test_ols[HC3]"],
         "quantities": ["HC3 covariance"],
         "conventions": "Normal reference; identical inputs.",
@@ -299,7 +299,7 @@ def test_reference_index_keeps_numerical_and_scientific_scope_separate():
                 "reference_mappings": [
                     mapping
                     | {
-                        "construction_paths": ["statadic.api.ordination.Ordination"],
+                        "construction_paths": ["statadic.ordination.fit.Ordination"],
                         "configuration": "Euclidean distances, two dimensions.",
                     }
                 ],
@@ -345,7 +345,7 @@ def test_constructor_links_require_the_exercised_construction_path():
         "title": "OLS",
         "python_symbols": [],
         "reference_mappings": [
-            {"construction_paths": ["statadic.api.regression.Regression.ols"]}
+            {"construction_paths": ["statadic.regression.Regression.ols"]}
         ],
     }
     app = SimpleNamespace(
@@ -354,13 +354,9 @@ def test_constructor_links_require_the_exercised_construction_path():
         _statadic_claims_by_symbol={},
     )
     lines = []
-    api_evidence(
-        app, "method", "statadic.api.regression.Regression.ols", None, None, lines
-    )
+    api_evidence(app, "method", "statadic.regression.Regression.ols", None, None, lines)
     assert "reference-linear-point.ols" in "\n".join(lines)
     assert "declared comparison" in "\n".join(lines)
     lines = []
-    api_evidence(
-        app, "method", "statadic.api.regression.Regression.wls", None, None, lines
-    )
+    api_evidence(app, "method", "statadic.regression.Regression.wls", None, None, lines)
     assert lines == []

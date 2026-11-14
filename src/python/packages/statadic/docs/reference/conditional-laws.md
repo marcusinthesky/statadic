@@ -8,8 +8,8 @@ description: Choose a response law for regression, from binomial and Poisson to 
 ## Usage
 
 ```python
-from statadic.api.design import Intercept, Linear
-from statadic.api.regression import Binomial, Observed, Regression
+from statadic.observation.design import Intercept, Linear
+from statadic.regression import Binomial, Observed, Regression
 
 model = Regression(
     Observed("successes", trials="n"),
@@ -25,7 +25,7 @@ expected = fit.predict({"dose": [0.25], "n": [10]}, kind="mean")
 
 ## Description
 
-A response law tells {py:class}`~statadic.api.regression.Regression` which
+A response law tells {py:class}`~statadic.regression.Regression` which
 distribution, link and dispersion policy describe the outcome. The predictor
 terms stay on `Regression`, and observation descriptors such as
 `Observed("successes", trials="n")` declare the trials. Each fitted result keeps
@@ -49,13 +49,13 @@ the input roles, the targets and the reasons a target is unavailable.
 | `HurdlePoisson(zero_link="logit")` | Gate and truncated count | Two blocks | Counts with excess zeros |
 
 Omitted trials mean one trial per row. Gamma and NB2 take a dispersion policy
-from `statadic.estimation.likelihood`, which is either `FixedDispersion(value)`
+from `statadic.estimation.likelihood.conditional`, which is either `FixedDispersion(value)`
 or `EstimatedDispersion()`. Fixed dispersion is a setting of the model rather than a
 coefficient, while estimated dispersion joins the score and Hessian of the fit.
 
 ```python
-from statadic.api.regression import Gamma, NegativeBinomial2, Poisson
-from statadic.estimation.likelihood import FixedDispersion
+from statadic.regression import Gamma, NegativeBinomial2, Poisson
+from statadic.estimation.likelihood.conditional import FixedDispersion
 
 terms = Intercept() + Linear("x")
 poisson = Regression("count", terms, law=Poisson(), exposure="hours")
@@ -71,7 +71,7 @@ A hurdle model takes two named term blocks, because the gate and the count
 often depend on different predictors. Named offsets use the same block names.
 
 ```python
-from statadic.api.regression import HurdlePoisson
+from statadic.regression import HurdlePoisson
 
 hurdle = Regression(
     "events",
@@ -119,17 +119,17 @@ likelihood estimate exists for the data.
 Intervals and tests then choose a reference distribution in a separate step of the report.
 
 For array workflows inside `jax.jit` or `jax.vmap`, use the native estimators
-`BinomialLogitMLE` and `PoissonMLE` from `statadic.estimation.glm` with
+`BinomialLogitMLE` and `PoissonMLE` from `statadic.estimation.likelihood.glm` with
 `BinomialProblem` and `PoissonProblem`. Inputs are complete finite arrays, and
 the columns of each array include any intercept. Covariance comes from
-`statadic.inference.glm_covariance.glm_covariance`, and intervals come from
-`statadic.inference.parameters.coefficient_intervals`.
+`inference.covariance.glm.glm_covariance`, and intervals come from
+`inference.restriction.linear.coefficient_intervals`.
 
 ```python
 import jax.numpy as jnp
-from statadic.estimation.glm import BinomialLogitMLE, BinomialProblem
-from statadic.inference.glm_covariance import glm_covariance
-from statadic.inference.parameters import coefficient_intervals
+from statadic.estimation.likelihood.glm import BinomialLogitMLE, BinomialProblem
+from statadic.inference.covariance.glm import glm_covariance
+from statadic.inference.restriction.linear import coefficient_intervals
 
 x = jnp.column_stack((jnp.ones(6), jnp.arange(6.0)))
 native = BinomialLogitMLE().estimate(

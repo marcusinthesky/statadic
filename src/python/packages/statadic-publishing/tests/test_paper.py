@@ -7,7 +7,7 @@ import jax
 import numpy as np
 import polars as pl
 import pytest
-from statadic.api.artifacts import load_analysis
+from statadic.prediction.artifacts import load_analysis
 from statadic_publishing.operations import _BIB_KEY
 from statadic_publishing.project import read_project
 

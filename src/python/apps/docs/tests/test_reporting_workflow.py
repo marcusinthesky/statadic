@@ -7,9 +7,9 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from statadic.api.artifacts import load_analysis, load_predictor, save_analysis
-from statadic.api.inference import HC
-from statadic.api.reporting import (
+from statadic.hypothesis.uncertainty import HC
+from statadic.prediction.artifacts import load_analysis, load_predictor, save_analysis
+from statadic.report.core import (
     Metric,
     ParameterRow,
     PlotSpec,

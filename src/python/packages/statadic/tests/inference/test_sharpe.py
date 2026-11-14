@@ -14,7 +14,7 @@ from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
 from scipy.stats import norm
-from statadic.estimation.sharpe import (
+from statadic.estimation.moments.sharpe import (
     sample_skew_kurtosis,
     sharpe_ratio,
     sharpe_ratio_axis,

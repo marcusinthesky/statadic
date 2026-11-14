@@ -6,153 +6,153 @@ These public entry points support the introductory tutorials. Follow the linked 
 Data and design
 ---------------
 
-.. autoclass:: statadic.api.data.Observations
+.. autoclass:: statadic.observation.data.Observations
    :members: take, numeric, categorical, resolve_grouping
 
-.. autoclass:: statadic.api.data.ColumnSource
+.. autoclass:: statadic.observation.data.ColumnSource
 
-.. py:type:: statadic.api.roles.InputRole
+.. py:type:: statadic.observation.roles.InputRole
 
    One of ``numeric``, ``categorical`` or ``measure``.
 
-.. autoclass:: statadic.api.roles.InputRoleProvider
+.. autoclass:: statadic.observation.roles.InputRoleProvider
 
-.. autofunction:: statadic.api.roles.merge_input_roles
+.. autofunction:: statadic.observation.roles.merge_input_roles
 
-.. autoclass:: statadic.api.data.MeasureColumn
+.. autoclass:: statadic.observation.data.MeasureColumn
 
-.. autoclass:: statadic.api.data.RelativePrecision
+.. autoclass:: statadic.observation.data.RelativePrecision
 
-.. autoclass:: statadic.api.design.Intercept
+.. autoclass:: statadic.observation.design.Intercept
 
-.. autoclass:: statadic.api.design.Linear
+.. autoclass:: statadic.observation.design.Linear
 
-.. autoclass:: statadic.api.design.DesignContrast
+.. autoclass:: statadic.observation.design.DesignContrast
 
-.. autoclass:: statadic.api.design.LinearPredictorContrast
+.. autoclass:: statadic.observation.design.LinearPredictorContrast
 
-.. autoclass:: statadic.api.design.DistanceToLandmarks
+.. autoclass:: statadic.observation.design.DistanceToLandmarks
 
 Regression and uncertainty
 --------------------------
 
-.. autoclass:: statadic.api.regression.Observed
+.. autoclass:: statadic.regression.Observed
 
-.. autoclass:: statadic.api.regression.Gaussian
+.. autoclass:: statadic.regression.Gaussian
 
-.. autoclass:: statadic.api.survival.RightCensored
+.. autoclass:: statadic.structure.survival.RightCensored
 
-.. autoclass:: statadic.api.data.PanelLayout
+.. autoclass:: statadic.observation.data.PanelLayout
 
-.. autoclass:: statadic.api.dyadic.Dyads
+.. autoclass:: statadic.structure.dyadic.Dyads
 
-.. autoclass:: statadic.api.dyadic.EndpointEffects
+.. autoclass:: statadic.structure.dyadic.EndpointEffects
 
-.. autoclass:: statadic.api.regression.Regression
+.. autoclass:: statadic.regression.Regression
    :members: ols, wls, logit, probit, poisson, aft, estimate
 
-.. py:type:: statadic.api.regression.RegressionEstimator
+.. py:type:: statadic.regression.RegressionEstimator
 
    A compatible native estimator for the selected scientific family.
 
-.. py:type:: statadic.api.regression.RegressionFit
+.. py:type:: statadic.regression.RegressionFit
 
    The supported family-specific result union; capabilities depend on the actual fit.
 
-.. py:type:: statadic.model.survival.AFTFamily
+.. py:type:: statadic.law.survival.AFTFamily
 
    A declared Weibull, lognormal or log-logistic accelerated failure-time law.
 
-.. py:class:: statadic.optimize.integration.IntegrationDesign
-   :canonical: statadic.optimize.integration.gaussian.IntegrationDesign
+.. py:class:: statadic.numerics.quadrature.IntegrationDesign
+   :canonical: statadic.numerics.quadrature.IntegrationDesign
 
    A replayable key or supplied integration points with fixed draw and replicate
    counts. See the :doc:`spatial survival guide <survival>` for scope.
 
-.. autoclass:: statadic.api.regression.LinearResult
+.. autoclass:: statadic.regression.LinearResult
    :members: diagnose, predict, infer
 
-.. py:class:: statadic.api.regression.LogisticResult
-   :canonical: statadic.api.regression._glm.LogisticResult
+.. py:class:: statadic.regression.LogisticResult
+   :canonical: statadic.regression._glm.LogisticResult
 
    Binomial-logit fit with retained design, prediction and explicit covariance choices.
 
-.. py:class:: statadic.api.regression.PoissonResult
-   :canonical: statadic.api.regression._glm.PoissonResult
+.. py:class:: statadic.regression.PoissonResult
+   :canonical: statadic.regression._glm.PoissonResult
 
    Poisson-log fit with retained exposure, offset and prediction targets.
 
-.. py:class:: statadic.api.regression.LikelihoodResult
-   :canonical: statadic.api.regression._likelihood.LikelihoodResult
+.. py:class:: statadic.regression.LikelihoodResult
+   :canonical: statadic.regression._likelihood.LikelihoodResult
 
    Probit, Gamma or NB2 fit; numerical validity and model-based inference remain separate.
 
-.. py:class:: statadic.api.survival.SurvivalResult
-   :canonical: statadic.api.survival._model.SurvivalResult
+.. py:class:: statadic.structure.survival.SurvivalResult
+   :canonical: statadic.structure.survival._model.SurvivalResult
 
    Independent AFT fit with the declared censoring, family and supported predictions.
 
-.. py:class:: statadic.api.fit_statistics.FitStatistics
+.. py:class:: statadic.model.fit_statistics.FitStatistics
 
    Fit-quality metrics and the notes that state their conventions, from ``fit.fit_statistics()``.
 
-.. py:class:: statadic.api.fit_statistics.LikelihoodSummary
+.. py:class:: statadic.model.fit_statistics.LikelihoodSummary
 
    Maximised log likelihood, parameter count and observation count that a family supplies for its criteria.
 
-.. py:class:: statadic.api.capabilities.ReportsFitStatistics
+.. py:class:: statadic.model.capabilities.ReportsFitStatistics
 
    Protocol for results that return ``FitStatistics`` from ``fit_statistics()``.
 
-.. py:class:: statadic.api.capabilities.SummarizesLikelihood
+.. py:class:: statadic.model.capabilities.SummarizesLikelihood
 
    Protocol for results that return a ``LikelihoodSummary`` from ``likelihood_summary()``.
 
-.. py:function:: statadic.api.fit_statistics.information_metrics
+.. py:function:: statadic.model.fit_statistics.information_metrics
 
    Build ``n_parameters``, ``log_likelihood``, AIC, BIC and HQIC from one log likelihood.
 
-.. py:class:: statadic.api.base.PreparedRegression
+.. py:class:: statadic.model.lifecycle.PreparedRegression
 
    Frozen row-wise design and observations, bound to the preparing model instance.
 
-.. py:class:: statadic.api.survival.PreparedSurvival
-   :canonical: statadic.api.survival._model.PreparedSurvival
+.. py:class:: statadic.structure.survival.PreparedSurvival
+   :canonical: statadic.structure.survival._model.PreparedSurvival
 
    Frozen AFT inputs, including the observation mechanism and fitted predictor design.
 
-.. automodule:: statadic.api.diagnostics
+.. automodule:: statadic.hypothesis.specification
    :members: JarqueBera, BreuschPagan, White, DurbinWatson, BreuschGodfrey, RESET, HansenJ, Influence, Diagnostics, InfluenceDiagnostic, LinearDiagnostic, IVDiagnostic, MomentsDiagnostic, RetainedLinearFit, RetainedIVFit, RetainedMomentsFit
 
-.. automodule:: statadic.api.hypotheses
+.. automodule:: statadic.hypothesis.core
    :members: Hypothesis, Proposition, LinearRestriction, ConstantVariance, GaussianMoments, NoSerialCorrelation, NoAddedFittedPowerEffect, OveridentifyingRestrictions, ChiSquare, FisherF, TestOutcome
 
 .. py:currentmodule:: None
 
-.. py:type:: statadic.api.hypotheses.Reference
+.. py:type:: statadic.hypothesis.core.Reference
 
    A ``ChiSquare`` or ``FisherF`` reference attached to an actual calibrated tail.
 
-.. py:type:: statadic.api.reporting.MetadataValue
+.. py:type:: statadic.report.core.MetadataValue
 
    Explicit JSON-compatible report metadata, including nested mappings and sequences.
 
-.. py:type:: statadic.api.reporting.FrozenMetadataValue
+.. py:type:: statadic.report.core.FrozenMetadataValue
 
    The recursively immutable representation retained by a report snapshot.
 
-.. py:type:: statadic.api.reporting.ReportNumber
+.. py:type:: statadic.report.core.ReportNumber
 
    An integer or floating-point report value.
 
-.. autoclass:: statadic.api.inference.InferenceContext
+.. autoclass:: statadic.hypothesis.uncertainty.InferenceContext
 
-.. py:class:: statadic.estimation.iv.IVFit
+.. py:class:: statadic.estimation.moments.instrumental.IVFit
 
    Native structural IV fit retaining the actual last weighting solve, original
    aligned rows and weighting/convergence provenance.
 
-.. py:class:: statadic.estimation.gmm.AffineGMMFit
+.. py:class:: statadic.estimation.moments.gmm.AffineGMMFit
 
    Native affine-GMM fit retaining the generating weight, final contributions
    and variability scheme. Point-fit validity and J calibration remain separate.
@@ -162,25 +162,25 @@ Regression and uncertainty
    Nominal axis distinguishing variability constructions; a scheme name alone
    establishes neither source correspondence nor statistical validity.
 
-.. py:type:: statadic.api.diagnostics.Diagnostic
+.. py:type:: statadic.hypothesis.specification.Diagnostic
 
    One diagnostic outcome: a ``TestOutcome`` or an ``InfluenceDiagnostic``.
 
-.. autoclass:: statadic.estimation.linear.LeastSquares
+.. autoclass:: statadic.estimation.least_squares.linear.LeastSquares
 
-.. autoclass:: statadic.estimation.glm.BinomialLogitMLE
+.. autoclass:: statadic.estimation.likelihood.glm.BinomialLogitMLE
 
-.. autoclass:: statadic.estimation.glm.PoissonMLE
+.. autoclass:: statadic.estimation.likelihood.glm.PoissonMLE
 
-.. autoclass:: statadic.estimation.likelihood.ProbitMLE
+.. autoclass:: statadic.estimation.likelihood.conditional.ProbitMLE
 
-.. autoclass:: statadic.estimation.survival.SurvivalML
+.. autoclass:: statadic.estimation.likelihood.survival.SurvivalML
 
-.. autoclass:: statadic.api.inference.HC
+.. autoclass:: statadic.hypothesis.uncertainty.HC
 
-.. autoclass:: statadic.api.inference.HAC
+.. autoclass:: statadic.hypothesis.uncertainty.HAC
 
-.. py:function:: statadic.inference.linear_covariance.hc_covariance(fit, *, kind="HC0", finite_sample_correction=1.0)
+.. py:function:: statadic.inference.covariance.linear.hc_covariance(fit, *, kind="HC0", finite_sample_correction=1.0)
 
    Estimate HC0–HC3 covariance from the fit's whitened influences. HC1 applies
    the count correction; HC2 and HC3 require leverage below one. The optional
@@ -194,25 +194,25 @@ own validity after requesting inference. See the :doc:`regression guide <regress
 Reports and retained plots
 --------------------------
 
-.. autoclass:: statadic.api.reporting.Report
+.. autoclass:: statadic.report.core.Report
    :members: to_text, to_html, to_latex, save_latex, to_values, save_values, coefficient_plot, require_available
 
-.. autoclass:: statadic.api.reporting.ParameterRow
+.. autoclass:: statadic.report.core.ParameterRow
 
-.. autoclass:: statadic.api.reporting.TestRow
+.. autoclass:: statadic.report.core.TestRow
 
-.. autoclass:: statadic.api.reporting.Metric
+.. autoclass:: statadic.report.core.Metric
 
-.. autoclass:: statadic.api.reporting.PlotSpec
+.. autoclass:: statadic.report.core.PlotSpec
    :members: to_pgfplots, save_pgfplots
 
-.. autoclass:: statadic.api.reporting.ReferenceLine
+.. autoclass:: statadic.report.core.ReferenceLine
 
 These objects retain already-computed values. Analysis snapshots restore
 rendering, while predictor artifacts restore only their declared prediction
-capabilities. See :doc:`reporting <reporting>` and :doc:`artifacts <artifacts>`.
+capabilities. See :doc:`reporting <report>` and :doc:`artifacts <prediction>`.
 
-.. py:class:: statadic.api.artifacts.PredictionArtifact
+.. py:class:: statadic.prediction.artifacts.PredictionArtifact
 
    A prediction-only artifact restored by ``load_predictor(path)``. It keeps the
    fitted design and coefficients needed for compatible new observations.
@@ -225,17 +225,17 @@ capabilities. See :doc:`reporting <reporting>` and :doc:`artifacts <artifacts>`.
 Quantities and supplied moments
 -------------------------------
 
-.. py:class:: statadic.api.estimand.Estimand(quantity, *, estimator)
+.. py:class:: statadic.estimand.core.Estimand(quantity, *, estimator)
 
    Prepare and estimate a declared covariance or supplied-moment quantity.
    The actual covariance, GMM or GEL result retains its family capabilities.
    See :doc:`estimand <estimand>` for inputs and inference requests.
 
-.. py:class:: statadic.api.estimand.Covariance(columns=None)
+.. py:class:: statadic.estimand.core.Covariance(columns=None)
 
    Covariance of an ordered set of observed variables; no inference is implied.
 
-.. py:class:: statadic.api.estimand.MomentConditions()
+.. py:class:: statadic.estimand.core.MomentConditions()
 
    Supplied fixed or affine moments; sample arrays belong to ``MomentData``.
 
@@ -251,66 +251,66 @@ Quantities and supplied moments
 
    Constant-correlation Ledoit--Wolf covariance brick.
 
-.. py:class:: statadic.api.moments.GMMSandwich(finite_sample_correction=1.0)
+.. py:class:: statadic.estimand.moments.GMMSandwich(finite_sample_correction=1.0)
 
    Explicit actual-fit GMM sampling covariance request.
 
-.. py:class:: statadic.api.moments.GELCalibration(kind="lr", assume_iid=False)
+.. py:class:: statadic.estimand.moments.GELCalibration(kind="lr", assume_iid=False)
 
    Bound GEL statistic/reference request; the hypothesis is evaluated at ``test``.
 
 Distributions, embedding and comparison
 ---------------------------------------
 
-.. autofunction:: statadic.discrepancy.mmd.energy.energy_distance
+.. autofunction:: statadic.geometry.discrepancy.mmd.energy.energy_distance
 
 .. autoclass:: statadic.geometry.ground.metrics.EuclideanLaw
 
-.. autoclass:: statadic.api.representation.Energy
+.. autoclass:: statadic.observation.geometry.Energy
 
-.. autoclass:: statadic.api.representation.MMD
+.. autoclass:: statadic.observation.geometry.MMD
 
-.. autoclass:: statadic.api.ordination.Ordination
+.. autoclass:: statadic.ordination.fit.Ordination
    :members: pca, pcoa, estimate
 
-.. autoclass:: statadic.api.ordination.PrincipalCoordinates
+.. autoclass:: statadic.ordination.fit.PrincipalCoordinates
 
-.. py:class:: statadic.api.ordination_terms.OrdinationEvidence
+.. py:class:: statadic.observation.coordinates.OrdinationEvidence
 
    Immutable actual native fit, training context and retained coordinate map.
 
-.. py:class:: statadic.api.ordination_terms.FittedOrdination
+.. py:class:: statadic.observation.coordinates.FittedOrdination
 
    A fitted predictor term with named inspection through
    ``fit.design.ordination(name)``. Prediction-only artifacts omit inspection.
 
-.. autoclass:: statadic.api.representation.ObservedDissimilarity
+.. autoclass:: statadic.observation.geometry.ObservedDissimilarity
 
-.. autoclass:: statadic.api.regression.GeometricResponse
+.. autoclass:: statadic.regression.GeometricResponse
 
-.. autoclass:: statadic.api.regression.Reduced
+.. autoclass:: statadic.regression.Reduced
 
-.. autoclass:: statadic.api.regression.FreedmanLane
+.. autoclass:: statadic.regression.FreedmanLane
 
-.. autoclass:: statadic.api.comparison.PermutationPlan
+.. autoclass:: statadic.hypothesis.homogeneity.PermutationPlan
 
-.. py:type:: statadic.api.comparison.ComparisonInput
+.. py:type:: statadic.hypothesis.homogeneity.ComparisonInput
 
    Aligned prepared geometry or a supported supplied matrix for group comparison.
 
-.. py:type:: statadic.api.comparison.DesignLabels
+.. py:type:: statadic.hypothesis.homogeneity.DesignLabels
 
    A grouping column name or explicitly aligned integer/string labels.
 
-.. autofunction:: statadic.discrepancy.mmd.mmd_squared
+.. autofunction:: statadic.geometry.discrepancy.mmd.mmd_squared
 
-.. autofunction:: statadic.discrepancy.mmd.mmd_squared_matrix
+.. autofunction:: statadic.geometry.discrepancy.mmd.mmd_squared_matrix
 
-.. autofunction:: statadic.discrepancy.mmd.weighted.weighted_mmd_squared_cross
+.. autofunction:: statadic.geometry.discrepancy.mmd.weighted.weighted_mmd_squared_cross
 
-.. autofunction:: statadic.inference.dispersion.dispersion_permutation_null
+.. autofunction:: statadic.inference.homogeneity.dispersion.dispersion_permutation_null
 
-.. py:function:: statadic.inference.resampling.permutation.permutation_test_kernel(statistic, null_distribution, num_permutations, alternative="two-sided")
+.. py:function:: statadic.inference.resampling.permutation_kernel.permutation_test_kernel(statistic, null_distribution, num_permutations, alternative="two-sided")
 
    Assemble a numerical test result from an observed statistic and supplied
    null draws. Alternatives are greater, less and absolute-value two-sided,
@@ -324,4 +324,4 @@ frozen query map. Geometric Regression requests inference separately through
 Inspect validity, calibration status and failed draws before interpreting a
 report. See :doc:`ordination <ordination>`, :doc:`energy <energy>`,
 :doc:`resampling <resampling>` and the
-:doc:`composition guide <composition>`.
+:doc:`composition guide <model>`.

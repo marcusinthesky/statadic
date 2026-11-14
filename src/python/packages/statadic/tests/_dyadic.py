@@ -12,7 +12,7 @@ from collections.abc import (
 )
 from typing import TYPE_CHECKING
 
-from statadic.estimation.dyadic import DyadicEstimator
+from statadic.estimation.least_squares.dyadic import DyadicEstimator
 from statadic.inference.dyadic import node_bootstrap_report
 
 if TYPE_CHECKING:

@@ -18,7 +18,8 @@ Four things this suite exists to stop from drifting silently:
   the one energy callable that did not validate ``exponent`` before the move.
 
 Runs under the t46.1 jaxtyping/beartype import hook (``tests/conftest.py``), so
-the NumPy-vs-JAX annotation split in :mod:`statadic.discrepancy.metrize` is checked
+the NumPy-vs-JAX annotation split in :mod:`statadic.geometry.discrepancy.metrize` is
+checked
 here rather than merely asserted in a docstring.
 """
 
@@ -41,9 +42,9 @@ from statadic.core.axioms import (
     Premetric,
     Semimetric,
 )
-from statadic.discrepancy import metrize
-from statadic.discrepancy.mmd import energy
-from statadic.sample.packed import PackedClouds, pack
+from statadic.geometry.discrepancy import metrize
+from statadic.geometry.discrepancy.mmd import energy
+from statadic.measure.clouds import PackedClouds, pack
 
 if TYPE_CHECKING:
     from jax import Array
@@ -99,7 +100,8 @@ def test_every_brand_is_the_strongest_marker_its_flags_imply(
     """A brand may never promise an axiom the declaration does not carry.
 
     Extends ``test_marker_brand_is_the_strongest_available`` to the shipped
-    tables, including :mod:`statadic.discrepancy.metrize`, which the battery does
+    tables, including :mod:`statadic.geometry.discrepancy.metrize`, which the battery
+    does
     not cover.
 
     Args:

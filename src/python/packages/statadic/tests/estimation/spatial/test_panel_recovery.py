@@ -17,15 +17,15 @@ from scipy.linalg import block_diag, solve_triangular
 from scipy.optimize import minimize
 from statadic.core.results import SolverResult, SolverStatus
 from statadic.estimation.spatial import SAR, PanelML, SpatialPanelProblem, panel
+from statadic.geometry.graph import prepare_spatial_panel_weights
 from statadic.inference.spatial import spatial_covariance
-from statadic.operators.spatial import prepare_spatial_panel_weights
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
     from numpy.typing import ArrayLike, NDArray
     from statadic.estimation.spatial.panel import SpatialPanelFit
-    from statadic.operators.spatial import SpatialPanelWeights
+    from statadic.geometry.graph import SpatialPanelWeights
 
 pytestmark = [pytest.mark.numerical]
 WITNESS = Path(__file__).resolve().parents[2] / "_validation/panel_float32_witness.npz"

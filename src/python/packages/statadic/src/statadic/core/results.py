@@ -4,7 +4,8 @@ Inference returns tests and uncertainty summaries; estimation retains actual
 fitted state before an uncertainty method is selected. ``*_test`` commonly
 returns :class:`TestResult` and
 ``*_estimate`` may return :class:`EstimateResult`. The preview linear ``*_fit``
-operations instead return :class:`statadic.estimation.linear.LinearFit`, preserving
+operations instead return :class:`statadic.estimation.least_squares.linear.LinearFit`,
+preserving
 the actual sample and parameter state before any uncertainty method is chosen.
 
 Both are pytree-registered, so a ``vmap`` over a Monte-Carlo grid returns

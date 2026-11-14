@@ -13,7 +13,7 @@ from hypothesis import strategies as st
 from statadic.association.decomposition import group_design
 from statadic.association.dispersion import disco_decomposition
 from statadic.core.random import cell_key, permutation_batch
-from statadic.inference.disco import disco_permutation_null
+from statadic.inference.homogeneity.disco import disco_permutation_null
 
 from .._budgets import examples
 from .._strategies import distinct_points

@@ -6,12 +6,12 @@ from pathlib import Path
 import jax.numpy as jnp
 import numpy as np
 import pytest
-from statadic.api.artifacts import ArtifactError
-from statadic.api.data import Observations
-from statadic.api.design import Intercept, RowDifference
-from statadic.api.ordination import DistanceGram, Ordination, PrincipalCoordinates
-from statadic.api.regression import Binomial, Observed, Regression
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
+from statadic.observation.data import Observations
+from statadic.observation.design import Intercept, RowDifference
+from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
+from statadic.prediction.artifacts import ArtifactError
+from statadic.regression import Binomial, Observed, Regression
 
 pytestmark = pytest.mark.native
 EXAMPLE = (

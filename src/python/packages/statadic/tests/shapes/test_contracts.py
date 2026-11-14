@@ -9,7 +9,7 @@ import jax
 import jax.numpy as jnp
 import pytest
 from jaxtyping import TypeCheckError
-from statadic.sample.alternatives import _draw_normal
+from statadic.measure.alternatives import _draw_normal
 
 from .._typing import check_types
 
@@ -43,7 +43,7 @@ def test_projection_preserves_its_dimensions(tmp_path: Path) -> None:
     check_types(
         _PRELUDE
         + """\
-from statadic.sample.reduction import Projection
+from statadic.measure.reduction import Projection
 @static_jaxtyping("")
 def check(mean: Float[Array, "3"], components: Float[Array, "3 2"],
           good: Float[Array, "5 3"], bad: Float[Array, "5 7"]) -> None:
@@ -65,7 +65,7 @@ def test_integer_arguments_determine_draw_shapes(tmp_path: Path) -> None:
         _PRELUDE
         + """\
 import jax
-from statadic.sample.alternatives import AltSpec, _draw_normal, draw
+from statadic.measure.alternatives import AltSpec, _draw_normal, draw
 @static_jaxtyping("")
 def check(key: Array) -> None:
     assert_type(_draw_normal(key, 2, 3), ShapedArray[[2, 3]])
@@ -106,9 +106,9 @@ def test_empirical_components_require_cloud_types(tmp_path: Path) -> None:
     check_types(
         _PRELUDE
         + """\
-from statadic.discrepancy.mmd.components import candidate_kernel_components
+from statadic.geometry.discrepancy.mmd.components import candidate_kernel_components
 from statadic.geometry.ground.similarities import LINEAR_KERNEL
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 @static_jaxtyping("")
 def check(target: PackedClouds, candidates: PackedClouds,
           bad: Float[Array, "4 9"]) -> None:

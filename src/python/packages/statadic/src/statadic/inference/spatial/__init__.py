@@ -7,9 +7,10 @@ nested-likelihood comparisons. Each diagnostic retains its own model-specific
 null and availability requirements.
 
 Fitting belongs to ``statadic.estimation.spatial``; graph preparation belongs to
-``statadic.operators.spatial``. Parameter intervals and linear restrictions compose
-through ``statadic.inference.parameters`` after covariance selection. General-panel
-covariance lives in ``statadic.inference.panel_covariance``. Numerical validity,
+``statadic.geometry.graph``. Parameter intervals and linear restrictions compose
+through ``statadic.inference.restriction.linear`` after covariance selection.
+General-panel
+covariance lives in ``statadic.inference.covariance.panel``. Numerical validity,
 reference assumptions and statistical calibration remain separate.
 """
 

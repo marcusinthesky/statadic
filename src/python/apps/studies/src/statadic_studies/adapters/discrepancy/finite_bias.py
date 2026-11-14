@@ -7,8 +7,8 @@ from functools import cache
 import jax
 import jax.numpy as jnp
 import numpy as np
-from statadic.discrepancy.mmd.scalar import mmd_squared
-from statadic.sample.packed import PackedClouds
+from statadic.geometry.discrepancy.mmd.scalar import mmd_squared
+from statadic.measure.clouds import PackedClouds
 
 from statadic_studies.adapters._random import rng
 

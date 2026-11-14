@@ -6,17 +6,13 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from statadic.core.equations import MeanCenteredLongRun, PlainLongRun
-from statadic.estimation.gel import AffineGEL, FixedGEL
-from statadic.estimation.gmm import FixedWeightGMM, IteratedGMM
-from statadic.estimation.moments import AffineMomentProblem, FixedMomentProblem
-from statadic.inference.gel import gel_test
-from statadic.inference.gmm import (
-    gmm_wald,
-    hansen_j,
-    hansen_j_from_fit,
-)
-from statadic.inference.gmm.covariance import gmm_covariance
-from statadic.operators.longrun import optimal_bandwidth
+from statadic.estimation.empirical_likelihood import AffineGEL, FixedGEL
+from statadic.estimation.moments.gmm import FixedWeightGMM, IteratedGMM
+from statadic.estimation.moments.problem import AffineMomentProblem, FixedMomentProblem
+from statadic.inference.covariance.moments import gmm_covariance
+from statadic.inference.restriction.empirical_likelihood import gel_test
+from statadic.inference.restriction.moments import gmm_wald, hansen_j, hansen_j_from_fit
+from statadic.numerics.linalg.longrun import optimal_bandwidth
 
 from statadic_studies.adapters._random import rng
 from statadic_studies.adapters.dependence._common import _inference, _record

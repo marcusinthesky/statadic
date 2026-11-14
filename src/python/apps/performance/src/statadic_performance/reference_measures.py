@@ -112,13 +112,13 @@ def prepare_measure(
     if side == "statadic":
         import jax
         import jax.numpy as jnp
-        from statadic.sample.packed import PackedClouds
+        from statadic.measure.clouds import PackedClouds
 
         if case in {"weighted-energy-value-gradient", "quantile-transport-unequal"}:
             left = PackedClouds.from_points(inputs[0], inputs[2])
             right = PackedClouds.from_points(inputs[1], inputs[3])
             if case == "weighted-energy-value-gradient":
-                from statadic.discrepancy.mmd.energy import energy_distance
+                from statadic.geometry.discrepancy.mmd.energy import energy_distance
 
                 def objective(coordinates, left, right):
                     return energy_distance(
@@ -135,7 +135,7 @@ def prepare_measure(
                     }
 
             else:
-                from statadic.discrepancy.transport.univariate import (
+                from statadic.geometry.discrepancy.transport.univariate import (
                     wasserstein_1d_power,
                 )
 
@@ -156,7 +156,7 @@ def prepare_measure(
         left = PackedClouds.from_array(jax.device_put(inputs[0]))
         candidates = PackedClouds.from_array(jax.device_put(inputs[1]))
         if case == "simplex-energy-projection":
-            from statadic.geometry.barycentre.mmd.energy import (
+            from statadic.geometry.frechet.energy import (
                 energy_barycentre_weights,
             )
 
@@ -175,7 +175,7 @@ def prepare_measure(
                 }
 
         elif case == "kernel-target-projection":
-            from statadic.geometry.barycentre.mmd import kernel_barycentre_weights
+            from statadic.geometry.frechet.mmd import kernel_barycentre_weights
             from statadic.geometry.ground.similarities import RBFKernel
 
             def execute(target, candidates):

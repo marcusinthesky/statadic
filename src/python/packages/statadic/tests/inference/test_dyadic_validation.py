@@ -15,8 +15,8 @@ from statadic.inference.dyadic import (
     bootstrap_coefficient_inference,
     bootstrap_dyadic,
 )
-from statadic.model.dyadic import DyadicSample
-from statadic.operators.design import NodeIndex
+from statadic.law.dyadic import DyadicSample
+from statadic.numerics.linalg.dyadic import NodeIndex
 
 from .._budgets import examples
 

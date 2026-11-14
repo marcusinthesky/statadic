@@ -28,7 +28,7 @@ from statadic.core.results import (
     SolverResult,  # runtime protocol  # noqa: TC001
 )
 from statadic.core.typing import Array, ArrayLike, PRNGKey  # noqa: TC001
-from statadic.estimation.linear import (  # runtime carrier  # noqa: TC001
+from statadic.estimation.least_squares.linear import (  # runtime carrier  # noqa: TC001
     LeastSquares,
     LinearFit,
     LinearProblem,

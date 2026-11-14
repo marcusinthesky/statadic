@@ -12,10 +12,10 @@ from typing import TYPE_CHECKING, cast
 
 import jax.numpy as jnp
 import pytest
-from statadic.discrepancy.mmd.energy import (
+from statadic.geometry.discrepancy.mmd.energy import (
     energy_distance,
 )
-from statadic.sample.packed import PackedClouds
+from statadic.measure.clouds import PackedClouds
 
 from ._parity import DEFAULT_ATOL, load_oracle
 

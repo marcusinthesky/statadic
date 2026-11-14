@@ -7,10 +7,10 @@ import jax
 import numpy as np
 import pytest
 from statadic.inference.dyadic import DyadicFitRequest, DyadicInference
-from statadic.inference.wolak import (
+from statadic.inference.inequality.wolak import (
     wolak_test,
 )
-from statadic.model.dyadic import DyadicModel, DyadicSample
+from statadic.law.dyadic import DyadicModel, DyadicSample
 
 from .._dyadic import fit_dyadic_report
 

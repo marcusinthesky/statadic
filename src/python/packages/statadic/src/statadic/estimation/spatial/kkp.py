@@ -22,7 +22,7 @@ from statadic.core.typing import (  # noqa: TC001
     Array,
     ArrayLike,
 )
-from statadic.estimation.linear import (  # noqa: TC001
+from statadic.estimation.least_squares.linear import (  # noqa: TC001
     LeastSquares,
     LinearFit,
     LinearProblem,
@@ -31,11 +31,11 @@ from statadic.estimation.spatial.likelihood import SEM
 from statadic.estimation.spatial.panel import (
     SpatialPanelProblem,  # noqa: TC001 -- runtime annotation
 )
-from statadic.operators.spatial import (  # noqa: TC001
+from statadic.geometry.graph import (  # noqa: TC001
     SpatialPanelWeights,
     spatial_panel_lag,
 )
-from statadic.optimize.backends import bounded_scalar_minimise
+from statadic.numerics.optimize.backends import bounded_scalar_minimise
 
 __all__ = ["KKP", "KKPPanelFit"]
 
