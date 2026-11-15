@@ -76,7 +76,7 @@ report.coefficient_plot().save_pgfplots(Path("coefficients.tex"))
 
 ![OLS coefficient estimates with HC3 normal-reference 95% intervals, generated from the example above](src/python/apps/docs/static/readme/ols-coefficients.png)
 
-Include the exported table directly in your manuscript:
+Include the exported table directly in your manuscript with:
 
 ```latex
 % Preamble: \usepackage{booktabs,siunitx}
@@ -85,21 +85,30 @@ Include the exported table directly in your manuscript:
   \caption{OLS estimates with HC3 standard errors.}
 \end{table}
 ```
+with publication quality `pgfplots` and diagnostics.   
 
-The figure is PGFplots source; add `pgfplots` to your preamble and
-`\input{coefficients.tex}`. HC3/normal intervals use an asymptotic reference.
-Browse the actual [text report](src/python/apps/docs/static/readme/report.txt) and
-[exported table](src/python/apps/docs/static/readme/regression.tex).
-The [complete example](src/python/packages/statadic/docs/start/first-regression.py)
-adds residual diagnostics, prediction, and saved analysis artifacts.
+## Everything in one place
+
+Rather than 10 different libraries with conflicting dependencies and incompatible API, use one library that combines them under one simple install: 
+
+| Library | OLS | WLS | GLM | GAM | FE | RE | FMB | IV/GMM | SAR/SEM | S-IV | S-Panel | AFT | Censor | MMD | Energy | OT | Dist | HAC | Mantel | Cov | QP | KPCA/ISO | FL |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| STATADIC | ✓ | ✓ | ✓ | ◐ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| statsmodels | ✓ | ✓ | ✓ | ✓ | ◐ | ◐ | — | ✓ | — | — | — | — | ✓ | — | — | — | — | ✓ | — | ✓ | — | — | — |
+| linearmodels | ✓ | ✓ | — | — | ✓ | ✓ | ✓ | ✓ | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — |
+| spreg | ✓ | — | ◐ | — | ✓ | ✓ | — | ✓ | ✓ | ✓ | ✓ | — | — | — | — | — | — | ✓ | — | — | — | — | — |
+| lifelines | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — | — | — | — | — |
+| glum | ✓ | ✓ | ✓ | ◐ | ◐ | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — |
+| arch | ◐ | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | — | — | — | — |
+| POT | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | ✓ | — | — | — | — | — | — |
+| dcor | — | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | ✓ | — | — | — | — | — | — |
+| scikit-learn | ✓ | ✓ | ✓ | ◐ | ◐ | — | — | — | — | — | — | — | — | ◐ | — | — | ✓ | — | — | ✓ | — | ✓ | — |
+| scikit-bio | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | — | ✓ | — | ✓ | — | — | — | — |
 
 ## But there is more: compose the analysis
 
-**Censored durations. Seasonal splines. Unit and time effects. Spatial dependence.**
-
-Use the same `Regression` interface. Given prepared `panel_data` and explicit
-`integration_designs`, this combines a lognormal AFT model, cyclic spline, two-way
-fixed effects, spatial lag and a spatially lagged predictor:
+Combine lognormal AFT model, cyclic spline, two-way
+fixed effects, spatial lag and a spatially lagged predictor all in one model:
 
 <!-- statadic:readme-composition:start -->
 
@@ -129,12 +138,6 @@ print(result.report().to_text())
 
 <!-- statadic:readme-composition:end -->
 
-This [integration example](src/python/packages/statadic/tests/structure/test_survival_composition.py)
-also exercises a censored spell and a missing node. It fixes the spatial
-coefficient at 0.2; spline terms are unpenalized. The
-[survival guide](src/python/packages/statadic/docs/reference/survival.md) explains
-data preparation, estimation and integration refinement.
-
 The same design vocabulary also supports
 [principal-component regression](src/python/packages/statadic/docs/guides/principal-component-regression.py),
 [count models](src/python/packages/statadic/docs/guides/count-models-with-exposure.py) and
@@ -142,58 +145,30 @@ The same design vocabulary also supports
 
 <!-- rumdl-disable MD026 -->
 
-## Now let's get fancy...
 
-<!-- rumdl-enable MD026 -->
+## CPU, GPU, TPU: JAX underneath, statistics on top
 
-**Train a representation through SAR.** The [complete example](src/python/packages/statadic/docs/guides/train-a-representation-through-sar.py)
-prepares vector distributions `clouds`, period designs `design`, outcomes `y`,
-empty error graphs `no_errors`, and `NeuralSAR`: a Flax NNX 6 → 8 → 2 MLP
-with trainable rho.
+With built-in `jit` compilation, `vmap` batching, sharding and support for CPU, GPU and TPU backends.  
 
-<!-- statadic:readme-neural-sar:start -->
+Against independent reference libraries, we see:  
+| Workload | Reference library | STATADIC (ms) | Reference (ms) | Speedup |
+| --- | --- | ---: | ---: | ---: |
+| Spatial SAR ML · 40 nodes | `spreg.ML_Lag` | **0.70** | 13.22 | **18.89×** |
+| Spatial panel FE · 12 × 8 | `spreg.Panel_FE_Lag` | **0.55** | 5.59 | **10.16×** |
+| Weibull AFT · 240 observations | `lifelines.WeibullAFTFitter` | **0.66** | 85.17 | **129.05×** |
+| Panel FE · 200 observations | `linearmodels.PanelOLS` | **1.96** | 19.42 | **9.91×** |
+| Euclidean energy · 512 × 384 points | `dcor.energy_distance` | **3.22** | 24.60 | **7.64×** |
+| Wasserstein W1 · 512 atoms | `POT.ot.emd2` | **0.32** | 13.87 | **43.34×** |
+| OLS + HC3 · 10,000 observations | `statsmodels.OLS` | 1.76 | **1.50** | 0.85× |
 
-```python
-import jax.numpy as jnp
-import optax
-from flax import nnx
-from statadic.observation.geometry import Energy
-from statadic.estimation.spatial.graph_likelihood import graph_profile
-from statadic.geometry.graph.distance import rbf_weights
+*Speedup = reference time ÷ STATADIC time. Measurements use float64 on CPU, reporting the median of three worker medians, each based on five warm calls. *
 
-model = NeuralSAR()
-optimizer = nnx.Optimizer(model, optax.adam(0.01), wrt=nnx.Param)
+[Full CPU performance report](src/python/apps/performance/cpu-reference-performance.md) · [All 44 workload results](src/python/apps/performance/results/cpu44/summary.csv) · [Reproduction instructions](src/python/apps/performance/history/cpu44/README.md)
 
-def objective(model):
-    projected = clouds.with_coordinates(model(clouds.coordinates))
-    cost = Energy(ground="euclidean").squared_cross(projected, projected)
-    upper = jnp.triu(cost, k=1)
-    weights = rbf_weights(upper + upper.T, jnp.asarray(1.0))
-    _, _, log_likelihood = graph_profile(
-        (weights[None],) * len(y), no_errors, design, tuple(y), model.rho[None]
-    )
-    return -log_likelihood / y.size
-
-@nnx.jit
-def step(model, optimizer):
-    value, gradients = nnx.value_and_grad(objective)(model)
-    optimizer.update(model, gradients)
-    return value
-
-for _ in range(120):
-    step(model, optimizer)
-```
-
-<!-- statadic:readme-neural-sar:end -->
-
-Gradients traverse energy costs, graph weights and SAR likelihood. Bandwidth is
-fixed; rho is bounded. The example's final `Regression` report conditions on the
-learned graph, excluding training uncertainty. Install Flax to run it.
 
 ## Trust you can inspect
 
-Follow a method from its tests to its mathematics, matched reference configuration
-and published sources. Each link opens the evidence behind that part of the method.
+Follow a method from the original citation, to it's Lean4-verified assumptions and mathematics, type checks, unit tests, performance benchmarks, reference implementation validation and montecarlo analysis:  
 
 | Method | Test suites | Selected Lean 4 mathematics | Independent comparisons | Sources / BibTeX |
 | --- | --- | --- | --- | --- |
@@ -204,23 +179,6 @@ and published sources. Each link opens the evidence behind that part of the meth
 | Spatial panels | [✓ Observed-panel contracts](src/python/packages/statadic/tests/estimation/spatial/test_observed_panel.py) | [Filter Jacobians](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Spatial/PanelJacobian.lean) | [spreg, selected configurations](src/python/packages/statadic/tests/integration/api/test_spatial_reference_walkthroughs.py) | [✓ Sources](.context/reference/elhorst-spatial-panel-2003/README.md) |
 | Energy statistics / MMD | [✓ Weighted reductions](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_weighted.py) | [Selected nonnegativity results](src/lean/packages/StatadicFormal/StatadicFormal/Discrepancy/MMD/Nonnegativity.lean) | [NumPy controls](src/python/packages/statadic/tests/geometry/discrepancy/test_mmd_independent_reference.py), [dcor](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_energy_independent_reference.py) | [✓ Sources](.context/reference/sejdinovic-equivalence-2013/README.md) |
 
-✓ identifies linked evidence, rather than a coverage percentage or a live passing
-result. Lean proves the stated mathematical results; numerical implementations,
-external comparisons and statistical studies have their own scopes. See the
-[claim registry](src/lean/registry/claims.json),
-[reference mappings](src/python/packages/statadic/docs/validation/references.md),
-[study dispositions](src/python/packages/statadic/docs/validation/research.md) and
-[known limits](src/python/packages/statadic/docs/validation/known-limitations.md).
-Citation records generate the shared [BibTeX bibliography](src/latex/refs.bib).
-
-## JAX underneath, statistical workflows on top
-
-Supported numerical kernels compose with `jit` and `vmap`. Named preparation and
-reporting stay eager; fitted state carries through to inference and prediction.
-JAX supplies CPU, GPU and TPU backends. Current STATADIC reference and performance
-evidence covers CPU; inspect the
-[method-specific transformation and performance scope](src/python/packages/statadic/docs/reference/transformation-support.md)
-when choosing a workload or device.
 
 ## Try it
 
@@ -231,10 +189,9 @@ uv venv --python 3.13
 uv pip install statadic
 ```
 
-Run the example with `.venv/bin/python`. See
+See
 [installation](src/python/packages/statadic/docs/start/installation.md) for optional
-table/plot extras and Python 3.14 compatibility scope. Repository environments
-target Linux x86-64 and ARM64.
+table/plot extras and Python 3.14 compatibility scope. 
 
 For development, use the pinned devenv shell and [contributor commands](CONTRIBUTING.md).
 After `just setup`, build the site with `just python::docs::build` and preview it
