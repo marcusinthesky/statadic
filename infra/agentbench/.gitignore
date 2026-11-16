@@ -1,0 +1,6 @@
+.devenv/
+.direnv/
+tex-cache/
+tex-prime/
+config.local.json
+campaigns/

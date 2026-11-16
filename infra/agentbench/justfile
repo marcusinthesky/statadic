@@ -1,0 +1,24 @@
+app := "../../src/python/apps/agentbench"
+
+# Explicit initial network boundary; subsequent commands use the retained lock.
+setup:
+    uv lock --project {{app}}
+    uv sync --project {{app}} --locked
+
+check:
+    uv run --project {{app}} --locked --offline python -m pytest {{app}}/tests
+
+# Prime only the allowed manuscript packages; this cache becomes an image input.
+tex-cache:
+    mkdir -p tex-cache tex-prime
+    XDG_CACHE_HOME="$PWD/tex-cache" tectonic --bundle https://data1.fullyjustified.net/tlextras-2022.0r0.tar --outdir tex-prime prime.tex
+
+images:
+    devenv container build statadic
+    devenv container copy statadic
+    devenv container build statsmodels
+    devenv container copy statsmodels
+    docker image inspect statadic-agentbench-statadic:pilot statadic-agentbench-statsmodels:pilot | python -c 'import json,sys; print("\n".join(v["Id"] for v in json.load(sys.stdin)))'
+
+bench *args:
+    uv run --project {{app}} --locked --offline python {{app}}/run.py {{args}}

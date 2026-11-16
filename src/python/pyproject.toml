@@ -8,6 +8,7 @@ package = false
 
 [tool.uv.workspace]
 members = ["apps/*", "packages/*"]
+exclude = ["apps/agentbench"]
 
 [dependency-groups]
 dev = [

@@ -1,0 +1,16 @@
+{
+  "model": "",
+  "images": {
+    "statadic": "REPLACE_WITH_LOCAL_SHA256_IMAGE_ID",
+    "statsmodels": "REPLACE_WITH_LOCAL_SHA256_IMAGE_ID"
+  },
+  "executable": "docker",
+  "tasks": ["PD0007", "PD0119"],
+  "efforts": ["medium"],
+  "repetitions": 1,
+  "seed": 42,
+  "timeout_seconds": 600,
+  "request_limit": 50,
+  "token_limit": 200000,
+  "pricing": null
+}
