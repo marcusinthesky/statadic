@@ -1,7 +1,7 @@
 # Rubric v1
 
 This is a new Python research-workflow adaptation, **not** StatLLM's original
-expert rubric. Source: https://github.com/yili-hong/StatLLM, pinned in `core.py`.
+expert rubric. Source: <https://github.com/yili-hong/StatLLM>, pinned in `core.py`.
 The selected original problem IDs and dataset paths are in `tasks.json`; original
 prompts are `ProblemDescription/PDxxxx.txt`, SAS programs are
 `Humanverified_SAScode/SCxxxx.txt` under that pinned source.

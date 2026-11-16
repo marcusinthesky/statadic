@@ -33,7 +33,8 @@ packages should not change the scientific package versions under comparison.
 Data are fetched only by the explicit `prepare` command from StatLLM commit
 `3194677cc1c1590a95e2bf482af57dd7bb37f35a`. Preparation keeps raw CSVs, source URLs,
 SHA-256 hashes, normalized complete-case inputs, public schemas and private
-witness values. No upstream datasets or SAS solutions are vendored. Review their
+witness values. Numeric accounting notation such as `(21.00)` is decoded as
+negative, preserving source signs and scales. No upstream datasets or SAS solutions are vendored. Review their
 source/licensing terms before downloading or redistributing them. Adaptations,
 including corrections of ambiguous source instructions, are in each task's notes.
 This is not an official StatLLM score or a reproduction of every SAS output.
@@ -72,6 +73,8 @@ program. Preserve review amendments separately. No agent sees the review files.
 Runs retain prompts, framework message traces, model/effort/image identity,
 provider usage, elapsed time, replay outputs, compilation logs and grading details.
 Credentials stay in the trusted controller. Library/model failures remain records.
+Elapsed time covers the agent phase, including its workspace lifecycle, and
+excludes independent replay and report compilation.
 Usage on interrupted/provider-error runs is marked incomplete; observed partial
 counts are retained, but unknown total cost is **not** zero.
 

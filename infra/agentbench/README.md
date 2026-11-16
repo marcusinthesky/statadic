@@ -28,6 +28,13 @@ immutable `sha256:...` image IDs printed by `just images`. No default model mean
 no accidental charged runs. Configure authentication on the controller through
 the provider's normal environment variables, never in JSON or image layers.
 
+For an existing ChatGPT/Codex subscription, set `model` to
+`openai-codex:gpt-6-luna` and leave `pricing` null. Pydantic's native provider
+reads the existing `~/.codex/auth.json` (or `$CODEX_HOME/auth.json`) on the
+controller; run `codex login` first if needed. No API key or model proxy is
+required. Subscription usage is not a per-token USD invoice, so dollar costs
+remain unavailable. Never mount the login file or its directory into a sandbox.
+
 For Podman, load the built images with devenv's registry/copy mechanism into its
 local store, set `executable` to `podman`, and inspect IDs with `podman image inspect`.
 The supplied convenience `images` recipe uses Docker. Use the same local runtime

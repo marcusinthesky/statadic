@@ -71,6 +71,11 @@ def prepare_csv(task, raw, destination):
             raise ValueError('Missing required source columns')
         if any(row[k].lower() in ('', '.', 'na', 'nan', 'null') for k in required):
             continue
+        for key in required:
+            if key not in task['factors'] and not (key == task['y'] and 'event' in task):
+                value = row[key]
+                if value.startswith('(') and value.endswith(')'):
+                    row[key] = str(-float(value[1:-1]))
         for key, levels in task['factors'].items():
             if row[key] not in levels:
                 try:

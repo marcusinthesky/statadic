@@ -161,9 +161,10 @@ async def compile_report(image, public, replay_dir, destination, executable):
     return result.exit_code==0 and len(read_regular(destination/'build/wrapper.pdf'))>0
 
 
-async def attempt(job, campaign, config):
+async def attempt(job, campaign, config, model):
     from pydantic import TypeAdapter
-    from pydantic_ai import Agent
+    from pydantic_ai import Agent, capture_run_messages
+    from pydantic_ai.messages import ModelMessagesTypeAdapter
     from pydantic_ai.usage import RunUsage, UsageLimits
     from pydantic_ai_harness.coder import Coder
     folder = campaign/'runs'/job['id']
@@ -177,19 +178,21 @@ async def attempt(job, campaign, config):
                   submission_sha256=sha((job['id']+':no-submission').encode()))
     save(folder/'run.json',output)
     start = time.monotonic()
-    try:
-        async with sandbox(image,public,folder/'work',executable) as (_,backend):
-            agent = Agent(config['model'], capabilities=[Coder(repo_context=False,sub_agents=False)],
-                          model_settings={'openai_reasoning_effort':job['effort']})
-            prompt = f"Use {job['library']} for {job['task']}. Read /input/task.json, /input/contract.md and /input/schema.json. Write the deliverables under /work/submission."
-            (folder/'prompt.txt').write_text(prompt)
-            async with asyncio.timeout(config['timeout_seconds']):
-                result = await agent.run(prompt, workspace=backend, usage=usage,
-                    usage_limits=UsageLimits(request_limit=config['request_limit'],total_tokens_limit=config['token_limit']))
-            (folder/'messages.json').write_bytes(result.all_messages_json())
-        output.update(status='completed',usage_complete=True)
-    except Exception as exc:  # Record failed attempts, never silently drop them.
-        output.update(status='failed',errors=[f'{type(exc).__name__}: {exc}'])
+    with capture_run_messages() as messages:
+        try:
+            async with sandbox(image,public,folder/'work',executable) as (_,backend):
+                agent = Agent(model, capabilities=[Coder(repo_context=False,sub_agents=False)],
+                              model_settings={'openai_reasoning_effort':job['effort']})
+                prompt = f"Use {job['library']} for {job['task']}. Read /input/task.json, /input/contract.md and /input/schema.json. Write the deliverables under /work/submission."
+                (folder/'prompt.txt').write_text(prompt)
+                async with asyncio.timeout(config['timeout_seconds']):
+                    await agent.run(prompt, workspace=backend, usage=usage,
+                        usage_limits=UsageLimits(request_limit=config['request_limit'],total_tokens_limit=config['token_limit']))
+            output.update(status='completed',usage_complete=True)
+        except Exception as exc:  # Record failed attempts, never silently drop them.
+            output.update(status='failed',errors=[f'{type(exc).__name__}: {exc}'])
+        finally:
+            (folder/'messages.json').write_bytes(ModelMessagesTypeAdapter.dump_json(messages))
     output['elapsed_seconds'] = time.monotonic()-start
     output['usage_complete'] = (output['usage_complete'] and usage.requests > 0
                                 and usage.unmeasured_requests == 0)
@@ -222,6 +225,7 @@ def plan(config):
 
 
 async def evaluate(campaign, execute):
+    from pydantic_ai.models import infer_model
     from pydantic_evals import Case, Dataset
     from pydantic_evals.evaluators import Evaluator
     from pydantic_evals.lifecycle import CaseLifecycle
@@ -252,9 +256,11 @@ async def evaluate(campaign, execute):
     dataset = Dataset(name='statllm-research-workflow',cases=[Case(name=j['id'],inputs=j,
         expected_output=read_json(campaign/'tasks'/j['task']/'expected.json'),
         metadata={'task':j['task'],'library':j['library'],'effort':j['effort']}) for j in jobs],evaluators=[Rubric()])
-    async def task(job):
-        return await attempt(job,campaign,config)
-    report = await dataset.evaluate(task,max_concurrency=1,lifecycle=Metrics)
+    # Keep subscription token refreshes in one provider without writing CLI credentials.
+    async with infer_model(config['model']) as model:
+        async def task(job):
+            return await attempt(job,campaign,config,model)
+        report = await dataset.evaluate(task,max_concurrency=1,lifecycle=Metrics)
     report.print(include_input=False,include_output=False)
 
 

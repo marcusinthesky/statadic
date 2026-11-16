@@ -112,6 +112,15 @@ def test_complete_case_policy_and_categories(tmp_path):
     assert len(rows)==1 and rows[0]['row_id']==1
 
 
+def test_source_accounting_negatives_preserve_sign_and_scale(tmp_path):
+    task=catalogue()['PD0129']
+    rows=prepare_csv(task,'api00,acs_k3,meals,full\n713,(21.00),63,92\n487,18,,0.72\n',tmp_path/'data.csv')
+    assert rows==[dict(row_id=1,api00='713',acs_k3='-21.0',meals='63',full='92')]
+    # The source's fractional full values are data, not an implicit percent conversion.
+    rows=prepare_csv(task,'api00,acs_k3,meals,full\n487,18,91,0.72\n',tmp_path/'fraction.csv')
+    assert rows[0]['full']=='0.72'
+
+
 def test_review_requires_artifact_binding():
     record=grade({'estimates':{'a':1},'inference':{'b':1}},None,False,False)
     review=dict(submission_sha256='a'*64,reviewer='r',notes='checked',interpretation=10,package_policy=5,integrity_violation=False)
