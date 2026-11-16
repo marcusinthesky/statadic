@@ -30,6 +30,11 @@ reference. Reparameterize equivalent library results before export if needed.
 Numbers must be finite, unrounded JSON numbers; no NaN/Infinity or fabricated
 fallback values. Fail clearly when a valid result is unavailable.
 
+Set `schema_version` to `1`, `task_id` to `task.json.id`, and `model` to
+`task.json.model`. Set `reference` to `"student_t"` for OLS or `"normal"` for
+logit/Poisson; it identifies the coefficient inference distribution. Copy
+`row_ids` and `parameter_names` exactly from `task.json`.
+
 Use classical OLS covariance SSE/(n-p) times inverse X'X, or inverse information
 for unpenalized logit/Poisson. Coefficient intervals: 95% Student t with n-p df for
 OLS, normal/Wald for GLMs. `fitted` means the training response means; `residuals`
