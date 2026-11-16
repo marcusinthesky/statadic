@@ -15,11 +15,11 @@ statistical methods coming together in one analysis.
 
 [![Site](https://img.shields.io/badge/site-GitHub%20Pages-222?logo=github)](https://marcusinthesky.github.io/statadic/)
 [![DOI](https://zenodo.org/badge/1358295759.svg)](https://doi.org/10.5281/zenodo.22689254)
-[![PyPI](https://img.shields.io/badge/PyPI-published-3775A9?logo=pypi&logoColor=white)](https://pypi.org/project/statadic/)  
+[![PyPI](https://img.shields.io/badge/PyPI-published-3775A9?logo=pypi&logoColor=white)](https://pypi.org/project/statadic/)
 
 [![Python 3.13–3.14](https://img.shields.io/badge/python-3.13%E2%80%933.14-3776AB?logo=python&logoColor=white)](src/python/packages/statadic/docs/start/installation.md)
 [![Lean 4.35.0](https://img.shields.io/badge/Lean-4.35.0-0E7490?logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMjQwMCIgaGVpZ2h0PSI5MDAiIHZpZXdCb3g9IjAgMCAyNDAwIDkwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUxNy40MyA3NDEuMDM2VjIxMy41NTFMMTQwOC44NiA0NTQuOTk3QzE0MDguODQgNDU1LjAzOSAxNDA4LjgzIDQ1NS4wODMgMTQwOC44MSA0NTUuMTI1TDEyNzQuODcgNzQzLjE2N0MxMjczLjA3IDc0Ny4wMjUgMTI2OS4yMSA3NDkuNDk4IDEyNjQuOTYgNzQ5LjUwOUwxMjYwLjQ5IDc0OS41MkMxMjU2LjIxIDc0OS41MyAxMjUyLjMxIDc0Ny4wNDIgMTI1MC41MSA3NDMuMTUzTDExMTcuNDkgNDU1LjE1TDEwMDMuNSAyMTEuNzAyVjczOC41NTZDMTAwMy41IDc0NC42MTEgOTk4LjU4OSA3NDkuNTIgOTkyLjUzNiA3NDkuNTJIMjU2Ljk2MUMyNTAuOTA4IDc0OS41MiAyNDYuMDAxIDc0NC42MTEgMjQ2IDczOC41NTZWMTU5Ljk2NEMyNDYgMTUzLjkwOSAyNTAuOTA3IDE0OSAyNTYuOTYxIDE0OUMyNjMuMDE0IDE0OSAyNjcuOTIxIDE1My45MDkgMjY3LjkyMSAxNTkuOTY0VjcyNy41OTJIOTgxLjU3NlY0NjEuNDY0SDYyNC43NUM2MTguNjk3IDQ2MS40NjQgNjEzLjc5IDQ1Ni41NTUgNjEzLjc5IDQ1MC41QzYxMy43OSA0NDQuNDQ1IDYxOC42OTcgNDM5LjUzNiA2MjQuNzUgNDM5LjUzNkg5ODEuNTc2VjE3My40MTFINjI0Ljc1QzYxOC42OTcgMTczLjQxMSA2MTMuNzkgMTY4LjUwMiA2MTMuNzkgMTYyLjQ0OEM2MTMuNzkgMTU2LjM5MyA2MTguNjk3IDE1MS40ODQgNjI0Ljc1IDE1MS40ODRIOTkyLjUzNkw5OTMuMzI4IDE1MS41MTNDOTk3LjI2NCAxNTEuNzk3IDEwMDAuNzcgMTU0LjE4NSAxMDAyLjQ2IDE1Ny43OTdMMTEzNC4zOCA0MzkuNTM2SDEzOTEuNzhMMTUxOC4zOSAxNTcuOTUxQzE1MjAuMTYgMTU0LjAxNSAxNTI0LjA3IDE1MS40ODQgMTUyOC4zOSAxNTEuNDg0SDE1MzAuODJDMTUzNC4xNSAxNTEuNDg0IDE1MzcuMjkgMTUyLjk5MyAxNTM5LjM3IDE1NS41ODVMMTk4NS4wOCA3MTAuOTA0VjE1OS45NjRDMTk4NS4wOCAxNTMuOTA5IDE5ODkuOTkgMTQ5IDE5OTYuMDQgMTQ5QzIwMDIuMDkgMTQ5IDIwMDcgMTUzLjkwOSAyMDA3IDE1OS45NjRWNzM5LjA0MUMyMDA3IDc0NS4wOTYgMjAwMi4wOSA3NTAuMDA1IDE5OTYuMDQgNzUwLjAwNUgxOTkzLjZDMTk5MC4yOCA3NTAuMDA1IDE5ODcuMTQgNzQ4LjQ5NiAxOTg1LjA2IDc0NS45MDRMMTUzOS4zNSAxOTAuNTgxVjc0MS4wMzZDMTUzOS4zNSA3NDcuMDkxIDE1MzQuNDQgNzUyIDE1MjguMzkgNzUyQzE1MjIuMzMgNzUyIDE1MTcuNDMgNzQ3LjA5MSAxNTE3LjQzIDc0MS4wMzZaTTEyNjIuNzIgNzE3LjI5NkwxMzgxLjY4IDQ2MS40NjRIMTE0NC41NUwxMjYyLjcyIDcxNy4yOTZaIiBmaWxsPSIjMDcwMDAwIi8%2BPHBhdGggZD0iTTIwNTEuMDggMTYzLjk2NVYxNTUuMDkxSDIwOTIuODlWMTYzLjk2NUgyMDc3LjMxVjIwNkgyMDY2LjY3VjE2My45NjVIMjA1MS4wOFoiIGZpbGw9IiNCN0I3QjciLz48cGF0aCBkPSJNMjA5OS43OCAxNTUuMDkxSDIxMTMuMDVMMjEyNy4wNyAxODkuMjk1SDIxMjcuNjdMMjE0MS42OSAxNTUuMDkxSDIxNTQuOTZWMjA2SDIxNDQuNTJWMTcyLjg2NEgyMTQ0LjFMMjEzMC45MiAyMDUuNzUxSDIxMjMuODFMMjExMC42NCAxNzIuNzRIMjExMC4yMlYyMDZIMjA5OS43OFYxNTUuMDkxWiIgZmlsbD0iI0I3QjdCNyIvPjwvc3ZnPg%3D%3D)](https://lean-lang.org/)
-[![Nix 2.35.4](https://img.shields.io/badge/built%20with-Nix%202.35.4-5277C3?logo=nixos&logoColor=white)](infra/nix/flake.nix)  
+[![Nix 2.35.4](https://img.shields.io/badge/built%20with-Nix%202.35.4-5277C3?logo=nixos&logoColor=white)](infra/nix/flake.nix)
 
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange)](src/python/packages/statadic/CHANGELOG.md)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
@@ -85,11 +85,12 @@ Include the exported table directly in your manuscript with:
   \caption{OLS estimates with HC3 standard errors.}
 \end{table}
 ```
-with publication quality `pgfplots` and diagnostics.   
+
+with publication quality `pgfplots` and diagnostics.
 
 ## Everything in one place
 
-Rather than 10 different libraries with conflicting dependencies and incompatible API, use one library that combines them under one simple install: 
+Rather than 10 different libraries with conflicting dependencies and incompatible API, use one library that combines them under one simple install:
 
 | Library | OLS | WLS | GLM | GAM | FE | RE | FMB | IV/GMM | SAR/SEM | S-IV | S-Panel | AFT | Censor | MMD | Energy | OT | Dist | HAC | Mantel | Cov | QP | KPCA/ISO | FL |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -145,12 +146,12 @@ The same design vocabulary also supports
 
 <!-- rumdl-disable MD026 -->
 
-
 ## CPU, GPU, TPU: JAX underneath, statistics on top
 
-With built-in `jit` compilation, `vmap` batching, sharding and support for CPU, GPU and TPU backends.  
+With built-in `jit` compilation, `vmap` batching, sharding and support for CPU, GPU and TPU backends.
 
-Against independent reference libraries, we see:  
+Against independent reference libraries, we see:
+
 | Workload | Reference library | STATADIC (ms) | Reference (ms) | Speedup |
 | --- | --- | ---: | ---: | ---: |
 | Spatial SAR ML · 40 nodes | `spreg.ML_Lag` | **0.70** | 13.22 | **18.89×** |
@@ -161,14 +162,13 @@ Against independent reference libraries, we see:
 | Wasserstein W1 · 512 atoms | `POT.ot.emd2` | **0.32** | 13.87 | **43.34×** |
 | OLS + HC3 · 10,000 observations | `statsmodels.OLS` | 1.76 | **1.50** | 0.85× |
 
-*Speedup = reference time ÷ STATADIC time. Measurements use float64 on CPU, reporting the median of three worker medians, each based on five warm calls. *
+*Speedup = reference time ÷ STATADIC time. Measurements use float64 on CPU, reporting the median of three worker medians, each based on five warm calls.*
 
 [Full CPU performance report](src/python/apps/performance/cpu-reference-performance.md) · [All 44 workload results](src/python/apps/performance/results/cpu44/summary.csv) · [Reproduction instructions](src/python/apps/performance/history/cpu44/README.md)
 
-
 ## Trust you can inspect
 
-Follow a method from the original citation, to it's Lean4-verified assumptions and mathematics, type checks, unit tests, performance benchmarks, reference implementation validation and montecarlo analysis:  
+Follow a method from the original citation, to it's Lean4-verified assumptions and mathematics, type checks, unit tests, performance benchmarks, reference implementation validation and montecarlo analysis:
 
 | Method | Test suites | Selected Lean 4 mathematics | Independent comparisons | Sources / BibTeX |
 | --- | --- | --- | --- | --- |
@@ -178,7 +178,6 @@ Follow a method from the original citation, to it's Lean4-verified assumptions a
 | Parametric AFT survival | [✓ Likelihood and prediction](src/python/packages/statadic/tests/law/survival/test_aft.py) | [AFT families](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Survival/AFTFamilies.lean) | [lifelines, selected configurations](src/python/packages/statadic/tests/testing/test_survival_references.py) | [✓ Sources](.context/reference/kalbfleisch-prentice-2002/README.md) |
 | Spatial panels | [✓ Observed-panel contracts](src/python/packages/statadic/tests/estimation/spatial/test_observed_panel.py) | [Filter Jacobians](src/lean/packages/StatadicFormal/StatadicFormal/Estimation/Spatial/PanelJacobian.lean) | [spreg, selected configurations](src/python/packages/statadic/tests/integration/api/test_spatial_reference_walkthroughs.py) | [✓ Sources](.context/reference/elhorst-spatial-panel-2003/README.md) |
 | Energy statistics / MMD | [✓ Weighted reductions](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_weighted.py) | [Selected nonnegativity results](src/lean/packages/StatadicFormal/StatadicFormal/Discrepancy/MMD/Nonnegativity.lean) | [NumPy controls](src/python/packages/statadic/tests/geometry/discrepancy/test_mmd_independent_reference.py), [dcor](src/python/packages/statadic/tests/geometry/discrepancy/mmd/test_energy_independent_reference.py) | [✓ Sources](.context/reference/sejdinovic-equivalence-2013/README.md) |
-
 
 ## Try it
 
@@ -191,7 +190,7 @@ uv pip install statadic
 
 See
 [installation](src/python/packages/statadic/docs/start/installation.md) for optional
-table/plot extras and Python 3.14 compatibility scope. 
+table/plot extras and Python 3.14 compatibility scope.
 
 For development, use the pinned devenv shell and [contributor commands](CONTRIBUTING.md).
 After `just setup`, build the site with `just python::docs::build` and preview it

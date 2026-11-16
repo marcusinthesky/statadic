@@ -1,0 +1,22 @@
+{
+  "model": "openai-codex:gpt-6-luna",
+  "conditions": {
+    "minimal": {
+      "statadic": "REPLACE_WITH_LOCAL_MINIMAL_STATADIC_SHA256_IMAGE_ID",
+      "statsmodels": "REPLACE_WITH_LOCAL_MINIMAL_STATSMODELS_SHA256_IMAGE_ID"
+    },
+    "reference": {
+      "statadic": "REPLACE_WITH_LOCAL_REFERENCE_STATADIC_SHA256_IMAGE_ID",
+      "statsmodels": "REPLACE_WITH_LOCAL_REFERENCE_STATSMODELS_SHA256_IMAGE_ID"
+    }
+  },
+  "executable": "docker",
+  "tasks": ["PD0003", "PD0007", "PD0119", "PD0036"],
+  "efforts": ["medium"],
+  "repetitions": 3,
+  "seed": 42,
+  "timeout_seconds": 600,
+  "request_limit": 50,
+  "token_limit": 200000,
+  "pricing": null
+}

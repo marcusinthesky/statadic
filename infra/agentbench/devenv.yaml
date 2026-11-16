@@ -1,0 +1,32 @@
+# Core pins match the repository; image builders are pinned independently.
+inputs:
+  nixpkgs:
+    url: github:NixOS/nixpkgs/c043004d1c6985732bcc1cbc5a9c9aecbbb4e0f0
+  devenv:
+    url: github:cachix/devenv/e44d88a683bf945c72445babd85f1d2e4e933409?dir=src/modules
+  nix2container:
+    url: github:nlewo/nix2container/42d1df94f001a9416ef08be7b305144074aca9d2
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+  mk-shell-bin:
+    url: github:rrbutani/nix-mk-shell-bin/ff5d8bd4d68a347be5042e2f16caee391cd75887
+  pyproject-nix:
+    url: github:pyproject-nix/pyproject.nix/d43f0e74444c1f266c640fc49ce6ce6fb69d33c3
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+  uv2nix:
+    url: github:pyproject-nix/uv2nix/c361746c7d630d98b972378290547c8d35542a7a
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+      pyproject-nix:
+        follows: pyproject-nix
+  pyproject-build-systems:
+    url: github:pyproject-nix/build-system-pkgs/bdbc5f8dd2ad6136bb2ccecb14f6ec343965b194
+    inputs:
+      nixpkgs:
+        follows: nixpkgs
+      pyproject-nix:
+        follows: pyproject-nix
