@@ -33,10 +33,19 @@ def fingerprint():
 def validate_config(config):
     if not isinstance(config.get('model'), str) or not config['model'].strip():
         raise ValueError('Choose an explicit Pydantic model identifier; no paid default')
-    if set(config['images']) != {'statadic','statsmodels'}:
-        raise ValueError('The pilot compares statadic and statsmodels on identical tasks')
-    if any(not re.fullmatch(r'sha256:[0-9a-f]{64}', v) for v in config['images'].values()):
-        raise ValueError('Use local immutable image IDs from docker/podman image inspect, not tags')
+    if ('images' in config) == ('conditions' in config):
+        raise ValueError('Choose either legacy images or documentation conditions, not both')
+    if 'conditions' in config:
+        if not isinstance(config['conditions'],dict) or set(config['conditions']) != {'minimal','reference'}:
+            raise ValueError('Documentation conditions must be minimal and reference')
+        image_sets = config['conditions'].values()
+    else:
+        image_sets = [config['images']]
+    for images in image_sets:
+        if not isinstance(images,dict) or set(images) != {'statadic','statsmodels'}:
+            raise ValueError('Each treatment compares statadic and statsmodels on identical tasks')
+        if any(not isinstance(v,str) or not re.fullmatch(r'sha256:[0-9a-f]{64}',v) for v in images.values()):
+            raise ValueError('Use local immutable image IDs from docker/podman image inspect, not tags')
     selected = list(catalogue()) if config['tasks']=='all' else config['tasks']
     if not selected or len(set(selected)) != len(selected) or set(selected)-catalogue().keys():
         raise ValueError('Choose distinct task IDs from the catalogue')
@@ -65,6 +74,7 @@ def prepare(config, destination):
     if not lock.exists():
         raise ValueError('Run explicit uv lock/setup first; a controller lock is required')
     versions = {p:importlib.metadata.version(p) for p in ('pydantic-ai-slim','pydantic-ai-harness','pydantic-evals','numpy','scipy')}
+    repository_commit = subprocess.check_output(['git','rev-parse','HEAD'],cwd=HERE,text=True).strip()
     destination.mkdir(parents=True)  # Never overwrite a frozen campaign.
     for task_id in config['tasks']:
         task = catalogue()[task_id]
@@ -86,7 +96,8 @@ def prepare(config, destination):
         save(folder/'source.json', dict(url=url, sha256=sha(raw)))
     files = {str(p.relative_to(destination)):sha(p.read_bytes()) for p in sorted((destination/'tasks').rglob('*')) if p.is_file()}
     shutil.copyfile(lock, destination/'controller.uv.lock')
-    save(destination/'manifest.json', dict(config=config, harness=fingerprint(), files=files, versions=versions, controller_lock=sha(lock.read_bytes())))
+    save(destination/'manifest.json', dict(config=config, harness=fingerprint(), files=files, versions=versions,
+                                         controller_lock=sha(lock.read_bytes()),repository_commit=repository_commit))
     print(f'Prepared {len(config["tasks"])} tasks; no model calls made.')
 
 
@@ -164,39 +175,95 @@ async def compile_report(image, public, replay_dir, destination, executable):
 async def attempt(job, campaign, config, model):
     from pydantic import TypeAdapter
     from pydantic_ai import Agent, capture_run_messages
+    from pydantic_ai.capabilities import Hooks
     from pydantic_ai.messages import ModelMessagesTypeAdapter
-    from pydantic_ai.usage import RunUsage, UsageLimits
+    from pydantic_ai.usage import RequestUsage, RunUsage, UsageLimits
     from pydantic_ai_harness.coder import Coder
     folder = campaign/'runs'/job['id']
     folder.mkdir(parents=True)
     public = campaign/'tasks'/job['task']/'public'
-    image = config['images'][job['library']]
+    images = config['conditions'][job['condition']] if 'condition' in job else config['images']
+    image = images[job['library']]
     executable = config.get('executable','docker')
     usage = RunUsage()
     output = dict(job, image=image, model=config['model'], status='started', actual=None,
                   replay_ok=False, latex_ok=False, errors=[], usage_complete=False,
+                  usage_incomplete_reasons=['attempt_not_finished'],
                   submission_sha256=sha((job['id']+':no-submission').encode()))
     save(folder/'run.json',output)
     start = time.monotonic()
+    requests = {}
+    hooks = Hooks()
+    ledger = folder/'requests.jsonl'
+    ledger.touch()
+
+    def record(event, ctx, request_context, **metadata):
+        row = dict(event=event, step=ctx.run_step, attempt=request_context.attempt,
+                   elapsed_seconds=time.monotonic()-start, **metadata)
+        with ledger.open('a') as stream:
+            stream.write(json.dumps(row,allow_nan=False)+'\n')
+
+    @hooks.on.prepare_model_request
+    async def prepared(ctx, request_context):
+        # Preparation precedes dispatch; an unreturned attempt has unknown usage.
+        requests[ctx.run_step,request_context.attempt] = False
+        record('prepared',ctx,request_context,model=request_context.model.model_name)
+        return request_context
+
+    @hooks.on.after_model_request
+    async def returned(ctx, *, request_context, response):
+        requests[ctx.run_step,request_context.attempt] = True
+        record('returned',ctx,request_context,model=response.model_name,
+               provider=response.provider_name,provider_response_id=response.provider_response_id,
+               state=response.state,usage=TypeAdapter(RequestUsage).dump_python(response.usage,mode='json'))
+        return response
+
+    @hooks.on.model_request
+    async def observe(ctx, *, request_context, handler):
+        record('step_started',ctx,request_context)
+        try:
+            response = await handler(request_context)
+        except BaseException as exc:
+            record('step_error',ctx,request_context,error_type=type(exc).__name__)
+            raise
+        record('step_returned',ctx,request_context)
+        return response
+
     with capture_run_messages() as messages:
         try:
             async with sandbox(image,public,folder/'work',executable) as (_,backend):
-                agent = Agent(model, capabilities=[Coder(repo_context=False,sub_agents=False)],
+                agent = Agent(model, capabilities=[hooks,Coder(repo_context=False,sub_agents=False,
+                                                               unrestricted_filesystem=True)],
                               model_settings={'openai_reasoning_effort':job['effort']})
                 prompt = f"Use {job['library']} for {job['task']}. Read /input/task.json, /input/contract.md and /input/schema.json. Write the deliverables under /work/submission."
+                if 'condition' in job:
+                    prompt += (' Before implementing the analysis, read /docs/INDEX.md for the assigned '
+                               'statistical library and consult its relevant API examples. Perform fitting '
+                               'and inference with that library.')
                 (folder/'prompt.txt').write_text(prompt)
                 async with asyncio.timeout(config['timeout_seconds']):
                     await agent.run(prompt, workspace=backend, usage=usage,
                         usage_limits=UsageLimits(request_limit=config['request_limit'],total_tokens_limit=config['token_limit']))
-            output.update(status='completed',usage_complete=True)
+            output['status'] = 'completed'
         except Exception as exc:  # Record failed attempts, never silently drop them.
             output.update(status='failed',errors=[f'{type(exc).__name__}: {exc}'])
         finally:
             (folder/'messages.json').write_bytes(ModelMessagesTypeAdapter.dump_json(messages))
     output['elapsed_seconds'] = time.monotonic()-start
-    output['usage_complete'] = (output['usage_complete'] and usage.requests > 0
-                                and usage.unmeasured_requests == 0)
+    output['request_accounting'] = dict(scope='pydantic_model_request_attempt',
+        prepared_attempts=len(requests),returned_responses=sum(requests.values()),
+        unresolved_attempts=sum(not returned for returned in requests.values()),
+        unmeasured_responses=usage.unmeasured_requests)
+    output['usage_incomplete_reasons'] = []
+    if not all(requests.values()):
+        output['usage_incomplete_reasons'].append('unresolved_prepared_attempts')
+    if usage.unmeasured_requests:
+        output['usage_incomplete_reasons'].append('responses_missing_usage')
+    if usage.requests != sum(requests.values()):
+        output['usage_incomplete_reasons'].append('native_response_count_mismatch')
+    output['usage_complete'] = not output['usage_incomplete_reasons']
     output['usage'] = TypeAdapter(RunUsage).dump_python(usage, mode='json')
+    output['observed_total_tokens'] = usage.input_tokens+usage.output_tokens
     output['total_tokens'] = usage.input_tokens+usage.output_tokens if output['usage_complete'] else None
     output['estimated_cost_usd'] = None
     rates = config.get('pricing')
@@ -219,7 +286,12 @@ async def attempt(job, campaign, config, model):
 
 
 def plan(config):
-    jobs = [dict(task=t,library=l,effort=e,repetition=r) for t,l,e,r in itertools.product(config['tasks'],sorted(config['images']),config['efforts'],range(config['repetitions']))]
+    if 'conditions' in config:
+        jobs = [dict(task=t,library=l,effort=e,repetition=r,condition=c)
+            for t,c,l,e,r in itertools.product(config['tasks'],sorted(config['conditions']),
+                ('statadic','statsmodels'),config['efforts'],range(config['repetitions']))]
+    else:
+        jobs = [dict(task=t,library=l,effort=e,repetition=r) for t,l,e,r in itertools.product(config['tasks'],sorted(config['images']),config['efforts'],range(config['repetitions']))]
     random.Random(config['seed']).shuffle(jobs)
     return [dict(job,id=f'run-{i:05d}') for i,job in enumerate(jobs)]
 
@@ -230,7 +302,7 @@ async def evaluate(campaign, execute):
     from pydantic_evals.evaluators import Evaluator
     from pydantic_evals.lifecycle import CaseLifecycle
     manifest = checked(campaign)
-    config = manifest['config']
+    config = validate_config(manifest['config'])
     jobs = plan(config)
     if not execute:
         print(json.dumps(jobs,indent=2))
@@ -239,7 +311,8 @@ async def evaluate(campaign, execute):
     if (campaign/'runs').exists():
         raise ValueError('Runs already exist; retain this campaign and prepare a new one')
     # Check every image is already local; sandbox creation must not pull a tag.
-    for image in config['images'].values():
+    image_sets = config['conditions'].values() if 'conditions' in config else [config['images']]
+    for image in sorted({image for images in image_sets for image in images.values()}):
         subprocess.run([config.get('executable','docker'),'image','inspect',image],check=True,stdout=subprocess.DEVNULL)
     class Rubric(Evaluator):
         def evaluate(self, ctx):
@@ -255,7 +328,7 @@ async def evaluate(campaign, execute):
             return ctx
     dataset = Dataset(name='statllm-research-workflow',cases=[Case(name=j['id'],inputs=j,
         expected_output=read_json(campaign/'tasks'/j['task']/'expected.json'),
-        metadata={'task':j['task'],'library':j['library'],'effort':j['effort']}) for j in jobs],evaluators=[Rubric()])
+        metadata={key:j[key] for key in ('task','library','effort','condition') if key in j}) for j in jobs],evaluators=[Rubric()])
     # Keep subscription token refreshes in one provider without writing CLI credentials.
     async with infer_model(config['model']) as model:
         async def task(job):

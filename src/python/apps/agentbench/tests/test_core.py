@@ -7,7 +7,7 @@ import pytest
 from scipy import stats
 
 from core import catalogue, design, grade, prepare_csv, read_json, read_regular, reviewed, same, schema, witness
-from reporting import aggregate
+from reporting import aggregate, condition_differences, failure_category, summarize, trace_facts
 
 
 def fixture(task_id, n=90):
@@ -154,3 +154,142 @@ def test_equal_task_weight_and_no_task_selection_bias():
 def test_boolean_does_not_equal_number_and_shapes_are_exact():
     assert not same(1,True)
     assert not same([1,2],[1])
+
+
+def docs_records():
+    tasks = ['PD0003', 'PD0007', 'PD0119', 'PD0036']
+    result = []
+    for condition, values in [('minimal', [0, 40, 80, 60]), ('reference', [30, 50, 85, 75])]:
+        for library in ['statadic', 'statsmodels']:
+            for task, value in zip(tasks, values, strict=True):
+                for repetition in range(3):
+                    failed = (condition, library, task, repetition) == ('minimal', 'statadic', 'PD0003', 0)
+                    record = dict(condition=condition, library=library, task=task, effort='medium',
+                                  repetition=repetition, status='failed' if failed else 'completed',
+                                  errors=['UsageLimitExceeded: token budget'] if failed else [],
+                                  replay_ok=not failed, latex_ok=not failed,
+                                  usage_complete=not failed, total_tokens=None if failed else 100,
+                                  estimated_cost_usd=None, elapsed_seconds=10+repetition,
+                                  usage=dict(input_tokens=10 if failed else 80,
+                                             cache_read_tokens=0 if failed else 20,
+                                             output_tokens=2 if failed else 20))
+                    scores = dict(automatic_grade=value, final_grade=None, review=None,
+                                  checks=dict(estimates={'a': value > 0}, inference={'a': value == 85}),
+                                  components=dict(reproducibility=0 if failed else 10,
+                                                  latex=0 if failed else 10,
+                                                  estimates=40 if value > 0 else 0,
+                                                  inference=25 if value == 85 else 0))
+                    result.append((record, scores))
+    return tasks, result
+
+
+def test_docs_groups_keep_failed_attempts_unknown_usage_and_paired_differences():
+    tasks, records = docs_records()
+    rows = aggregate(records, tasks, True)
+    assert len(rows) == 4
+    assert all(row['tasks'] == 4 and row['attempts'] == 12 for row in rows)
+    minimal = next(row for row in rows if (row['condition'], row['library']) == ('minimal', 'statadic'))
+    assert minimal['mean_grade'] == 45
+    assert minimal['completion_rate'] == pytest.approx(11/12)
+    assert minimal['failure_categories']['token_budget'] == 1
+    assert minimal['mean_total_tokens'] is None
+    assert minimal['mean_estimated_cost_usd'] is None
+    assert minimal['observed_input_tokens_subtotal'] == 890
+    assert minimal['observed_output_tokens_subtotal'] == 222
+    assert minimal['incomplete_usage_runs'] == 1
+    assert minimal['mean_final_grade'] is None
+    differences = condition_differences(rows)
+    assert len(differences) == 2
+    assert all(row['delta_mean_grade'] == 15 and row['descriptive'] for row in differences)
+    statadic = next(row for row in differences if row['library'] == 'statadic')
+    assert statadic['delta_mean_total_tokens'] is None
+    assert statadic['delta_completion_rate'] == pytest.approx(1/12)
+    assert all(row['delta_mean_estimated_cost_usd'] is None for row in differences)
+    assert all(row['delta_mean_final_grade'] is None for row in differences)
+    with pytest.raises(ValueError, match='both minimal and reference'):
+        condition_differences([row for row in rows if row['condition'] == 'minimal'])
+
+
+def test_condition_metrics_weight_tasks_equally_and_legacy_shape_is_preserved():
+    tasks, records = docs_records()
+    chosen = [(r, s) for r, s in records if r['condition'] == 'minimal' and r['library'] == 'statadic'
+              and r['task'] in tasks[:2] and (r['task'] != tasks[0] or r['repetition'] == 0)]
+    row = aggregate(chosen, tasks[:2], True)[0]
+    assert row['mean_grade'] == 20
+    assert row['completion_rate'] == .5
+    legacy = [(dict((k, v) for k, v in r.items() if k != 'condition'), s) for r, s in chosen]
+    row = aggregate(legacy, tasks[:2], True)[0]
+    assert set(row) == {'library', 'effort', 'tasks', 'attempts', 'mean_grade', 'grade_max',
+                        'mean_total_tokens', 'mean_estimated_cost_usd', 'mean_elapsed_seconds',
+                        'incomplete_usage_runs', 'grade_ci95', 'pareto_mean_total_tokens',
+                        'pareto_mean_estimated_cost_usd'}
+    with pytest.raises(ValueError, match='mix conditioned and legacy'):
+        aggregate(chosen + legacy, tasks[:2], True)
+
+
+def test_docs_trace_counters_are_observations_not_compliance_or_success(tmp_path):
+    path = tmp_path/'messages.json'
+    assert trace_facts(path)['docs_path_calls'] is None
+    path.write_text(json.dumps([
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'read_file', 'tool_call_id': 'a',
+                    'args': {'path': '/docs/INDEX.md'}}]},
+        {'parts': [{'part_kind': 'tool-return', 'tool_call_id': 'a',
+                    'content': 'outside the project root /work'}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'shell', 'tool_call_id': 'b',
+                    'args': json.dumps({'command': 'cat /docs/INDEX.md; print(dir(pkg))'})}]},
+        {'parts': [{'part_kind': 'tool-return', 'tool_call_id': 'b', 'content': 'x'*10000}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'write_file', 'tool_call_id': 'c',
+                    'args': {'path': 'solution.py', 'content': 'print(dir(pkg)); # /docs'}}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'shell', 'tool_call_id': 'd',
+                    'args': {'command': None}}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'read_file', 'tool_call_id': 'e',
+                    'args': {'path': []}}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'shell', 'tool_call_id': 'f',
+                    'args': {'command': []}}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'read_file', 'tool_call_id': 'g',
+                    'args': {'path': None}}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'shell', 'tool_call_id': 'h',
+                    'args': 'null'}]},
+        {'parts': [{'part_kind': 'tool-call', 'tool_name': 'read_file', 'tool_call_id': 'i',
+                    'args': '[]'}]},
+    ]))
+    assert trace_facts(path) == dict(trace_available=True, docs_path_calls=2, docs_path_returns=2,
+                                    docs_path_denials=1, outside_root_denials=1,
+                                    introspection_calls=1, large_tool_returns=1)
+    for message, category in [('total_tokens_limit', 'token_budget'), ('request_limit', 'request_limit'),
+                              ('unknown limit', 'usage_limit')]:
+        assert failure_category(dict(status='failed', errors=['UsageLimitExceeded: '+message]), {}) == category
+
+
+def test_docs_summary_outputs_all_48_attempts_without_changing_grades(tmp_path):
+    from run import plan
+    tasks, records = docs_records()
+    images = {'statadic': 'sha256:'+'a'*64, 'statsmodels': 'sha256:'+'b'*64}
+    config = dict(tasks=tasks, conditions={'minimal': images, 'reference': images},
+                  efforts=['medium'], repetitions=3, seed=42)
+    (tmp_path/'manifest.json').write_text(json.dumps(dict(config=config)))
+    by_identity = {(r['condition'], r['library'], r['task'], r['repetition']): (r, s) for r, s in records}
+    for job in plan(config):
+        record, scores = by_identity[(job['condition'], job['library'], job['task'], job['repetition'])]
+        folder = tmp_path/'runs'/job['id']
+        folder.mkdir(parents=True)
+        (folder/'run.json').write_text(json.dumps(dict(record, **{'id': job['id']})))
+        (folder/'grade.json').write_text(json.dumps(scores))
+    originals = {path: path.read_bytes() for path in (tmp_path/'runs').glob('*/grade.json')}
+    summarize(tmp_path, True)
+    output = tmp_path/'summary-automatic'
+    for name, count in [('summary', 4), ('attempts', 48), ('per-task', 16),
+                        ('condition-differences', 2), ('task-condition-differences', 8)]:
+        rows = read_json(output/f'{name}.json')
+        assert len(rows) == count
+        assert (output/f'{name}.csv').is_file() and (output/f'{name}.md').is_file()
+    assert (output/'mean_total_tokens.svg').is_file()
+    assert not (output/'mean_estimated_cost_usd.svg').exists()
+    assert all(path.read_bytes() == content for path, content in originals.items())
+    attempts = read_json(output/'attempts.json')
+    assert all(row['final_grade'] is None and not row['reviewed'] for row in attempts)
+    assert all(row['estimates_points'] in (0, 40) and row['inference_points'] in (0, 25)
+               for row in attempts)
+    with pytest.raises(ValueError, match='Incomplete campaign'):
+        (tmp_path/'runs'/plan(config)[-1]['id']/'grade.json').unlink()
+        summarize(tmp_path, True)

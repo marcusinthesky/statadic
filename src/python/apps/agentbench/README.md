@@ -39,11 +39,50 @@ source/licensing terms before downloading or redistributing them. Adaptations,
 including corrections of ambiguous source instructions, are in each task's notes.
 This is not an official StatLLM score or a reproduction of every SAS output.
 
-Agents receive only public inputs, the assigned package and its installed
+Agents receive public inputs, the assigned package and its installed
 source/docstrings. `/docs/installed-api.txt` is generated from that package during
-image building. They do not receive the checkout's `.agents`, tests or oracles.
+image building. Documentation conditions can add the frozen public references
+described below. Agents do not receive the checkout's `.agents`, tests or oracles.
 The same capability/tool configuration, budgets and preprocessing apply to both
 treatments. No multi-agent delegation, repository-context injection or web access.
+
+## Documentation A/B pilot
+
+[The example configuration](../../../../infra/agentbench/config.docs-ab.example.json)
+selects the first existing catalog task in each family: PD0003 (ANOVA), PD0007
+(OLS), PD0119 (logistic GLM), and PD0036 (diagnostics). They use four distinct
+datasets. Two libraries × two documentation conditions × four tasks × three
+repetitions produces **48 attempts**, with GPT-6 Luna, medium effort, seed 42,
+600 seconds, 50 requests and 200,000 tokens per attempt. The seed shuffles the
+complete plan; it does not fix a hosted model's random sampling.
+
+`conditions` replaces the legacy `images` mapping with `minimal` and `reference`,
+each containing immutable STATADIC and statsmodels image IDs. Legacy two-image
+configurations remain supported. The condition is part of every job and run
+identity, and the existing Pydantic Evals runner shuffles and runs the complete
+balanced plan. There is no separate agent loop or Skills injection.
+
+All four images contain `/docs/INDEX.md`, root-package `installed-api.txt`, runtime
+identity, a license and a hashed corpus manifest. Reference images add grouped
+public API documentation generated from the installed package; STATADIC also
+includes selected unmodified package reference pages. Source, locks, modules,
+objects, files and corpus bytes are frozen with the images. Corpus sizes are
+**not matched between libraries**: the experiment compares those documented
+bundles, not equal bytes or equal prior model knowledge. It supplies no
+benchmark-specific cookbook, private calibration code or expected results.
+
+Both conditions receive the same instruction to read `/docs/INDEX.md` before
+implementation. Both use `Coder(unrestricted_filesystem=True)`, so file tools
+can read `/input` and `/docs` inside the OCI workspace. The OCI mounts, network restrictions,
+packages, public statistical contract, reference calculations and grading remain
+the same. Documentation reading consumes the ordinary per-attempt budget.
+
+The previous 20-task, one-repetition campaign is a historical baseline, not the
+minimal arm of this new pilot: its documentation/access instructions differ.
+All selected tasks have already been observed. This pilot is exploratory;
+selection by catalog order does not make it a new confirmatory study. Preserve
+all failures and incomplete measurements, and **stop after the pilot**. A
+20-task follow-up requires a separate decision and frozen campaign.
 
 ## Artifacts and grading
 
@@ -75,8 +114,12 @@ provider usage, elapsed time, replay outputs, compilation logs and grading detai
 Credentials stay in the trusted controller. Library/model failures remain records.
 Elapsed time covers the agent phase, including its workspace lifecycle, and
 excludes independent replay and report compilation.
-Usage on interrupted/provider-error runs is marked incomplete; observed partial
-counts are retained, but unknown total cost is **not** zero.
+Native request hooks append preparation, response and step events to each run's
+`requests.jsonl`. Usage completeness depends on every prepared attempt returning
+measured usage and native response counts agreeing, rather than agent status.
+A budget failure after a measured response can have complete usage; an unresolved
+or unmeasured request leaves complete totals unavailable. Observed partial counts
+and explicit incompleteness reasons remain retained; unknown cost is **not** zero.
 
 Summaries require the full balanced plan. They average repetitions within tasks,
 then tasks equally; they do not drop failures or compare different eligible task
@@ -84,6 +127,31 @@ sets. Automatic-score plots are labeled /85, reviewed plots /100. Unknown usage
 suppresses that cost-frontier point. Grade intervals resample shared-dataset
 clusters. Pareto flags are descriptive, not a significance test of dominance.
 No benchmark results or superiority claims are supplied by this implementation.
+
+Condition campaigns produce four summary groups (`condition`, `library`,
+`effort`). `summary.json`, `.csv` and `.md` retain the ordinary equal-task grades,
+strict complete token/cost means, elapsed time and descriptive cluster intervals.
+Quality–cost SVGs include condition labels and omit unavailable points. New
+`per-task` and `attempts` JSON/CSV/Markdown tables retain every planned repetition,
+automatic component points, null or reviewed final grades, completion, replay,
+TeX, usage completeness and observed input/cache/output counts. Observed subtotals
+can include partial runs; they are not complete token totals or dollar costs.
+Subscription runs with null pricing retain unavailable estimated costs.
+
+`condition-differences` and `task-condition-differences` tables report reference
+minus minimal within each library/effort, averaging repetitions before tasks.
+Unknown full means produce unknown differences. These are descriptive comparisons;
+four selected datasets and three repetitions do not establish superiority.
+Attempts remain in their assigned condition even when they never read docs.
+
+Failure categories use precedence: token/request/unknown usage limit, timeout,
+other agent/tool error, replay/contract, LaTeX, numerical mismatch, then none.
+Per-attempt flags and failed quantities preserve additional failures. Trace
+counters count `/docs` path mentions, associated returns, explicit root denials,
+introspection markers and returns of at least 10,000 characters. Missing traces
+remain unavailable. A returned tool call does not prove a document was read,
+and no counter or matching number adjudicates assigned-package compliance.
+Human-review fields and final /100 scores remain null until actual review.
 
 ## Checks
 

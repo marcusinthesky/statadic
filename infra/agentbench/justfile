@@ -20,5 +20,14 @@ images:
     devenv container copy statsmodels
     docker image inspect statadic-agentbench-statadic:pilot statadic-agentbench-statsmodels:pilot | python -c 'import json,sys; print("\n".join(v["Id"] for v in json.load(sys.stdin)))'
 
+images-reference:
+    devenv container build statadic-reference
+    devenv container copy statadic-reference
+    devenv container build statsmodels-reference
+    devenv container copy statsmodels-reference
+    docker image inspect statadic-agentbench-statadic-reference:pilot statadic-agentbench-statsmodels-reference:pilot | python -c 'import json,sys; print("\n".join(v["Id"] for v in json.load(sys.stdin)))'
+
+images-all: images images-reference
+
 bench *args:
     uv run --project {{app}} --locked --offline python {{app}}/run.py {{args}}

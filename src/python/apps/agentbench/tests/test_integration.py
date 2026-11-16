@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import textwrap
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -27,6 +28,42 @@ def test_plan_is_balanced_and_reproducible():
     assert len({j['id'] for j in jobs})==16
     assert {j['task'] for j in jobs}==set(config['tasks'])
     assert all(sum(j['library']==library for j in jobs)==8 for library in config['images'])
+    assert all(set(job)=={'task','library','effort','repetition','id'} for job in jobs)
+
+
+def test_documentation_plan_has_all_48_interleaved_attempts():
+    config=configuration()
+    minimal=config.pop('images')
+    config.update(conditions=dict(minimal=minimal,
+        reference={'statadic':'sha256:'+'c'*64,'statsmodels':'sha256:'+'d'*64}),
+        tasks=['PD0007','PD0119','PD0096','PD0142'],efforts=['medium'],repetitions=3)
+    config=validate_config(config)
+    jobs=plan(config)
+    assert len(jobs)==48 and jobs==plan(config)
+    assert len({job['id'] for job in jobs})==48
+    cells=Counter((job['task'],job['library'],job['condition']) for job in jobs)
+    assert len(cells)==16 and set(cells.values())=={3}
+    assert {job['effort'] for job in jobs}=={'medium'}
+    assert {job['condition'] for job in jobs[:24]}=={'minimal','reference'}
+    assert {job['condition'] for job in jobs[24:]}=={'minimal','reference'}
+
+
+@pytest.mark.parametrize('conditions',[
+    None,{}, {'minimal':{}}, {'minimal':{},'reference':{}},
+    {'minimal':{'statadic':'latest','statsmodels':'latest'},'reference':{}},
+    {'minimal':{'statadic':None,'statsmodels':None},'reference':{}},
+])
+def test_bad_documentation_conditions_fail_before_running(conditions):
+    config=configuration();config.pop('images');config['conditions']=conditions
+    with pytest.raises(ValueError):
+        validate_config(config)
+
+
+def test_legacy_images_and_conditions_are_mutually_exclusive():
+    config=configuration()
+    config['conditions']=dict(minimal=config['images'],reference=config['images'])
+    with pytest.raises(ValueError,match='either legacy images'):
+        validate_config(config)
 
 
 @pytest.mark.parametrize('change',[
@@ -174,6 +211,93 @@ def test_native_image_smoke(tmp_path,library,monkeypatch):
         assert first==second==expected
         assert await compile_report(image,public,tmp_path/'replay-1',tmp_path/'tex',executable)
     asyncio.run(smoke())
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize('library',['statadic','statsmodels'])
+@pytest.mark.parametrize('condition',['minimal','reference'])
+def test_native_coder_file_access_and_documentation_isolation(tmp_path,library,condition,monkeypatch):
+    suffix='_REFERENCE' if condition=='reference' else ''
+    image=os.environ.get(f'AGENTBENCH_{library.upper()}{suffix}_IMAGE')
+    if not image:
+        pytest.skip('Set all four immutable documentation-treatment image IDs for OCI checks')
+    from pydantic_ai import Agent
+    from pydantic_ai.messages import ModelResponse, TextPart, ToolCallPart, ToolReturnPart
+    from pydantic_ai.models.function import FunctionModel
+    from pydantic_ai.usage import RequestUsage
+    from pydantic_ai_harness.coder import Coder
+    from run import sandbox
+
+    public=tmp_path/'public';public.mkdir()
+    (public/'task.json').write_text('{"public_probe":"immutable input"}')
+    private=tmp_path/'controller-only';private.mkdir()
+    secret=private/'auth.json';secret.write_text('synthetic-controller-credential')
+    monkeypatch.setenv('OPENAI_API_KEY','synthetic-controller-credential')
+    probes=[
+        ('input','read_file',dict(path='/input/task.json')),
+        ('index','read_file',dict(path='/docs/INDEX.md')),
+        ('manifest','read_file',dict(path='/docs/manifest.json')),
+        ('private','read_file',dict(path=str(secret))),
+        ('readonly-input','write_file',dict(path='/input/task.json',content='forbidden')),
+        ('readonly-docs','write_file',dict(path='/docs/INDEX.md',content='forbidden')),
+        ('write-work','write_file',dict(path='/work/submission/probe.txt',content='writable work')),
+        ('read-work','read_file',dict(path='/work/submission/probe.txt')),
+        ('input-after','read_file',dict(path='/input/task.json')),
+        ('index-after','read_file',dict(path='/docs/INDEX.md')),
+    ]
+    calls=0
+
+    async def response(messages,info):
+        nonlocal calls
+        if calls==len(probes):
+            return ModelResponse([TextPart('offline probe complete')],
+                                 usage=RequestUsage(input_tokens=1,output_tokens=1))
+        name,tool,args=probes[calls]
+        calls+=1
+        return ModelResponse([ToolCallPart(tool,args,tool_call_id=name)],
+                             usage=RequestUsage(input_tokens=1,output_tokens=1))
+
+    executable=os.environ.get('AGENTBENCH_RUNTIME','docker')
+    async def probe():
+        async with sandbox(image,public,tmp_path/'work',executable) as (workspace,backend):
+            agent=Agent(FunctionModel(response),capabilities=[
+                Coder(repo_context=False,sub_agents=False,unrestricted_filesystem=True)])
+            result=await agent.run('Perform the supplied offline file-tool checks.',workspace=backend)
+            returns={part.tool_call_id:part for message in result.all_messages()
+                     for part in message.parts if isinstance(part,ToolReturnPart)}
+            assert 'immutable input' in str(returns['input'].content)
+            assert returns['input'].outcome=='success'
+            assert str(returns['input'].content)==str(returns['input-after'].content)
+            assert str(returns['index'].content)==str(returns['index-after'].content)
+            assert returns['index'].outcome=='success'
+            assert 'outside the project root' not in str(returns['index'].content).lower()
+            assert 'synthetic-controller-credential' not in str(returns['private'].content)
+            assert 'not found' in str(returns['private'].content).lower()
+            assert returns['readonly-input'].outcome!='success'
+            assert returns['readonly-docs'].outcome!='success'
+            assert 'writable work' in str(returns['read-work'].content)
+            check=textwrap.dedent(f'''
+                import json, os
+                from pathlib import Path
+                docs=Path('/docs')
+                manifest=json.loads((docs/'manifest.json').read_text())
+                assert manifest['library']=={library!r}
+                assert manifest['condition']=={condition!r}
+                assert sorted(path.name for path in docs.iterdir())==sorted([*manifest['files'],'manifest.json'])
+                reference={{'api-design.txt','api-regression.txt','api-uncertainty.txt',
+                    'api-hypothesis.txt','api-diagnostics.txt','api-reporting.txt'}}
+                if {condition!r}=='minimal':
+                    assert not manifest['objects'] and not manifest['sources']
+                    assert not reference.intersection(manifest['files'])
+                    assert not any(reference.intersection(files) for _,_,files in os.walk('/nix/store'))
+                else:
+                    assert manifest['objects'] and manifest['sources']
+                    assert reference.issubset(manifest['files'])
+                assert 'OPENAI_API_KEY' not in os.environ
+            ''')
+            checked=await workspace.run(['python','-c',check],timeout=60)
+            assert checked.exit_code==0,checked.stderr
+    asyncio.run(probe())
 
 
 def test_sandbox_cleanup_even_when_task_fails(tmp_path,monkeypatch):

@@ -37,8 +37,21 @@ let
       --bundle https://data1.fullyjustified.net/tlextras-2022.0r0.tar "$@"
   '';
   image =
-    library:
+    library: documentation:
     let
+      suffix = lib.optionalString (documentation == "reference") "-reference";
+      referencePages = [
+        "regression"
+        "conditional-laws"
+        "hypothesis"
+        "linear-diagnostics"
+        "report"
+      ];
+      pageArgs = lib.optionalString (library == "statadic" && documentation == "reference") (
+        lib.concatMapStringsSep " " (
+          name: "--page ${name} ${../../src/python/packages/statadic/docs/reference + "/${name}.md"}"
+        ) referencePages
+      );
       python = pythonSet.mkVirtualEnv "agentbench-${library}" {
         ${library} = [ ];
         numpy = [ ];
@@ -47,7 +60,7 @@ let
         matplotlib = [ ];
       };
       root = pkgs.buildEnv {
-        name = "agentbench-${library}-root";
+        name = "agentbench-${library}${suffix}-root";
         paths = [
           python
           tectonic
@@ -62,21 +75,15 @@ let
         postBuild = ''
           mkdir -p $out/opt $out/docs
           cp -r ${cache} $out/opt/tex-cache
-          ${python}/bin/python - <<'PY' > $out/docs/installed-api.txt
-          import pydoc
-          print(pydoc.render_doc("${library}", renderer=pydoc.plaintext))
-          PY
-          ${python}/bin/python - <<'PY' > $out/docs/runtime.json
-          import importlib.metadata, json, platform
-          print(json.dumps({"python": platform.python_version(), "packages": {
-              d.metadata["Name"]: d.version for d in importlib.metadata.distributions()
-          }}, sort_keys=True))
-          PY
+          ${python}/bin/python ${./build_docs.py} ${library} ${documentation} $out/docs \
+            --scientific-lock ${../../src/python/uv.lock} \
+            --nix-lock ${./devenv.lock} \
+            ${lib.optionalString (library == "statadic") "--license ${../../LICENSE}"} ${pageArgs}
         '';
       };
     in
     {
-      name = "statadic-agentbench-${library}";
+      name = "statadic-agentbench-${library}${suffix}";
       version = "pilot";
       # Never copy the repository: it contains gold computations and developer AGENTS.md.
       copyToRoot = [ ];
@@ -109,6 +116,8 @@ in
     LANG = "C.UTF-8";
   };
   enterShell = "unset PYTHONPATH PYTHONHOME VIRTUAL_ENV";
-  containers.statadic = image "statadic";
-  containers.statsmodels = image "statsmodels";
+  containers.statadic = image "statadic" "minimal";
+  containers.statsmodels = image "statsmodels" "minimal";
+  containers.statadic-reference = image "statadic" "reference";
+  containers.statsmodels-reference = image "statsmodels" "reference";
 }
