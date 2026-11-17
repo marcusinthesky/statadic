@@ -72,19 +72,27 @@ raises `ArtifactError`.
 
 ## Methods and formulas
 
-Current artifacts use schema 7. The manifest holds closed JSON records, and
+New artifacts use schema 8. Readers accept schema 8 and preserve compatibility
+with previously valid schema-7 artifacts. Full multivariate Wasserstein geometry
+and orthogonally transformed coordinate maps require schema 8, including when
+nested in regression predictors or graph recipes. A schema-7 manifest containing
+these new record kinds is rejected. Older releases that read only schema 7 reject
+schema-8 artifacts; use an updated reader for newly saved artifacts.
+
+The manifest holds closed JSON records, and
 loaders validate the required fields, discriminants and values of each record
 before rebuilding any numerical state. The prediction kind follows from the declared family rather
 than from the saved state. Kernel bandwidths keep their scalar payload, dtype
 and JAX weak-scalar status, so loading preserves how they promote against
-feature and measure arrays. A reader accepts only its own schema version, and
-the error message names the version found and the version expected.
+feature and measure arrays. Unsupported-version errors name the version found
+and both supported reader versions.
 
 ## Assumptions and limits
 
-- A reader rejects any other schema version, including artifacts from earlier
-  prerelease versions. There is no migration, so re-save from the original
-  analysis. The manifest records the writer version for diagnosis only.
+- Readers reject versions other than 7 and 8, including earlier prerelease
+  formats. Re-save unsupported artifacts from their original analysis using a
+  compatible environment. The manifest records the writer package version for
+  diagnosis; schema compatibility is governed by the artifact schema version.
 - Executable classes, closures and pickle are unsupported. Restored state that
   fails validation raises `ArtifactError` with the underlying cause.
 - Saving and loading arrays with 64-bit precision require JAX x64 to be enabled.

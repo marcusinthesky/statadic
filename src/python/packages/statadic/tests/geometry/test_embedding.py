@@ -26,7 +26,11 @@ import pytest
 from hypothesis import example, given
 from hypothesis import strategies as st
 from hypothesis.extra import numpy as hnp
-from statadic.geometry.embedding import NonEuclideanEmbeddingError, pcoa_kernel
+from statadic.geometry.embedding import (
+    NonEuclideanEmbeddingError,
+    orthogonal_procrustes,
+    pcoa_kernel,
+)
 from statadic.observation.geometry import ObservedDissimilarity
 from statadic.ordination.fit import DistanceGram, Ordination, PrincipalCoordinates
 
@@ -41,6 +45,26 @@ _MINIMUM_SPREAD = 0.1
 def _has_spread(points: NDArray[np.float64]) -> bool:
     """Require a nonconstant cloud, since PCoA needs one positive eigenvalue."""
     return bool(np.ptp(points, axis=0).max() >= _MINIMUM_SPREAD)
+
+
+@pytest.mark.unit
+@pytest.mark.reference
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_orthogonal_procrustes_recovers_known_reflection_under_jit(dtype: type) -> None:
+    """The pure array solver recovers a known full-rank change of basis."""
+    source = jnp.asarray([[1.0, 0.0], [0.0, 2.0], [-2.0, 1.0]], dtype=dtype)
+    expected = jnp.asarray([[0.0, 1.0], [1.0, 0.0]], dtype=dtype)
+    target = source @ expected
+    rotation, singular_values = jax.jit(orthogonal_procrustes)(source, target)
+    tolerance = 2e-5 if dtype is np.float32 else 2e-12
+    np.testing.assert_allclose(rotation, expected, atol=tolerance)
+    np.testing.assert_allclose(source @ rotation, target, atol=tolerance)
+    np.testing.assert_allclose(
+        singular_values,
+        np.linalg.svd(np.asarray(source).T @ np.asarray(target), compute_uv=False),
+        atol=tolerance,
+    )
+    assert rotation.dtype == dtype
 
 
 def _point_clouds(rows: int, columns: int) -> SearchStrategy[NDArray[np.float64]]:

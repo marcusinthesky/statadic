@@ -21,6 +21,7 @@ __all__ = [
     "RowId",
     "SinkhornDivergence",
     "SlicedWasserstein",
+    "Wasserstein",
     "Wasserstein1D",
 ]
 
@@ -47,6 +48,7 @@ from statadic.geometry.discrepancy.mmd.weighted import (
     weighted_mmd_matrix,
     weighted_mmd_squared_cross,
 )
+from statadic.geometry.discrepancy.transport.empirical import wasserstein_distance_jax
 from statadic.geometry.discrepancy.transport.matrix import (
     finite_sliced_w2_matrix,
     quantile_w2_matrix,
@@ -60,7 +62,9 @@ from statadic.geometry.discrepancy.transport.sliced import (
 from statadic.geometry.discrepancy.transport.univariate import wasserstein_1d_power
 from statadic.geometry.ground.config import (
     GroundDistanceSelection,  # runtime annotations
+    resolve_ground_distance,
 )
+from statadic.geometry.ground.metrics import EUCLIDEAN
 from statadic.geometry.ground.similarities import (
     PositiveSemidefiniteKernelLaw,
     SimilarityStrategy,
@@ -319,6 +323,76 @@ class Wasserstein1D:
         return HilbertianMeasureMatrix(
             quantile_w2_matrix(measures), "Real-line W2 quantile Hilbert embedding."
         )
+
+
+@dataclass(frozen=True)
+class Wasserstein:
+    """Unregularized multivariate Wp on weighted empirical measures.
+
+    ``ground`` compares raw coordinates by default. Assignment handles equal
+    uniform counts, and balanced transportation handles unequal counts and
+    probabilities. Neither solver grants a general Hilbertian warrant.
+    The dense weighted solver is qualified for small supports; larger solves
+    require a measured iteration/resource budget. Invalid or unavailable
+    distances (including detected power underflow) fail host preparation.
+    """
+
+    p: int | float = 2
+    ground: GroundDistanceSelection = EUCLIDEAN
+    max_iterations: int = 10_000
+    tolerance: float = 1e-6
+
+    def __post_init__(self) -> None:
+        """Validate order, declared ground and solver options eagerly."""
+        if isinstance(self.p, bool) or not math.isfinite(self.p) or self.p < 1:
+            message = "Wasserstein order must be finite and at least one."
+            raise ValueError(message)
+        if (
+            type(self.max_iterations) is not int
+            or self.max_iterations < 1
+            or not math.isfinite(self.tolerance)
+            or self.tolerance <= 0
+        ):
+            message = "Transport iteration budget and tolerance must be positive."
+            raise ValueError(message)
+        resolve_ground_distance(self.ground)
+        object.__setattr__(self, "p", float(self.p))
+
+    def prepare(
+        self,
+        measures: PackedClouds | MeasureColumn,
+        *,
+        row_ids: Sequence[RowId] | None = None,
+    ) -> PreparedGeometry:
+        """Freeze reference probabilities, coordinates and numerical settings."""
+        return _prepare(self, measures, row_ids)
+
+    def cross(self, left: PackedClouds, right: PackedClouds) -> Array:
+        """Compute new-by-reference distances with bounded pair-solve storage."""
+        if left.data.shape[-1] != right.data.shape[-1]:
+            message = "Measure feature widths must agree."
+            raise ValueError(message)
+        ground = resolve_ground_distance(self.ground)
+
+        def row(a: PackedClouds) -> Array:
+            def entry(b: PackedClouds) -> Array:
+                return wasserstein_distance_jax(
+                    a,
+                    b,
+                    self.p,
+                    ground=ground,
+                    max_iterations=self.max_iterations,
+                    tolerance=self.tolerance,
+                )
+
+            return jax.lax.map(entry, right)
+
+        return jax.lax.map(row, left)
+
+    @staticmethod
+    def matrix(measures: PackedClouds) -> None:  # noqa: ARG004 -- geometry protocol
+        """General multivariate Wp has no declared Hilbertian producer."""
+        return
 
 
 @dataclass(frozen=True)

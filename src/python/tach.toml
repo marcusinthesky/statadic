@@ -379,7 +379,7 @@ depends_on = [
 [[modules]]
 path = "statadic.geometry.discrepancy.transport"
 cannot_depend_on_external = ["numpy", "scipy"]
-depends_on = ["statadic.core", "statadic.geometry.ground", "statadic.measure"]
+depends_on = ["statadic.core", "statadic.geometry.ground", "statadic.measure", "statadic.numerics.optimize"]
 
 [[modules]]
 path = "statadic.geometry.discrepancy.metrize"
@@ -874,6 +874,7 @@ expose = [
   "glm.[A-Za-z][A-Za-z0-9_]*",
   "psd.[A-Za-z][A-Za-z0-9_]*",
   "simplex.[A-Za-z][A-Za-z0-9_]*",
+  "transportation.[A-Za-z][A-Za-z0-9_]*",
 ]
 
 [[interfaces]]
@@ -985,11 +986,14 @@ expose = [
 from = ["statadic.geometry.discrepancy.transport"]
 expose = [
   "[A-Za-z][A-Za-z0-9_]*",
+  "decomposition.[A-Za-z][A-Za-z0-9_]*",
+  "empirical.[A-Za-z][A-Za-z0-9_]*",
   "exact.[A-Za-z][A-Za-z0-9_]*",
   "matrix.[A-Za-z][A-Za-z0-9_]*",
   "sinkhorn.sinkhorn_cost",
   "sliced.[A-Za-z][A-Za-z0-9_]*",
   "univariate.[A-Za-z][A-Za-z0-9_]*"
+  , "weighted.[A-Za-z][A-Za-z0-9_]*"
 ]
 
 [[interfaces]]

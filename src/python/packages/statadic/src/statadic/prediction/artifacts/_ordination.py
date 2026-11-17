@@ -27,6 +27,7 @@ from statadic.observation.coordinates import (
     GeodesicCoordinateMap,
     KernelCoordinateMap,
     LinearCoordinateMap,
+    OrthogonalCoordinateMap,
     coordinate_capabilities,
     transform_coordinates,
     transform_cross_distances,
@@ -48,6 +49,7 @@ from ._schema import (  # noqa: TC001 -- runtime artifact annotations
     CrossGramRecord,
     FeatureDistanceRecord,
     GeodesicMapRecord,
+    OrthogonalMapRecord,
 )
 from ._store import (
     Arrays,
@@ -135,6 +137,16 @@ def _decode_cross(value: CrossGramRecord, arrays: Arrays) -> CrossGramMap:
 
 def encode_coordinate_map(value: CoordinateMap, arrays: Arrays) -> CoordinateMapRecord:
     """Persist only known frozen scientific transformations."""
+    if type(value) is OrthogonalCoordinateMap:
+        base = encode_coordinate_map(value.base, arrays)
+        if base["kind"] == "orthogonal":
+            msg = "Orthogonal coordinate maps require a flat base map."
+            raise ArtifactError(msg)
+        return {
+            "kind": "orthogonal",
+            "base": base,
+            "rotation": arrays.add(value.rotation),
+        }
     if type(value) is LinearCoordinateMap:
         return {
             "kind": "linear",
@@ -201,6 +213,8 @@ def decode_coordinate_record(value: object) -> CoordinateMapRecord:
         msg = "A coordinate map must be a declarative record."
         raise ArtifactError(msg)
     kind = value.get("kind")
+    if kind == "orthogonal":
+        return _decode_orthogonal_record(value)
     if kind == "linear":
         saved = record(
             value,
@@ -288,8 +302,32 @@ def decode_coordinate_record(value: object) -> CoordinateMapRecord:
     raise ArtifactError(msg)
 
 
+def _decode_orthogonal_record(value: object) -> OrthogonalMapRecord:
+    saved = record(value, {"kind", "base", "rotation"}, "orthogonal coordinate map")
+    base = decode_coordinate_record(saved["base"])
+    if base["kind"] == "orthogonal":
+        msg = "Nested orthogonal coordinate maps are not supported."
+        raise ArtifactError(msg)
+    return {
+        "kind": "orthogonal",
+        "base": base,
+        "rotation": text(saved["rotation"], "rotation"),
+    }
+
+
+def _decode_orthogonal_map(saved: OrthogonalMapRecord, arrays: Arrays) -> CoordinateMap:
+    base = decode_coordinate_map(saved["base"], arrays)
+    try:
+        return OrthogonalCoordinateMap(base, arrays.get(saved["rotation"]))
+    except (TypeError, ValueError) as exc:
+        msg = "Invalid retained orthogonal rotation."
+        raise ArtifactError(msg) from exc
+
+
 def decode_coordinate_map(saved: CoordinateMapRecord, arrays: Arrays) -> CoordinateMap:
     """Restore and validate dimensions, identities and numerical domains."""
+    if saved["kind"] == "orthogonal":
+        return _decode_orthogonal_map(saved, arrays)
     if saved["kind"] == "linear":
         names = tuple(saved["feature_names"])
         mean, scale, center, components = (

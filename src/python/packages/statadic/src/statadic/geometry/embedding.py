@@ -35,6 +35,7 @@ __all__ = [
     "PCoAKernelResult",
     "center_gram",
     "gram_coordinates",
+    "orthogonal_procrustes",
     "pcoa_kernel",
 ]
 
@@ -95,6 +96,28 @@ class OrdinationFit(NamedTuple):
     eigenvalues: Array
     threshold: Array
     euclidean: Array
+
+
+def orthogonal_procrustes(source: Array, target: Array) -> tuple[Array, Array]:
+    """Minimize squared coordinate error over orthogonal right transformations.
+
+    Inputs are aligned real matrices with a common row and coordinate axis.
+    The returned pair contains the rotation and cross-product singular values;
+    the latter retain evidence for the caller's rank decision. No translation,
+    rescaling, identity matching or derivative qualification is implied.
+
+    Args:
+        source: Real source coordinates with shape ``(n, k)``.
+        target: Corresponding target coordinates with shape ``(n, k)``.
+
+    Returns:
+        The orthogonal right transformation and cross-product singular values.
+
+    """
+    left, singular_values, right = jnp.linalg.svd(
+        source.T @ target, full_matrices=False
+    )
+    return left @ right, singular_values
 
 
 def center_gram(gram: Array) -> Array:

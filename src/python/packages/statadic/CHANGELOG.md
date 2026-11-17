@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Add multivariate `Wasserstein` empirical-measure geometry for Ordination and
+  frozen prediction, retaining uniform assignment and weighted unequal-support
+  transport beneath one declaration. Weighted simplex currently serves small
+  supports and reports unavailable solves rather than substituting an approximation.
+- Retain exact transport matches, scaled objective contributions and numerical
+  evidence; add the Euclidean W2 location/centered-shape decomposition.
+- Add frozen orthogonal rotations, identity-aware Procrustes alignment and
+  explicit reuse of learned Ordination maps as Regression terms.
+- Write artifact schema 8 for the added geometry and coordinate maps; retain
+  valid schema-7 reading and reject invalid new settings as `ArtifactError`.
+- Reject detected cost-power underflow in the new Wasserstein scalar workflow;
+  lower inspection doors retain the candidate and numerical evidence.
+
 ## [0.5.0a2] - 2026-11-14
 
 - Prepare artifact-locked release dependencies before running tests and promote

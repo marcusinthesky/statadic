@@ -22,6 +22,7 @@ from statadic.observation.geometry import (
     PreparedGeometry,  # runtime artifact annotations  # noqa: TC001
     SinkhornDivergence,
     SlicedWasserstein,
+    Wasserstein,
     Wasserstein1D,
 )
 
@@ -30,6 +31,7 @@ from ._schema import (
     EnergyGeometry,  # noqa: TC001
     GeometryRecord,  # noqa: TC001
     MMDGeometry,  # noqa: TC001
+    MultivariateWassersteinGeometry,  # noqa: TC001
     SinkhornGeometry,  # noqa: TC001
     SlicedGeometry,  # noqa: TC001
     WassersteinGeometry,  # noqa: TC001
@@ -67,6 +69,7 @@ def encode_geometry(value: PreparedGeometry, arrays: Arrays) -> GeometryRecord:
         MMD,
         Energy,
         Wasserstein1D,
+        Wasserstein,
         SlicedWasserstein,
         SinkhornDivergence,
     }:
@@ -90,6 +93,19 @@ def encode_geometry(value: PreparedGeometry, arrays: Arrays) -> GeometryRecord:
         config = {
             "epsilon": spec.epsilon,
             "iterations": spec.iterations,
+            "tolerance": spec.tolerance,
+        }
+    elif isinstance(spec, Wasserstein):
+        resolved = resolve_ground_distance(spec.ground)
+        names = [name for name, strategy in _GROUNDS.items() if resolved is strategy]
+        if not names:
+            message = "Custom ground strategies have no declarative prediction codec."
+            raise ArtifactError(message)
+        kind = "wasserstein"
+        config = {
+            "ground": names[0],
+            "p": spec.p,
+            "max_iterations": spec.max_iterations,
             "tolerance": spec.tolerance,
         }
     elif isinstance(spec, Wasserstein1D):
@@ -205,6 +221,38 @@ def decode_geometry_record(value: object) -> GeometryRecord:
             "row_ids": common["row_ids"],
         }
         return sinkhorn
+    if saved["kind"] == "wasserstein":
+        config = record(
+            saved["config"],
+            {"p", "ground", "max_iterations", "tolerance"},
+            "multivariate Wasserstein configuration",
+        )
+        multivariate: MultivariateWassersteinGeometry = {
+            "kind": "wasserstein",
+            "config": {
+                "p": number(config["p"], "Wasserstein order"),
+                "ground": _ground_name(config["ground"]),
+                "max_iterations": integer(config["max_iterations"], "iteration budget"),
+                "tolerance": number(config["tolerance"], "transport tolerance"),
+            },
+            "data": common["data"],
+            "counts": common["counts"],
+            "masses": common["masses"],
+            "row_ids": common["row_ids"],
+        }
+        # Validate scalar domains before allocating support arrays.
+        settings = multivariate["config"]
+        try:
+            Wasserstein(
+                settings["p"],
+                _GROUNDS[settings["ground"]],
+                settings["max_iterations"],
+                settings["tolerance"],
+            )
+        except (TypeError, ValueError) as exc:
+            message = "Invalid multivariate Wasserstein configuration."
+            raise ArtifactError(message) from exc
+        return multivariate
     if saved["kind"] == "wasserstein_1d":
         config = record(saved["config"], {"p"}, "Wasserstein configuration")
         order = number(config["p"], "Wasserstein order")
@@ -287,6 +335,14 @@ def decode_geometry(saved: GeometryRecord, arrays: Arrays) -> PreparedGeometry:
         )
     elif saved["kind"] == "wasserstein_1d":
         spec = Wasserstein1D(saved["config"]["p"])
+    elif saved["kind"] == "wasserstein":
+        settings = saved["config"]
+        spec = Wasserstein(
+            settings["p"],
+            _GROUNDS[settings["ground"]],
+            settings["max_iterations"],
+            settings["tolerance"],
+        )
     else:
         config = saved["config"]
         key = jax.random.wrap_key_data(

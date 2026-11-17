@@ -34,10 +34,18 @@ from statadic.observation.design import (
     Intercept,
     Linear,
 )
-from statadic.observation.geometry import MMD, Energy, SlicedWasserstein, Wasserstein1D
+from statadic.observation.geometry import (
+    MMD,
+    Energy,
+    SlicedWasserstein,
+    Wasserstein,
+    Wasserstein1D,
+)
+from statadic.ordination.fit import Ordination
 from statadic.prediction.artifacts import (
     ArtifactError,
     load_analysis,
+    load_ordination_predictor,
     load_predictor,
     save_analysis,
     save_predictor,
@@ -48,6 +56,7 @@ from statadic.prediction.artifacts._geometry import (
     encode_geometry,
 )
 from statadic.prediction.artifacts._store import Arrays, read_bundle, write_bundle
+from statadic.regression import Regression
 from statadic.report.core import Metric, ParameterRow, PlotSpec, Report, TestRow
 
 from .._budgets import examples
@@ -165,7 +174,7 @@ def test_writer_metadata_is_diagnostic(tmp_path: Path) -> None:
 
 @pytest.mark.integration
 @pytest.mark.contract
-@pytest.mark.parametrize("schema", [2, 3, 4, 5, 6, "old", None])
+@pytest.mark.parametrize("schema", [2, 3, 4, 5, 6, 9, True, "old", None])
 def test_schema_rejection_names_found_and_supported(
     tmp_path: Path, schema: object
 ) -> None:
@@ -173,10 +182,104 @@ def test_schema_rejection_names_found_and_supported(
     _simple(tmp_path)
     _mutate(tmp_path, lambda document: document.update(schema_version=schema))
     with pytest.raises(
-        ArtifactError, match=r"schema version .* is not supported;.*schema 7"
+        ArtifactError, match=r"schema version .* is not supported;.*schemas 7 and 8"
     ) as error:
         load_predictor(tmp_path)
     assert repr(schema) in str(error.value)
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+def test_schema_seven_predictor_preserves_predictions_and_metadata(
+    tmp_path: Path,
+) -> None:
+    """Existing schema-7 state loads unchanged, including unrestricted metadata."""
+    rows = _simple(tmp_path)
+    expected = load_predictor(tmp_path).predict(rows)
+    saved = json.loads((tmp_path / "manifest.json").read_text())
+    assert saved["schema_version"] == 8  # noqa: PLR2004
+    _mutate(
+        tmp_path,
+        lambda document: document.update(
+            schema_version=7,
+            metadata={"kind": "orthogonal", "geometry": {"kind": "wasserstein"}},
+        ),
+    )
+    manifest, _ = read_bundle(tmp_path, purpose="prediction")
+    assert manifest["schema_version"] == 7  # noqa: PLR2004
+    restored = load_predictor(tmp_path)
+    np.testing.assert_array_equal(restored.predict(rows), expected)
+    assert restored.metadata["kind"] == "orthogonal"
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+def test_schema_seven_nested_ordination_predictor_remains_compatible(
+    tmp_path: Path,
+) -> None:
+    """Legacy nested coordinate maps preserve frozen regression predictions."""
+    rows = Observations(
+        {
+            "x": [0.0, 1.0, 2.0, 4.0],
+            "z": [1.0, 3.0, 0.0, 2.0],
+            "y": [1.0, 2.0, 0.0, 5.0],
+        }
+    )
+    fit = Regression.ols("y", Intercept() + Ordination.pca(("x", "z"), dim=1)).estimate(
+        rows
+    )
+    fit.save_predictor(tmp_path)
+    expected = load_predictor(tmp_path).predict(rows)
+    _mutate(tmp_path, lambda document: document.update(schema_version=7))
+    np.testing.assert_array_equal(load_predictor(tmp_path).predict(rows), expected)
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+def test_schema_seven_analysis_preserves_report_with_kind_metadata(
+    tmp_path: Path,
+) -> None:
+    """Version compatibility does not interpret report metadata as prediction state."""
+    report = Report(
+        "legacy snapshot",
+        metrics=(Metric("observations", 3),),
+        metadata={"kind": "orthogonal"},
+    )
+    save_analysis(tmp_path, report)
+    _mutate(tmp_path, lambda document: document.update(schema_version=7))
+    assert load_analysis(tmp_path).report.to_text() == report.to_text()
+
+
+@pytest.mark.integration
+@pytest.mark.contract
+@pytest.mark.parametrize("kind", ["orthogonal", "wasserstein"])
+def test_new_coordinate_and_geometry_records_require_schema_eight(
+    tmp_path: Path, kind: str
+) -> None:
+    """New discriminants cannot be mislabeled as the previous closed format."""
+    if kind == "orthogonal":
+        result = (
+            Ordination.pca(dim=2)
+            .estimate(jnp.asarray([[0.0, 1.0], [1.0, 0.0], [2.0, 3.0], [4.0, 1.0]]))
+            .rotate(jnp.asarray([[0.0, -1.0], [1.0, 0.0]]))
+        )
+    else:
+        clouds = PackedClouds.from_clouds(
+            [
+                jnp.asarray([[0.0, 0.0], [1.0, 1.0]]),
+                jnp.asarray([[2.0, 0.0], [3.0, 1.0]]),
+            ]
+        )
+        result = Ordination.pcoa(
+            Wasserstein(), dim=1, negative_inertia="positive-subspace"
+        ).estimate(clouds)
+    result.save_predictor(tmp_path)
+    manifest, _ = read_bundle(tmp_path, purpose="prediction")
+    assert manifest["schema_version"] == 8  # noqa: PLR2004
+    load_ordination_predictor(tmp_path)
+    _mutate(tmp_path, lambda document: document.update(schema_version=7))
+    with pytest.raises(ArtifactError, match="require schema 8"):
+        load_ordination_predictor(tmp_path)
 
 
 @pytest.mark.integration
@@ -204,7 +307,7 @@ def test_old_manifest_without_writer_reports_schema(tmp_path: Path) -> None:
         document["schema_version"] = 2
 
     _mutate(tmp_path, make_old)
-    with pytest.raises(ArtifactError, match=r"version 2 .*schema 7"):
+    with pytest.raises(ArtifactError, match=r"version 2 .*schemas 7 and 8"):
         load_predictor(tmp_path)
 
 
@@ -247,13 +350,13 @@ def test_persisted_wasserstein_order_is_validated(
 
 @pytest.mark.integration
 @pytest.mark.contract
-def test_schema_six_derives_prediction_kinds_and_rejects_redundant_state(
+def test_current_schema_derives_prediction_kinds_and_rejects_redundant_state(
     tmp_path: Path,
 ) -> None:
     """Prediction capabilities derive from family; extra wire fields are rejected."""
     _simple(tmp_path)
     saved = json.loads((tmp_path / "manifest.json").read_text())
-    assert saved["schema_version"] == 7  # noqa: PLR2004
+    assert saved["schema_version"] == 8  # noqa: PLR2004
     assert set(saved["state"]) == {"design", "parameters", "offset", "exposure"}
     _mutate(
         tmp_path,
@@ -570,7 +673,7 @@ def test_prediction_loader_rejects_modified_payload_and_duplicate_json(
     document = (
         (path / "manifest.json")
         .read_text()
-        .replace('"schema_version": 7', '"schema_version": 7, "schema_version": 7')
+        .replace('"schema_version": 8', '"schema_version": 8, "schema_version": 8')
     )
     (path / "manifest.json").write_text(document)
     with pytest.raises(ArtifactError, match="Duplicate"):

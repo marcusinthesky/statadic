@@ -1,4 +1,4 @@
-"""Closed, required-field wire records for version-7 artifacts.
+"""Closed wire records for schema-8 writers and compatible schema-7 readers.
 
 These describe serialized values. Decoders at each owning boundary establish
 their runtime validity before constructing retained numerical state.
@@ -32,7 +32,7 @@ class ArrayInventory(TypedDict):
 
 
 class Bundle[FamilyT: str = str, StateT = object](TypedDict):
-    schema_version: Literal[7]
+    schema_version: Literal[7, 8]
     writer: WriterRecord
     purpose: Literal["prediction", "analysis"]
     family: FamilyT
@@ -63,6 +63,12 @@ class EnergyConfig(TypedDict):
 
 class WassersteinConfig(TypedDict):
     p: float
+
+
+class MultivariateWassersteinConfig(WassersteinConfig):
+    ground: Literal["euclidean", "angular", "cosine", "normalized_euclidean"]
+    max_iterations: int
+    tolerance: float
 
 
 class SinkhornConfig(TypedDict):
@@ -101,6 +107,11 @@ class WassersteinGeometry(_GeometryState):
     config: WassersteinConfig
 
 
+class MultivariateWassersteinGeometry(_GeometryState):
+    kind: Literal["wasserstein"]
+    config: MultivariateWassersteinConfig
+
+
 class SinkhornGeometry(_GeometryState):
     kind: Literal["sinkhorn_divergence"]
     config: SinkhornConfig
@@ -115,6 +126,7 @@ type GeometryRecord = (
     MMDGeometry
     | EnergyGeometry
     | WassersteinGeometry
+    | MultivariateWassersteinGeometry
     | SlicedGeometry
     | SinkhornGeometry
 )
@@ -166,9 +178,18 @@ class GeodesicMapRecord(TypedDict):
     feature_distances: FeatureDistanceRecord | None
 
 
-type CoordinateMapRecord = (
+type BaseCoordinateMapRecord = (
     LinearMapRecord | KernelMapRecord | DistanceMapRecord | GeodesicMapRecord
 )
+
+
+class OrthogonalMapRecord(TypedDict):
+    kind: Literal["orthogonal"]
+    base: BaseCoordinateMapRecord
+    rotation: str
+
+
+type CoordinateMapRecord = BaseCoordinateMapRecord | OrthogonalMapRecord
 
 
 class OrdinationTerm(TypedDict):

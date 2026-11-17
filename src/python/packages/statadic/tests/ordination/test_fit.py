@@ -16,6 +16,7 @@ from statadic.observation.coordinates import (
     FittedOrdination,
     KernelCoordinateMap,
     LinearCoordinateMap,
+    OrthogonalCoordinateMap,
 )
 from statadic.observation.data import Observations
 from statadic.observation.design import FittedDesign, Intercept, Linear
@@ -26,6 +27,7 @@ from statadic.observation.geometry import (
 )
 from statadic.ordination.fit import (
     DistanceGram,
+    FrozenOrdination,
     KernelGram,
     LinearGram,
     Ordination,
@@ -201,6 +203,9 @@ def test_signed_spectrum_is_explicit_and_never_promoted_to_a_law() -> None:
     assert descriptive.spectrum.material_negative_inertia
     assert descriptive.context.construction_warrant is None
     assert descriptive.report().warnings
+    rotated = descriptive.rotate(-np.eye(descriptive.coordinates.shape[1]))
+    assert rotated.spectrum.material_negative_inertia
+    np.testing.assert_array_equal(rotated.eigenvalues, descriptive.eigenvalues)
     zero = Ordination(
         DistanceGram(), PrincipalCoordinates(None, "positive-subspace")
     ).estimate(ObservedDissimilarity.from_array(np.zeros((3, 3))))
@@ -348,6 +353,159 @@ def test_predictive_only_ordination_does_not_claim_live_inspection() -> None:
         _ = term.inspection
     with pytest.raises(ValueError, match="Predictive-only"):
         FittedDesign(term).ordination("ordination")
+
+
+@pytest.mark.contract
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+def test_rotation_preserves_geometry_and_freezes_future_projection(dtype: type) -> None:
+    """A change of basis preserves distances, source evidence and query preparation."""
+    training = np.asarray([[0, 1], [1, 0], [2, 4], [4, 1]], dtype=dtype)
+    query = np.asarray([[1.5, 3.0], [-2.0, 1.0]], dtype=dtype)
+    original = Ordination.pca(dim=2).estimate(training)
+    rotation = np.asarray([[0, -1], [1, 0]], dtype=dtype)
+    rotated = original.rotate(rotation)
+    expected = np.asarray(original.transform(query)) @ rotation
+    tolerance = 2e-5 if dtype is np.float32 else 2e-12
+    rotation[:] = 0
+    assert rotated.core is original.core
+    assert rotated.context is original.context
+    np.testing.assert_array_equal(rotated.spectrum.eigenvalues, original.eigenvalues)
+    np.testing.assert_allclose(
+        _distances(np.asarray(rotated.coordinates)),
+        _distances(np.asarray(original.coordinates)),
+        atol=tolerance,
+    )
+    np.testing.assert_allclose(rotated.transform(query), expected, atol=tolerance)
+    np.testing.assert_allclose(
+        rotated.transform(query[:1]), expected[:1], atol=tolerance
+    )
+    assert isinstance(rotated.mapping, OrthogonalCoordinateMap)
+    np.testing.assert_allclose(
+        jax.jit(rotated.mapping.project_values)(jnp.asarray(query)),
+        expected,
+        atol=tolerance,
+    )
+    np.testing.assert_allclose(
+        rotated.loadings, original.loadings @ rotated.mapping.rotation, atol=tolerance
+    )
+    with pytest.raises(TypeError, match="not principal axes"):
+        _ = rotated.explained_variance
+    with pytest.raises(TypeError, match="not principal axes"):
+        _ = rotated.explained_variance_ratio
+    composed = rotated.rotate(rotated.mapping.rotation.T)
+    assert isinstance(composed.mapping, OrthogonalCoordinateMap)
+    assert composed.mapping.base is original.mapping
+    np.testing.assert_allclose(
+        composed.coordinates, original.coordinates, atol=tolerance
+    )
+
+
+@pytest.mark.contract
+def test_alignment_matches_identities_and_retains_future_coordinate_basis() -> None:
+    """Permuting reference rows cannot change an identifiable Procrustes alignment."""
+    rows = Observations(
+        {"x": [0.0, 1.0, 2.0, 4.0], "z": [1.0, 0.0, 4.0, 1.0]},
+        row_ids=("a", "b", "c", "d"),
+    )
+    fitted = Ordination.pca(("x", "z"), dim=2).estimate(rows)
+    rotation = np.asarray([[0.6, 0.8], [0.8, -0.6]])
+    reference = np.asarray(fitted.coordinates) @ rotation
+    aligned = fitted.align_to(reference[::-1], row_ids=rows.row_ids[::-1])
+    np.testing.assert_allclose(aligned.coordinates, reference, atol=2e-12)
+    np.testing.assert_allclose(aligned.loadings, fitted.loadings @ rotation, atol=2e-12)
+    query = Observations({"x": [1.5, -2.0], "z": [3.0, 1.0]})
+    np.testing.assert_allclose(
+        aligned.transform(query), fitted.transform(query) @ rotation, atol=2e-12
+    )
+    identity = aligned.align_to(aligned.coordinates, row_ids=rows.row_ids)
+    np.testing.assert_allclose(identity.coordinates, aligned.coordinates, atol=2e-12)
+    with pytest.raises(ValueError, match="unique row identities"):
+        fitted.align_to(reference, row_ids=("a", "b", "c", "c"))
+    with pytest.raises(ValueError, match="dimension"):
+        fitted.align_to(reference[:, :1], row_ids=rows.row_ids)
+    with pytest.raises(ValueError, match="rank deficient"):
+        fitted.align_to(np.zeros_like(reference), row_ids=rows.row_ids)
+    with pytest.raises(ValueError, match="finite"):
+        fitted.align_to(np.full_like(reference, np.nan), row_ids=rows.row_ids)
+
+
+@pytest.mark.contract
+def test_rotated_distance_queries_preserve_reference_identity_contract() -> None:
+    """Explicit cross distances extend in the retained rotated training basis."""
+    training = np.asarray([[0, 1], [1, 0], [2, 4], [4, 1]], dtype=float)
+    ids = ("a", "b", "c", "d")
+    fitted = Ordination.pcoa(dim=2).estimate(
+        ObservedDissimilarity.from_array(_distances(training), ids)
+    )
+    rotation = np.asarray([[0, -1], [1, 0]], dtype=float)
+    rotated = fitted.rotate(rotation)
+    query = np.asarray([[1.5, 3.0], [-2.0, 1.0]])
+    distances = np.linalg.norm(query[:, None] - training[None], axis=-1)
+    np.testing.assert_allclose(
+        rotated.transform_distances(distances, reference_ids=ids),
+        fitted.transform_distances(distances, reference_ids=ids) @ rotation,
+        atol=2e-12,
+    )
+    assert rotated.capabilities == ("transform_distances",)
+    with pytest.raises(ValueError, match="reference IDs"):
+        rotated.transform_distances(distances, reference_ids=ids[::-1])
+    with pytest.raises(ValueError, match="named transformable source"):
+        rotated.as_term()
+
+
+@pytest.mark.contract
+def test_frozen_rotated_regression_term_never_refits_representation(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Regression fitting reuses the exact learned rotated map and its evidence."""
+    rows = Observations(
+        {
+            "x": [0.0, 1.0, 2.0, 4.0, -1.0],
+            "z": [1.0, 0.0, 4.0, 1.0, 3.0],
+            "y": [1.0, 2.0, 3.0, 4.0, 3.0],
+        }
+    )
+    rotated = (
+        Ordination.pca(("x", "z"), dim=2, name="scores")
+        .estimate(rows)
+        .rotate(np.asarray([[0.0, -1.0], [1.0, 0.0]]))
+    )
+    term = rotated.as_term()
+    assert isinstance(term, FrozenOrdination)
+
+    def fail_fit(*_args: object, **_kwargs: object) -> None:
+        message = "frozen term refitted the representation"
+        raise AssertionError(message)
+
+    monkeypatch.setattr(Ordination, "_estimate_prepared", fail_fit)
+    regression = Regression.ols("y", Intercept() + term).estimate(rows)
+    retained = regression.design.ordination("scores")
+    assert retained.mapping is rotated.mapping
+    np.testing.assert_allclose(
+        retained.transform(rows), rotated.coordinates, atol=2e-12
+    )
+    np.testing.assert_allclose(
+        retained.inspection.coordinates, rotated.coordinates, atol=2e-12
+    )
+    query = Observations({"x": [2.5], "z": [2.0]})
+    np.testing.assert_allclose(
+        retained.transform(query), rotated.transform(query), atol=2e-12
+    )
+
+
+@pytest.mark.contract
+@pytest.mark.parametrize(
+    "rotation", [np.ones((2, 2)), np.eye(3), np.full((2, 2), np.nan)]
+)
+def test_rotation_rejects_nonorthogonal_or_wrong_width_inputs(
+    rotation: np.ndarray,
+) -> None:
+    """A coordinate change cannot silently distort the retained geometry."""
+    fitted = Ordination.pca(dim=2).estimate(
+        np.asarray([[0.0, 1.0], [1.0, 0.0], [2.0, 3.0], [4.0, 1.0]])
+    )
+    with pytest.raises(ValueError, match=r"orthogonal|retained axes"):
+        fitted.rotate(rotation)
 
 
 @pytest.mark.contract

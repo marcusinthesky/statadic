@@ -7,6 +7,7 @@ from statadic.observation.coordinates import (
     GeodesicCoordinateMap,
     KernelCoordinateMap,
     LinearCoordinateMap,
+    OrthogonalCoordinateMap,
 )
 from statadic.observation.design import (
     CyclicSpline,
@@ -236,7 +237,9 @@ def _decode_term_record(value: object) -> TermRecord:  # noqa: C901, PLR0911, PL
 
 def _restore_ordination(saved: OrdinationTerm, arrays: Arrays) -> FittedOrdination:
     mapping = decode_coordinate_map(saved["mapping"], arrays)
-    if isinstance(mapping, LinearCoordinateMap):
+    if isinstance(mapping, OrthogonalCoordinateMap):
+        width = mapping.rotation.shape[1]
+    elif isinstance(mapping, LinearCoordinateMap):
         width = mapping.projection.components.shape[1]
     elif isinstance(mapping, KernelCoordinateMap):
         width = mapping.projection.axes.shape[1]

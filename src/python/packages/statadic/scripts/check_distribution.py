@@ -175,7 +175,7 @@ with tempfile.TemporaryDirectory() as folder:
     assert restored.capabilities == ("predict",)
     manifest = Path(folder) / "manifest.json"
     original = manifest.read_text()
-    assert json.loads(original)["schema_version"] == 7
+    assert json.loads(original)["schema_version"] == 8
     for invalid in (
         "{",
         json.dumps({**json.loads(original), "schema_version": 2}),

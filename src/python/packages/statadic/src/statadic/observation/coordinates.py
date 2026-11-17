@@ -46,6 +46,7 @@ __all__ = [
     "OrdinationContext",
     "OrdinationEvidence",
     "OrdinationSpectrum",
+    "OrthogonalCoordinateMap",
     "coordinate_capabilities",
     "feature_values",
     "transform_coordinates",
@@ -243,12 +244,91 @@ class GeodesicCoordinateMap:
         return _finite(self.project_distances(values))
 
 
+@dataclass(frozen=True)
+class OrthogonalCoordinateMap:
+    """An orthogonal change of basis after a frozen source coordinate map.
+
+    The source retains its original principal axes and spectral evidence.
+    Successive changes of basis compose into one matrix and never refit.
+    """
+
+    base: CoordinateMap
+    rotation: Array
+
+    def __post_init__(self) -> None:
+        """Own a finite orthogonal matrix matching the source coordinate width."""
+        base = self.base
+        rotation = jnp.array(self.rotation, copy=True)
+        if not jnp.issubdtype(rotation.dtype, jnp.number) or jnp.iscomplexobj(rotation):
+            message = "Coordinate rotation must be real numeric values."
+            raise TypeError(message)
+        rotation = rotation.astype(jnp.result_type(rotation, 1.0))
+        if isinstance(base, OrthogonalCoordinateMap):
+            if rotation.ndim != _MATRIX_NDIM or rotation.shape != base.rotation.shape:
+                message = "Coordinate rotation must be square on the retained axes."
+                raise ValueError(message)
+            rotation = base.rotation @ rotation
+            base = base.base
+        dimension = _coordinate_dimension(base)
+        if rotation.ndim != _MATRIX_NDIM or rotation.shape != (
+            dimension,
+            dimension,
+        ):
+            message = "Coordinate rotation must be square on the retained axes."
+            raise ValueError(message)
+        identity = jnp.eye(dimension, dtype=rotation.dtype)
+        tolerance = 10 * max(dimension, 1) * jnp.finfo(rotation.dtype).eps
+        if not bool(
+            jnp.all(jnp.isfinite(rotation))
+            & jnp.all(jnp.abs(rotation.T @ rotation - identity) <= tolerance)
+        ):
+            message = "Coordinate rotation must be finite and orthogonal."
+            raise ValueError(message)
+        object.__setattr__(self, "base", base)
+        object.__setattr__(self, "rotation", rotation)
+
+    @property
+    def input_columns(self) -> dict[str, InputRole]:
+        """Return the unchanged source input roles."""
+        return self.base.input_columns
+
+    def project_values(self, values: Array) -> Array:
+        """Apply a numerical feature projection and the retained rotation."""
+        if not isinstance(self.base, (LinearCoordinateMap, KernelCoordinateMap)):
+            message = "This coordinate source does not consume feature values."
+            raise TypeError(message)
+        return self.base.project_values(values) @ self.rotation
+
+    def project_distances(self, distances: Array) -> Array:
+        """Apply a numerical distance projection and the retained rotation."""
+        if not isinstance(self.base, (DistanceCoordinateMap, GeodesicCoordinateMap)):
+            message = "This coordinate source does not consume cross distances."
+            raise TypeError(message)
+        return self.base.project_distances(distances) @ self.rotation
+
+    def transform(self, data: Observations | ArrayLike | PackedClouds) -> Array:
+        """Apply the frozen source transformation before the retained rotation."""
+        return _finite(transform_coordinates(self.base, data) @ self.rotation)
+
+
 type CoordinateMap = (
     LinearCoordinateMap
     | KernelCoordinateMap
     | DistanceCoordinateMap
     | GeodesicCoordinateMap
+    | OrthogonalCoordinateMap
 )
+
+
+def _coordinate_dimension(mapping: CoordinateMap) -> int:
+    if isinstance(mapping, OrthogonalCoordinateMap):
+        return mapping.rotation.shape[0]
+    if isinstance(mapping, LinearCoordinateMap):
+        return mapping.projection.components.shape[1]
+    base = (
+        mapping.distance_map if isinstance(mapping, GeodesicCoordinateMap) else mapping
+    )
+    return base.projection.axes.shape[1]
 
 
 @dataclass(frozen=True)
@@ -290,6 +370,15 @@ class OrdinationEvidence:
     context: OrdinationContext
 
     @property
+    def coordinates(self) -> Array:
+        """Return training coordinates in the retained, possibly rotated basis."""
+        return (
+            self.fit.coordinates @ self.mapping.rotation
+            if isinstance(self.mapping, OrthogonalCoordinateMap)
+            else self.fit.coordinates
+        )
+
+    @property
     def spectrum(self) -> OrdinationSpectrum:
         """Inspect the complete signed spectrum without attaching a population law."""
         threshold = float(self.fit.threshold)
@@ -302,13 +391,26 @@ class OrdinationEvidence:
 
     @property
     def loadings(self) -> Array:
-        """Return feature loadings only for a linear feature decomposition."""
-        if not isinstance(self.mapping, LinearCoordinateMap):
+        """Return linear feature coefficients in the retained coordinate basis."""
+        mapping = self.mapping
+        base = mapping.base if isinstance(mapping, OrthogonalCoordinateMap) else mapping
+        if not isinstance(base, LinearCoordinateMap):
             message = "Feature loadings are available only for linear feature geometry."
             raise TypeError(message)
-        return self.mapping.projection.components
+        components = base.projection.components
+        return (
+            components @ mapping.rotation
+            if isinstance(mapping, OrthogonalCoordinateMap)
+            else components
+        )
 
     def _selected_variance(self) -> Array:
+        if isinstance(self.mapping, OrthogonalCoordinateMap):
+            message = (
+                "Rotated coordinates are not principal axes; inspect the original "
+                "fit spectrum or compute coordinate variances explicitly."
+            )
+            raise TypeError(message)
         if not isinstance(self.mapping, LinearCoordinateMap):
             message = "Feature variance is available only for linear feature geometry."
             raise TypeError(message)
@@ -329,6 +431,8 @@ class OrdinationEvidence:
 
 def coordinate_capabilities(mapping: CoordinateMap) -> tuple[str, ...]:
     """Describe only operations supplied by the actual frozen query source."""
+    if isinstance(mapping, OrthogonalCoordinateMap):
+        return coordinate_capabilities(mapping.base)
     if isinstance(mapping, (LinearCoordinateMap, KernelCoordinateMap)):
         return ("transform",)
     base = (
@@ -347,6 +451,8 @@ def transform_coordinates(
     mapping: CoordinateMap, data: Observations | ArrayLike | PackedClouds
 ) -> Array:
     """Apply a frozen source-specific host transformation without new fitting."""
+    if isinstance(mapping, OrthogonalCoordinateMap):
+        return mapping.transform(data)
     if isinstance(mapping, DistanceCoordinateMap):
         if not isinstance(data, (Observations, PackedClouds)):
             message = "Distance transformation requires measures or named observations."
@@ -367,6 +473,13 @@ def transform_cross_distances(
     reference_ids: tuple[int | str, ...],
 ) -> Array:
     """Check exact reference identities and apply a retained distance extension."""
+    if isinstance(mapping, OrthogonalCoordinateMap):
+        return _finite(
+            transform_cross_distances(
+                mapping.base, distances, reference_ids=reference_ids
+            )
+            @ mapping.rotation
+        )
     if not isinstance(mapping, (DistanceCoordinateMap, GeodesicCoordinateMap)):
         message = "This ordination does not consume cross distances."
         raise TypeError(message)

@@ -85,6 +85,142 @@ By default, material negative inertia raises an error, and setting
 reports that coordinates approximate its positive part. With `dim=None`, every
 positive axis is kept.
 
+### Empirical distributions and frozen rotations
+
+The same measure column can supply centroid or full-distribution geometry.
+`MMD(LINEAR_KERNEL)` equals Euclidean distance between probability-weighted
+centroids. `Wasserstein(p=2, ground=EUCLIDEAN)` compares the empirical
+distributions themselves, including information their centroids discard.
+It accepts nonuniform probabilities and unequal support sizes; omitted masses
+are uniform within each measure. Atom coordinates are used as supplied, so
+normalization or a topic-probability transformation belongs in the declared
+preparation applied before either geometry.
+
+```python
+from pathlib import Path
+
+import jax.numpy as jnp
+
+from statadic.geometry.ground.metrics import EUCLIDEAN
+from statadic.geometry.ground.similarities import LINEAR_KERNEL
+from statadic.measure.clouds import PackedClouds
+from statadic.observation.data import MeasureColumn, Observations
+from statadic.observation.design import Intercept
+from statadic.observation.geometry import MMD, Wasserstein
+from statadic.ordination.fit import Ordination
+from statadic.prediction.artifacts import load_ordination_predictor, load_predictor
+from statadic.regression import Regression
+
+ids = ("a", "b", "c", "d", "e", "f")
+clouds = PackedClouds.from_clouds(
+    [
+        [[0.0, 0.0]],
+        [[1.0, 0.0], [1.0, 1.0]],
+        [[0.0, 2.0]],
+        [[2.0, 1.0], [3.0, 1.0]],
+        [[3.0, -1.0]],
+        [[-1.0, -1.0], [-1.0, 0.0]],
+    ],
+    masses=[[1.0], [0.25, 0.75], [1.0], [0.5, 0.5], [1.0], [0.75, 0.25]],
+)
+firms = Observations(
+    {"y": [1.0, 2.0, 1.5, 3.2, 4.1, 0.7]},
+    row_ids=ids,
+    measures={"articles": MeasureColumn(ids, clouds)},
+)
+geometry = Wasserstein(p=2, ground=EUCLIDEAN)
+coordinates = Ordination.pcoa(
+    geometry,
+    column="articles",
+    dim=2,
+    negative_inertia="positive-subspace",
+    name="news",
+).estimate(firms)
+centroid_geometry = MMD(LINEAR_KERNEL)  # Alternative geometry on the same clouds.
+centroid_coordinates = Ordination.pcoa(
+    centroid_geometry, column="articles", dim=2, name="centroid"
+).estimate(firms)
+
+# Rotate the retained basis, or align to reference coordinates by observation ID.
+rotated = coordinates.rotate(jnp.asarray([[0.0, -1.0], [1.0, 0.0]]))
+aligned = coordinates.align_to(rotated.coordinates[::-1], row_ids=ids[::-1])
+query_ids = ("new-firm",)
+query = Observations(
+    {},
+    row_ids=query_ids,
+    measures={
+        "articles": MeasureColumn(
+            query_ids, PackedClouds.from_clouds([[[0.5, 1.0], [1.0, 1.5]]])
+        )
+    },
+)
+new_coordinates = aligned.transform(query)
+
+# Keep the already learned map when estimating the outcome model.
+fit = Regression("y", Intercept() + aligned.as_term()).estimate(firms)
+aligned.save_predictor(Path("news-coordinates"))
+fit.save_predictor(Path("news-regression"))
+saved_map = load_ordination_predictor(Path("news-coordinates"))
+saved_model = load_predictor(Path("news-regression"))
+saved_coordinates = saved_map.transform(query)
+predictions = saved_model.predict(query)
+```
+
+Both artifacts retain the training measure references, probabilities, geometry
+and rotation. Held-out queries use those references independently of other
+query rows. Explicit cross-distance input must retain the exact training
+reference order: use
+`aligned.transform_distances(cross, reference_ids=aligned.row_ids)`.
+
+`rotate` accepts orthogonal changes of basis, including reflections.
+`align_to` learns an orthogonal Procrustes transform using the same unique
+observation identities, reorders reference rows by identity and rejects a
+rank-deficient alignment. Neither operation estimates translation, scaling or
+semantic labels. Rotated columns generally cease to be individual principal
+axes; the original signed spectrum remains available on the live result.
+`as_term()` freezes a learned map explicitly. Passing the unfitted `Ordination`
+specification into `Regression` instead learns its map on that regression's
+training sample. Choose the learning sample inside the intended validation
+design; freezing a map does not remove information leakage from its construction.
+
+General multivariate Wasserstein has no Hilbertian construction warrant.
+The strict policy therefore rejects this producer before estimating coordinates;
+an observed finite-sample spectrum cannot supply its missing construction law.
+The positive-subspace policy is an explicit approximation when the fitted
+distance geometry has material negative inertia; it is not a statement that
+the distance preserves all information in the retained coordinates.
+Exact unregularized transport, finite-projection sliced transport and an
+entropically regularized objective are different statistical declarations.
+
+The native weighted solver currently serves small-support comparisons. A
+synthetic float64 CPU benchmark with 16-dimensional atoms measured median warm
+times of 4.4 ms at 16×16, 222 ms at 32×32 and 8.8 s at 64×64; runs containing
+one first execution and three warm executions at 128×128 and 128×96 exceeded
+60 seconds. The equal-uniform 128×128 assignment path measured 2.2 ms warm.
+These measurements exclude corpus preparation and establish no GPU throughput.
+Measure the chosen support sizes before scheduling all-pairs weighted analyses.
+The scalar workflow returns an unavailable distance when it detects cost-power
+underflow; host preparation rejects it. Lower result/inspection doors retain
+the candidate and its evidence for diagnosis.
+
+Detailed pair explanations stay with the transport family:
+
+- `statadic.geometry.discrepancy.transport.decomposition.euclidean_wasserstein2_decomposition`
+  reports total squared W2, squared centroid separation, centered-distribution
+  squared W2 and reconstruction error. This identity requires Euclidean ground
+  geometry.
+- `statadic.geometry.discrepancy.transport.exact.exact_balanced_wasserstein_inspect`
+  retains a sparse assignment and numerical evidence for one supported
+  uniform equal-count comparison. `balanced_wasserstein_from_cost_inspect`
+  accepts supplied unsquared ground costs. One optimal assignment need not
+  provide a unique explanation.
+- `statadic.geometry.discrepancy.transport.empirical.wasserstein_distance_result`
+  retains the selected weighted pair's coupling, scaled costs and solver
+  evidence. It does not promise a derivative through the optimum.
+
+Distance-matrix production retains scalar distances; request detailed
+couplings only for selected pairs rather than storing every all-pairs plan.
+
 ## Results
 
 | Operation | What it does |
@@ -94,6 +230,9 @@ positive axis is kept.
 | `result.spectrum` | Signed eigenvalues, the numerical cutoff and axis counts |
 | `result.capabilities` | Which query sources the result can use |
 | `result.transform_distances(cross, reference_ids=ids)` | Coordinates from query-to-training distances, in the stored order |
+| `result.rotate(rotation)` | A frozen orthogonal change of retained coordinate basis |
+| `result.align_to(reference, row_ids=ids)` | Identity-matched orthogonal Procrustes alignment |
+| `result.as_term()` | An already learned map bound as a frozen regression term |
 
 Eigenvalues are in centred-Gram units, whereas for linear PCA the
 `explained_variance` divides by the training sample divisor. Variance and ratio
@@ -157,6 +296,9 @@ are placed by the out-of-sample extension {cite:p}`bengio-etal-2003`.
   projections.
 - Artifacts: the {download}`artifact controls <../../tests/ordination/test_fit_artifacts.py>`
   exercise standalone and nested frozen maps.
+- Distribution workflow: the {download}`Wasserstein composition controls <../../tests/integration/test_wasserstein_workflow.py>`
+  exercise uniform and weighted unequal supports, signed geometry, frozen
+  rotations and standalone/nested predictor persistence.
 
 ## See also
 

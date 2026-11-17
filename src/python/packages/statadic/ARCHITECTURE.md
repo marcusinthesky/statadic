@@ -164,6 +164,69 @@ learned-outcome-geometry calibration is implied. Spectral positive-subspace
 approximation is explicit and retains the signed spectrum. Frozen Isomap queries
 attach to the training graph; disconnected training graphs fail preparation.
 
+### Semantic-factor geometry and latent-model boundaries
+
+The Principal Semantic Factors research application extends existing scientific
+owners rather than establishing a domain-specific workflow. One `PackedClouds`
+measure representation supplies both linear-kernel MMD, which equals Euclidean
+distance between weighted centroids, and full multivariate Wasserstein geometry.
+`GeometrySpec` retains preparation, pairwise construction and frozen query
+cross-distances; `Ordination` retains coordinate estimation. Topic vectors and
+embedding vectors are observations supplied by the application. Article selection,
+economic labels, portfolio policy and independent semantic validation remain there.
+
+Exact Wasserstein is one mathematical request with specialized numerical solvers.
+Uniform equal-count measures use Hungarian assignment; unequal counts or arbitrary
+probability masses require native unregularized balanced transport. Both target the
+same minimum transport cost under the declared ground cost and rooting convention.
+General solves retain marginal feasibility, nonnegativity, dual and objective-gap
+evidence, and explicit iteration-limit or numerical failure status. Padding carries
+no mass. Inspectable assignments or couplings describe one optimum, potentially
+nonunique; they establish neither unique semantic attribution nor economic causality.
+Regularized transport is a separate method, never an implicit fallback. POT remains
+an optional independent reference rather than a runtime solver backend.
+
+Multivariate Wasserstein does not generally supply a Hilbertian construction
+warrant. A particular observed positive spectrum does not establish that law.
+PCoA therefore retains its signed spectrum and explicit negative-inertia policy.
+The Euclidean W2 location/shape decomposition separates squared centroid distance
+from centered-distribution squared distance and retains its reconstruction residual;
+it does not extend this identity to arbitrary ground geometries.
+
+Orthogonal coordinate changes belong to the shared frozen coordinate-map owner.
+They preserve retained distances and compose for future observations without another
+decomposition. Procrustes alignment matches declared observation identities and
+rejects underdetermined rank; it estimates neither translation nor scale. The
+original native fit and signed spectrum remain source evidence. Rotated columns
+are generally no longer principal axes and acquire no per-axis principal variance
+interpretation. An explicit frozen predictor term lets `Regression` reuse that same
+map, while ordinary ordination terms retain training-time estimation. Freezing a
+representation does not imply that resampling refits its original preparation.
+
+A generative latent-factor workflow remains a credible future family. An explicit
+measurement law, latent law and loading structure could unify Gaussian factor
+analysis and probabilistic PCA, with common marginal fitting, local-state inference
+and conditional reconstruction. Count/simplex topic models and characteristic-based
+panel loadings are useful tests of its proposed breadth. Different matrix layouts
+alone do not disqualify such a family: `Regression` already composes diverse response
+laws and dependence structures. The case for another workflow is reusable statistical
+state and coherent operation meanings beyond the existing workflows.
+
+The current PSF work does not establish that contract. PCA already has one
+`Ordination` owner; Gaussian latent posterior scores, LDA document-topic inference
+and IPCA contemporaneous factor estimation consume different information. IPCA
+predicts loadings from characteristics, but a new time factor generally requires
+new cross-sectional outcomes; characteristics alone do not forecast it. Merely
+sharing score and reconstruction matrices would hide these distinctions. Initial
+topic modeling therefore uses a qualified external implementation, and the published
+narrative-factor baseline retains its authors' estimator; ordinary IPCA does not
+substitute for their Sparse IPCA variant. Any pipeline adapter remains bounded and
+retains learned preparation and information timing. A later native family must show
+shared mathematical contracts across representative methods, native identification
+and uncertainty evidence, frozen-state composition and a justified benefit over
+reliable external packages. JAX compatibility matters when the computation needs its
+transformations, rather than as a reason alone to replace a host-side estimator.
+
 ## Axes, carriers and estimating equations
 
 A declaration names many mathematical axes, and they do not all sit on the

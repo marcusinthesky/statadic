@@ -9,6 +9,7 @@ remain separate. Ordination is also a training-fitted regression term.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from numbers import Integral
 from pathlib import Path
 from typing import Literal, override
 
@@ -20,6 +21,7 @@ from statadic.geometry.embedding import (
     NonEuclideanEmbeddingError,
     OrdinationFit,
     gram_coordinates,
+    orthogonal_procrustes,
 )
 from statadic.geometry.graph.shortest_paths import knn_shortest_paths
 from statadic.geometry.ground.config import (
@@ -47,6 +49,7 @@ from statadic.observation.coordinates import (
     OrdinationContext,
     OrdinationEvidence,
     OrdinationSpectrum,
+    OrthogonalCoordinateMap,
     coordinate_capabilities,
     feature_values,
     transform_coordinates,
@@ -66,6 +69,7 @@ from statadic.report.core import Metric, PlotSpec, Report
 
 __all__ = [
     "DistanceGram",
+    "FrozenOrdination",
     "KernelGram",
     "LinearGram",
     "Ordination",
@@ -658,6 +662,47 @@ class Ordination(Model[_Input, PreparedOrdination, "OrdinationResult"], Term):
 
 
 @dataclass(frozen=True)
+class FrozenOrdination(Term):
+    """An explicitly frozen ordination predictor, without training-time refitting.
+
+    Regression estimation and resampling reuse the retained representation.
+    The caller must choose its learning sample without held-out information.
+    """
+
+    evidence: OrdinationEvidence
+
+    def __post_init__(self) -> None:
+        """Require a named transformable source and at least one coordinate."""
+        if not isinstance(self.evidence.name, str) or not self.evidence.name:
+            message = "An ordination name must be a nonempty string."
+            raise ValueError(message)
+        if not self.evidence.mapping.input_columns:
+            message = "A frozen predictor requires a named transformable source."
+            raise ValueError(message)
+        if not self.evidence.coordinates.shape[1]:
+            message = "A frozen predictor requires at least one coordinate."
+            raise ValueError(message)
+
+    @property
+    @override
+    def input_columns(self) -> dict[str, InputRole]:
+        """Return the unchanged named roles of the retained coordinate source."""
+        return self.evidence.mapping.input_columns
+
+    @override
+    def _prepare_term(self, training: Observations) -> FittedOrdination:
+        """Retain exactly the existing map and coordinate column identities."""
+        return FittedOrdination(
+            self.evidence.mapping,
+            tuple(
+                f"{self.evidence.name}_{axis + 1}"
+                for axis in range(self.evidence.coordinates.shape[1])
+            ),
+            self.evidence,
+        )
+
+
+@dataclass(frozen=True)
 class OrdinationResult(Result[OrdinationFit, OrdinationContext]):
     """Selected coordinates, full signed evidence and the actual frozen map."""
 
@@ -673,14 +718,14 @@ class OrdinationResult(Result[OrdinationFit, OrdinationContext]):
     def valid(self) -> bool:
         """Expose numerical availability independently of negative-inertia policy."""
         return bool(
-            jnp.all(jnp.isfinite(self.core.coordinates))
+            jnp.all(jnp.isfinite(self.coordinates))
             & jnp.all(jnp.isfinite(self.core.eigenvalues))
         )
 
     @property
     def coordinates(self) -> Array:
         """Return retained training coordinates in their original row order."""
-        return self.core.coordinates
+        return self.evidence.coordinates
 
     @property
     def row_ids(self) -> tuple[int | str, ...]:
@@ -716,6 +761,105 @@ class OrdinationResult(Result[OrdinationFit, OrdinationContext]):
     def capabilities(self) -> tuple[str, ...]:
         """Expose only transformations defined by the retained source."""
         return coordinate_capabilities(self.mapping)
+
+    def rotate(self, rotation: ArrayLike) -> OrdinationResult:
+        """Return an orthogonally transformed view with a frozen query map.
+
+        The original numerical fit and full signed spectrum remain unchanged.
+        Reflections are allowed. Successive rotations compose in application
+        order, and the result never decomposes the training data again.
+
+        Args:
+            rotation: Finite orthogonal ``(k, k)`` matrix for retained dimension k.
+
+        Returns:
+            An immutable result in the transformed coordinate basis.
+
+        """
+        return OrdinationResult(
+            self.core,
+            self.context,
+            OrthogonalCoordinateMap(self.mapping, jnp.asarray(rotation)),
+            self.name,
+        )
+
+    def align_to(
+        self,
+        reference_coordinates: ArrayLike,
+        *,
+        row_ids: tuple[int | str, ...],
+    ) -> OrdinationResult:
+        """Align corresponding training rows by orthogonal Procrustes.
+
+        Reference rows are reordered by identity. Both inputs must cover the
+        same unique identities and retained dimension. Translation, scaling
+        and semantic labels are not estimated. Rank-deficient cross-covariance
+        is rejected because it leaves the alignment underdetermined.
+
+        Args:
+            reference_coordinates: Finite reference coordinate rows.
+            row_ids: Reference identities in their supplied row order.
+
+        Returns:
+            A rotated result whose future queries use the learned alignment.
+
+        Raises:
+            ValueError: Identities, dimensions or numerical rank are incompatible.
+            TypeError: Reference coordinates are not real numeric values.
+
+        """
+        identities = tuple(row_ids)
+        if any(
+            isinstance(identity, bool) or not isinstance(identity, (str, Integral))
+            for identity in identities
+        ):
+            message = (
+                "Alignment row identities must be integers or strings, excluding bool."
+            )
+            raise TypeError(message)
+        if len(set(identities)) != len(identities) or set(identities) != set(
+            self.row_ids
+        ):
+            message = "Alignment requires the same unique row identities."
+            raise ValueError(message)
+        reference = jnp.asarray(reference_coordinates)
+        if reference.ndim != _MATRIX_NDIM or reference.shape != self.coordinates.shape:
+            message = "Alignment coordinates must match training rows and dimension."
+            raise ValueError(message)
+        if not jnp.issubdtype(reference.dtype, jnp.number) or jnp.iscomplexobj(
+            reference
+        ):
+            message = "Alignment coordinates must be real numeric values."
+            raise TypeError(message)
+        if not bool(jnp.all(jnp.isfinite(reference))) or not self.valid:
+            message = "Alignment requires finite source and reference coordinates."
+            raise ValueError(message)
+        indices = {identity: index for index, identity in enumerate(identities)}
+        reference = reference[
+            jnp.asarray([indices[identity] for identity in self.row_ids])
+        ]
+        if not self.coordinates.shape[1]:
+            message = "Alignment requires at least one identified coordinate direction."
+            raise ValueError(message)
+        rotation, singular_values = orthogonal_procrustes(self.coordinates, reference)
+        threshold = (
+            jnp.finfo(singular_values.dtype).eps
+            * self.coordinates.shape[1]
+            * singular_values[0]
+        )
+        if not bool(
+            jnp.all(jnp.isfinite(singular_values) & (singular_values > threshold))
+        ):
+            message = "Alignment cross-covariance is rank deficient or nonfinite."
+            raise ValueError(message)
+        return self.rotate(rotation)
+
+    def as_term(self) -> FrozenOrdination:
+        """Bind this already-estimated coordinate map as a frozen predictor term."""
+        if not self.mapping.input_columns:
+            message = "A frozen predictor requires a named transformable source."
+            raise ValueError(message)
+        return FrozenOrdination(self.evidence)
 
     def transform(self, data: Observations | ArrayLike | PackedClouds) -> Array:
         """Apply the fitted coordinate map to new observations.
@@ -755,6 +899,8 @@ class OrdinationResult(Result[OrdinationFit, OrdinationContext]):
                 ),
             )
         )
+        if isinstance(self.mapping, OrthogonalCoordinateMap):
+            warnings += ("Rotated coordinates retain the original operator spectrum.",)
         return Report(
             "Ordination",
             metrics=(

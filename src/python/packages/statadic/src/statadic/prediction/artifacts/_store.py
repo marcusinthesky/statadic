@@ -1,4 +1,4 @@
-"""Version-7 declarative JSON and little-endian numeric artifact storage."""
+"""Versioned declarative JSON and little-endian numeric artifact storage."""
 
 from __future__ import annotations
 
@@ -43,7 +43,8 @@ _FORMATS = {
     "uint32": "I",
     "uint64": "Q",
 }
-_SCHEMA_VERSION = 7
+_SCHEMA_VERSION: Literal[8] = 8
+_READABLE_SCHEMA_VERSIONS = (7, 8)
 _DEFAULT_WIDTH = 4
 _CODEC_CHUNK = 4096
 
@@ -272,15 +273,44 @@ def _check_schema(document: object) -> None:
         and "schema_version" in document
         and (
             type(document["schema_version"]) is not int
-            or document["schema_version"] != _SCHEMA_VERSION
+            or document["schema_version"] not in _READABLE_SCHEMA_VERSIONS
         )
     ):
         message = (
             f"Artifact schema version {document['schema_version']!r} is not supported; "
-            f"statadic {version('statadic')} reads schema {_SCHEMA_VERSION} only. "
+            f"statadic {version('statadic')} reads schemas 7 and 8. "
             "Re-save it from the original analysis."
         )
         raise ArtifactError(message)
+
+
+def _require_legacy_prediction_state(value: object) -> None:
+    """Exclude schema-8 kinds along predictive wire edges, outside user metadata."""
+    if isinstance(value, list):
+        for child in value:
+            _require_legacy_prediction_state(child)
+        return
+    if not isinstance(value, dict):
+        return
+    if value.get("kind") in ("orthogonal", "wasserstein"):
+        message = "Orthogonal maps and multivariate Wasserstein require schema 8."
+        raise ArtifactError(message)
+    for key in (
+        "design",
+        "terms",
+        "left",
+        "right",
+        "mapping",
+        "base",
+        "distance_map",
+        "geometry",
+    ):
+        if key in value:
+            _require_legacy_prediction_state(value[key])
+    graphs = value.get("graphs")
+    if isinstance(graphs, dict):
+        for graph in graphs.values():
+            _require_legacy_prediction_state(graph)
 
 
 def _decode_entry(value: object) -> ArrayEntry:
@@ -322,14 +352,16 @@ def _decode_manifest(
         "manifest",
     )
     if (
-        saved["schema_version"] != _SCHEMA_VERSION
+        saved["schema_version"] not in _READABLE_SCHEMA_VERSIONS
         or type(saved["schema_version"]) is not int
     ):
-        message = "Artifact schema version must be 7."
+        message = "Artifact schema version must be 7 or 8."
         raise ArtifactError(message)
     if saved["purpose"] != purpose:
         message = f"This loader requires an artifact with purpose={purpose!r}."
         raise ArtifactError(message)
+    if saved["schema_version"] == 7 and purpose == "prediction":  # noqa: PLR2004
+        _require_legacy_prediction_state(saved["state"])
     writer = record(saved["writer"], {"package", "version"}, "writer")
     decoded_writer: WriterRecord = {
         "package": text(writer["package"], "writer package"),
@@ -356,7 +388,7 @@ def _decode_manifest(
         freeze_metadata(string_record(saved["metadata"], "artifact metadata"))
     )
     return {
-        "schema_version": 7,
+        "schema_version": 7 if saved["schema_version"] == 7 else 8,  # noqa: PLR2004
         "writer": decoded_writer,
         "purpose": purpose,
         "family": text(saved["family"], "artifact family"),

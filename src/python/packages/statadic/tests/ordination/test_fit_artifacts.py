@@ -1,4 +1,4 @@
-"""Schema-six frozen ordination and nested regression prediction transport."""
+"""Frozen ordination and nested regression prediction transport."""
 
 from __future__ import annotations
 
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 pytestmark = pytest.mark.integration
-_SCHEMA_VERSION = 7
+_SCHEMA_VERSION = 8
 
 
 def _model(kind: str) -> Ordination:
